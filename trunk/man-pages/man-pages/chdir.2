@@ -1,0 +1,128 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Wed Jul 21 22:10:52 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 15 April 1995 by Michael Chastain <mec@shell.portal.com>:
+.\"   Added 'fchdir'.
+.\"   Fix bugs in error section.
+.\" Modified Mon Oct 21 23:05:29 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified by Joseph S. Myers <jsm28@cam.ac.uk>, 970821
+.\"
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\"
+.TH CHDIR 2 1997-08-21 "Linux 2.0.30" "Podręcznik programisty Linuksa"
+.SH NAZWA
+chdir, fchdir \- zmiana katalogu roboczego
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.BI "int chdir(const char *" path );
+.br
+.BI "int fchdir(int " fd );
+.SH OPIS
+.B chdir
+zmienia katalog bieżący na katalog podany w
+.IR path .
+.PP
+.B fchdir
+jest identyczne jak
+.BR chdir ,
+lecz katalog jest podawany jako deskryptor otwartego pliku.
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracane jest zero. W wypadku błędu zwracane jest \-1
+i odpowiednio ustawiane
+.IR errno .
+.SH BŁĘDY
+Dla niektórych systemów plików mogą być zwracane inne błędy niż opisane
+poniżej. Najogólniejsze błędy
+.B chdir
+to:
+.TP
+.B EFAULT
+.I path
+wskazuje poza dostępną dla użytkownika przestrzeń adresową.
+.TP
+.B ENAMETOOLONG
+.I path
+jest zbyt długie.
+.TP
+.B ENOENT
+Plik nie istnieje.
+.TP
+.B ENOMEM
+Brak pamięci jądra.
+.TP
+.B ENOTDIR
+Składnik ścieżki
+.IR path .
+nie jest katalogiem.
+.TP
+.B EACCES
+Brak praw do przeszukiwania dla składnika ścieżki
+.IR path .
+.TP
+.B ELOOP
+Podczas rozwiązywania
+.I path
+napotkano zbyt wiele dowiązań symbolicznych.
+.TP
+.B EIO
+Wystąpił błąd wejścia-wyjścia.
+.PP
+Ogólne błędy
+.B fchdir
+to:
+.TP
+.B EBADF
+.I fd
+Nie jest prawidłowym deskryptorem pliku.
+.TP
+.B EACCESS
+Brak praw do przeszukiwania katalogu otwartego przez deskryptor
+.IR fd .
+.SH UWAGI
+Prototyp funkcji
+.B fchdir
+jest dostępny tylko jeżeli zdefiniowano
+.B _BSD_SOURCE
+(bezpośrednio, albo pośrednio - nie definiując _POSIX_SOURCE czy
+kompilując z włączoną flagą -ansi).
+.SH "ZGODNE Z"
+Funkcja
+.B chdir
+jest zgodna z SVr4, SVID, POSIX, X/OPEN, 4.4BSD. SVr4 dokumentuje
+dodatkowe błędy EINTR, ENOLINK i EMULTIHOP, lecz nie zawiera ENOMEM.
+POSIX.1 nie zawiera błędów ENOMEM, ELOOP.
+X/OPEN nie zawiera błędów EFAULT, ENOMEM i EIO.
+
+Funkcja
+.B fchdir
+jest zgodna z SVr4, 4.4BSD oraz X/OPEN.
+SVr4 dokumentuje dodatkowe błędy EIO, EINTR i ENOLINK.
+X/OPEN dokumentuje dodatkowe błędy EINTR i EIO.
+.SH "ZOBACZ TAKŻE"
+.BR getcwd (3), 
+.BR chroot (2)

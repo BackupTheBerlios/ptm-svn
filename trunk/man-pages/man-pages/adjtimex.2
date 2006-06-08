@@ -1,0 +1,143 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1995 Michael Chastain (mec@shell.portal.com), 15 April 1995.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Fri Jan 31 16:11:17 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Wed Jul 30 14:25:16 1997 by Paul Slootman <paul@wurtel.demon.nl>
+.\" Translation (c) 1998 Przemek Borys <pborys@dione.ids.pl>
+.\" Sync with man-pages 1.47 A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH ADJTIMEX 2 1997-07-30 "Linux 2.0" "Podręcznik programisty Linuksa"
+.SH NAZWA
+adjtimex \- dopasowanie zegara w jądrze
+.SH SKŁADNIA
+.B #include <sys/timex.h>
+.sp
+.BI "int adjtimex(struct timex *" "buf" );
+.SH OPIS
+Linux używa algorytmu dopasowywania Davida L. Millsa (zobacz w RFC 1305).
+Wywołanie systemowe
+.B adjtimex
+czyta i opcjonalnie ustawia parametry sterujące tego algorytmu.
+.B adjtimex
+pobiera wskaźnik do struktury
+.IR timex ,
+poprawia parametry w jądrze na podstawie wartości przekazanych w polach
+i zwraca tę samą strukturę z bieżącymi ustawieniami jądra.
+Struktura jest zadeklarowana następująco:
+.PP
+.RS
+.nf
+struct timex {
+    int modes;           /* przełącznik trybu */
+    long offset;         /* offset czasu (usec) */
+    long frequency;      /* offset częstotliwości (skalowany ppm) */
+    long maxerror;       /* maksymalny błąd (usec) */
+    long esterror;       /* obliczony błąd (usec) */
+    int status;          /* komenda/status zegara */
+    long constant;       /* stała czasu pll */
+    long precision;      /* dokładność zegara (usec) (tylko do odczytu) */
+    long tolerance;      /* tolerancja częstotliwości zegara (ppm)
+                            (tylko do odczytu) */
+    struct timeval time; /* aktualny czas (tylko do odczytu) */
+    long tick;           /* czas miedzy tyknięciami zegara (usec) */
+};
+.fi
+.RE
+.PP
+Pole
+.I modes
+określa, które parametry (jeśli w ogóle) ustawić.
+Może ono zawierać
+.RI bitowe or
+kombinacji zera lub więcej spośród następujących bitów:
+.PP
+.RS
+.nf
+#define ADJ_OFFSET            0x0001 /* offset czasu */
+#define ADJ_FREQUENCY         0x0002 /* offset częstotliwości */
+#define ADJ_MAXERROR          0x0004 /* maksymalny błąd czasu */
+#define ADJ_ESTERROR          0x0008 /* obliczany błąd czasu */
+#define ADJ_STATUS            0x0010 /* status zegara */
+#define ADJ_TIMECONST         0x0020 /* stała czasu pll */
+#define ADJ_TICK              0x4000 /* wartość tyknięcia */
+#define ADJ_OFFSET_SINGLESHOT 0x8001 /* staromodne adjtime */
+.fi
+.RE
+.PP
+Zwyczajni użytkownicy są ograniczeni do wartości zero dla
+.IR mode .
+Jedynie superużytkownik może ustawiać jakiekolwiek parametry.
+.br
+.ne 12v
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu,
+.B adjtimex
+zwraca stan zegara z
+.PP
+.RS
+.nf
+#define TIME_OK   0 /* zegar zsynchronizowany */
+#define TIME_INS  1 /* dodaj sekundę przestępną */
+#define TIME_DEL  2 /* skasuj sekundę przestępną */
+#define TIME_OOP  3 /* sekunda przestępna trwa */
+#define TIME_WAIT 4 /* wystąpiła sekunda przestępna */
+#define TIME_BAD  5 /* zegar nie zsynchronizowany */
+.fi
+.RE
+.PP
+W przypadku błędu,
+.B adjtimex
+zwraca \-1 i ustawia
+.IR errno .
+.SH BŁĘDY
+.TP
+.B EFAULT
+.I buf
+nie wskazuje do zapisywalnej pamięci.
+.TP
+.B EPERM
+.I buf.mode
+jest niezerowe, a użytkownik nie jest superużytkownikiem.
+.TP
+.B EINVAL
+Próbowano ustawić
+.I buf.offset
+na wartość poza obszarem od \-131071 do +131071,
+lub ustawić
+.I buf.status
+na wartość inną niż te wymienione powyżej, lub ustawić
+.I buf.tick
+na wartość spoza zakresu
+.RB 900000/ HZ
+do 
+.RB 1100000/ HZ ,
+gdzie
+.B HZ
+jest częstotliwością przerwania systemowego timera.
+.SH "ZGODNE Z"
+\fBadjtimex\fP jest specyficzny dla Linuksa i nie powinien być używany w
+programach, które mają być przenośne. W SVr4 istnieje podobna, lecz mniej
+ogólna funkcja \fBadjtime\fR.
+.SH "ZOBACZ TAKŻE"
+.BR settimeofday (2).
