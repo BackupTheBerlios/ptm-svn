@@ -1,0 +1,48 @@
+Witamy,
+
+Strona należy do PTM - projektu tłumaczenia manuali.
+
+Do naszych obowiązków należy tłumaczenie oraz zarządzanie już przetłumaczoną
+dokumentacją systemową man dla systemu Linux. Są to strony, które stanowią
+podstawę nauki pracy z tym systemem, a ich lokalizacja jest kluczowa z punktu
+widzenia rozbudowy polskiej społeczności Linuksowej. Strony te znajdują się w
+każdej dystrybucji Linuksa i są zwykle pierwszum źródłem informacji i pomocy w
+przypadku pojawienia się jakichkolwiek problemów. W związku z tym, że niewiele
+osób zna angielski na wystarczająco dobrym poziomie by w pełni zrozumieć
+przedstawione w wielu stronach man instrukcje oraz w związku z tym, że ich
+zrozumienie jest niezbędne dla używania Linuksa, postanowiliśmy spędzić część
+naszego wolnego czasu na tłumaczeniu tych stron na język polski.
+
+Dostarczamy przetłumaczonych na język polski stron man wszystkim dystrybucjom,
+które są dostępnością takich stron zainteresowane, czyli w praktyce każdej
+poważnej odmianie Linuksa.
+
+Każdy człowiek znający dobrze Linuksa i angielski może pomóc nam w pracy.
+Potrzebni są nie tylko tłumacze do stron, które jeszcze są po angielsku, ale
+także osoby dokonujące korekty już przetłumaczonych tekstów czy po prostu
+zgłaszające błędy.
+
+Aby się z nami skontaktować, wystarczy wysłać e-mail do jednej z osób
+zarządzających projektem:
+
+Damian Szeluga (damjanek@gentoo.pl)
+Łukasz Damentko (rane@gentoo.org)
+
+Można z nami również porozmawiać na oficjalnym kanale projektu, #ptm w sieci
+irc.freenode.net (http://freenode.net).
+
+Praca nad manualami odbywa się w repozytorium SVN, które sponsoruje serwis
+Berlios.de. 
+
+Adres repozytorium to: http://svn.berlios.de/viewcvs/ptm/trunk/
+
+Dostęp do niego może otrzymać każdy chętny do pomocy w pracach nad tłumaczeniem
+manuali. Każdy chętny dostanie też szansę dokonania wkładu w rozwój
+społeczności opensource w Polsce. Nie odrzucamy żadnej pomocy.
+
+Zapraszamy do współpracy.
+
+Zespół PTM.
+
+
+
