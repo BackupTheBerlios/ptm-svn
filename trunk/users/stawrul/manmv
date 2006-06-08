@@ -1,0 +1,19 @@
+Automatyczne grupowanie manów
+
+Manuale programów, które mamy zainstalowe w systemie można pogrupować w sposób automatyczny, oto algorytm:
+
+1. Przechodzimy do katalogu trunk/users/damjanek/smieci/manX i wykonujemy w nim polecenie:
+
+$ for i in *; do equery -C belongs $i.gz; done;
+
+2. Wyjście powyższego polecenia zapisujemy do pliku, np. equeryres.
+
+3. Plik equeryres sedujemy w następujący sposób:
+
+$ sed -e '/^\[/d' equeryres
+
+4. Przechodzimy do katalogu trunk/man-pages i wykonujemy polecenie:
+
+$ perl -e 'while (<>){ /.*\/(.*)-\d/; $prog = $1; system("mkdir ~/ptm/trunk/man-pages/$prog && svn add ~/ptm/trunk/man-pages/$prog && svn cleanup;"); /.*\/(.*).gz/; system("svn mv ~/ptm/trunk/users/damjanek/smietnik/man1/$1 ~/ptm/trunk/man-pages/$prog"); }' equeryres
+
+UWAGA: należy zmienić ścieżki w obu wywołaniach system stosownie do posiadanej struktury katalogów
