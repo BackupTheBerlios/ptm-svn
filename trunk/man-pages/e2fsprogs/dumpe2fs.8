@@ -1,0 +1,86 @@
+.\" -*- nroff -*-
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH "DUMPE2FS" "8" "Marzec 2002" "e2fsprogs wersja 1.27" ""
+.SH "NAZWA"
+dumpe2fs \- wyrzuć dane o systemie plików
+.SH "SKŁADNIA"
+.B dumpe2fs
+[
+.B \-bfhixV
+]
+[
+.B \-ob 
+.I superblok
+]
+[
+.B \-oB
+.I rozmiar\-bloku
+]
+.I urządzenie
+.SH "OPIS"
+.BI dumpe2fs
+drukuje superblok i dane grupy bloków systemu plików znajdującego się na
+urządzeniu
+.I device.
+.PP 
+.BI dumpe2fs
+jest podobny do Berkeley'owskiego
+.BI dumpfs
+dla systemu plików BSD Fast.
+.SH "OPCJE"
+.TP 
+.B \-b
+Wypisz bloki, które są zaznaczone jako uszkodzone.
+.TP 
+.BI \-ob " superblok"
+użyj bloku
+.I superblok
+podczas badania systemu plików. Ta opcja zwykle nie jest potrzebna z
+wyjątkiem czarodzieja systemu plików (filesystem wizard), który bada
+resztki po mocno zniszczonym systemie plików.
+.TP 
+.BI \-oB " rozmiar\-bloku"
+użyj bloków o rozmiarze
+.I blocksize
+bajtów podczas badania systemu plików. Ta opcja zwykle nie jest potrzebna
+z wyjątkiem czarodzieja systemu plików (filesystem wizard), który bada
+resztki po mocno zniszczonym systemie plików.
+.TP 
+.B \-f
+zmuś dumpe2fs aby wyświetlał system plików nawet wtedy, gdy może on mieć
+ustawione flagi, których dumpe2fs nie rozumie (i które mogą powodować to,
+że dumpe2fs nie chce ich wyświetlać).
+.TP 
+.B \-h
+wyświetl tylko informacje na temat superbloku bez szczegółów o deskryptorach grup bloków.
+.TP 
+.B \-i
+wyświetl dane systemu plików z obrazu znajdującego się w pliku, utworzonego przez 
+.BR e2image ,
+używając 
+.I urządzenie
+jako ścieżkę do pliku z obrazem.
+.TP 
+.B \-x
+wyświetl szczegółowe informacje na temat grupy bloków w formie szesnastkowej
+.TP 
+.B \-V
+wypisz numer wersji 
+.B dumpe2fs
+i zakończ działanie.
+.SH "BŁĘDY"
+Musisz znać strukturę fizyczną systemu pliku by zrozumieć wyjście.
+.SH "AUTOR"
+.B dumpe2fs 
+został napisany przez Remy'ego Carda <Remy.Card@linux.org>.
+.SH "DOSTĘPNOŚĆ"
+.B dumpe2fs
+jest częścią pakietu e2fsprogs i jest dostępny na stronie 
+http://e2fsprogs.sourceforge.net.
+.SH "ZOBACZ TAKŻE"
+.BR e2fsck (8),
+.BR mke2fs (8),
+.BR tune2fs (8)
+

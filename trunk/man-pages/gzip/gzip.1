@@ -1,0 +1,479 @@
+.\" {PTM/LK/0.1/29-09-1998/"kompresja i dekompresja plików"}
+.\" Tłumaczenie: 29-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.PU
+.TH gzip 1 local
+.SH NAZWA
+gzip, gunzip, zcat \- skompresuj i zdekompresuj pliki
+.SH SKŁADNIA
+.ll +8
+.B gzip
+.RB [ " \-acdfhlLnNrtvV19 " ]
+.RB [ \-S\ rozszerzenie ]
+[
+.I "nazwa \&..."
+]
+.ll -8
+.br
+.B gunzip
+.RB [ " \-acfhlLnNrtvV " ]
+.RB [ \-S\ rozszerzenie ]
+[
+.I "nazwa \&..."
+]
+.br
+.B zcat
+.RB [ " \-fhLV " ]
+[
+.I "nazwa \&..."
+]
+.SH OPIS
+.I gzip
+redukuje rozmiar podanych plików używając algorytmu Lempel-Ziv (LZ77).
+Zawsze, jeżeli jest to możliwe, do nazwy pliku dodawane jest rozszerzenie
+.BR "\&.gz" ,
+przy zachowaniu informacji o właścicielu pliku, trybie dostępu, oraz czasie
+dostępu i modyfikacji. 
+(Domyślnym rozszerzeniem nazwy pliku jest
+.B "\-gz"
+dla systemu VMS,
+.B ".z"
+dla MSDOS, OS/2 FAT, Windows NT FAT i Atari.)
+Jeżeli nie podano nazwy żadnego pliku, lub podano nazwę "-", dane do 
+kompresji pobierane są ze standardowego wejścia, a po skompresowaniu 
+zapisywane na standardowe wyjście.
+.I gzip
+kopresuje jedynie zwykłe pliki. W szczególności, ignoruje dowiązania
+symboliczne.
+.PP
+Jeżeli nazwa skompresowanego pliku jest za długa dla systemu plików,
+.I gzip
+obcina ją.
+.I gzip
+usiłuje obcinać jedynie części nazw plików dłuższe niż 3 znaki. (Część nazwy
+pliku znajduje się pomiędzy kropkami). Jeżeli nazwa składa się tyko z
+krótkich części, obcinane są najdłuższe z nich. Na przykład, jeżeli długość
+nazwy plików jest ograniczona do 14 znaków, gzip.msdos.exe jest kompresowane
+do gzi.msd.exe.gz. Jeżeli w systemie plików nie ma ograniczenia długości
+nazwy pliku, nazwa nie jest obcinana.
+.PP
+Domyślnie
+.I gzip
+zachowuje oryginalną nazwę pliku oraz czas modyfikacji i dostępu wewnątrz
+skompresowanego pliku. Jest ona uzywana podczas dekompresji z opcją 
+.BR \-N .
+Jest to użytecznie, gdy nazwa skompresowanego pliku została obcięta lub czas
+modyfikacji nie został zachowany po transferze pliku.
+.PP
+Skompresowane pliki moga być odtworzone do pierwotnej postaci przy użyciu
+poleceń
+.IR "gzip -d" ,
+.I gunzip
+lub
+.IR zcat .
+Jeżeli oryginalna nazwa pliku zachowana wewnątrz pliku skompresowanego nie
+może być odtworzona w danym systemie plików, na podstawie oryginalnej nazwy
+tworzona jest nowa.
+.PP
+.I gunzip
+uruchamiany jest z listą plików w linii poleceń. Następnie każdy plik,
+którego nazwa kończy się rozszerzeniem .gz, -gz, .z, -z, _z lub .Z
+i w nagłówku pliku znajduje się prawidłowa liczba (magic number) jest
+dekompresowany i zastępowany oryginalnym plikiem bez jednego z powyższych
+rozszerzeń.
+.I gunzip
+rozpoznaje też specjalne rozszerzenia nazw plików
+.B "\&.tgz"
+i
+.B "\&.taz"
+jako skróty dla, odpowiednio,
+.B "\&.tar.gz"
+i
+.BR "\&.tar.Z" .
+Podczas kompresji pliku z rozszerzeniem
+.BR "\&.tar" ,
+jeżeli jest to konieczne,
+.I gzip
+używa rozszerzenia 
+.B "\&.tgz"
+zamiast obcinania nazwy pliku.
+.PP
+.I gunzip
+może dokonać dekompresji plików stworzonych przez programy
+.I gzip, zip, compress, compress -H
+lub
+.I pack.
+Rodzaj pliku wejściowego jest rozpoznawany automatycznie. Podczas
+dekompresji plików w pierwszych dwóch formatach, 
+.I gunzip
+kontroluje 32-bitową sumę kontrolną CRC. W wypadku plików stworzonych przez
+programy
+.IR pack " i " gunzip
+sprawdzana jest długość zdekompresowanego pliku. Standardowy format programu
+.I compress
+nie umożliwiał kontroli poprawności. Jednak niekiedy
+.I gunzip
+jest w stanie wykryć uszkodzony plik .Z. Jeżeli w trakcie dekompresji
+takiego pliku pojawią się błędy, nie sądź, że plik jest w porządku jeżeli
+program
+.I uncompress
+nie zgłaszał problemów. Oznacza to tylko, że 
+.I uncompress
+nie kontroluje poprawności plików wejściowych. Format plików compress -H
+systemu SCO (kompresja metodą lzh) również nie obsługuje kontroli
+poprawności, lecz także możliwe jest podstawowe sprawdzenie spójności pliku.
+.PP
+Pliki stworzone przez program
+.I zip
+mogą być zdekompresowane tylko, jeżeli w archiwum .zip znajduje się jeden
+plik i jest on skompresowny metodą 'deflation'. Jest to opcja przeznaczona
+do konwersji plików .tar.zip do formatu .tar.gz. Do dekompresji archiwów .zip 
+zawierających więcej niż jeden plik użyj programu unzip
+.I unzip
+zamiast
+.I gunzip.
+.PP
+.I zcat
+działa tak samo, jak
+.I gunzip
+.B \-c.
+(W niektórych systemach
+.I zcat
+może być zainstalowany jako 
+.IR gzcat ,
+aby zachować oryginalne dowiązanie do programu
+.IR compress ).
+.I zcat
+dekompresuje pliki z listy podanej w linii poleceń lub pobiera dane ze
+standardowego wejścia, a nastepnie zapisuje zdekompresowane dane na
+standardowym wyjściu.
+.I zcat
+dokonuje dekompresji plików po sprawdzeniu, że w nagłówku
+pliku znajduje się właściwa liczba (magic number); nie
+jest wymagane, aby nazwa pliku miała rozszerzenie
+.BR "\&.gz" .
+.PP
+.I Gzip
+korzysta z algorytmu Lempel-Ziv użytego w programach
+.I zip
+i PKZIP.
+Wydajność kompresji zależy od wielkości danych
+wejściowych, ilości bitów używanych w kodach oraz
+rozmieszczenia w danych jednakowych podciągów. Dane takie,
+jak kod źródłowy lub tekst w języku angielskim są
+redukowane o 60-70  procent. Osiągany stopień kompresji
+jest przeważnie dużo większy niż przy użyciu kodowania LZW
+(używanym przez program
+.IR compress ),
+Huffmana
+.RI ( pack ),
+lub adaptywnym  kodowaniu Huffmana 
+.RI ( compact ).
+.PP
+Kompresja jest przeprowadzana zawsze, nawet jeżeli plik wyjściowy jest
+większy niż oryginalny. W najgorszym przypadku narzut może wynosić kilka
+bajtów dla nagłówka i 5 bajtów dla każdego bloku o długości 32K.
+Ewentualnie współczynnik powiększenia pliku może wynosić 0.015% dla bardzo
+dużych plików. Zauważ, że prawie nigdy nie zwiększa się ilość bloków
+używanych przez plik na dysku.
+.I gzip
+zachowuje tryb dostępu, właściciela pliku oraz czas dostępu i modyfikacji
+pliku podczas kompresji i dekompresji.
+.SH OPCJE
+.TP
+.B \-a --ascii
+Tryb tekstowy. Przekształć znaki końca linii używając lokalnych konwencji.
+Ta opcja jest dostępna jedynie na kilku systemach nie-Unixowych. W systemie
+MS-DOS podczas kompresji znaki CR LF są przekształcane na LF; a podczas
+dekompresji z powrotem.
+.TP
+.B \-c --stdout --to-stdout
+Wypisz skompresowane dane na standardowe wyjście; oryginalne pliki pozostają
+nienaruszone. Jeżeli podanych zostało kilka plików wejściowych, każdy z nich
+kompresowany jest oddzielnie. Dla osiągnięcia lepszej kompresji połącz pliki
+ze sobą przed poddaniem ich kompresji.
+.TP
+.B \-d --decompress --uncompress
+Zdekompresuj plik.
+.TP
+.B \-f --force
+Kompresuj plik nawet, jeżeli istnieją do niego twarde dowiązania lub plik
+wyjściowy już istnieje, lub też, jeżeli dane są uprzednio skompresowane.
+Jeżeli format danych wejściowych nie jest rozpoznany, a podana została opcja
+--stdout, dane zostają bez zmian przekopiowane na standardowe wyjście.
+.I zcat
+zachowuje się w takim wypadku jak
+.I cat.
+Jeżeli opcja
+.B \-f
+nie została podana i program został uruchomiony w pierwszym planie,
+.I gzip
+pyta użytkownika przed nadpisaniem istniejącego pliku.
+.TP
+.B \-h --help
+Wyświetl ekran pomocy i zakończ działanie.
+.TP
+.B \-l --list
+Dla każdego skompresowanego pliku wypisz następujące informacje:
+
+  compressed size: rozmiar skompresowanego pliku
+  uncompressed size: rozmiar zdekompresowanego pliku
+  ratio: współczynnik kompresji (0.0% jeżeli nieznany)
+  uncompressed_name: nazwa zdekompresowanego pliku
+
+Rozmiar zdekompresowanego pliku jest wypisywany jako -1 dla plików nie
+będących w formacie gzip, jak na przykład pliki .Z. Aby poznać rozmiar
+takiego pliku po dekompresji, możesz użyć polecenia:
+
+  zcat file.Z | wc -c
+
+Po podaniu również opcji --verbose, dodatkowo są wyświetlane następujące
+informacje:
+
+  method: metoda kompresji
+  crc: 32-bitowa suma kontrolna CRC zdekompresowanych danych
+  date & time: pole daty/czasu oryginalnego pliku
+
+Aktualnie dostepne metody kompresji, to
+deflate, compress, lzh (SCO compress -H) oraz pack.
+Suma CRC dla plików w formacie innym niż gzip jest podawana jako ffffffff.
+
+Po podaniu opcji --name, podawane są dane oryginalnego pliku zawarte w pliku
+skompresowanym (nazwa, data/czas), jeżeli zostaną tam znalezione.
+
+Po podaniu opcji --verbose wyświetlany jest wspólny rozmiar i współczynnik
+kompresji wszystkich plików, chyba że nie dla wszystkich plików te dane są
+dostępne. Po podaniu opcji --quiet, linie nagłówka i podsumowania nie są
+wyświetlane.
+
+.TP
+.B \-L --license
+Wyświetl informację o licencji i zakończ działanie programu.
+.TP
+.B \-n --no-name
+Podczas kompresji nie zachowuj w skompresowanym pliku oryginalnej nazwy,
+trybu dostępu oraz
+czasu modyfikacji i dostępu. (Oryginalna nazwa jest zapisywana, jeżeli nazwa
+pliku będzie musiała być obcięta). Podczas dekompresji nie odtwarzaj
+oryginalnej nazwy pliku (usuń tylko rozszerzenie .gz z nazwy pliku), nie
+odtwarzaj również oryginalnego pola daty/czasu - zamiast tego zachowane
+zostanie to pole z pliku .gz. Jest to domyślna opcja podczas dekompresji.
+.TP
+.B \-N --name
+Podczas kompresji zawsze zachowuj oryginalne pole daty/czasu; jest to
+zachowanie domyślne. Podczas dekompresji odtwórz oryginalne pole daty/czasu
+oraz nazwę pliku. Ta opcja jest użyteczna na sytemach z limitem długości
+nazwy pliku lub po utracie oryginalnego pola daty/czasu po transferze pliku.
+
+.TP
+.B \-q --quiet
+Nie wyświetlaj żadnych ostrzeżeń.
+.TP
+.B \-r --recursive
+Kompresuj rekurencyjnie zawartość katalogów podanych w linii poleceń.
+W wypadku programu
+.I gunzip
+dokonaj rekurencyjnej dekompresji.
+
+.TP
+.B \-S .suf   --suffix .suf
+Użyj rozszerzenia .suf zamiast .gz. Można użyć dowolnego rozszerzenia,
+chociaż należy unikać innych niż .z lub .gz, aby uniknąć zamieszania po
+transferze plików do innego systemu. Rozszerzenie o zerowej długości
+powoduje, że gunzip usiłuje zdekompresować wswzystkie napotkane pliki
+niezależnie od rozszerzenia, np:
+
+    gunzip -S "" *       (*.* for MSDOS)
+
+Poprzednie wersje programu gzip używały rozszerzenia .z, aby uniknąć
+konfliktu z programem
+.IR pack "(1)".
+.TP
+.B \-t --test
+Sprawdź spójność skompresowanego pliku.
+.TP
+.B \-v --verbose
+Wyświetl nazwę i stopień kompresji każdego pliku.
+.TP
+.B \-V --version
+Wyświetl numer wersji oraz opcje kompilacji i zakończ działanie.
+.TP
+.B \-# --fast --best
+Określ prędkość kompresji za pomocą cyfry
+.IR # ,
+gdzie
+.B \-1
+lub
+.B \-\-fast
+oznacza najszybszą (lecz najmniej wydajną) kompresję, zaś
+.B \-9
+lub
+.B \-\-best
+oznacza najwolniejszą (lecz najbardziej wydajną) metodę kompresji.
+Domyślną wartością jest 
+.BR \-6
+(tzn. zorientowaną na lepszą kompresję kosztem prędkości).
+.SH "ZAAWANSOWANE SPOSOBY UŻYCIA"
+Skompresowane pliki mogą być ze sobą łączone; w takim wypadku 
+.I gunzip
+zdekompresuje wszystkie pliki jednocześnie. Na przykład:
+
+      gzip -c plik1  > foo.gz
+      gzip -c plik2 >> foo.gz
+
+Następnie
+      gunzip -c foo
+
+jest równoznaczne z
+
+      cat plik1 plik2
+
+W wypadku, gdy jeden z połączonych plików zostanie uszkodzony, pozostałe
+wciąż mogą być odzyskane (po usunięciu uszkodzonego pliku). Jednak znacznie
+lepsze efekty daje jednoczesne kompresowanie wszystkich plików:
+
+      cat plik1 plik2 | gzip > foo.gz
+
+daje lepsze wyniki kompresji niż
+
+      gzip -c plik1 plik2 > foo.gz
+
+Jeżeli chcesz od nowa skompresować połączone ze sobą skompresowane pliki
+wykonaj polecenie:
+
+      gzip -cd stary.gz | gzip > nowy.gz
+
+Jeżeli skompresowny plik został utworzony z kilku skompresowanych plików,
+informacje uzyskane opcją --list dotyczą tylko ostatniego pliku. Jeżeli
+interesuje cię rozmiar wszystkich plików po dekompresji, wykonaj:
+
+      gzip -cd plik.gz | wc -c
+
+Jeżeli chcesz umieścić w archiwum kilka plików, a następnie mieć możliwość
+oddzielnego ich odzyskania użyj programów takich, jak tar lub zip. tar w
+wersji GNU obsługuje opcję -z, która powoduje wywołanie programu gzip w
+sposób niewidzialny dla użytkownika. gzip został zaprojektowany jako
+uzupełnienie programu tar; nie może go zastąpić.
+.SH "ŚRODOWISKO"
+W zmiennej środowiskowej
+.B GZIP
+mogą się znajdować domyślne opcje dla programu
+.IR gzip .
+Są one odczytywane na początku; w ten sposób opcje w linii poleceń mają
+przed nimi pierwszeństwo, na przykład:
+      dla sh:    GZIP="-8v --name"; export GZIP
+      dla csh:   setenv GZIP "-8v --name"
+      dla MSDOS: set GZIP=-8v --name
+
+Na komputerach Vax/VMS zmienna nosi nazwę GZIP_OPT, by uniknąć konfliktu z
+zestawem symboli dla wywoływania programu.
+.\" avoid a conflict with the symbol set for invocation of the program.
+.SH "ZOBACZ TAKŻE"
+znew(1), zcmp(1), zmore(1), zforce(1), gzexe(1), zip(1), unzip(1), compress(1),
+pack(1), compact(1)
+.SH "DIAGNOSTYKA"
+Kod wyjścia jest normalnie równy 0; jeżeli wystapi błąd, kod wyjścia jest
+równy 1. Jeżeli wystąpi ostrzeżenie, kod wyjścia jest równy 2.
+.PP
+Usage: gzip [-cdfhlLnNrtvV19] [-S suffix] [file ...]
+.in +8
+W linii poleceń znalazły się nieprawidłowe  opcje.
+.in -8
+.IR file :
+not in gzip format
+.in +8
+Podany plik nie jest skompresowany (komunikat programu
+.IR gunzip ).
+.in -8
+.IR file:
+Corrupt input. Use zcat to recover some data.
+.in +8
+Skompresowany plik uległ uszkodzeniu. Do miejsca uszkodzenia dane mogą być
+odzyskane poleceniem
+.in +8
+zcat file > recover
+.in -16
+.IR file :
+compressed with 
+.I xx
+bits, can only handle 
+.I yy
+bits
+.in +8
+Plik został skompresowany (z użyciem algorytmu LZW) przez program
+obsługujący kody o większej ilości bitów niż program do dekompresji na tym
+komputerze. Skompresuj plik od nowa programem gzip, który osiąga lepszy
+współczynnik kompresji i używa mniej pamięci.
+.in -8
+.IR file :
+already has .gz suffix -- no change
+.in +8
+Plik z rozszerzeniem nazwy .gz nie może być
+ponownie kompresowany. Zmień nazwę pliku i spróbuj
+ponownie.  
+.in -8
+.I file
+already exists; do you wish to overwrite (y or n)?
+.in +8
+Odpowiedz "y", jeżeli chcesz nadpisać istniejący
+już plik wyjściowy lub "n", jeżeli nie chcesz      
+.in -8
+gunzip: corrupt input
+.in +8
+Program otrzymał sygnał SIGSEGV co zazwyczaj
+oznacza, że plik wejściowy jest uszkodzony.          
+.in -8
+.I "xx.x%"
+.in +8
+Osiągnięty stopień  kompresji  (tylko  po  podaniu opcji 
+.BR \-v
+i
+.BR \-l \.)
+.in -8
+-- not a regular file or directory: ignored
+.in +8
+Gdy plik wejściowy nie jest zwykłym plikiem lub
+katalogiem (tzn. jest np. dowiązaniem symbolicznym,    
+gniazdem, kolejką FIFO, plikiem
+urządzenia) jest pozostawiany bez zmian.     
+.in -8
+-- has 
+.I xx 
+other links: unchanged
+.in +8
+Plik wejściowy ma twarde dowiązania i nie może
+zostać zmieniony. Więcej informacji znajdziesz w
+opisie polecenia  
+.IR ln "(1)."   
+Użyj  opcji  
+.BR \-f ,
+aby wymusić kompresję plików mających twarde dowiązania. 
+.in -8
+.SH OSTRZEŻENIA
+Podczas zapisywania danych na taśmie, zazwyczaj trzeba dodać na końcu
+odpowiednią ilość zer, by ostatnia część danych zajmowała pełny blok.
+Gdy dane są odczytywane przez program
+.IR gunzip ,
+wykrywa on, że na końcu właściwych danych znajdują się przypadkowe dane i
+wypisuje ostrzeżenie. Aby tego uniknąć, powinieneś używać opcji --quiet.
+Ta opcja może być ustawiona w zmiennej środowiskowej
+.B GZIP
+w następujący sposób:
+  dla sh:  GZIP="-q";  tar -xfz --block-compress /dev/rst0
+  dla csh: setenv GZIP -q; tar -xfz --block-compr /dev/rst0
+
+W powyższym przykładzie gzip jest niejawnie wywoływany przez program tar
+dzięki opcji -z programu GNU tar. Musisz byc pewien, że do zapisu i odczytu
+z taśmy użyto tej samej długości bloku (opcja -b programu tar). W tym
+przykładzie zakłada się, że uzywasz programu tar w wersji GNU.
+.SH PROBLEMY
+Opcja --list wypisuje niewłaściwy rozmiar pliku, jeżeli jest on większy niż
+2 gigabajty.
+Opcja --list wypisuje rozmiar jako -1 i CRC jako ffffffff jeżeli plik
+znajduje się na nośniku o dostępie sekwencyjnym.
+
+Niekiedy (rzadko) zdarza się, że kompresja z opcją --best daje gorsze
+rezultaty niż z opcją domyślną (-6). Niektóre pliki, w których powtarza się
+bardzo dużo sekwencji są lepiej kompresowane programem
+.I compress
+niż
+.I gzip.

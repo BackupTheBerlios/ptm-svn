@@ -1,0 +1,36 @@
+.\" 1999 PTM Przemek Borys
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH CTRLALTDEL 8 "25 Październik 1993" "Linux 1.2" "Podręcznik programisty Linuksa"
+.SH NAZWA
+ctrlaltdel \- ustaw działanie kombinacji Ctrl-Alt-Del
+.SH SKŁADNIA
+.BR "ctrlaltdel hard" " | " soft
+.SH OPIS
+Po obejrzeniu kodu z
+.IR linux/kernel/sys.c ,
+okazało się, że istnieją dwie funkcje, których może dokonać Ctrl-Alt-Del:
+.I twardy
+(hard) reset, który natychmiast przeładowuje komputer, nie wołając
+.B sync (2)
+i nie dokonując innych przygotowań; oraz
+.I miękki
+(soft) reset, który wysyła procesowi
+.B init
+sygnał SIGINT (przerwania). Jeśli użyta jest ta opcja, program
+.B init (8)
+musi obsługiwać tę właściwość. Ponieważ w chwili obecnej istnieje w
+środowisku linuksowym kilka programów
+.B init (8),
+musisz sprawdzić to w dokumentacji swojej wersji.
+
+.B ctrlaltdel
+jest zazwyczaj używany w pliku
+.IR /etc/rc.local .
+.SH PLIKI
+.I /etc/rc.local
+.SH "ZOBACZ TAKŻE"
+.BR simpleinit (8),
+.BR init (8)
+.SH AUTOR
+Peter Orbaek (poe@daimi.aau.dk)

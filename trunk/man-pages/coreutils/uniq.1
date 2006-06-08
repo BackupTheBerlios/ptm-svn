@@ -1,0 +1,142 @@
+.\"  {PTM/GSN/0.5/23-02-1999/"usuń powtarzające się linie z posortowanego pliku"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page uniq.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH UNIQ "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+uniq \- usuń powtarzające się linie z posortowanego pliku
+.SH SKŁADNIA
+.TP 6
+.B uniq
+.RB [ \-cdiuwD ]
+.RB [ \- \fIliczba\fP]
+.RB [ + \fIliczba\fP]
+.RB [ \-f
+.IR liczba ]
+.br
+.RB [ \-s
+.IR liczba ]
+.RB [ \-w
+.IR liczba ]
+.RB [ \-\-count ]
+.RB [ \-\-ignore\-case ]
+.br
+.RB [ \-\-repeated ]
+.RB [ \-\-all\-repeated ]
+.RB [ \-\-unique ]
+.br
+.RB [ \-\-skip-fields= \fIliczba\fP]
+.RB [ \-\-skip-chars= \fIliczba\fP]
+.br
+.RB [ \-\-check-chars= \fIliczba\fP]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.br
+.RI [ plikwej ]
+.RI [ plikwyj ]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo uniq
+.RE
+lub
+.RS
+.BR "info uniq" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBuniq\fP w wersji GNU.
+.PP
+.B uniq
+wypisuje unikatowe linie sortowanego pliku, tj. odrzucając z kolejnych
+identycznych wszystkie linie poza jedną.  Może on opcjonalnie pokazywać
+tylko linie, które pojawiają się tylko raz, bądź linie które pojawiają się
+więcej niż raz.
+.B uniq
+wymaga posortowanego wejścia, ponieważ porównuje tylko linie sąsiadujące
+ze sobą. Jeśli nie jest posortowane, można zamiast \fBuniq\fP
+użyć '\fBsort -u\fP'.
+.PP
+Jeśli plik wynikowy nie jest podany,
+.B uniq
+pisze na standardowe wyjście.  Jeśli plik wejściowy nie jest podany,
+czyta on ze standardowego wejścia.
+.SH OPCJE
+.TP
+.BR +\fIliczba\fP ", " \-s ", " \-\-skip-chars= \fIliczba
+W tej opcji, \fIliczba\fP to liczba całkowita reprezentująca liczbę znaków,
+które należy przeskoczyć zanim rozpocznie się sprawdzanie unikatowości.
+Pierwsze \fIliczba\fP znaków, a także jakiekolwiek znaki puste znalezione
+zanim osiągnięto \fIliczba\fP znaków, są przeskakiwane i niewliczane.
+Jeśli użyto zarówno przeskakiwania pól jak i znaków, pola są przeskakiwane
+w pierwszej kolejności.
+.TP
+.BR \-\fIliczba\fP ", " \-f ", " \-\-skip-fields= \fIliczba
+W tej opcji, \fIliczba\fP to liczba całkowita reprezentująca liczbę pól,
+które należy przeskoczyć zanim rozpocznie się sprawdzanie unikatowości.
+Pierwsze \fIliczba\fP pól, a także jakiekolwiek znaki puste znalezione
+zanim osiągnięto \fIliczba\fP pól, są przeskakiwane i niewliczane.  Pola
+definiowane są jako łańcuchy znaków nie będących spacjami ani tabulacjami,
+rozdzielone od siebie spacjami lub tabulacjami.
+.TP
+.BR \-c ", " \-\-count
+Wypisuje razem z linią ile razy się ona powtórzyła.
+.TP
+.BR \-d ", " \-\-repeated
+Wypisuje tylko linie powtarzające się.
+.TP
+.BR \-D ", " \-\-all\-repeated
+Wypisuje wszystkie linie powtarzające się i tylko linie powtarzające się.
+Opcja ta przydatna jest głównie w połączeniu z innymi np. do ignorowania
+wielkości liter lub porównywania tylko wybranych pól. Jest to rozszerzenie GNU.
+.TP
+.BR \-i ", " \-\-ignore\-case
+Podczas porównywania linii ignoruje różnice pomiędzy małymi a dużymi literami.
+.TP
+.BR \-u ", " \-\-unique
+Wypisuje tylko linie unikatowe.
+.TP
+.BR \-w ", " \-\-check-chars= \fIliczba
+Określa ilość znaków, które należy porównywać w liniach, po przeskoczeniu
+wszystkich wskazanych pól i znaków.  Normalnie porównywana jest cała
+reszta linii.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR sort (1),
+.BR comm (1),
+.BR ptx (1),
+.BR tsort (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

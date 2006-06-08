@@ -1,0 +1,190 @@
+.\" {PTM/LK/0.1/10-10-1998/"kopiowanie plików i ustawianie ich atrybutów"}
+.\" Tłumaczenie: 10-10-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page install.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH INSTALL "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+ginstall \- kopiuje pliki i nadaje im atrybuty
+.SH SKŁADNIA
+.B ginstall
+.RI [ opcje ]...
+.I plik_źródłowy plik_docelowy
+.br
+.B ginstall
+.RI [ opcja ]...
+.I plik_źródłowy katalog
+.br
+.B ginstall
+.RI [ opcja ]...
+.B \-d
+.RI [ opcja ]...
+.IR katalog ...
+.SH OPIS
+Ta strona opisuje program \fBinstall\fP w wersji GNU.
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo install
+.RE
+lub
+.RS
+.BR "info install" .
+.RE
+.PP
+.PP
+W pierwszych dwu formatach pliki \fIźródłowe\fP są kopiowane na \fIdocelowe\fP
+lub do \fIkatalogu docelowego\fP. W trzecim formacie wywołania, tworzony jest
+zadany \fIkatalog\fP(i) i wszelkie brakujące katalogi nadrzędne (rodzicielskie).
+.PP
+.B install
+kopiuje pliki i nadaje im prawa dostępu oraz, jeżeli jest to możliwe,
+właściciela i grupę. Używany jest podobnie do
+.BR cp ;
+najczęściej w plikach \fIMakefile\fP w celu kopiowania programów do ich
+katalogów docelowych. Może też zostać użyty do stworzenia tych katalogów
+(wraz z całą ścieżką dostępu, jeżeli ta nie istnieje), oraz ustawienia ich
+praw dostępu. Nie można kopiować plików na same siebie.
+.SS OPCJE
+.TP
+.BR \-b " [\fImetoda\fR], " \-\-backup [ = \fImetoda\fR]
+Tworzy kopie zapasowe tych plików, które mają być nadpisane lub usunięte.
+Zobacz opis opcji \fB-V\fP oraz sekcja `Opcje kopii zapasowych' w podręczniku
+\fBfileutils\fP(1).
+.TP
+.B \-c
+Opcja ignorowana; pozostawiona dla kompatybilności ze starymi wersjami
+programu pochodzącymi z systemów Unix.
+.TP
+.B \-C
+Instaluje plik, chyba że plik docelowy już istnieje i jest taki sam, jak nowy
+plik. W takim przypadku nie będzie zmieniany czas modyfikacji.
+.TP
+.BR \-d ", "  \-\-directory
+Traktuje wszystkie argumenty jak nazwy katalogów.
+Tworzy każdy dany katalog oraz jego katalogi nadrzędne, jeżeli jeszcze nie
+istnieją. Nadaje właściciela, grupę oraz prawa dostępu zgodnie z opcjami
+z wiersza poleceń lub wartościami domyślnymi. Wszystkie tworzone
+katalogi nadrzędne dostają te same atrybuty. Jest to działanie odmienne
+w stosunku do wersji programu
+.B install
+z systemu SunOS 4.x, gdzie tworzone katalogi dostają domyślne atrybuty.
+.TP
+.B \-D
+Twórz wszystkie wiodące składowe \fIdocelowego\fP, oprócz ostatniej, następnie
+skopiuj \fIźródło\fP na \fIcel\fP; przydatne w pierwszym formacie składni
+polecenia.
+.TP
+.BI \-g " grupa\fR, " \-\-group= grupa
+Ustawia grupę pliku lub katalogu zgodnie z podanym parametrem (domyślną
+wartością jest bieżąca grupa procesu). Parametr
+.I grupa
+może być również numerycznym identyfikatorem grupy.
+.TP
+.BI \-m " prawa_dostępu\fR, " \-\-mode= prawa_dostępu
+Ustawia \fIprawa dostępu\fP instalowanego pliku lub tworzonego katalogu
+zgodnie z parametrem.
+Prawa mogą być podane jako liczba w systemie ósemkowym lub w postaci
+symbolicznej, jak w programie \fBchmod\fP, z 0 jako punktem wyjścia (zobacz
+`Prawa pliku' w \fBfileutils\fP(1)). Domyślnym trybem dostępu jest `u=rwx,go=rx'
+\-\- odczyt, zapis i wykonywanie dla właściciela, odczyt i wykonywanie dla grupy
+i pozostałych użytkowników.
+.TP
+.BI  \-o " właściciel\fR, " \-\-owner= właściciel
+Jeżeli program jest uruchomiony przez superużytkownika (roota), ustawia
+właściciela pliku zgodnie z podaną wartością (domyślną wartością jest root).
+\Właściciel\fP może być określony albo przez nazwę użytkownika albo jego
+numeryczny identyfikator.
+.TP
+.BR -p ", " --preserve-timestamps
+Ustawia czas ostatniego dostępu i czas ostatniej modyfikacji każdego
+instalowanego pliku tak, by odpowiadały odpowiednim czasom oryginalnych plików.
+Jeśli plik jest instalowany bez tej opcji, to czas ostatniego dostępu
+i ostatniej modyfikacji tego pliku ustawiane są na czas instalacji. Opcja ta
+jest przydatna jeśli chcemy używać czasów ostatniej modyfikacji instalowanych
+plików, by widzieć, kiedy były ostatnio tworzone a nie kiedy były instalowane.
+.TP
+.B \-s ", " \-\-strip
+Usuwa tablice symboli z instalowanych programów. Ma zastosowanie tylko przy
+składni pierwszego i drugiego formatu.
+.TP
+.BI \-S " przyr_kopii\fR, " \-\-suffix= przyr_kopii
+Dodaje przyrostek \fIprzyr_kopii\fP do nazwy każdego pliku kopii zapasowej
+wykonanego za pomocą \fB\-b\fP. Jeśli opcja ta nie zostanie podana, to użyta
+zostanie wartość zmiennej środowiskowej \fBSIMPLE_BACKUP_SUFFIX\fP. Jeśli
+ona również nie jest określona, to użyty zostanie domyślny znak `~',
+jak w Emacsie.
+.TP
+.BI \-\-target\-directory= katalog
+Określa \fIkatalog\fP docelowy. Zobacz sekcja `Katalog docelowy'
+w \fBfileutils\fP(1).
+.TP
+.BR \-v ", " \-\-verbose
+Wypisuje nazwę każdego pliku przed jego skopiowaniem.
+.TP
+.BI \-V " metoda\fR, " -\-version-control= metoda
+Zmienia metodę kopii zapasowych wykonywanych za pomocą \fB\-b\fP. Jeśli
+opcja ta nie zostanie podana, to użyta zostanie wartość zmiennej
+środowiskowej \fBVERSION_CONTROL\fP. Jeśli nie zdefiniowano również
+\fBVERSION_CONTROL\fP to użyta zostanie domyślny typ kopii zapasowej:
+`existing'.
+
+Opcja ta odpowiada zmiennej `version-control' Emacsa: używane są te same
+wartości dla typu kopii. Rozpoznają także bardziej opisowe synonimy.
+Prawidłowe wartości to (unikalne skróty są dopuszczalne):
+.RS
+.TP
+.BR t ", " numbered
+Zawsze tworzy numerowane kopie zapasowe.
+.TP
+.BR nil ", " existing
+Tworzy numerowane kopie zapasowe plików, które już je mają, zwykłe kopie dla
+reszty.
+.TP
+.BR never ", " simple
+Robi zawsze zwykłe kopie zapasowe (uzyskiwane przez dodanie przyrostka
+wg opcji \fB-S\fP).
+.RE
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach,
+kończy działanie.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy działanie.
+.SH AUTOR
+Napisane przez Davida MacKenzie.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR cp (1),
+.BR chmod (1),
+.BR chown (1),
+.BR touch (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

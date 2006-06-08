@@ -1,0 +1,267 @@
+.\" {PTM/PB/0.2/01-08-1999/"Sprawdź system plików ext2"}
+.\" Translation (c) 1999 Przemek Borys
+.\" Last update: Grzegorz Goławski <grzegol@pld.org.pl>, Apr 2002
+.\" -*- nroff -*-
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH "E2FSCK" "8" "marzec 2002" "e2fsprogs wersja 1.27" ""
+.SH "NAZWA"
+e2fsck \- Sprawdź system plików ext2fs (second extended filesystem)
+.SH "SKŁADNIA"
+.B e2fsck
+[
+.B \-pacnyrdfvstFSV
+]
+[
+.B \-b
+.I superblok
+]
+[
+.B \-B
+.I rozmiar_bloku
+]
+[
+.BR \-l | \-L
+.I plik_złych_bloków
+]
+[
+.B \-C
+.I fd
+]
+[
+.B \-j
+.I zewnętrzny_dziennik
+]
+.I urządzenie
+.SH "OPIS"
+.B e2fsck
+jest używany do sprawdzania systemu plików ext2fs.
+E2fsck obsługuje także systemy plików ext2 zawierające dziennik, znane również jako systemy plików ext3. 
+.TP 
+.I urządzenie
+jest specjalnym plikiem, odpowiadającym urządzeniu (np. 
+.IR /dev/hdc1 ).
+.SH "OPCJE"
+.TP 
+.B \-a 
+Ta opcja robi to samo co opcja
+.BR \-p .
+Jest udostępniana jedynie ze względu na kompatybilność wstecz; zaleca
+się używanie 
+.B \-p
+wszędzie tam, gdzie to możliwe.
+.TP 
+.BI \-b " superblok"
+Zamiast używać normalnego superbloku, użyj innego, podanego przez
+.IR superblok .
+Ta opcja używana jest, gdy podstawowy superblok został uszkodzony.
+Położenie kopii zapasowej superbloku zależne jest od rozmiaru bloku w
+danym systemie plików. W systemach plików o rozmiarze bloku 1k, kopia
+zapasowa superbloku znajduje się w bloku 8193, dla systemów plików o
+rozmiarze bloku 2k, w bloku 16384, zaś dla systemów plików o rozmiarze
+bloku 4k, w bloku 32768.
+.IP 
+Położenie dodatkowej kopii zapasowej superbloku może być określone
+poprzez użycie programu
+.B mke2fs 
+z opcją 
+.B \-n
+drukującą położenia superbloków. Opcja
+.B \-b 
+programu 
+.BR mke2fs ,
+określająca rozmiar bloku dla systemu plików musi być podana w dokładnie
+takiej samej kolejności, w jakiej wypisane zostały położenia.
+.IP 
+Jeżeli podany jest alternatywny superblok, a system plików nie jest otwarty
+w trybie tylko do odczytu, e2fsck sprawdzi, czy podstawowy superblok jest
+uaktualniony.
+.TP 
+.BI \-B " rozmiar_bloku"
+Normalnie, e2fsck szuka superbloku w zmienianych rozmiarach bloku i próbuje
+znaleźć rozmiar odpowiedni. Ta technika czasem daje się ogłupić. Dlatego
+opcja ta wymusza na e2fsck wyszukiwanie superbloków o określonej wielkości
+bloku. Jeśli superblok nie zostanie znaleziony, e2fsck zakończy działanie z
+błędem krytycznym.
+.TP 
+.B \-c
+Opcja ta powoduje, że e2fsck uruchamia program
+.BR badblocks (8)
+w celu znalezienie uszkodzonych bloków systemu plików. Bloki takie są
+następnie zaznaczane poprzez dodawanie ich do inodu uszkodzonych bloków.
+Jeżeli opcja ta podana jest dwa razy, wtedy uszkodzone bloki będą
+poszukiwane przy użyciu nie\-destruktywnego testu.
+.TP 
+.BI \-C " fd"
+Ta opcja powoduje, że
+.B e2fsck
+wypisze kompletną informację do podanego deskryptoru pliku. Dzięki temu
+postęp sprawdzania systemu plików może być kontrolowany. Ta opcja jest
+używana przede wszystkim przez programu uruchamiające
+.BR e2fsck .
+Jeżeli jako deskryptor pliku podane jest 0, 
+.B e2fsck
+wypisze pasek postępu w swoim stylu. To wymaga, aby e2fsck uruchomiony 
+był na konsoli lub na terminalu.
+.TP 
+.B \-d
+Drukuj wyjście debuggowe (bezużyteczne, chyba że debuggujesz
+.BR e2fsck ).
+.TP 
+.B \-f
+Wymuś sprawdzanie, nawet jeśli system wydaje się być czysty.
+.TP 
+.B \-F
+Wypróżnij bufory systemu plików przed uruchomieniem programu. Przydatne
+właściwie tylko w czasowych próbach e2fsck.
+.TP 
+.BI \-j " zewnętrzny_dziennik"
+Ustaw ścieżkę dostępu do zewnętrznego dziennika dla tego systemu plików.
+.TP 
+.BI \-l " plik"
+Dodaj podane przez
+.I plik
+bloki do listy bloków uszkodzonych. Format pliku jest taki sam jak ten utworzony przez program
+.BR badblocks (8).
+Zauważ, że numery bloków bazują na rozmiarze bloku systemu plików. Dlatego 
+.BR badblocks (8)
+musi otrzymać rozmiar bloku systemu plików. Jednak dużo łatwiejsze i bezpieczniejsze jest użycie opcji
+.B \-c
+programu 
+.BR e2fsck ,
+ponieważ zapewnia to przekazanie właściwych parametrów do programu
+.B badblocks.
+.TP 
+.BI \-L " plik"
+Ustaw listę uszkodzonych bloków na listę bloków określoną przez
+.IR plik .
+(Opcja ta jest identyczna z
+.BR \-l ,
+poza tym, że przed dodaniem listy bloków z pliku, stara lista uszkodzonych
+bloków jest czyszczona).
+.TP 
+.B \-n
+Otwórz system plików w trybie tylko do odczytu i załóż odpowiedź ``nie'' na
+wszystkie pytania. Umożliwia to użycie 
+.B e2fsck
+w trybie nieinteraktywnym. (Zauważ: jeśli podano opcje
+.BR \-c ,
+.B \-l
+lub
+.B \-L
+w połączeniu z
+.BR \-n ,
+to system plików zostanie otworzony w trybie odczytu i zapisu, aby
+umożliwić odświeżenie listy uszkodzonych bloków. Inne zmiany nie
+będą dokonywane).
+.TP 
+.B \-p
+Napraw automatycznie system plików bez żadnych pytań.
+.TP 
+.B \-r
+Ta opcja nie robi nic; jest udostępniona dla kompatybilności wstecznej.
+.TP 
+.B \-s
+Ta opcja wykona zamianę bajtów w systemie plików, tak aby były one w
+standardowej kolejności (czyli i386 lub little endian). Jeżeli bajty są już
+w takiej kolejności,
+.B e2fsck 
+nic nie zrobi.
+.TP 
+.B \-S
+Ta opcja wykona zamianę bajtów w systemie plików niezależnie od ich
+aktualnej kolejności.
+.TP 
+.B \-t
+Drukuj statystyki czasowe dla
+.BR e2fsck .
+Jeśli opcja ta jest użyta dwukrotnie, to drukowane są dodatkowe statystyki
+czasowe.
+.TP 
+.B \-v
+Tryb gadatliwy (verbose).
+.TP 
+.B \-V
+Drukuj informację o wersji i zakończ.
+.TP 
+.B \-y
+Załóż odpowiedź ``yes'' na wszystkie pytania; umożliwia użycie
+.B e2fsck
+w trybie nieinteraktywnym.
+.SH "KOD WYJŚCIA"
+Kod wyjścia zwracany przez
+.B e2fsck
+jest sumą następujących warunków:
+.br 
+\	0\	\-\ Bez błędów
+.br 
+\	1\	\-\ Błędy systemu plików są poprawione
+.br 
+\	2\	\-\ Błędy systemu plików są poprawione, system powinien
+.br 
+\	\	\ \ być przeładowany, jeśli filesystem był zamontowany
+.br 
+\	4\	\-\ Błędy systemu plików nie zostały poprawione
+.br 
+\	8\	\-\ Błąd operacyjny
+.br 
+\	16\	\-\ Błąd w skłani lub użyciu
+.br 
+\	128\	\-\ Błąd biblioteki dzielonej
+.br 
+.SH "SYGNAŁY"
+Następujące sygnały mają następujący efekt, gdy zostaną wysłane do
+.BR e2fsck .
+.TP 
+.B SIGUSR1
+Ten sygnał powoduje, że
+.B e2fsck
+wyświetli pasek postępu. (Zobacz opis opcji
+.BR \-C ).
+.TP 
+.B SIGUSR2
+Ten sygnał powoduje, że
+.B e2fsck 
+przestanie wyświetlać pasek postępu.
+.SH "BŁĘDY"
+Prawie każdy program ma błędy. Jeśli znajdziesz system plików, powodujący
+pad programu
+.B e2fsck
+lub taki, którego
+.B e2fsck
+nie potrafi naprawić, zgłoś to autorowi.
+.PP 
+Załącz tyle informacji, ile da się załączyć w swoim zgłoszeniu błędu.
+Najlepiej, załącz kompletną transkrypcję uruchomienia
+.BR e2fsck ,
+tak bym mógł dokładnie widzieć, co się działo. Jeśli masz zapisywalny
+system plików, gdzie możesz tę transkrypcję zapisać, użyj programu
+.BR script (1).
+.PP 
+Użyteczne może być też przesłanie wyjścia z
+.BR dumpe2fs (8).
+Jeśli określony inode lub ich grupa wydaje się sprawiać e2fsck kłopoty,
+spróbuj uruchomić komendę
+.BR debugfs (8)
+i wysłać wyjście komendy
+.BR stat (1u)
+na dotkniętych inode. Jeśli inode jest katalogiem, komenda
+.I debugfs
+o nazwie
+.I dump
+umożliwi ekstrakcję zawartości inode katalogu, którą możesz mi przysłać
+po zakodowaniu jej programem
+.BR uuencode (1).
+.PP 
+Zawsze załączaj też pełny tekst wersji, wyświetlany przez e2fsck podczas
+pracy.
+.SH "AUTOR"
+Ta wersja 
+.B e2fsck
+jest napisana przez Theodore Ts'o <tytso@mit.edu>.
+.SH "ZOBACZ TAKŻE"
+.BR mke2fs (8),
+.BR tune2fs (8),
+.BR dumpe2fs (8),
+.BR debugfs (8)

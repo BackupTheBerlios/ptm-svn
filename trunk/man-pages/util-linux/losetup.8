@@ -1,0 +1,120 @@
+.\" {PTM/WK/2000-IV}
+.TH LOSETUP 8 "24 listopada 1993" "Linux" "Polecenia konserwacji"
+.SH NAZWA
+losetup \- konfiguracja i sterowanie urządzeniami pseudosieci (loop)
+.SH SKŁADNIA
+.ad l
+.B losetup
+.RB [ \-e
+.IR szyfrowanie ]
+.RB [ \-o
+.IR offset ]
+.I urządzenie_loop plik
+.br
+.B losetup
+.RB [ \-d ]
+.I urządzenie_loop
+.ad b
+.SH OPIS
+.B losetup
+służy do kojarzenia urządzeń pseudosieci z plikami zwykłymi lub urządzeniami
+blokowymi, do odłączania urządzeń pseudosieci i sprawdzania ich statusu.
+Jeżeli podano tylko argument \fIurządzenie_loop\fP, to pokazywany jest status
+odpowiedniego urządzenia pseudosieci.
+.SH OPCJE
+.IP \fB\-d\fP
+odłącza plik lub urządzenie skojarzone z podanym urządzeniem pseudosieci.
+.IP "\fB\-e \fIszyfrowanie\fP"
+.RS
+włącza szyfrowanie danych. Rozpoznawane są następujące słowa kluczowe:
+.IP \fBNONE\fP
+bez szyfrowania (domyślne).
+.PD 0
+.IP \fBXOR\fP
+wykorzystuje proste szyfrowanie XOR.
+.IP \fBBlowfish\fP
+stosuje szyfrowanie Blowfish. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe [tłum.: dotyczy występujących w Debianie
+różnic w dystrybucji do użytku w USA i poza nimi,
+z uwagi na ograniczenia eksportowe] i szyfrowanie to uaktywniono w Crypto API.
+.IP \fBTwofish\fP
+stosuje szyfrowanie Twofish. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe i szyfrowanie to uaktywniono w Crypto API.
+.IP \fBCAST\fP
+stosuje szyfrowanie CAST. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe i szyfrowanie to uaktywniono w Crypto API.
+.IP \fBDES\fP
+wykorzystuje szyfrowanie DES. Szyfrowanie DES jest dostępne tylko, jeśli
+do jądra dodano opcjonalny pakiet DES. Posługuje się ono dodatkową wartością
+początkową, używaną do ochrony haseł przeciw atakom słownikowym.
+Stosowanie DES jest niezalecane.
+.IP \fBDFC\fP
+stosuje szyfrowanie DFC. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe i szyfrowanie to uaktywniono w Crypto API.
+.IP \fBIDEA\fP
+stosuje szyfrowanie IDEA. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe i szyfrowanie to uaktywniono w Crypto API.
+.IP \fBMARS\fP
+stosuje szyfrowanie MARS. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe i szyfrowanie to uaktywniono w Crypto API.
+.IP \fBRC5\fP
+stosuje szyfrowanie RC5. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe i szyfrowanie to uaktywniono w Crypto API.
+.IP \fBRC6\fP
+stosuje szyfrowanie RC6. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe i szyfrowanie to uaktywniono w Crypto API.
+.IP \fBSerpent\fP
+stosuje szyfrowanie Serpent. Jest dostępne tylko wówczas, gdy stosuje
+się jądro międzynarodowe i szyfrowanie to uaktywniono w Crypto API.
+.PD
+.RE
+.IP "\fB\-o \fIoffset\fP"
+początek danych przesuwany jest \fIoffset\fP bajtów w podanego pliku
+lub urządzenia.
+.SH PLIKI
+.nf
+/dev/loop0,/dev/loop1,...   urządzenia loop (numer główny=7)
+/proc/cipher/*              dostępne metody szyfrowania
+.fi
+.SH PRZYKŁAD
+Przy posługiwaniu się modułem ładowalnym konieczne jest wcześniejsze
+załadowanie go poleceniem
+.IP
+# insmod loop.o
+.LP
+Jako przykład użycia urządzenia pseudosieci posłużą poniższe polecenia:
+.nf
+.IP
+dd if=/dev/zero of=/file bs=1k count=100
+losetup -e blowfish /dev/loop0 /file
+Password :
+mkfs -t ext2 /dev/loop0 100
+mount -t ext2 /dev/loop0 /mnt
+ ...
+umount /dev/loop0
+losetup -d /dev/loop0
+.fi
+.LP
+Przy posługiwaniu się modułem ładowalnym można usunąć z pamięci załadowany
+moduł poleceniem
+.IP
+# rmmod loop
+.LP
+.fi
+.SH OGRANICZENIA
+Szyfrowanie DES jest nieznośnie powolne. Z kolei XOR jest strasznie słabe.
+Obecnie oba nie są bezpieczne.  Niektóre z metod szyfrowania wymagają
+licencji, by móc je używać.
+.SH BŁĘDY
+CAST, DES, RC5 i Twofish są aktualnie
+.\" broken
+zepsute [złamane?]
+i nie można ich używać. [tłum.: uwaga z wersji do Debiana]
+
+.SH AUTORZY
+.nf
+Wersja pierwotna: Theodore Ts'o <tytso@athena.mit.edu>
+Utrzymanie: Werner Almesberger <almesber@bernina.ethz.ch>
+Pierwotne DES: Eric Young <eay@psych.psy.uq.oz.au>
+Modularyzacja i aktualizacja 28-5-94: Mitch DSouza <m.dsouza@mrc-apu.cam.ac.uk>
+.fi

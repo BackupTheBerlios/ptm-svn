@@ -1,0 +1,206 @@
+.\" {PTM/PB/0.1/28-09-1998/"podsumuj ilość wolnego miejsca na dysku"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page df.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH DF "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+df \- raport wolnego i zajętego miejsca na dysku
+.SH SKŁADNIA
+.B df
+.RB [ opcja ]...
+.RI [ plik ]...
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo df
+.RE
+lub
+.RS
+.BR "info df" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBdf\fP w wersji GNU.
+.PP
+.B df
+wyświetla rozmiar przestrzeni dyskowej wykorzystanej i dostępnej
+na systemach plików, zawierającym każdy z podanych argumentów nazw pliku.
+Jeśli nie podano żadnej nazwy pliku, pokazywana jest ilość miejsca
+wykorzystanego i dostępnego na wszystkich zamontowanych systemach plików.
+Przestrzeń jest mierzona w blokach po 1K, ale może to zostać unieważnione,
+m.in. przez zdefiniowanie zmiennej środowiskowej \fBPOSIXLY_CORRECT\fP (w tym
+przypadku używane są bloki po 512B). Więcej na ten temat znajdziesz w sekcji
+`Rozmiar bloku' podręcznika \fBfileutils\fP(1).
+.PP
+Jeśli argument jest absolutną nazwą pliku węzła urządzenia dyskowego,
+zawierającego podmontowany system plików, to
+.B df
+pokazuje ilość miejsca dostępną na tym systemie plików, a nie na
+systemie plików, zawierającym węzeł urządzenia (tj. systemie root). Ta wersja
+.B df
+nie potrafi pokazywać miejsca dostępnego na niezamontowanych systemach
+plików, ponieważ na większości rodzajów systemów zrobienie tego wymaga wielce
+nieprzenośnej i dogłębnej wiedzy o strukturach danego systemu plików.
+.SS OPCJE
+.TP
+.BR \-a ", " \-\-all
+Ujmuje w zestawieniu systemy plików, mające zero bloków (które domyślnie są
+pomijane). Takie systemy plików są typowo pseudo systemami przeznaczonymi do
+specjalnych zadań, takich jak wpisy automountera. Również systemy plików typu
+\fIignore\fP lub \fIauto\fP, obsługiwane przez niektóre systemy operacyjne,
+są włączane do raportu wyłącznie dzięki tej opcji.
+.TP
+.BI \-\-block\-size= rozmiar
+Używa bloków o wielkości \fIrozmiar\fP bajtów.
+.TP
+.BR \-h ", " \-\-human\-readable
+Pokazuje objętości w postaci czytelniejszej dla człowieka, dodając literowe
+przyrostki określające potęgi 1024, np. `M' dla megabajtów. `M' oznacza
+1.048.576 bajtów. Jeżeli wolisz potęgi 1000 - użyj opcji \fB-H\fP
+(\fB--si\fP).
+.TP
+.BR \-H ", " \-\-si
+Podobnie jak \fB--human-readable\fP, ale posługuje się potęgami 1000
+a nie 1024. (SI - Międzynarodowy System Miar definiuje przyrostki potęg 1000).
+Przy zastosowaniu tej opcji przyrostek `M' oznacza 1.000.000 bajtów. Posłuż
+się opcją \fB-h\fP (\fB--human-readable\fP), jeśli wolisz potęgi 1024.
+.TP
+.BR \-i ", " \-\-inodes
+Wypisuje użycie i-węzłów zamiast użycia bloków. I-węzeł (inode, skrót od
+"index node" /węzeł indeksowy/) jest specjalnym rodzajem bloku dyskowego,
+który zawiera dane dotyczące pliku jak np. jego właściciele, prawa, czasy
+pliku i położenie na dysku.
+.TP
+.BR \-k ", " \-\-kilobytes
+Pokazuje rozmiary w blokach 1024-bajtowych (kilobajtach).
+Jak \fB--block-size=1024\fP.
+Przesłania to domyślną wielkość bloku. Zobacz `Rozmiar bloku'
+w \fBfileutils\fP(1).
+.TP
+.BR \-l ", " \-\-local
+Ogranicza raport do lokalnych systemów plików. Domyślnie wykazywane są także
+zdalne systemy plików.
+.TP
+.BR \-m ", " \-\-megabytes
+Podobnie jak \fB--block-size=\1048576\fP.
+.TP
+.BR \-\-no\-sync
+Nie wywołuje \fIsync\fP przed uzyskaniem informacji o zajętości. Powoduje to,
+że \fBdf\fP działa znacząco szybciej na systemach z wieloma dyskami, ale na
+niektórych systemach (szczególnie SunOS) wyniki mogą być nieco nieaktualne.
+Jest to zachowanie domyślnie.
+.TP
+.BR \-P ", " \-\-portability
+Używa formatu wyjściowego POSIX-a. Jest on taki jak domyślny format, poza
+tym, że:
+.RS
+.RS 3
+
+1. Dla każdego systemu plików dane go dotyczące są zawsze wypisywane
+w dokładnie jednym wierszu; urządzenie montowane nigdy nie jest wstawiane w
+linii samo.  Znaczy to, że jeśli nazwa montowanego urządzenie jest dłuższa
+niż 20 znaków (jak w przypadku niektórych zamontowanych systemów
+sieciowych), to kolumny będą źle wyrównane.
+
+2. Wartości niecałkowite wypisywane są jako liczby całkowite
+z zaokrągleniem w górę, zamiast arytmetycznego zaokrąglania do najbliższej
+całkowitej.
+
+3. Etykiety w wierszu nagłówkowym zmienione są tak, by wypełnić wymagania
+POSIX.
+.RE
+.RE
+.TP
+.BR \-sync
+Przed uzyskaniem informacji o zajętości wywołuje funkcję systemową \fIsync\fP.
+Na niektórych systemach (szczególnie SunOS) zyskuje się bardziej aktualne
+wyniki, ale ogólnie opcja ta spowalnia działanie \fBdf\fP, szczególnie przy
+wielu lub bardzo obciążonych systemach plików.
+.TP
+.BR \-T ", " \-\-print\-type
+Dla każdego systemu plików wypisuje jego typ. Użyte tu typy plików są tymi
+samymi, które można włączać lub pomijać opcjami \fB-t\fP i \fB-x\fP.
+Konkretne wypisywane wartości typu zależą od tego, co obsługuje dany system.
+Poniżej podano kilka powszechnych nazw (ta lista z pewnością nie jest
+wyczerpująca):
+.RS
+.TP
+.B nfs
+System plików NFS, tj. zamontowany poprzez sieć z innej maszyny. Wydaje się,
+że jest to jedyna nazwa systemu plików używana jednolicie we wszystkich
+systemach.
+.TP
+.BR 4.2 ", " ufs ", " efs ...
+System plików na lokalnie zamontowanym dysku twardym. (System może
+obsługiwać więcej niż jeden typ tego rodzaju: robi to Linux).
+.TP
+.BR hsfs ", " cdfs
+System plików na dysku CD-ROM. HP-UX używa nazwy \fBcdfs\fP, większość
+pozostałych systemów posługuje się nazwą \fBhsfs\fP (`hs' od `High Sierra').
+.TP
+.B pcfs
+System plików MS-DOS, zwykle na dyskietce.
+.RE
+.TP
+.BR \-t ", " \-\-type=\fItyp_fsfR
+Ogranicza raport do systemów typu
+.IR typ_fs .
+Można wykluczyć więcej niż jeden typ systemu podając opcję
+.I \-t
+wielokrotnie.
+Domyślnie nie są pomijane żadne typy systemów plików.
+.TP
+.BR \-x ", " \-\-exclude\-type=\fItyp_fs\fR
+Nie ujmuje systemów plików typu
+.IR typ_fs .
+Więcej typów systemów można wykluczyć podając opcję
+.I \-x
+wielokrotnie.
+Domyślnie nie są pomijane żadne typy systemów plików.
+.TP
+.B \-v
+Ignorowana; istnieje dla zgodności z wersjami \fBdf\fP z Systemu V.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.SH AUTOR
+Napisane przez Torbjorna Granlund, Davida MacKenzie, Larry'ego McVoy oraz
+Paula Eggert.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR du (1),
+.BR sync (1),
+.BR sync (2),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

@@ -1,0 +1,64 @@
+.\" 1999 PTM Przemek Borys
+.\" poszerzenie i aktualizacja do GNU sh-utils 2.0 PTM/WK/2000-VI
+.ig
+Transl.note: based on GNU man page sleep.1 and sh-utils.info
+
+Copyright (C) 1994, 95, 96 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH SLEEP "1" FSF "maj 2000" "Narzędzia powłokowe GNU 2.0"
+.SH NAZWA
+sleep \- pauzuj przez podany czas
+.SH SKŁADNIA
+.B sleep
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.IR liczba [\fBsmhd\fP]...
+.SH OPIS
+Ta strona podręcznika opisuje polecenie \fBsleep\fP w wersji GNU.
+.PP
+.B sleep
+pauzuje przez podany czas, podany jako suma wartości argumentów wiersza
+poleceń. Każdy argument jest liczbą, za którą stoi opcjonalna jednostka
+(domyślną są sekundy). Jednostki to:
+.IP s
+sekundy
+.IP m
+minuty
+.IP h
+godziny (hours)
+.IP d
+dni
+.SH OPCJE
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+pracę.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-sh-utils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR sh-utils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi powłokowych
+GNU wersji 2.0.

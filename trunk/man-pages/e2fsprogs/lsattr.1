@@ -1,0 +1,49 @@
+.\" -*- nroff -*-
+.\" {PTM/PB/0.1/28-09-1998/"listuj atrybuty plików ext2fs"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" Last update: Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>, Apr 2002
+.\" 
+.TH LSATTR 1 "Marzec 2002" "e2fsprogs wersja 1.27"
+.SH NAZWA
+lsattr \- wypisanie atrybutów plików z systemu plików ext2
+.SH SKŁADNIA
+.B lsattr
+[
+.B \-RVadv
+]
+[
+.I pliki...
+]
+.SH OPIS
+.B lsattr
+wypisuje atrybuty plików z drugiego rozszerzonego systemu plików Linuksa
+(ext2). Opis atrybutów i ich znaczenia znajduje się w
+.BR chattr (1).
+.SH OPCJE
+.TP
+.B \-R
+Wypisywanie rekurencyjnie atrybutów katalogów oraz ich zawartości.
+.TP
+.B \-V
+Wypisanie wersji programu.
+.TP
+.B \-a
+Wypisywanie wszystkich plików w katalogach, właczając pliki zaczynające się
+od ,,.''.
+.TP
+.B \-d
+Wypisywanie katalogów jak innych plików, zamiast wypisywania ich zawartości.
+.TP
+.B \-v
+Wypisanie wersji i numeru pokolenia (generation number) pliku.
+.SH AUTOR
+.B lsattr
+został napisany przez Remy'ego Carda <Remy.Card@linux.org>.
+.SH BŁĘDY
+Nie ma żadnych :-).
+.SH DOSTĘPNOŚĆ
+.B lsattr
+jest częścią pakietu e2fsprogs i jest dostępny na stronie
+http://e2fsprogs.sourceforge.net.
+.SH "ZOBACZ TAKŻE"
+.BR chattr (1)

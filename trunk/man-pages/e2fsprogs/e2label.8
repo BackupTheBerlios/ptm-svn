@@ -1,0 +1,50 @@
+.\" {PTM/WK/2000-I}
+.\" -*- nroff -*-
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH E2LABEL 8 "styczeń 1999" "E2fsprogs version 1.14"
+.SH NAZWA
+e2label \- zmień etykietę systemu plików ext2
+.SH SKŁADNIA
+.B e2label
+.I urządzenie
+.RI [ nowa_etykieta ]
+.SH OPIS
+.BI e2label
+wyświetla lub zmienia etykietę (label) systemu plików typu ext2 położonego
+na danym
+.I urządzeniu.  
+.PP
+Jeli brak jest opcjonalnego argumentu
+.IR nowa_etykieta ,
+to
+.B e2label
+wyświetli po prostu bieżącą etykietę systemu plików.
+.PP
+Jeli podano argument
+.IR nowa_etykieta ,
+to
+.B e2label
+ustawi etykietę systemu plików na tę wartość. Etykiety systemu plików typu ext2
+mogą mieć co najwyżej 16 znaków. Jeżeli
+.I nowa_etykieta
+jest dłuższa niż 16 znaków, to 
+.B e2label
+obetnie ją i wydrukuje komunikat ostrzegawczy.
+.PP
+Można również ustawić etykietę systemu plików przy pomocy opcji
+.B -L
+polecenia 
+.BR tune2fs (8).
+.PP
+.SH AUTOR
+.B e2label 
+zostało napisane przez Andriesa Brouwer (aeb@cwi.nl).
+.SH DOSTĘPNOŚĆ
+.B e2label
+jest częścią pakietu e2fsprogs i jest dostępne przez anonimowe
+ftp z serwera \fItsx-11.mit.edu\fP z katalogu \fI/pub/linux/packages/ext2fs\fP.
+.SH ZOBACZ TAKŻE
+.BR mke2fs (8),
+.BR tune2fs (8).

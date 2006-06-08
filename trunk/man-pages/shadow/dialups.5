@@ -1,0 +1,24 @@
+.\"
+.\" {PTM/WK/1999-09-22}
+.\"
+.TH DIALUPS
+.SH NAZWA
+dialups - plik terminalowych linii telefonicznych
+.SH OPIS
+Z dostępem do systemu przez linię telefoniczną związane są dwa pliki
+konfiguracyjne: \fI/etc/d_passwd\fR, zawierający hasła i \fI/etc/dialups\fR,
+zawierający linie. W każdym wierszu pliku \fIdialups\fR zawarta jest nazwa
+pliku specjalnego linii terminalowej, do której podłączony jest modem:
+.br
+.sp 1
+         /dev/tty12
+         /dev/tty13
+.br
+.sp 1
+Warto jest ująć w nim \fBwszystkie\fR linie z dostępem modemowym.
+Połączenie z linii pominiętej nie będzie dodatkowo weryfikowane - użytkownicy
+łączący się nią nie będą musieli podawać hasła telefonicznego.
+.SH ZOBACZ TAKŻE
+.BR dpasswd (1),
+.BR login (1),
+.BR d_passwd (5).

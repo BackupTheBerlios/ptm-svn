@@ -1,0 +1,48 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/14-06-1999/"przygotowuje przypisania adresów dla qmail-lspawn"}
+.TH qmail-newu 8
+.SH NAZWA
+qmail-newu \- przygotuj przypisania adresów dla qmail-lspawn
+.SH SKŁADNIA
+.B qmail-newu
+.SH OPIS
+.B qmail-newu
+czyta przypisania z
+.B /var/qmail/users/assign
+i zapisuje je do
+.B /var/qmail/users/cdb
+w formacie binarnym odpowiednim
+dla szybkiego dostępu przez
+.BR qmail-lspawn .
+
+Jeśli jest jakiś problem z plikiem
+.BR users/assign ,
+to
+.B qmail-newu
+wyjaśnia go i zostawia
+.B users/cdb
+w spokoju.
+
+.B qmail-newu
+dba o to by plik
+.B users/cdb
+był odświeżany automatycznie,
+więc
+.B qmail-lspawn
+nigdy nie musi czekać aż
+.B qmail-newu
+skończy swą pracę.
+Jednakże,
+.B qmail-newu
+nie podejmuje próby ochrony przeciw sytuacji, w której
+dwa niezależne procesy odświeżają zawartość
+.BR users/cdb .
+
+Format binarny
+.B users/cdb
+nadaje się do przenoszenia pomiędzy maszynami.
+
+.SH "ZOBACZ TAKŻE"
+qmail-users(5),
+qmail-lspawn(8),
+qmail-pw2u(8)

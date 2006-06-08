@@ -1,0 +1,240 @@
+.\" 1999 PTM Przemek Borys
+.\" Last update: Robert Luberda <robert@debian.org>, Aug 2002, util-linux 2.11n
+.\" $Id: fdisk.8,v 1.6 2002/08/29 16:37:53 robert Exp $
+.\"
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Copyright 1998 Andries E. Brouwer (aeb@cwi.nl)
+.\" May be distributed under the GNU General Public License
+.TH FDISK 8 "11 czerwca 1998" "Linux 2.0" "Podręcznik progrmisty linuksowego"
+.SH NAZWA
+fdisk \- Obsługa tablicy partycji dla Linuksa
+.SH SKŁADNIA
+.BI "fdisk [\-u] [\-b rozmiar_sektora] " urządzenie
+.sp
+.BI "fdisk \-l [\-u] [\-b rozmiar_sektora] [" "urządzenie ..." ]
+.sp
+.BI "fdisk \-s " "partycja ..."
+.sp
+.BI "fdisk \-v
+.SH OPIS
+Dyski twarde mogą być podzielone na jeden lub więcej logicznych
+dysków zwanych
+.IR partycjami .
+Podział ten jest zapisany w 
+.I "tablicy partycji"
+znajdującej się w sektorze 0 dysku.
+
+W świecie BSD mówi się o tzw. "plastrach dyskowych" (`disk slices')
+i "etykiecie dysku" (`disklabel').
+
+Linux potrzebuje przynajmniej jednej partycji \(em mianowicie partycji
+przeznaczonej na główny system plików.
+Może używać plików i/lub partycji wymiany, ale te drugie są bardziej
+wydajne. Tak więc, zazwyczaj używana jest druga partycja linuksowa
+przeznaczona na partycję wymiany (tzw. swap).
+Na komputerach o architekturze zgodnej z Intelem, BIOS, używany
+do uruchamiania systemu, często ma dostęp tylko do pierwszych 1024 cylindrów
+dysku. Z tego powodu osoby mające duże dyski często tworzą trzecią
+partycję o rozmiarze kilku MB, zazwyczaj montowaną w katalogu
+.IR /boot ,
+która przechowuje obraz jądra i kilka dodatkowych plików potrzebnych w czasie
+uruchamiania systemu, żeby mieć pewność, że te rzeczy są dostępne
+dla BIOS-u.
+Mogą być różne przyczyny, związane z bezpieczeństwem, ułatwieniem 
+administrowania i tworzenia kopii zapasowych lub testowaniem, żeby
+używać większej liczby partycji niż to minimum.
+
+.B fdisk
+(w pierwszej wersji jego wywołania)
+to obsługiwany z pomocą menu program do działania na tablicy partycji dysku
+twardego.
+Rozumie partycje DOS-owe oraz etykiety dysków typu BSD lub SUN-a.
+
+.I Urządzenie
+jest zwykle jednym z:
+.br
+.nf
+.RS
+/dev/hda
+/dev/hdb
+/dev/sda
+/dev/sdb
+.RE
+.fi
+(/dev/hd[a-h] \(em to dyski IDE, /dev/sd[a-p] \(em dyski SCSI,
+/dev/ed[a-d] \(em dyski ESDI, /dev/xd[ab] \(em dyski XT).
+Nazwa urządzenia odnosi się do całego dysku.
+
+.I Partycja
+to nazwa
+.IR urządzenia ,
+za którą następuje liczba. Na przykład,
+.B /dev/hda1
+jest pierwszą partycją pierwszego dysku twardego IDE w systemie.
+Dyski IDE mogą zawierać do 63 partycji, a dyski SCSI \(em do 15.
+Zobacz także
+.IR /usr/src/linux/Documentation/devices.txt .
+
+Etykieta dysku typu BSD/SUN może opisywać 8 partycji,
+z których trzecia powinna być specjalną partycją oznaczającą
+cały dysk. Partycji, która używa swojego pierwszego sektora
+(jak na przykład partycja wymiany) nie należy umieszczać 
+w cylindrze 0, ponieważ zniszczy to etykietę dysku.
+
+Etykieta dysku typu IRIX/SGI może opisywać 16 partycji,
+z których jedenasta powinna być partycją całego "woluminu",
+natomiast dziewiąta powinna być tzw. "nagłówkiem woluminu".
+Nagłówek woluminu także pokrywa całą tablicę partycji, tzn.
+zaczyna się  w bloku zerowym i domyślnie ciągnie się przez pięć cylindrów.
+Pozostałe miejsce w nagłówku woluminu może być użyte przez wpisy
+głównych katalogów. Żadna partycja nie może nachodzić na nagłówek woluminu.
+Także, nie należy zmieniać typu nagłówka woluminu, ani tworzyć na nim
+systemu plików, ponieważ spowoduje to utratę tablicy partycji. Proszę używać
+tego typu etykiety dysku tylko podczas pracy z Linuksem na komputerach IRIX/SGI
+lub podczas pracy z dyskami IRIX/SGI pod Linuksem.
+
+Tablica partycji typu DOS może opisać nieograniczoną liczbę 
+partycji. W sektorze 0 jest miejsce na opis 4 partycji
+(zwanych podstawowymi \(em `primary'). Jedna z nich może być partycją
+rozszerzoną; jest ona jakby pudełkiem zawierającym partycje
+logiczne, których deskryptory można znaleźć w wiązanej
+liście sektorów, z których każdy poprzedza odpowiadającą
+partycję logiczną.
+Cztery podstawowe partycje, niezależnie od tego czy są obecne,
+czy nie, otrzymują numery od 1 do 4. Numery partycji logicznych
+zaczynają się od 5.
+
+W tablicy partycji typu DOS początkowe przesunięcie (`offset')
+i rozmiar każdej partycji przechowywany jest na dwa sposoby:
+jako bezwzględna liczba sektorów (zapisywana na 32 bitach)
+i jako trójka Cylindry/Głowice/Sektory (Cylinders/Heads/Sectors)
+(zapisywana na 10+8+6 bitach). Pierwszy zapis jest w porządku -
+przy 512-bajtowych sektorach będzie działał aż do 2 TB. W przypadku
+drugiego zapisu występują dwa małe problemy. Przede wszystkim
+pola C/H/S mogą być wypełnione tylko wtedy, gdy znana jest liczba
+głowic oraz liczba sektorów na ścieżce. Po drugie, nawet jeżeli
+te liczby są znane, to te 24 bity, które są dostępne, nie wystarczają.
+DOS używa tylko C/H/S, Windows \(em obu, a Linux nigdy nie używa C/H/S.
+
+Jeśli jest to możliwe,
+.B fdisk
+automatycznie uzyska informacje o geometrii dysku. 
+Niekoniecznie musi to być fizyczna geometria dysku (co więcej,
+nowoczesne dyski w rzeczywistości nie mają czegoś takiego jak
+fizyczna geometria, a w każdym razie nie mają niczego, co mogłoby
+być opisane w prostej postaci cylindry/głowice/sektory),
+lecz geometria, której używa MS-DOS dla tablicy partycji. 
+
+Zazwyczaj wszystko idzie dobrze i nie ma żadnych problemów,
+jeżeli Linux jest jedynym systemem na dysku. Jednakże, jeśli
+dysk będzie dzielony z innymi systemami operacyjnymi, to dobrym pomysłem
+jest utworzenie co najmniej jednej partycji fdiskiem pochodzącym z
+innego systemu operacyjnego. Linux, podczas uruchamiania, przegląda
+tablicę partycji i stara się wywnioskować, jaka (fałszywa) geometria
+dysku jest wymagana, żeby mógł dobrze współpracować z innymi systemami.
+
+Gdy drukowana jest tablica partycji, dokonywane jest sprawdzenie
+konsystencji wpisów tablicy. Sprawdzane jest, czy fizyczne i logiczne
+punkty startowe i końcowe są takie same, oraz czy partycja rozpoczyna się i kończy w
+granicach cylindrów (poza pierwszą partycją).
+
+Niektóre wersje MS-DOS tworzą pierwszą partycję, która nie rozpoczyna się na
+granicy cylindra, lecz na 2 sektorze pierwszego cylindra. Partycje
+rozpoczynające się na cylindrze 1 nie mogą rozpoczynać się na granicy
+cylindra, lecz raczej nie powinno to sprawiać problemów, chyba że używasz
+OS/2.
+
+Funkcje sync() i ioctl() BLKRRPART są wywoływane (o ile zmieniono tablicę
+partycji) przed wyjściem, kiedy tablica partycji zostanie już zaktualizowana.
+Dawno temu było konieczne przeładowanie systemu (reboot) po użyciu fdiska.
+Teraz nie powinno być takiej potrzeby; co więcej, zbyt szybkie przeładowanie
+systemu może spowodować utratę jeszcze nie zapisanych danych. Proszę zauważyć,
+że zarówno jądro, jak i dysk mogą buforować dane.
+
+.SH "OSTRZEŻENIE DOS 6.x"
+
+Komenda FORMAT z DOS 6.x szuka informacji w pierwszym sektorze obszaru
+danych partycji i traktuje je jako godniejsze zaufania niż informacje z tablicy partycji.
+Dosowy FORMAT oczekuje od dosowego FDISK-a, że ten wyczyści pierwsze 512
+bajtów obszarów danych przy każdej zmianie rozmiarów. Dosowy FORMAT zajrzy
+do tych dodatkowych danych nawet z flagą /U -- uważamy to za błąd tych
+programów.
+
+Tak więc używając cfdiska lub fdiska do zmiany rozmiaru partycji dosowej,
+należy też użyć 
+.B dd
+do wyzerowania pierwszych 512 bajtów tej partycji przed użyciem dosowego
+FORMAT. Na przykład, po utworzeniu dosowej partycji programem
+cfdisk, powinno się  wykonać polecenie
+"dd if=/dev/zero of=/dev/hda1 bs=512 count=1", które zeruje pierwszych 512
+bajtów partycji.
+
+.B BĄDŹ NIEWYOBRAŻALNIE OSTROŻNY
+przy używaniu komendy
+.BR dd ,
+gdyż mała pomyłka może spowodować zniszczenie wszystkich danych z dysku.
+
+Dla najlepszych wyników, zawsze powinieneś używać fdiska specyficznego dla danego
+systemowi operacyjnemu. Na przykład, partycje dosowe powinieneś tworzyć
+dosowym FDISK-iem, a linuksowe \(em linuksowym fdiskiem lub cfdiskiem.
+
+.SH OPCJE
+.TP
+.BI "\-b " rozmiar_sektora
+Określa rozmiar sektora dysku. Możliwe wartości są następująca: 512, 1024 lub 2048.
+(Ostatnie jądra znają rozmiar sektora. Proszę używać tej opcji tylko dla starych
+jąder lub w celu nadpisania wartości podanej przez jądro).
+.TP
+.B \-l
+Drukuje tablice partycji dla podanych urządzeń i kończy działanie.
+Jeżeli nie podano żadnych urządzeń, to używane są urządzenia
+wymienione w pliku
+.I /proc/partitions
+(o ile taki istnieje).
+.TP
+.BI "\-s " partycja
+Wypisuje na standardowym wyjściu
+.I rozmiar
+partycji (blokach).
+.TP
+.B \-v
+Drukuje numer wersji
+.B fdiska 
+i kończy działanie.
+.SH BŁĘDY
+Istnieje kilka różnych programów *fdisk.
+Każdy z nich ma swoje problemy i zalety.
+Prosimy wypróbować ich w następującej kolejności:
+.BR cfdisk ,
+.BR fdisk ,
+.BR sfdisk .
+(Istotnie,
+.B cfdisk
+jest pięknym programem, mającym surowe wymagania co do tablic
+partycji, które akceptuje, tworzącym tablice partycji wysokiej jakości.
+Należy go używać, jeżeli tylko jest taka możliwość.
+.B fdisk
+jest programem mającym wiele błędów, robiącym mętne rzeczy \(em zazwyczaj
+zdarza mu się dać sensowne wyniki. Jego pojedynczą zaletą jest 
+obsługa etykiet dysków typu BSD i innych nie-DOS-owych tablic partycji.
+Należy go unikać, jeżeli tylko jest taka możliwość.
+.B sfdisk
+jest programem tylko dla hakerów \(em interfejs użytkownika jest okropny,
+ale program jest poprawniejszy od fdiska i potężniejszy od zarówno fdiska,
+jak i cfdiska. Co więcej, może być używany nieinterakcyjnie).
+.PP
+Etykiety dysku typu IRIX/SGI nie są jeszcze obsługiwane przez jądro.
+Co więcej,  katalogi główkowe (header directories) IRIX/SGI nie są
+jeszcze w pełni obsługiwane.
+.PP
+Brak opcji "zapisz tablicę partycji do pliku".
+.\" .SH AUTHORS
+.\" A. V. Le Blanc (LeBlanc@mcc.ac.uk)
+.\" Bernhard Fastenrath (fasten@informatik.uni-bonn.de)
+.\" Jakub Jelinek (jj@sunsite.mff.cuni.cz)
+.\" Andreas Neuper (ANeuper@GUUG.de)
+.\" and many others.
+.SH "ZOBACZ TAKŻE"
+.BR cfdisk (8),
+.BR parted (8),
+.BR sfdisk (8).

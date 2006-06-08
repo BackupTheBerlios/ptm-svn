@@ -1,0 +1,1158 @@
+./" {PTM/WK/2000-I}
+.ig
+Transl.note: based on GNU fileutils.info
+FSF notice for fileutils docs follows:
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH FILEUTILS "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+fileutils - opis pakietu narzędzi plikowych GNU
+.SH OD TŁUMACZA
+Podręczniki man dla narzędzi plikowych GNU nie są już rozwijane.
+Niniejsza strona podręcznika powstała jako tłumaczenie, używanej
+przez twórców jako podstawowej, dokumentacji formatu info.
+W pliku, który czytasz umieszczono część dokumentacji dotyczącą wspólnych
+cech i opcji programów oraz informacje, które z różnych przyczyn nie znalazły
+się na stronach opisujących poszczególne polecenia pakietu.
+Szczegółowe opisy samych poleceń znajdziesz we właściwych, osobnych
+stronach podręcznika.
+
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo fileutils
+.RE
+lub
+.RS
+.BR "info fileutils" .
+.RE
+.PP
+.SH WSTĘP
+Niniejszy podręcznik opisuje zestaw narzędzi plikowych GNU w wersji 4.01.
+
+Podręcznik ten nie jest wyczerpujący: nie usiłowano wyjaśnić podstawowych
+pojęć dotyczących plików w sposób odpowiedni dla nowicjuszy. Zatem, jeśli
+jesteś zainteresowany, włącz się, proszę, w udoskonalanie go. Skorzysta na tym
+cała wspólnota GNU.
+
+Narzędzia plikowe GNU są w większości zgodne ze standardem POSIX.2.
+
+Błędy proszę zgłaszać, w jęz.angielskim, do <bug-fileutils@gnu.org>. Pamiętaj,
+by zamieścić numer wersji, architekturę maszyny, pliki wejściowe i inne
+informacje potrzebne do powielenia błędu: wprowadzane znaki, czego się
+spodziewałeś, co otrzymałeś i dlaczego jest to źle. Pliki diff są mile
+widziane, ale proszę dołączyć również opis problemu, gdyż czasem ciężko
+jest wyciągnąć wnioski.
+
+Podręcznik ten powstał pierwotnie na bazie uniksowych stron man napisanych
+przez Davida MacKenzie i aktualizowanych przez Jima Meyeringa. Autorytatywną
+dokumentacją jest obecnie dokumentacja w formacie info; strony man nie są
+już rozwijane i aktualizowane.
+Franc,ois Pinard wykonał wstępną konwersję do formatu Texinfo. Karl
+Berry wykonał indeksy, trochę reorganizacji i edycji wyników.
+Richard Stallman wniósł swój zwykły nieoceniony wgląd w całość procesu.
+.SH ZAWARTOŚĆ PAKIETU
+Obecnie pakiet narzędzi plikowych GNU zawiera kilkanaście programów:
+.SS Listowanie zawartości katalogów
+.RS 4
+.nf
+ls          lista zawartości katalogu
+dir         ls krótko
+vdir        rozgadane ls
+dircolors   ustawienie kolorów dla ls, itd.
+.fi
+.RE
+.SS Podstawowe operacje
+.RS 4
+.nf
+cp          kopiuje pliki
+dd          konwertuje i kopiuje plik
+install     kopiuje pliki i ustawia atrybuty
+mv          przesuwa pliki/zmienia nazwy
+rm          usuwa pliki lub katalogi
+shred       bezpieczniejsze usuwanie plików
+.fi
+.RE
+.SS Specjalne typy plików
+Niżej wymienione polecenia tworzą pliki specjalnych typów. (W szczególności
+`rmdir' usuwa katalogi, będące jednym ze specjalnych typów plików.)
+
+Mimo, że uniksopodobne systemy operacyjne mają znacznie mniej specjalnych
+typów plików niż inne, nie \fBwszystko\fP może być traktowane wyłącznie jako
+niezróżnicowany strumień bajtów "zwykłych plików". Na przykład, podczas
+tworzenia lub usuwania pliku, system musi odnotować tę informację, co czyni
+w "katalogu" -- specjalnym rodzaju pliku. Można czytać katalogi
+tak jak zwykłe pliki, jeśli ktoś jest ciekaw, jednak system do wykonania
+swojej roboty musi narzucić strukturę, pewne uporządkowanie bajtów takiego
+pliku.  Dlatego jest to "specjalny" typ pliku.
+
+Oprócz katalogów, inne typy plików specjalnych obejmują potoki nazwane
+(FIFO), dowiązania symboliczne, gniazda i tak zwane "pliki specjalne".
+.RS 4
+.nf
+ln          tworzy dowiązania (links) między plikami
+mkdir       tworzy katalogi
+mkfifo      tworzy FIFO (potoki nazwane)
+mknod       tworzy blokowe lub znakowe pliki specjalne
+rmdir       usuwa puste katalogi
+.fi
+.RE
+.SS Zmiana atrybutów pliku
+Plik to nie tylko jego zawartość, nazwa i typ pliku (zobacz `Specjalne typy
+plików').
+Plik ma także właściciela (id użytkownika), grupę (id grupy), prawa
+(co może zrobić z plikiem jego właściciel, co mogą członkowie grupy
+a co wszyscy inni), różne znaczniki czasu (timestamps) i inne dane.
+Zbiorczo, nazywamy je "atrybutami" pliku.
+Poniższe polecenia zmieniają atrybuty pliku.
+.RS 4
+.nf
+chown       zmienia właściciela i grupę pliku
+chgrp       zmienia grupę pliku
+chmod       zmienia prawa dostępu do pliku
+touch       zmienia znaczniki czasu pliku
+.fi
+.RE
+.SS Zajętość dysku
+Żaden dysk nie pomieści nieskończonej ilości danych. Poniższe polecenia
+podają, jak bardzo zajęte lub dostępne jest miejsce na dyskach. (Nie ma to nic
+wspólnego z tym, ile \fBpamięci głównej\fP, tj. RAM, używa dany program podczas
+pracy; w tym celu potrzebujemy `ps', `pstat' lub `swap' albo jakiegoś
+podobnego polecenia.)
+.RS 4
+.nf
+df          raport zajętości dysku dla systemów plików
+du          szacunkowe zużycie miejsca przez plik
+sync        synchronizuje pamięć i dysk
+.fi
+.RE
+.SH OPCJE WSPÓLNE
+Pewne opcje dostępne są we wszystkich opisywanych programach (naprawdę
+powinien je przyjmować każdy z programów GNU).
+.TP
+.B --help
+Wyświetla informację o stosowaniu programu i listę wszystkich dostępnych opcji,
+pomyślnie kończy działanie.
+.TP
+.B --version
+Wyświetla numer wersji programu i pomyślnie kończy działanie.
+.PP
+Zobacz też w niektórych programach:
+.RS
+.br
+Opcje kopii zapasowych: -b -S -V
+.br
+Rozmiar bloku:          BLOCK_SIZE i --block-size
+.br
+Katalog docelowy:       --target-directory
+.RE
+.SH OPCJE KOPII ZAPASOWYCH
+Niektóre z programów GNU (co najmniej `cp', `install', `ln' i `mv')
+opcjonalnie tworzą kopie zapasowe plików przed zapisaniem ich nowych wersji.
+Opcje te sterują szczegółami robienia kopii. Są one także krótko wzmiankowane
+w opisach konkretnych programów.
+.TP
+.PD 0
+.BI -b " metoda"
+.TP
+.PD
+.BR --backup [ = \fImetoda\fP]
+Tworzy kopię zapasową każdego pliku, który inaczej byłby nadpisany lub
+usunięty.  Bez użycia tej opcji wersje pierwotne są niszczone. Posługuje się
+zadaną \fImetodą\fP do określenia typu kopii zapasowych, jakie mają być
+wykonywane.  Gdy opcja ta jest używana bez określenia metody, do używana
+jest wartość zmiennej środowiskowej \fBVERSION_CONTROL\fP. A jeśli ta
+zmienna nie jest ustawiona, to domyślnym typem kopii zapasowej jest
+`existing'.
+
+Opcja ta odpowiada zmiennej `version-control' Emacsa: używane są te same
+wartości dla \fImetody\fP tworzenia kopii. Opcje te rozpoznają także bardziej
+opisowe synonimy. Prawidłowe wartości to (unikalne skróty są dopuszczalne):
+.RS
+.TP
+.BR none ", " off
+Nigdy nie tworzy kopii zapasowych.
+.TP
+.BR t ", " numbered
+Zawsze tworzy numerowane kopie zapasowe.
+.TP
+.BR nil ", " existing
+Tworzy numerowane kopie zapasowe plików, które już je mają, zwykłe kopie dla
+reszty.
+.TP
+.BR never ", " simple
+Robi zawsze zwykłe kopie zapasowe. Zauważ, proszę, że `never' nie powinno być
+mylone z `none'.
+.RE
+.TP
+.PD 0
+.BI \-S " przyr_kopii"
+.TP
+.PD
+.BI \-\-suffix " przyr_kopii"
+Dodaje przyrostek \fIprzyr_kopii\fP do nazwy każdego pliku kopii zapasowej
+wykonanego za pomocą \fB\-b\fP. Jeśli opcja ta nie zostanie podana, to
+użyta zostanie wartość zmiennej środowiskowej \fBSIMPLE_BACKUP_SUFFIX\fP.
+Jeśli ona również nie jest określona, to użyty zostanie domyślny znak `~',
+jak w Emacsie.
+.TP
+.BI --version-control= metoda
+Opcja ta jest przestarzała i w przyszłych wydaniach zostanie usunięta.
+Została zastąpiona przez \fB--backup\fP.
+.SH ROZMIAR BLOKU
+Niektóre z programów GNU (co najmniej `df', `du' i `ls') wyświetlają wielkości
+plików w "blokach". Możesz dopasować rozmiar bloku by uczytelnić rozmiary
+plików. Rozmiar bloku do wyświetlania jest niezależny od rozmiaru bloku
+jakiegokolwiek systemu plików.
+
+Normalnie wyświetlane zajętości dysku zaokrąglane są w górę, ilość wolnego
+miejsca w dół, a inne rozmiary do najbliższego bloku, z połówkami
+zaokrąglanymi do liczb parzystych.
+
+Domyślny rozmiar bloku wybierany jest przez sprawdzenie kolejno poniższych
+zmiennych środowiska; pierwsza, która jest ustawiona określa rozmiar bloku.
+.TP
+.B DF_BLOCK_SIZE
+Określa domyślny rozmiar bloku dla polecenia `df'. Podobnie,
+\fBDU_BLOCK_SIZE\fP określa wielkość domyślną dla `du', zaś
+\fBLS_BLOCK_SIZE\fP' dla `ls'.
+.TP
+.B BLOCK_SIZE
+Określa domyślny rozmiar bloku dla wszystkich trzech poleceń, jeśli nie są
+ustawione wymienione wyżej zmienne specyficzne dla poszczególnych poleceń.
+.TP
+.B POSIXLY_CORRECT
+Jeżeli nie jest ustawiona ani zmienna \fBpolecenie_BLOCK_SIZE\fP ani też
+\fBBLOCK_SIZE\fP, ale ta zmienna jest ustawiona, to domyślną wartością bloku
+jest 512.
+.PP
+Jeśli nie jest ustawiona żadna z powyższych zmiennych środowiskowych, to
+obecnie domyślny rozmiar bloku wynosi 1024 bajty, lecz liczba ta może
+w przyszłości się zmienić.
+
+Rozmiaru bloku może opisywać dodatnia liczba całkowita, określająca
+liczbę bajtów bloku, bądź jeden z napisów \fBhuman-readable\fP lub \fBsi\fP,
+wybierający format w postaci czytelnej dla człowieka.
+
+W przypadku formatów czytelnych dla człowieka wyświetlane rozmiary kończone są
+literą przyrostka potęgi, jak `M' dla megabajtów.
+.B BLOCK_SIZE=human-readable
+posługuje się potęgami 1024; `M' oznacza 1,048,576 bajtów.
+.B BLOCK_SIZE=si
+jest podobne, ale używa potęg 1000; `M' oznacza tu 1,000,000 bajtów.
+(SI, Międzynarodowy System Jednostek, definiuje wymienione przyrostki
+kolejnych potęg liczby 1000.)
+
+Całkowity rozmiar bloku może być zakończony literą określającą wielokrotność
+tego rozmiaru. Przy użyciu tej notacji, litery rozmiarów normalnie oznaczają
+potęgi 1024, i może po nich wystąpić opcjonalna litera `B' dla oznaczenia
+"bajtów"; ale jeżeli po literze rozmiaru występuje `D' ("bajty dziesiętnie"),
+oznacza to potęgi 1000. Na przykład, `BLOCK_SIZE=4MB' jest równoważne
+`BLOCK_SIZE=4194304', a `BLOCK_SIZE=4MD' jest równoważne `BLOCK_SIZE=4000000'.
+
+Zdefiniowane są poniższe litery. Bardzo wielkie rozmiary, jak `1Y' mogą być
+odrzucone przez twój komputer z powodu ograniczeń jego arytmetyki.
+.TP
+.B k
+kilo: 2^10 = 1024 dla `human-readable' lub 10^3 = 1000 dla `si'.
+.TP
+.B M
+Mega: 2^20 = 1,048,576 lub 10^6 = 1,000,000.
+.TP
+.B G
+Giga: 2^30 = 1,073,741,824 lub 10^9 = 1,000,000,000.
+.TP
+.B T
+Tera: 2^40 = 1,099,511,627,776 lub 10^12 = 1,000,000,000,000.
+.TP
+.B P
+Peta: 2^50 = 1,125,899,906,842,624 lub
+10^15 = 1,000,000,000,000,000.
+.TP
+.B E
+Exa: 2^60 = 1,152,921,504,606,846,976 lub
+10^18 = 1,000,000,000,000,000,000.
+.TP
+.B Z
+Zetta: 2^70 = 1,180,591,620,717,411,303,424 lub
+10^21 = 1,000,000,000,000,000,000,000.
+.TP
+.B Y
+Yotta: 2^80 = 1,208,925,819,614,629,174,706,176 lub
+10^24 = 1,000,000,000,000,000,000,000,000.
+
+Domyślne rozmiary bloków mogą być unieważniane przez jawne użycie opcji
+.BI --block-size= rozmiar \fR.
+Opcja \fB-k\fP lub \fB-kilobytes\fP jest równoważna \fB--block-size=1k\fP,
+co jest ustawieniem domyślnym, chyba że ustawiono zmienną środowiskową
+.BR POSIXLY_CORRECT .
+Opcja \fB-h\fP lub \fB--human-readable\fP jest równoważna
+.BI --block-size= human-readable \fR.
+Opcja \fB-H\fP lub \fB-si\fP jest równoważna
+.BI --block-size= si \fR.
+.SH KATALOG DOCELOWY
+Niektóre programy GNU (co najmniej `cp', `install', `ln' i `mv') pozwalają na
+określenie katalogu docelowego przez tę opcję:
+.TP
+.BI --target-directory= KATALOG
+Określa KATALOG docelowy.
+
+Interfejs większości programów przewiduje, że po przetworzeniu opcji
+i skończonej liczby (może być to zero) argumentów stałopozycyjnych,
+pozostała lista argumentów powinna być albo pusta albo być listą pozycji
+(zwykle plików), które będą identycznie traktowane. Program \fBxargs\fP(1)
+zaprojektowano do pracy z taką konwencją.
+
+Polecenia z rodziny \fBmv\fP są niezwyczajne przez to, że pobierają zmienną
+liczbę argumentów, specjalnie traktując ostatni z nich (czyli katalog
+docelowy).  Powoduje to, że wykonanie niektórych operacji nie jest banalne,
+np., "przesuń wszystkie pliki stąd do ../d/", gdyż `mv * ../d/' może
+wyczerpać przestrzeń argumentów [będzie ich zbyt wiele na możliwość
+rozwinięcia znaku `*' przez powłokę]. Z kolei `ls | xargs ...' nie daje
+czystego sposobu na określenie dodatkowego, końcowego argumentu dla każdego
+wywołania odpowiedniego polecenia. (Da się to zrobić przez polecenie
+powłoki, ale wymaga to więcej ludzkiej pracy i wysiłku umysłowego niż
+powinno.)
+
+Opcja \fB--target-directory\fP pozwala programom \fBcp\fP, \fPinstall\fP,
+\fBln\fP i \fBmv\fP na wygodne użytkowanie z \fBxargs\fP. Na przykład, można
+przesunąć pliki z bieżącego katalogu do równoległego katalogu `d' w ten
+sposób (jednak, nie przesuwa to plików o nazwach rozpoczynających się `.')
+.nf
+
+    ls | xargs mv --target-directory=../d
+
+.fi
+Korzystając z programu \fBfind\fP w wersji GNU, można przesunąć
+\fBwszystkie\fP pliki takim poleceniem:
+.nf
+
+    find . -mindepth 1 -maxdepth 1 \\
+        | xargs mv --target-directory=../d
+
+.fi
+Zawiedzie ono jednak, jeżeli w bieżącym katalogu nie ma żadnych plików lub
+któryś z plików ma nazwę zawierającą znak nowej linii. Poniższy przykład
+usuwa te ograniczenia i wymaga równocześnie GNU find i GNU xargs:
+.nf
+
+    find . -mindepth 1 -maxdepth 1 -print0 \\
+        | xargs --null --no-run-if-empty   \\
+                mv --target-directory=../d
+
+.fi
+.SH PRAWA PLIKU
+Każdy z plików posiada zestaw "praw dostępu" kontrolujących rodzaje dostępu,
+jakie mają do niego użytkownicy. Prawa dla pliku są również nazywane
+jego "trybem dostępu". Mogą być przedstawiane w formie symbolicznej lub jako
+liczba ósemkowa.
+.SS Struktura praw pliku
+Istnieją trzy rodzaje praw, jakie w stosunku do pliku może posiadać
+użytkownik:
+.RS 4
+.TP 3
+1.
+prawo do odczytu pliku. Dla katalogów oznacza ono prawo do przeglądania
+(listowania) zawartości danego katalogu.
+.TP 3
+2.
+prawo do zapisu (zmiany) pliku. Dla katalogów oznacza ono prawo do
+tworzenia i usuwania plików w danym katalogu.
+.TP 3
+3.
+prawo do wykonywania pliku (uruchomienia go jako programu). Dla katalogów
+oznacza ono prawo dostępu do plików w danym katalogu.
+.RE
+.PP
+Istnieją trzy kategorie użytkowników, którzy mogą mieć różne prawa
+do wykonywania dowolnej z powyższych czynności dla pliku:
+.PP
+.RS 4
+1. właściciel pliku
+
+2. inni użytkownicy należący do grupy pliku
+
+3. wszyscy inni użytkownicy systemu
+.RE
+.PP
+Właściciel i grupa przypisywane są plikom podczas ich tworzenia. Zwykle
+właścicielem jest bieżący użytkownik, a grupą jest grupa katalogu, w którym
+znajduje się plik, ale może być różnie w zależności od systemu operacyjnego,
+systemu plików, w którym jest tworzony plik i sposobu jego tworzenia. Możesz
+zmienić właściciela i grupę pliku przy pomocy poleceń \fBchown\fP
+i \fBchgrp\fP.
+
+Oprócz wymienionych powyżej trzech zestawów trzech uprawnień prawa pliku
+zawierają trzy specjalne składniki, działające jedynie w odniesieniu do plików
+wykonywalnych (programów) oraz, na niektórych systemach, katalogów:
+.RS 4
+.TP 3
+1.
+podczas wykonywania ustaw efektywny identyfikator użytkownika procesu
+na identyfikator właściciela pliku (zwany bitem "setuid", od "set user id").
+Nie działa na katalogach.
+.TP 3
+2.
+podczas wykonywania ustaw efektywny identyfikator grupy procesu
+na identyfikator grupy pliku (zwany bitem "setgid", od "set group id").
+Na niektórych systemach, zastosowany do katalogu ustawia dla plików w nim
+tworzonych grupę danego katalogu, bez względu na grupę użytkownika, który
+je tworzy.
+.TP 3
+3.
+zachowaj tekst programu na urządzeniu buforującym (swap), tak by ładował
+się szybciej przy uruchomieniu (zwany "sticky bit", "bitem lepkim" lub
+"bitem ochrony").
+Na niektórych systemach, zastosowany do katalogu zabrania użytkownikom
+usuwania w nim innych plików poza własnymi; nazywane jest to ustawianiem
+katalogu "tylko-do-dodawania" ("append-only").
+.RE
+.SS Tryby symboliczne
+"Tryby symboliczne" pokazują zmiany praw do plików jako operacje
+na jednoznakowych symbolach. Pozwalają na zmianę wszystkich lub wybranych
+części praw plików, opcjonalnie w oparciu o ich uprzednie wartości i być może
+również o aktualne ustawienie \fBumask\fP (zobacz Umask i ochrona).
+Formatem trybów symbolicznych jest:
+.PP
+.RS
+.RB [ ugoa ...][[ +-= ][ rwxXstugo ...]...][ , ...]
+.RE
+.PP
+Poniższe sekcje opisują operatory i inne szczegóły dotyczące trybów
+symbolicznych.
+.SS Ustawianie praw dostępu
+Podstawowymi operacjami symbolicznymi na prawach pliku są dodawanie,
+usuwanie i ustawianie prawa, jakie mają pewni użytkownicy do czytania, zapisu
+i wykonywania pliku. Operacje te mają następujący format:
+.PP
+.RS
+.I   użytkownicy operacja prawa
+.RE
+.PP
+Spacje pomiędzy powyższymi trzema częściami pokazano wyłącznie dla czytelności;
+tryby symboliczne nie mogą zawierać spacji.
+
+Część \fIużytkownicy\fP mówi, jakim użytkownikom zmieniany jest dostęp
+do pliku. Składa się z jednej lub więcej liter (może też być pusta;
+zobacz `Umask i ochrona', gdzie znajdziesz opis, co wówczas się dzieje).
+Kiedy podano więcej niż jedną z tych liter, ich kolejność nie ma znaczenia.
+.RS 4
+.TP
+.B u
+(user) użytkownik, który jest właścicielem pliku
+.TP
+.B g
+(group) inni użytkownicy należący do grupy pliku
+.TP
+.B o
+(other) inni użytkownicy systemu;
+.TP
+.B a
+(all) wszyscy użytkownicy; to samo co \fBugo\fP.
+.RE
+.PP
+Część \fIoperacja\fP mówi, jak zmienić zadanym użytkownikom prawa dostępu
+do pliku, i jest jednym z następujących symboli:
+.RS 4
+.TP
+.B +
+dodaje \fIprawa\fP do dowolnych praw pliku, jakie mają
+już \fIużytkownicy\fP. Następuje uzupełnienie już posiadanych praw o podane.
+.TP
+.B -
+usuwa \fIprawa\fP spośród dowolnych praw pliku, jakie mają
+już \fIużytkownicy\fP.
+.TP
+.B =
+ustawia podane \fIprawa\fP jako jedyne prawa pliku, jakie powinni mieć do
+niego \fIużytkownicy\fP. Usuwa ewentualne uprzednie prawa.
+.RE
+.PP
+Część \fIprawa\fP mówi, jaki rodzaj dostępu do pliku powinien zostać zmieniony;
+jest to zero lub więcej poniższych liter. tak jak w przypadku części
+\fIużytkownicy\fP, kolejność liter, jeśli jest więcej niż jedna, nie ma
+znaczenia. Pominięcie części \fIprawa\fP przydatne jest tylko z operacją `=',
+gdzie nie daje ona \fIużytkownikom\fP żadnego dostępu do pliku.
+.RS 4
+.TP
+.B r
+prawo do odczytu (read) pliku
+.TP
+.B w
+prawo do zapisu (write) pliku
+.TP
+.B x
+prawo do wykonywania (execution) pliku
+.RE
+.PP
+Na przykład, aby odebrać każdemu prawo do odczytu i zapisu pliku, ale nie do
+jego wykonywania, posłuż się:
+.nf
+    a=rw
+.fi
+Usunięcie prawa zapisu dla wszystkich użytkowników innych niż właściciel pliku
+można zrealizować przez:
+.nf
+    go-w
+.fi
+Powyższe polecenie nie zmieni dostępu, jaki ma do pliku jego właściciel, nie
+nie ma też wpływu na to, czy inni użytkownicy mogą czytać bądź wykonywać plik.
+
+Chcąc nie dać nikomu poza właścicielem pliku żadnych praw do niego, możesz
+posłużyć się podanym poniżej trybem. Inni użytkownicy mogą nadal usunąć plik,
+jeżeli mają prawo zapisu w katalogu, w którym się on znajduje.
+.nf
+    go=
+.fi
+Innym sposobem określenia tego samego jest:
+.nf
+    og-rxw
+.fi
+.SS Kopiowanie istniejących praw
+Możesz ustalić prawa pliku w oparciu o jego prawa już istniejące. By to zrobić
+wystarczy zamiast używania `r', `w' czy `x' po operatorze użyć liter
+`u', `g' lub `o'. Na przykład tryb
+.nf
+    o+g
+.fi
+dodaje prawa dla użytkowników, którzy należą do grupy pliku do praw, jakie
+posiadają inni użytkownicy pliku. Zatem, jeśli plik początkowo miał tryb 644
+(`rw-rw-r--'), to powyższe dopisanie zmieni mu tryb na 666 (`rw-rw-rw-').
+Jeżeli tryb początkowo miał tryb 741 (`rwxr----x'), to nastąpi zmiana na
+tryb 745 (`rwxr--r-x'). Operacje `-' i `=' działają analogicznie.
+.SS Zmiana praw specjalnych
+Oprócz zmiany praw odczytu, zapisu i wykonywania pliku, możesz zmienić także
+jego prawa specjalne.  W podsekcji `Struktura praw pliku' znajdziesz ich
+krótki opis.
+
+W celu zmiany prawa pliku ustawiającego identyfikator użytkownika przy wykonaniu
+posłuż się literą \fBu\fP w części \fIużytkownicy\fP trybu symbolicznego oraz
+\fBs\fP w części \fIprawa\fP.
+
+W celu zmiany prawa pliku ustawiającego identyfikator grupy przy wykonaniu
+posłuż się literą \fBg\fP w części \fIużytkownicy\fP trybu symbolicznego oraz
+\fBs\fP w części \fIprawa\fP.
+
+W celu zmiany prawa pliku decydującego o pozostawieniu tekstu programu na
+urządzeniu wymiany (swap), posłuż się literą \fBo\fP w części \fIużytkownicy\fP
+trybu symbolicznego oraz \fBt\fP w części \fIprawa\fP.
+
+Na przykład, chcąc dodać prawo ustawiania ID użytkownika dla programu, możesz
+użyć trybu
+.nf
+    u+s
+.fi
+Usunąć mu zarówno prawo ustawiania ID użytkownika jak i grupy, możesz trybem:
+.nf
+    ug-s
+.fi
+Użycie trybu
+.nf
+    o+t
+.fi
+spowoduje z kolei zachowanie programu na urządzeniu wymiany.
+
+Pamiętaj, że prawa specjalne działają tylko w odniesieniu do plików
+wykonywalnych, plus, na niektórych systemach, katalogach (w tym przypadku
+mają inne znaczenie; patrz `Struktura praw pliku'). Użycie `a' w części
+\fIużytkownicy\fP trybu symbolicznego nie powoduje zmian praw specjalnych;
+zatem,
+.nf
+    a+s
+.fi
+\fBnic nie robi\fP. Musisz użyć jawnie `u', `g' lub `o' by zmienić prawa
+specjalne. Również kombinacje `u+t', `g+t' i `o+s' nic nie robią.
+
+Operator `=' niezbyt się przydaje przy prawach specjalnych; na przykład, tryb:
+.nf
+    o=t
+.fi
+spowoduje zachowanie pliku na urządzeniu wymiany, ale równocześnie usunie
+wszystkie prawa odczytu, zapisu i wykonania, które mogli mieć wcześniej
+użytkownicy nie należący do grupy pliku.
+.SS Warunkowa wykonywalność
+Istnieje jeszcze jeden specjalny typ praw symbolicznych; jeśli użyjesz \fBX\fP
+zamiast \fBx\fP, to prawo wykonywania jest zmieniane tylko wtedy, gdy plik
+ma już prawo wykonywania lub jest to katalog. Zmienia on prawa wykonywania dla
+katalogów nawet, jeśli uprzednio nie miały ustawionego żadnego prawa
+wykonywania.
+
+Na przykład, ten tryb:
+.nf
+    a+X
+.fi
+daje wszystkim użytkownikom prawo wykonywania plików (lub przeszukiwania
+katalogów) jeśli ktoś już wcześniej je posiadał.
+.SS Dokonywanie wielu zmian
+Format trybów symbolicznych jest faktycznie bardziej złożony, niż opisano
+to powyżej (zobacz `Ustawianie praw dostępu'). Umożliwia on dwa sposoby
+dokonywania wielu zmian w prawach plików.
+
+Sposób pierwszy polega na wielokrotnym określeniu części \fIoperacja\fP
+i \fIprawo\fP po części \fIużytkownicy\fP trybu symbolicznego.
+
+Na przykład, tryb:
+.nf
+    og+rX-w
+.fi
+daje użytkownikom innym niż właściciel pliku prawo odczytu oraz, jeśli jest
+to katalog lub ktoś już ma prawo wykonywania tego pliku, daje im prawo
+wykonywania; równocześnie odbiera im prawo zapisu tego pliku. Nie ma to
+wpływu na prawa, jakie posiada do niego właściciel pliku. Powyższy tryb
+jest równoważnikiem dwu trybów:
+.nf
+    og+rX
+    og-w
+.fi
+
+Drugi sposób dokonywania wielu zmian polega na określeniu więcej niż jednego
+prostego trybu symbolicznego, oddzielonego od poprzedniego przecinkiem.
+Na przykład, ten tryb:
+.nf
+    a+r,go-w
+.fi
+nadaje każdemu prawo do odczytu pliku i usuwa prawo zapisu wszystkim
+użytkownikom oprócz jego właściciela. Inny przykład:
+.nf
+    u=rwx,g=rx,o=
+.fi
+ustawia wprost wszystkie nie-specjalne prawa pliku. (Nie daje użytkownikom
+spoza grupy w ogóle żadnych praw do pliku.)
+
+Opisane dwie metody mogą być ze sobą łączone. Ten tryb
+.nf
+    a+r,g+x-w
+.fi
+daje wszystkim użytkownikom prawo odczytu pliku, użytkownikom należącym
+do grupy pliku również prawo jego wykonywania, ale bez prawa zapisu.
+Powyższy tryb można zapisać na kilka różnych sposobów; innym sposobem jest:
+.nf
+    u+r,g+rx,o+r,g-w
+.fi
+
+.SS Umask i ochrona
+Jeśli w trybie symbolicznym pominięto część określającą użytkowników, to
+domyślnie jest ona przyjmowana za `a' (dotyczy wszystkich użytkowników),
+z wyjątkiem tego, że prawa \fBustawione\fP w zmiennej systemowej \fIumask\fP
+\fBnie są zmieniane\fP. Wartość \fIumask\fP można zmienić posługując się
+poleceniem \fBumask\fP. Wartość domyślna tej zmiennej jest różna dla różnych
+systemów.
+
+Pominięcie części \fIużytkownicy\fP trybu symbolicznego nie jest na ogół
+użyteczne przy operacjach innych niż `+'. Przydaje się przy `+', gdyż pozwala
+na użycie `umask' jako łatwo dostosowywalnej ochrony przeciw rozdawaniu
+większych praw do plików niż faktycznie zamierzasz.
+
+Na przykład, jeśli `umask' ma wartość 2, co usuwa prawa zapisu dla
+użytkowników nie należących do grupy pliku, to tryb:
+.nf
+    +w
+.fi
+dodaje prawo zapisu do pliku jego właścicielowi i innym użytkownikom należącym
+do grupy pliku, ale \fBnie\fP pozostałym użytkownikom.
+Inaczej jest w przypadku trybu:
+.nf
+    a+w
+.fi
+ignoruje on `umask' i \fBdaje\fP prawo zapisu do pliku wszystkim użytkownikom.
+.SS Tryby liczbowe
+Prawa pliku są wewnętrznie zapisywane jako liczby całkowite. Zamiast podawać
+tryb symbolicznie, możesz podać liczbę ósemkową (o podstawie układu równej 8),
+odpowiadającą wewnętrznej reprezentacji nowego trybu.
+Liczba ta jest zawsze interpretowana jako ósemkowa; nie musisz dodawać
+wiodącego 0, tak jak w C. Tryb 0055 jest tym samym, co tryb 55.
+
+Tryb liczbowy jest zwykle krótszy w zapisie niż odpowiadający mu tryb
+symboliczny, ale jego ograniczeniem jest to, że nie możesz przy jego określaniu
+korzystać z poprzednich praw pliku; możesz jedynie ustawiać je bezwzględnie.
+
+Na większości systemów prawa nadane użytkownikowi, innym użytkownikom grupy
+pliku i pozostałym użytkownikom spoza grupy są przechowywane jako trójki bitów,
+każda przedstawiana przez jedną cyfrę ósemkową.
+Układ bitów, poczynając od najmniejszej wartości, pokazano poniżej:
+.PP
+.nf
+Wartość trybu  Odpowiadające mu prawo
+
+               Pozostali użytkownicy spoza grupy pliku:
+        1      wykonanie (x)
+        2      zapis (w)
+        4      odczyt (r)
+
+               Inni użytkownicy należący do grupy pliku:
+       10      wykonanie (x)
+       20      zapis (w)
+       40      odczyt (r)
+
+               Właściciel pliku:
+      100      wykonanie (x)
+      200      zapis (w)
+      400      odczyt (r)
+
+               Prawa specjalne:
+     1000      zachowaj obraz na urządzeniu wymiany
+     2000      ustaw ID grupy przy wykonaniu
+     4000      ustaw ID użytkownika przy wykonaniu
+.fi
+.PP
+Na przykład, tryb liczbowy 4755 odpowiada trybowi symbolicznemu
+`u=rwxs,go=rx', zaś tryb 664 trybowi `ug=rw,o=r'.
+Numeryczny tryb 0 odpowiada symbolicznemu `ugo='.
+.SH FORMATY WPROWADZANIA DATY
+.ig
+Najpierw cytat:
+.PP
+.\" Piękny cytat -- na pewno jest ktoś lepszy w tłumaczeniu literatury... [WK]
+.RS
+Our units of temporal measurement, from seconds on up to months,
+are so complicated, asymmetrical and disjunctive so as to make
+coherent mental reckoning in time all but impossible.  Indeed, had
+some tyrannical god contrived to enslave our minds to time, to
+make it all but impossible for us to escape subjection to sodden
+routines and unpleasant surprises, he could hardly have done
+better than handing down our present system.  It is like a set of
+trapezoidal building blocks, with no vertical or horizontal
+surfaces, like a language in which the simplest thought demands
+ornate constructions, useless particles and lengthy
+circumlocutions.  Unlike the more successful patterns of language
+and science, which enable us to face experience boldly or at least
+level-headedly, our system of temporal calculation silently and
+persistently encourages our terror of time.
+
+ ...  It is as though architects had to measure length in feet,
+width in meters and height in ells; as though basic instruction
+manuals demanded a knowledge of five different languages.  It is
+no wonder then that we often look into our own immediate past or
+future, last Tuesday or a week from Sunday, with feelings of
+helpless confusion.  ...
+
+-- Robert Grudin, `Time and the Art of Living'.
+.RE
+.PP
+..
+Ta sekcja opisuje tekstowe postaci daty akceptowane przez programy GNU.
+Są to łańcuchy znakowe, które możesz, jako użytkownik, podać jako
+argumenty różnych programów. Nie jest tu opisany interfejs C (poprzez funkcję
+\fIgetdate\fP).
+
+Mimo, że opisywana składnia daty umożliwia przedstawienie dowolnej daty
+od roku zerowego naszej ery, to liczby całkowite komputera nie są wystarczająco
+duże dla takich (względnie) długich okresów czasu. Najwcześniejszą datą jaka
+jest dozwolona semantycznie w systemach uniksowych jest północ 1 stycznia 1970
+czasu uniwersalnego (UTC).
+.SS Ogólna składnia daty
+"Data" jest łańcuchem znakowym (może być pusty) zawierającym wiele elementów
+rozdzielonych białymi znakami. Biały znak może być pominięty jeśli nie
+spowoduje to niejednoznaczności. Pusty łańcuch oznacza początek dzisiejszego
+dnia (tj.północ). Kolejność elementów jest nieistotna. Łańcuch daty może
+zawierać wiele różnych odmian elementów:
+.nf
+    * datę kalendarzową
+    * czas dnia (godzinę)
+    * strefę czasową
+    * dzień tygodnia
+    * element względny
+    * czyste liczby
+.fi
+Opiszemy poniżej po kolei każdy z typów elementu daty.
+
+W większości kontekstów kilka liczb może być zapisanych słownie. Najbardziej
+przydaje się to do określania elementów dnia tygodnia lub elementów względnych
+(patrz poniżej). Oto lista: `first' (pierwszy) dla 1, `next' (następny) dla 2,
+`third' (trzeci) dla 3, `fourth' (czwarty) dla 4, `fifth' dla 5, `sixth' dla 6,
+`seventh' dla 7, `eighth' dla 8, `ninth' dla 9, `tenth' dla 10, `eleventh' dla
+11 i `twelfth' dla 12.  Również, `last' (ostatni) oznaczający dokładnie -1.
+
+Kiedy w ten sposób zapisywany jest miesiąc, wciąż traktowany jest tak, jakby
+został zapisany liczbowo, zamiast potraktowania w sposób "w pełni zgodny
+z wymową"; zmienia to dozwolone łańcuchy.
+
+Wielkość liter w datach jest całkowicie ignorowana. Pomiędzy nawiasami
+okrągłymi można umieszczać komentarze, póki zawarte nawiasy są poprawnie
+zagnieżdżone. Myślniki, po których nie występują cyfry są obecnie ignorowane.
+Wiodące zera w liczbach są ignorowane.
+.SS Zapis daty kalendarzowej
+"Zapis daty kalendarzowej" określa dzień roku. Podawany jest rozmaicie,
+w zależności od tego, czy miesiąc określono liczbowo czy słownie. Wszystkie
+te łańcuchy określają tę samą datę kalendarzową:
+.nf
+    1970-09-17           # ISO 8601.
+    70-9-17              # załóż 19xx dla 69 do 99, 20xx dla 00 do 68.
+    70-09-17             # wiodące zera są ignorowane.
+    9/17/72              # powszechny zapis amerykański.
+    24 September 1972
+    24 Sept 72           # wrzesień (September) ma specjalny skrót.
+    24 Sep 72            # zawsze dozwolone trzyliterowe skróty.
+    Sep 24, 1972
+    24-sep-72
+    24sep72
+.fi
+Można też ominąć rok. W takim przypadku, używany jest ostatnio określony rok,
+lub rok bieżący, jeśli nie określono żadnego. Na przykład:
+.nf
+    9/17
+    sep 17
+.fi
+A oto reguły...
+
+Dla miesięcy podanych liczbowo dozwolony jest format liczbowy ISO 8601 postaci
+`ROK-MIESIĄC-DZIEŃ', gdzie ROK jest dowolną liczbą całkowitą, MIESIĄC jest
+liczbą od 01 do 12, zaś DZIEŃ jest liczbą od 01 do 31. Jeśli liczba jest
+mniejsza niż dziesięć to musi być zapisana z zerem wiodącym. Jeżeli ROK jest
+wynosi 68 lub mniej, to dodawane jest do niego 2000; w przeciwnym razie, jeśli
+ROK jest mniejszy od 100, to jest do niego dodawane 1900. Akceptowana jest
+konstrukcja postaci `MIESIĄC/DZIEŃ/ROK', popularna w Stanach Zjednoczonych.
+Również `MIESIĄC/DZIEŃ', z pominięciem roku.
+
+Miesiące słownie mogą być zapisane w pełnej formie: `January' (styczeń),
+`February' (luty), `March' (marzec), `April' (kwiecień), `May' (maj),
+`June' (czerwiec), `July' (lipiec), `August' (sierpień),
+`September' (wrzesień), `October' (październik), `November' (listopad)
+lub `December' (grudzień). Słowne określenia miesięcy mogą być
+skracane do pierwszych trzech liter, z możliwym dodaniem kropki kończącej
+skrót. Dozwolony jest również zapis `Sept' zamiast `September'.
+
+Przy słownym zapisie miesięcy data kalendarzowa może być podana na jeden
+z poniższych sposobów:
+.nf
+    DZIEŃ MIESIĄC ROK
+    DZIEŃ MIESIĄC
+    MIESIĄC DZIEŃ ROK
+    DZIEŃ-MIESIĄC-ROK
+.fi
+Albo, pomijając rok:
+.nf
+    MIESIĄC DZIEŃ
+.fi
+.SS Zapis czasu (godziny)
+"Zapis czasu" w łańcuchach daty określa czas (godzinę) zadanego dnia.
+Oto kilka przykładów, oznaczających tę samą godzinę:
+.nf
+    20:02:0
+    20:02
+    8:02pm
+    20:02-0500      # w strefie EST (Eastern US Standard Time)
+.fi
+Ogólniej, czas może zostać podany jako `GODZINA:MINUTA:SEKUNDA', gdzie
+GODZINA jest liczbą od 0 do 23, MINUTA liczbą od 0 do 59, zaś SEKUNDA liczbą
+od 0 do 59. Człon `:SEKUNDA' można pominąć, jest on wówczas przyjmowany
+jako zero.
+
+Jeśli po określeniu czasu występuje `am' lub `pm' (lub `a.m.' czy `p.m.'),
+to GODZINA ograniczona jest do zakresu od 1 do 12 a `:MINUTA' może być
+pominięta (przyjmowana za zero). `am' wskazuje na pierwszą połowę dnia, `pm'
+na drugą połowę. W tej notacji, godzina 12 poprzedza godzinę 1: północ jest
+zapisywana jako `12am', zaś południe jako `12pm'.
+
+Po zapisie czasu może również wystąpić określenie korekty z uwagi
+na strefę czasową. Jest ono wyrażane jako `ZGGMM', gdzie Z jest znakiem `+'
+lub `-', GG jest liczbą godzin różnicy dla strefy a MM liczbą minut.
+Podanie w ten sposób strefy czasowej wymusza interpretację podanego czasu
+względem czasu uniwersalnego (UTC - Coordinated Universal Time), unieważniając
+wcześniejsze określenia strefy czasowej czy lokalnej strefy czasowej. Część
+opisująca MINUTY w określeniu czasu nie może być pomijana, jeśli używana jest
+korekta z uwagi na strefę czasową. Jest to jedyny sposób określania korekty
+strefy czasowej o ułamkowe części godziny.
+
+Można podać korektę `am'/`pm' albo korektę z uwagi na strefę czasową, ale
+nie obie jednocześnie.
+.SS Strefa czasowa
+Element typu "strefa czasowa" określa międzynarodową strefę czasową, wskazywaną
+przez niewielki zestaw liter. Są one obsługiwane w celu zachowania wstecznej
+zgodności. Ich używanie nie jest jednakże zalecane, gdyż praktycznie są one
+dwuznaczne: na przykład, skrót `EST' posiada inne znaczenie w Australii, a inne
+w Stanach Zjednoczonych. Zawarte w nim kropki są ignorowane.
+Wojskowe miana stref czasowych używają pojedynczych liter.
+Obecnie jako pozycje typu strefa czasowa mogą być przedstawiane wyłącznie
+strefy o przesunięciu o całkowitą liczbę godzin.
+W poprzedniej sekcji znajdziesz opis precyzyjniejszego sterowania korektą
+z uwagi na strefę czasową.
+
+Poniżej podano wiele stref czasowych (z wyłączeniem stref "czasów letnich"),
+uporządkowanych według przesunięcia w czasie (parametr GODZINA strefy).
+.TP
+-1200
+`Y' wojskowo.
+.TP
+-1100
+`X' wojskowo.
+.TP
+-1000
+`W' wojskowo.
+.TP
+-0900
+`V' wojskowo.
+.TP
+-0800
+`PST' dla amerykańskiej strefy Pacific Standard, zaś `U' wojskowo.
+.TP
+-0700
+`MST' dla amerykańskiej strefy Mountain Standard, zaś `T' wojskowo.
+.TP
+-0600
+`CST' dla amerykańskiej strefy Central Standard, zaś `S' wojskowo.
+.TP
+-0500
+`EST' dla amerykańskiej strefy Eastern Standard, zaś `R' wojskowo.
+.TP
+-0400
+`AST' dla amerykańskiej strefy Atlantic Standard, zaś `Q' wojskowo.
+.TP
+-0300
+`P' wojskowo.
+.TP
+-0200
+`O' wojskowo.
+.TP
+-0100
+`N' wojskowo.
+.TP
++0000
+`GMT' dla średniego czasu Greenwich (Greenwich Mean), `UT' dla czasu
+uniwersalnego, `UTC' dla Coordinated Universal, `WET' dla czasu
+zachodnioeuropejskiego (Western European), zaś `Z' dla ISO 8601
+i zapisu wojskowego.
+.TP
++0100
+`A' wojskowo, `CET' dla czasu środkowoeuropejskiego (Central European),
+`MET' dla Midden Europesche Tijd (holenderski), and `MEZ' dla Mittel-Europa"ische
+Zeit (Niemcy).
+.TP
++0200
+`B' wojskowo, zaś `EET' dla wschodnioeuropejskiego (Eastern European).
+.TP
++0300
+`C' wojskowo.
+.TP
++0400
+`D' wojskowo.
+.TP
++0500
+`E' wojskowo.
+.TP
++0600
+`F' wojskowo.
+.TP
++0700
+`G' wojskowo.
+.TP
++0800
+`H' wojskowo.
+.TP
++0900
+`I' wojskowo, zaś `JST' dla strefy japońskiej (Japan Standard).
+.TP
++1000
+`GST' dla amerykańskiej strefy Guam (Guam Standard), zaś `K' wojskowo.
+.TP
++1100
+`L' wojskowo.
+.TP
++1200
+`M' wojskowo, zaś `NZST' dla strefy nowozelandzkiej (New Zealand Standard).
+.PP
+Istnieje wiele stref czasowych wynikających z oszczędzania światła dziennego
+("czas letni", strefy DST - daylight-saving time). Również umieszczając
+po określeniu strefy zwykłej łańcuch `DTS' jako odrębne słowo (tj. oddzielone
+białymi znakami), można podać odpowiednią strefę czasową oszczędzania energii.
+.TP
+-0700
+`PDT' dla amerykańskiej strefy Pacific Daylight.
+.TP
+-0600
+`MDT' dla amerykańskiej strefy dla Mountain Daylight.
+.TP
+-0500
+`CDT' dla amerykańskiej strefy Central Daylight.
+.TP
+-0400
+`EDT' dla amerykańskiej strefy Eastern Daylight.
+.TP
+-0300
+`ADT' dla amerykańskiej strefy Atlantic Daylight.
+.TP
++0100
+`BST' dla brytyjskiego czasu letniego (British Summer) oraz `WEST' dla
+zachodnioeuropejskiego czasu letniego (Western European Summer).
+.TP
++0200
+`CEST' dla środkowoeuropejskiego czasu letniego (Central European Summer),
+`MEST' dla Midden Europesche S. Tijd (holenderski) oraz `MESZ' dla
+Mittel-Europa"ische Sommerzeit (Niemcy).
+.TP
++1300
+`NZDT' dla nowozelandzkiego czasu New Zealand Daylight.
+.SS Dzień tygodnia
+Bezpośrednie powołanie się na dzień tygodnia będzie występować po dacie
+(tylko jeśli to konieczne) w celu określenia takiego dnia tygodnia
+w przyszłości.
+
+Dni tygodnia mogą być pisane w postaci pełnej: `Sunday' (niedziela),
+`Monday' (poniedziałek), `Tuesday' (wtorek), `Wednesday' (środa),
+`Thursday' (czwartek), `Friday' (piątek) lub `Saturday' (sobota).
+Można je skracać do pierwszych trzech liter, opcjonalnie zakończonych kropką.
+Dozwolone są także specjalne skróty `Tues' dla wtorku (Tuesday),
+`Wednes' dla środy (Wednesday) oraz `Thur' lub `Thurs' dla czwartku (Thursday).
+
+Dzień tygodnia może być poprzedzony liczbą, by wyrazić przesunięcie w czasie
+o daną liczbę tygodni. Najlepiej używany jest w wyrażeniach takich jak
+`third monday' (trzeci poniedziałek). W tym kontekście dopuszczalne są również
+`last DZIEŃ' lub `next DZIEŃ'; przesuwają one o tydzień wstecz lub w przód
+w stosunku do dnia reprezentowanego przez DZIEŃ.
+
+Przecinek następujący po określeniu dnia tygodnia jest jest ignorowany.
+.SS Elementy względne w łańcuchach dat
+"Elementy względne" wskazują na datę przesunięta względem danej (lub daty
+bieżącej, jeśli nie podano innej) w przód i wstecz. Efekty elementów
+względnych sumują się. Oto kilka przykładów:
+.nf
+    1 year        # 1 rok
+    1 year ago    # 1 roku temu
+    3 years       # 3 lata
+    2 days        # 2 dni
+.fi
+Jednostkę przemieszczenia w czasie można wybrać przy pomocy łańcucha
+\fByear\fP lub \fBmonth\fP dla przesunięcia odpowiednio o całe lata
+lub miesiące. Są to jednostki dość rozmyte, gdyż lata i miesiące nie
+mają jednakowej długości. Precyzyjniejszymi jednostkami są \fBfortnight\fP,
+czyli okres 14 dni, \fBweek\fP (tydzień) mający 7 dni, \fBday\fP (dzień) mający
+24 godziny, \fBhour\fP (godzina) o 60 minutach, \fBminute\fP (minuta)
+lub \fBmin\fP o 60 sekundach i \fBsecond\fP (sekunda) lub \fBsec\fP
+o długości jednej sekundy. Przyrostek \fBs\fP, oznaczający w języku angielskim
+liczbę mnogą, dołączony do tych jednostek jest akceptowany i ignorowany.
+
+Jednostka czasu może zostać poprzedzona mnożnikiem, podanym jako liczba (może
+być ze znakiem). Liczby bez znaku traktowane są jako liczby dodatnie
+ze znakiem. Brak liczby oznacza mnożnik 1. Następujące po elemencie względnym
+słowo \fBago\fP (..temu) jest równoważne poprzedzeniu jednostki dodatkowym
+mnożnikiem o wartości -1.
+
+Łańcuch znaków \fBtommorow\fP (jutro) ma wartość jednego dnia w przyszłości
+(równoważne \fBday\fP), łańcuch \fByesterday\fP (wczoraj) ma wartość jednego
+dnia w przeszłości (równoważny \fBday ago\fP, dzień temu).
+
+Łańcuchy \fB now\fP (teraz) lub \fBtoday\fP (dziś) są jednostkami względnymi
+odpowiadającymi zerowemu przesunięciu w czasie; biorą się one z tego, że
+przesunięcie w czasie o wartości zerowej reprezentuje bieżący czas, jeśli
+nie zostanie to zmienione przez poprzedzające elementy. Łańcuchów określających
+bieżący czas można użyć do uwydatnienia innych elementów, jak w `12:00 today'
+(12:00 dziś). Łańcuch \fBthis\fP (ten) ma również znaczenie przesunięcia
+w czasie o zerowej wartości, ale używany jest raczej w łańcuchach daty jak
+`this thursday' (ten czwartek).
+
+Gdy element względny powoduje, że data wynikowa przekracza granicę między DST
+(np.czasem letnim, zobacz podsekcja `Strefa czasowa') a czasem zwykłym
+(nie-DST), lub odwrotnie, godzina jest korygowana stosownie do czasu lokalnego.
+.SS Czyste liczby w łańcuchach daty
+Dokładna interpretacja czystej liczby dziesiętnej zależy od kontekstu
+w łańcuchu znakowym określającym datę.
+
+Jeżeli liczba dziesiętna ma postać RRRRMMDD i nie pojawia się przez nią żaden
+inny element daty kalendarzowej (patrz `Zapis daty kalendarzowej'), to RRRR
+odczytywane jest jako rok, MM jako numer miesiąca a DD jako dzień miesiąca
+opisywanej daty.
+
+Jeżeli liczba dziesiętna ma postać GGMM i w łańcuchu daty nie pojawia się
+przed nią żaden inny element określający czas, to GG jest odczytywane jako
+godzina a MM jako minuty godziny opisywanego czasu dnia. MM może być też
+pominięte.
+
+Jeśli po lewej stronie liczby pojawia się zarówno data kalendarzowa jak i czas,
+ale nie ma elementu względnego, to liczba unieważnia wcześniej określony rok.
+.SS Autorzy `getdate'
+`getdate' zostało pierwotnie zaimplementowane przez Stevena M. Bellovin
+(<smb@research.att.com>) podczas pobytu w Chapel Hillwhile na University
+of North Carolina.
+Kod został później nieco zmodyfikowany przez kilku ludzi na Usenecie,
+a następnie gruntownie zmieniony przez Richa $alz (<rsalz@bbn.com>)
+i Jima Berets (<jberets@bbn.com>) w sierpniu 1990. Rozmaite wersje
+dla systemu GNU zrobił David MacKenzie, Jim Meyering i inni.
+
+Rozdział ten został pierwotnie utworzony przez Franc,oisa Pinard
+(<pinard@iro.umontreal.ca>) z kodu źródłowego `getdate.y', a następnie
+poprawiony przez K. Berry (<kb@cs.umb.edu>).
+
+.SH ZOBACZ TAKŻE
+.TP 10
+.BR ls (1)
+lista zawartości katalogu
+.TP 10
+.BR dir (1)
+ls krótko
+.TP 10
+.BR vdir (1)
+rozgadane ls
+.TP 10
+.BR dircolors (1)
+ustawienie kolorów dla ls
+.TP 10
+.BR cp (1)
+kopiuje pliki
+.TP 10
+.BR dd (1)
+konwertuje i kopiuje pliki
+.TP 10
+.BR install (1)
+kopiuje pliki i nadaje atrybuty
+.TP 10
+.BR mv (1)
+przesuwa pliki/zmienia nazwy
+.TP 10
+.BR rm (1)
+usuwa pliki lub katalogi
+.TP 10
+.BR shred (1)
+bezpieczniejsze usuwanie plików
+.TP 10
+.BR ln (1)
+tworzy dowiązania (links) między plikami
+.TP 10
+.BR mkdir (1)
+tworzy katalogi
+.TP 10
+.BR mkfifo (1)
+tworzy FIFO (potoki nazwane)
+.TP 10
+.BR mknod (1)
+tworzy blokowe lub znakowe pliki specjalne.
+.TP 10
+.BR rmdir (1)
+usuwa puste katalogi
+.TP 10
+.BR chown (1)
+zmienia właściciela i grupę pliku
+.TP 10
+.BR chgrp (1)
+zmienia grupę pliku
+.TP 10
+.BR chmod (1)
+zmienia prawa dostępu do pliku
+.TP 10
+.BR touch (1)
+zmienia znaczniki czasu pliku
+.TP 10
+.BR df (1)
+raport zajętości dysku dla systemów plików
+.TP 10
+.BR du (1)
+szacunkowe zużycie miejsca przez plik
+.TP 10
+.BR sync (1)
+synchronizuje pamięć i dysk
+.PP

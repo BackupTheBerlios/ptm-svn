@@ -1,0 +1,172 @@
+.\" {PTM/PB/0.1/09-05-1999/"uruchom powłokę z podmienieniem id użytkownika/grupy"}
+.\" poszerzenie i aktualizacja do GNU sh-utils 2.0 PTM/WK/2000-VI
+.ig
+Transl.note: based on GNU man page su.1 and sh-utils.info
+
+Copyright (C) 1994, 95, 96 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH SU "1" FSF "maj 2000" "Narzędzia powłokowe GNU 2.0"
+.SH NAZWA
+su \- uruchom powłokę z podmienieniem ID użytkownika/grupy.
+.SH SKŁADNIA
+.TP 4
+.B su
+.RB [ \-flmp ]
+.RB [ \-c
+.IR polecenie ]
+.RB [ \-s
+.IR powłoka ]
+.RB [ \- ]
+.RB [ \-\-login ]
+.br
+.RB [ \-\-fast ]
+.RB [ \-\-preserve-environment ]
+.RB [ \-\-shell=\fIpowłoka ]
+.br
+.RB [ \-\-command=\fIpolecenie ]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.br
+.RI [ użytkownik
+.RI [ arg ...]]
+.SH OPIS
+Ta strona podręcznika opisuje polecenie \fBsu\fP w wersji GNU.
+.PP
+.B su
+pozwala danemu użytkownikowi na tymczasowe bycie innym użytkownikiem.
+Uruchamia polecenie (często powłokę interaktywną) z rzeczywistym i efektywnym
+id użytkownika oraz id grupy i grupami dodatkowymi, należącymi do
+\fIużytkownika\fP. Jeśli nie podano użytkownika, domyślnym jest root, czyli
+superużytkownik. Nazwa powłoki jest pobierana ze wpisu w \fI/etc/passwd\fP,
+a jeśli tam nic nie będzie, używany jest /bin/sh. Jeśli \fIużytkownik\fP ma
+hasło, to
+.B su
+zapyta o hasło, chyba że wywołujący je użytkownik miał efektywny
+identyfikator użytkownika ustawiony na 0 (superużytkownik).
+.PP
+Domyślnie
+.B su
+nie zmienia bieżącego katalogu. Ustawia zmienne środowiskowe \fBHOME\fP i
+\fBSHELL\fP według zapisów w pliku haseł dla \fIużytkownika\fP, a jeśli
+nie jest on superużytkownikiem, ustawia też \fBUSER\fP i \fBLOGNAME\fP
+na \fIużytkownik\fP.
+Domyślnie powłoka nie jest powłoką zgłoszeniową (zalogowania).
+.PP
+Jeśli podano więcej \fIarg\fPumentów, to są one przekazywane jako dodatkowe
+argumenty dla powłoki.
+.PP
+.B su
+nie obsługuje specjalnie /bin/sh czy innych powłok
+(ustawianie argv[0] na "-su", przekazywanie -c do niektórych powłok, itp.).
+.PP
+Na systemach, które mają sysloga,
+.B su
+może zostać tak skompilowane, by raportowało nieudane, lub opcjonalnie
+również udane próby zmiany id przy użyciu
+.BR su .
+Jednak \fBsu\fP w wersji GNU nie sprawdza czy użytkownik jest członkiem grupy
+`wheel' -- patrz poniżej.
+.SH OPCJE
+.TP
+.BR \-c " \fIpolecenie\fP, " \-\-command= \fIpolecenie
+Przekazuje \fIpolecenie\fP, pojedynczy wiersz poleceń do wykonania,
+do powłoki z użyciem parametru
+.BR \-c ,
+zamiast uruchamiać powłokę interaktywną.
+.TP
+.BR \-f ", " \-\-fast
+Przekazuje powłoce opcję
+.BR \-f .
+Prawdopodobnie ma to zastosowanie tylko dla
+.B csh
+i
+.BR tcsh ,
+dla których opcja
+.B \-f
+powoduje nieczytanie pliku startowego (\fI.cshrc\fP). W powłokach typu
+bourne, opcja
+.B \-f
+wyłącza rozszerzanie wzorców nazw plików, co raczej nie jest przydatne.
+.TP
+.BR \- ", " \-l ", " \-\-login
+Sprawia, że powłoka będzie powłoką zgłoszeniową. Znaczy to, co następuje.
+Unieważnia
+wszelkie zmienne środowiskowe poza \fBTERM\fP, \fBHOME\fP i \fBSHELL\fP
+(które są ustawiane, jak opisano wyżej), i \fBUSER\fP oraz \fBLOGNAME\fP
+(ustawiane, nawet dla superużytkownika, w sposób wyżej opisany ).
+Ustawia zmienną \fBPATH\fP na wkompilowaną wartość domyślną. Zmienia katalog
+na katalog domowy użytkownika. Dodaje do nazwy powłoki "\-", aby przeczytał
+pliki startowe logowania.
+.TP
+.BR \-m ", " \-p ", " \-\-preserve\-environment
+Nie zmienia zmiennych środowiskowych \fBHOME\fP, \fBUSER\fP, \fBLOGNAME\fP
+czy \fBSHELL\fP.
+Zamiast powłoki \fIużytkownika\fP określonej w pliku passwd, uruchamia powłokę
+podaną w zmiennej \fBSHELL\fP, chyba że użytkownik wywołujący
+.B su
+nie jest superużytkownikiem, a powłoka \fIużytkownika\fP jest okrojona.
+Powłoka okrojona, to taka, która nie jest wymieniona w pliku \fI/etc/shells\fP,
+lub we wkompilowanej liście powłok. Częściowo opcja ta może być przesłonięta
+opcjami
+.B \-\-login
+i
+.BR \-\-shell .
+.TP
+.B \-s " \fIpowłoka\fP, " \-\-shell= powłoka
+Zamiast powłoki \fIużytkownika\fP określonej w passwd, uruchamia zadaną
+\fIpowłokę\fP, chyba że uruchamiający
+.B su
+użytkownik nie jest superużytkownikiem, a powłoka \fIużytkownika\fP jest
+ograniczona.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+pracę.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.SH Dlaczego GNU `su' nie obsługuje grupy `wheel'
+
+(Sekcję tę napisał Richard Stallman)
+
+Czasami kilku użytkowników usiłuje sprawować nieograniczoną władzę nad
+pozostałymi. Na przykład, w 1984, kilku użytkowników w laboratorium AI MIT
+zdecydowało się `przejąć władzę' zmieniając hasło operatora systemu Twenex
+i trzymając je w tajemnicy przed wszystkimi innymi. (Udało mi się
+udaremnić ten zamach i przywrócić władzę użytkownikom łatając jądro, lecz
+nie wiedziałbym jak zrobić to w Uniksie.)
+
+Jednak, od czasu do czasu panujący wyjawiają komuś. Przy zwykłym
+mechanizmie `su', ktoś, kto poznał hasło root'a i sympatyzuje ze zwykłymi
+użytkownikami, może przekazać je pozostałym. Funkcja "grupy wheel"
+uniemożliwiałaby to, i w ten sposób umacniała władzę rządzących.
+
+Jestem po stronie mas, nie po stronie rządzących. Jeżeli zwykłeś popierać
+szefów i administratorów systemów we wszystkim, co robią, podejście to może
+początkowo wydać Ci się dziwne.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-sh-utils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR sh-utils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi powłokowych
+GNU wersji 2.0.

@@ -1,0 +1,93 @@
+.\" {PTM/WK/1999-XII}
+.\" -*- nroff -*-
+.TH MKFS 8 "czerwiec 1995" "wersja 1.9"
+.SH NAZWA
+mkfs \- zbuduj linuksowy system plików
+.SH SKŁADNIA
+.B mkfs
+.RB [ \-V ]
+.RB [ \-t
+.IR typ_fs ]
+.RB [ opcje-fs ]
+.I filesys
+.RI [ bloki ]
+.SH OPIS
+.B mkfs
+służy do budowania linuksowego systemu plików na zadanym urządzeniu, zwykle
+partycji dysku twardego.
+.I filesys
+jest albo nazwą urządzenia (np. /dev/hda1, /dev/sdb2) albo punktem montowania
+(np. /, /usr, /home) dla danego systemu plików.
+Parametr
+.I bloki
+jest liczbą bloków, jakie zostaną użyte dla zadanego systemu plików.
+.PP
+.B mkfs
+zwraca kod zakończenia równy 0 w przypadku powodzenia, zaś 1 przy porażce.
+.PP
+W rzeczywistości
+.B mkfs
+jest po prostu interfejsem dla różnych poleceń budujących systemy plików
+(\fBmkfs\fR.\fItyp_fs\fP)
+dostępnych w Linuksie. Polecenie budowania odpowiednie dla danego typu
+systemu plikowego wyszukiwane jest w wielu różnych katalogach jak
+/sbin, /sbin/fs, /sbin/fs.d, /etc/fs, /etc (dokładna lista definiowana jest
+na etapie kompilacji, ale zawiera co najmniej /sbin i /sbin/fs), a ostatecznie
+w katalogach wymienionych w zmiennej środowiskowej PATH.
+Przeglądnij, proszę, strony podręcznika właściwe dla poleceń budowania
+konkretnych typów systemów plików. Znajdziesz tam więcej szczegółów.
+.SH OPCJE
+.TP
+.B -V
+Tryb gadatliwy. Wyświetlaj szczegółowe komunikaty, łącznie ze wszystkimi
+wywoływanymi poleceniami specyficznymi dla systemu plików.
+Podanie tej opcji więcej niż jednokrotnie zabrania wykonywania jakichkolwiek
+poleceń specyficznych dla danego systemu plików. Naprawdę przydatne tylko
+do testowania.
+.TP
+.BI -t \ typ_fs
+Określa typ tworzonego systemu plików. Jeśli nie podano, używany jest domyślny
+(obecnie ext2).
+.TP
+.B opcje-fs
+Opcje specyficzne dla danego systemu plikowego, jakie mają zostać przekazane
+do faktycznego polecenia tworzenia systemu plików.
+Mimo, że nie jest to gwarantowane, poniższe opcje obsługiwane są przez
+większość poleceń tworzących systemy plików.
+.TP
+.B -c
+Sprawdź uszkodzone bloki (bad blocks) urządzenia przed utworzeniem systemu
+plików.
+.TP
+.BI -l \ nazwapliku
+Odczytaj listę błędnych plików z
+.I pliku
+o podanej nazwie.
+.TP
+.B -v 
+(verbose) Włącz tryb gadatliwy.
+.SH BŁĘDY
+Wszystkie opcje ogólne muszą poprzedzać i nie mogą być łączone z opcjami
+specyficznymi dla systemu plików.
+Niektóre z programów budujących pewne systemy plików nie obsługują
+opcji
+.I -v
+ani nie zwracają znaczących kodów zakończenia.
+Ponadto, niektóre z programów tworzących systemy plików nie rozpoznają
+automatycznie wielkości urządzania i wymagają podania parametru
+.IR bloki .
+.SH AUTORZY
+David Engel (david@ods.com)
+.br
+Fred N. van Kempen (waltje@uwalt.nl.mugnet.org)
+.br
+Ron Sommeling (sommel@sci.kun.nl)
+.br
+Niniejsza strona podręcznika została bezwstydnie zaadaptowana z wersji
+Remy'ego Carda do systemu plików ext2.
+.SH ZOBACZ TAKŻE
+.BR fsck (8),
+.BR mkfs.minix (8),
+.BR mkfs.ext (8),
+.BR mkfs.ext2 (8),
+.BR mkfs.xiafs (8).

@@ -1,0 +1,22 @@
+.\" Translation: Robert Luberda <robert@debian.org>, May 2003, gzip 1.3.5
+.\" $Id: zless.1,v 1.3 2003/05/07 08:40:16 robert Exp $
+.\"
+.TH ZLESS 1
+.SH NAZWA
+zless \- pełnoekranowe przeglądanie skompresowanych plików tekstowych
+.SH SKŁADNIA
+.B zless
+[ nazwa ...  ]
+.SH OPIS
+.I  Zless
+pozwala na przeglądanie na ekranie terminala plików tekstowych skompresowanych
+bądź nieskompresowanych.
+Taki sam efekt można uzyskać ustawiając zmienną środowiskową
+LESSOPEN na "|gzip -cdfq %s",
+i uruchamiając
+.IR less .
+Jednakże wystarczająco dużo ludzi uznaje dostępność polecenia
+.I zless
+za ważną, żeby to polecenie dostarczać.
+.SH "ZOBACZ TAKŻE"
+zmore(1), less(1)

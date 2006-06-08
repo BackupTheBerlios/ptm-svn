@@ -1,0 +1,398 @@
+.\" 1999 PTM Przemek Borys
+.\" Updated to version 1.28 2002 Grzegorz Goławski <grzegol@pld.org.pl>
+.\" -*- nroff -*-
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH "MKE2FS" "8" "Sierpień 2002" "E2fsprogs wersja 1.28" ""
+.SH "NAZWA"
+mke2fs \- tworzy linuksowy system plików ext2/3
+.SH "SKŁADNIA"
+.B mke2fs
+[
+.B \-c
+| 
+.B \-l
+.I nazwa\-pliku
+]
+[
+.B \-b
+.I rozmiar\-bloku
+]
+[
+.B \-f
+.I rozmiar\-fragmentu
+]
+[
+.B \-i
+.I bajty\-na\-i\-węzeł
+]
+[
+.B \-j
+]
+[
+.B \-J
+.I opcje\-dziennika
+]
+[
+.B \-N
+.I liczba\-i\-węzłów
+]
+[
+.B \-n
+]
+[
+.B \-m
+.I procent\-zarezerwowanych\-bloków
+]
+[
+.B \-o
+.I tworzący\-os
+]
+[
+.B \-O 
+.IR właściwość [,...]
+]
+[
+.B \-q
+]
+[
+.B \-r
+.I rewizja\-fs
+]
+[
+.B \-R
+.I opcje\-raid
+]
+[
+.B \-v
+]
+[
+.B \-F
+]
+[
+.B \-L
+.I etykieta\-woluminu
+]
+[
+.B \-M
+.I katalog\-ostatniego\-montowania
+]
+[
+.B \-S
+]
+[
+.B \-T
+.I typ\-systemu\-plików
+]
+[
+.B \-V
+]
+.I urządzenie
+[
+.I liczba\-bloków
+]
+.sp
+.B "mke2fs \-O journal_dev"
+[
+.B \-b
+.I rozmiar\-bloku
+]
+.\" Brak jeszcze opcji specyficznych dla zewnętrznego dziennika (rozmiar jest ignorowany)
+.\" [
+.\" .B \-J
+.\" .I opcje\-dziennika
+.\" ]
+[
+.B \-L
+.I etykieta\-woluminu
+]
+[
+.B \-n
+]
+[
+.B \-q
+]
+[
+.B \-v
+]
+.I zewnętrzny\-dziennik
+[
+.I liczba\-bloków
+]
+.SH "OPIS"
+.B mke2fs
+jest używany do tworzenia linuksowego systemu plików ext2/3. Jest on
+tworzony na urządzeniu (zwykle partycji dysku twardego).
+.I urządzenie
+jest specjalnym plikiem, odpowiadającym urządzeniu, np.
+.IR /dev/hdXX .
+.I liczba\-bloków
+jest liczbą bloków na urządzeniu. Jeśli jest pominięte,
+.B mke2fs
+wykrywa ją automagicznie. Gdy program jest wywołany jako
+.B mkfs.ext3
+tworzony jest dziennik, tak jak gdyby była podana opcja
+.BR \-j .
+.SH "OPCJE"
+.TP 
+.I \-b " rozmiar\-bloku"
+Określa rozmiar bloku w bajtach. Poprawnymi wartościami są 1024, 2048 oraz
+4096 bajtów na blok. Gdy wartość ta zostanie pominięta, rozmiar\-bloku
+.B mke2fs
+jest ustalany na podstawie rozmiaru systemu plików oraz oczekiwanej jego
+eksploatacji (zobacz opcję
+.BR \-T ).
+.TP 
+.I \-c
+Powoduje, że przed utworzeniem systemu plików, urządzenie zostanie sprawdzone
+w poszukiwaniu uszkodzonych bloków. Gdy opcja ta zostanie podana dwa razy,
+wykonany będzie wolniejszy, destruktywny test w trybie odczyt\-zapis, zamiast
+szybkiego testu w trybie tylko\-do\-odczytu.
+.TP 
+.I \-f " rozmiar\-fragmentu"
+Określa rozmiar fragmentów w bajtach.
+.TP 
+.B \-F
+Zmuś 
+.B mke2fs
+do pracy, nawet gdy podane urządzenie wydaje się nie być specjalnym
+urządzeniem blokowym, lub wydaje się być zamontowane.
+.TP 
+.I \-i " bajty\-na\-i\-węzeł"
+Określa współczynnik bajty/i-węzeł.
+.B mke2fs
+tworzy i-węzeł co każde
+.I bajty\-na\-i\-węzeł
+bajtów dysku. Im większy współczynnik
+.IR bajty\-na\-i\-węzeł ,
+tym więcej i-węzłów. Generalnie, wartość ta nie powinna być
+mniejsza od rozmiaru bloku w systemie plików, gdyż wtedy byłoby utworzonych
+zbyt dużo i-węzłów. Ostrzegamy jednak, że wartość ta nie może być już
+zmieniona po utworzeniu systemu plików, więc ostrożnie dobierz wartość tego parametru.
+.TP 
+.B \-j
+Powoduje utworzenie system plików z księgowaniem ext3. Gdy nie podano opcji
+.BR \-J ,
+przy tworzeniu dziennika zostaną użyte domyślne parametry
+oraz dobrany będzie właściwy rozmiar tego dziennika (na podstawie wielkości
+systemu plików) przechowywanego we wnętrzu systemu plików. Zauważ, że musisz
+korzystać z jądra posiadającego wsparcie dla ext3, aby móc używać dziennika.
+.TP 
+.BI \-J " opcje\-dziennika"
+Tworzy dziennik ext3 używając opcji podanych z linii poleceń. Opcje te są
+oddzielone przecinkami i mogą posiadać argument, podawany po znaku równości ('=').
+Obsługiwane są następujące opcje:
+.RS 1.2i
+.TP 
+.BI size= rozmiar\-dziennika
+Tworzy wewnętrzny dziennik (np. przechowywany wewnątrz systemu plików) o
+rozmiarze
+.I rozmiar\-dziennika 
+megabajtów.
+Rozmiar dziennika musi wynosić co najmniej 1024 bloki systemu plików (np. 1MB
+przy korzystaniu z bloków 1k, 4MB przy blokach 4k, itd.) i co najwyżej 102.400
+bloków systemu plików.
+.TP 
+.BI device= zewnętrzny\-dziennik
+Przyłącza dziennik system plików do urządzenia blokowego znajdującego się na
+.IR zewnętrzny\-dziennik .
+Zewnętrzny dziennik musi być utworzony za pomocą polecenia
+.IP 
+.B mke2fs \-O journal_dev
+.I zewnętrzny\-dziennik
+.IP 
+Zauważ, że
+.I zewnętrzny\-dziennik
+musi być utworzony z takim samym rozmiarem bloku jak nowy system plików.
+.IP 
+Zamiast bezpośredniego podawania nazwy urządzenia,
+.I zewnętrzny\-dziennik
+można podać w postaci
+.BI LABEL= etykieta
+lub
+.BI UUID= UUID.
+Wtedy zewnętrzny dziennik zostanie znaleziony poprzez etykietę woluminu
+lub UUID przechowywany w superbloku ext2 na początku dziennika.
+Do wyświetlenia nazwy woluminu oraz UUID urządzenia dziennika użyj
+.BR dumpe2fs (8).
+Zobacz także opcję
+.B \-L
+.BR tune2fs (8).
+.RE
+.IP 
+Dla danego systemu plików można podać tylko jedną z opcji:
+.BR size " lub " device .
+.TP 
+.I \-l " nazwa\-pliku"
+Powoduje odczytanie listy uszkodzonych bloków z
+.IR nazwa\-pliku .
+Zauważ, że numery bloków na liście zepsutych bloków muszą być wygenerowane
+przy użyciu takiego samego rozmiaru bloków jaki użyty był w mke2fs.
+W rezultacie opcja
+.B \-c
+dla
+.B mke2fs
+jest prostszą i mniej podatną na błędy metodą sprawdzenia dysku pod kątem
+zepsutych bloków przed formatowaniem go, gdyż
+.B mke2fs
+automatycznie podaje odpowiednie parametry do programu
+.BR badblocks .
+.TP 
+.B \-L
+Ustawia nazwę woluminu dla systemu plików.
+.TP 
+.I \-m " procent\-zarezerowanych\-bloków"
+Określa procentową liczbę bloków zarezerwowanych dla superużytkownika. Wartość
+domyślna to 5%.
+.TP 
+.B \-M
+Ustawia katalog ostatniego montowania systemu plików. Opcja ta może być
+użyteczna ze względu na aplikacje, dla których katalog ostatniego montowania
+wskazuje, gdzie należy zamontować dany system plików.
+.TP 
+.B \-n
+powoduje, że mke2fs nie utworzy systemu plików, ale wyświetli, co by zrobił
+gdyby miał utworzyć system plików. Może być to użyteczne do ustalenia
+miejsca kopii zapasowej superbloków dla danego systemu plików, po warunkiem,
+że używane są parametry przekazane mke2fs podczas tworzenia systemu plików.
+(Z dodaną opcją
+.BR \-n ,
+oczywiście!)
+.TP 
+.BI \-N " liczba\-i\-węzłów"
+zmienia domyślnie wyliczoną liczbę i-węzłów, które powinny być zarezerwowane
+dla systemu plików (a która bazuje na liczbie bloków i współczynniku
+.IR bajty\-na\-i\-węzeł ).
+To pozwala użytkownikowi podać bezpośrednio liczbę żądanych i-węzłów.
+.TP 
+.BI \-o " tworzący\-os"
+Służy do ręcznej zmiany domyślnej wartości pola "creator os" (tworzący system operacyjny)
+systemu plików. Normalnie pole to jest ustawiane na natywny OS pod którym
+działa
+.BR mke2fs .
+.TP 
+.B "\-O \fIwłaściwość\fR[,...]"
+Tworzy system plików z podanymi właściwościami (opcjami systemu plików).
+Obecnie właściwości
+.B sparse_super
+i
+.B filetype
+włączone są domyślnie, gdy
+.B mke2fs
+uruchamiany jest na systemie z Linuksem 2.2 lub późniejszym (chyba, że
+tworzący\-os jest ustawiony na Hurd). Systemy plików, które mają być
+montowane na Linuksie starszym niż 2.2 lub innym jądrze powinny być tworzone
+z
+.B "\-O none"
+(lub
+.B "\-r 0"
+dla Linuksa 1.2). Wtedy właściwości te będą wyłączone, nawet gdy 
+.B mke2fs 
+jest uruchomiony na systemie, które je wspiera.
+.sp
+Obsługiwane są następujące opcje:
+.RS 1.2i
+.TP 
+.B sparse_super
+Tworzy system plików z mniejszą liczbą kopii zapasowych superbloku (oszczędza
+miejsce na dużych systemach plików).
+.TP 
+.B filetype
+Przechowuje informacje o typach plików we wpisach katalogów.
+.TP 
+.B has_journal
+Tworzy dziennik ext3 (tak jak przy użyciu opcji
+.BR \-j ).
+.TP 
+.B journal_dev
+Tworzy zewnętrzny dziennik ext3 na podanym urządzeniu zamiast w systemie
+plików ext2.
+Zauważ, że
+.I zewnętrzny\-dziennik
+musi być utworzony z takim samym rozmiarem bloku jak system plików, który
+będzie go używał.
+.RE
+.TP 
+.I \-q
+Ciche wywołanie. Przydatne gdy
+.B mke2fs
+jest uruchamiany ze skryptu.
+.TP 
+.BI \-r " rewizja"
+Ustawia rewizję (wersję) systemu plików dla nowego systemu plików. Zauważ, że
+jądra 1.2 wspierają jedynie systemy plików o rewizji 0. Domyślnie tworzone są
+systemy plików o rewizji 1.
+.TP 
+.BI \-R " opcje\-raid"
+Ustawia opcje związane z raid dla systemu plików. Opcje raid są oddzielone
+przecinkami i mogą przyjmować argument po znaku równości ('='). Obsługiwane są
+następujące opcje:
+.RS 1.2i
+.TP 
+.BI stride= strip\-size
+Konfiguruje system plików do pracy z tablicą RAID z
+.I stripe\-size
+blokami systemu plików na każdy pasek tablicy.
+.RE
+.TP 
+.B \-S
+Zapisuje jedynie superblok i deskryptory grupy. Przydaje się, gdy uszkodzony
+zostanie cały superblok i kopie zapasowe superbloków. Jest to ostateczna
+metoda odzyskania. Powoduje ona, że
+.B mke2fs
+ponownie inicjuje superblok i deskryptory grup, lecz nie dotyka tablicy
+i-węzłów, bloku, ani map bitowych i-węzłów.
+Natychmiast po użyciu tej opcji należy uruchomić program
+.BR e2fsck ,
+a i tak nie jest pewne, czy że uda się odzyskać jakiekolwiek dane. Podczas
+korzystania z tej opcji najważniejsze jest ustawienie dobrego rozmiaru
+bloku systemu plików. Bez tego nie ma żadnej szansy na odzyskanie danych.
+.\" .TP 
+.\" .BI \-t " test"
+.\" Sprawdź urządzenie pod kątem uszkodzonych bloków przed tworzeniem systemu
+.\" plików używając określonego testu.
+.TP 
+.BI \-T " typ\-fs"
+Określa, w jaki sposób dany system plików będzie wykorzystywany.
+Dzięki temu mke2fs może wybrać optymalne parametry dla systemu plików.
+Wspierane są następujące typy:
+.RS 1.2i
+.TP 1.2i
+news
+jeden i-węzeł na 4kb blok
+.TP 
+largefile
+jeden i-węzeł na megabajt
+.TP 
+largefile4
+jeden i-węzeł na 4 megabajty
+.RE
+.TP 
+.I \-v
+Wypisuje bardziej szczegółowe informacje.
+.TP 
+.B \-V
+Wypisuje numer wersji
+.B mke2fs
+i wyjdź.
+.SH "AUTOR"
+Ta wersja
+.B mke2fs
+została napisana przez Theodora Ts'o <tytso@mit.edu>.
+.SH "BŁĘDY"
+.B mke2fs
+przyjmuje opcję
+.B \-f,
+lecz obecnie ją ignoruje, gdyż ten system plików jeszcze nie obsługuje
+fragmentów.
+.br 
+Mogą być też inne. Proszę, zgłaszaj je autorowi.
+.SH "DOSTĘPNOŚĆ"
+.B mke2fs
+jest częścią e2fsprogs i jest dostępne z http://e2fsprogs.sourceforge.net.
+.SH "ZOBACZ TAKŻE"
+.BR badblocks (8),
+.BR dumpe2fs (8),
+.BR e2fsck (8),
+.BR tune2fs (8)

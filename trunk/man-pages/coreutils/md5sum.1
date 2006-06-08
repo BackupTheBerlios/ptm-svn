@@ -1,0 +1,139 @@
+.\" {PTM/GSN/0.5/23-02-1999/"oblicz i sprawdź skrót w formacie MD5"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page md5sum.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH MD5SUM "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+md5sum \- oblicz i sprawdź skrót pliku w formacie MD5
+.SH SKŁADNIA
+.TP 8
+.B md5sum
+.RB [ \-bctw ]
+.RB [ \-c
+.RI [ plik ]]
+.\" .RB [ \-s [\fIłańcuch\fP]]
+.RB [ \-\-binary ]
+.RB [ \-\-check= [\fIplik\fP]]
+.\" .RB [ \-\-string [ = \fIłańcuch\fP]]
+.br
+.RB [ \-\-text ]
+.RB [ \-\-status ]
+.RB [ \-\-warn ]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.RI [ plik ...]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo md5sum
+.RE
+lub
+.RS
+.BR "info md5sum" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBmd5sum\fP w wersji GNU.
+.PP
+.B md5sum
+tworzy dla każdego pliku wejściowego 128-bitowy "odcisk palca" ("skrót",
+sumę kontrolną), bądź może sprawdzić używając wyniku wcześniejszego
+uruchomienia czy skróty ciągle są takie same (tj. czy pliki się zmieniły).
+.PP
+Sumy obliczane są według opisu podanego w RFC 1321.
+Dla każdego z plików wypisywana jest linia ze skrótem, znakiem wskazującym
+na typ pliku wejściowego ('\fB*\fP' binarny, ' ' tekstowy) i jego nazwą.
+Jeśli nazwą pliku jest '-' lub nie podano plików to skrót obliczany jest
+dla standardowego wejścia.
+.SH OPCJE
+.TP
+.BR \-b ", " \-\-binary
+Traktuje wszystkie pliki wejściowe jako binarne.  Normalnie nie czyni to
+żadnej różnicy w systemach UN*Xowych, ale niektóre systemy mają odmienną
+wewnętrzną i zewnętrzną reprezentację tekstu (zwłaszcza znaków końca
+linii). Tryb ten jest domyślny w MS-DOS/MS-Windows.
+.TP
+.BR \-c ", " \-\-check [ = \fIplik\fP]
+Czyta nazwy plików i informację o skrótach z zadanego \fIpliku\fP
+(lub ze standardowego wejścia, jeśli nie podano pliku) i zgłasza, czy każdy
+z danych plików ma skrót zgodny z zapisanym. Plikiem wejściowym dla tego
+trybu pracy jest na ogół wynik wcześniejszego, tworzącego skróty,
+uruchomienia
+.BR md5sum .
+Plik wejściowy zawiera w każdej linii sumę MD5, znacznik binarium/tekstu,
+oraz nazwę pliku.  Dla każdej z linii czytany jest wymieniony w niej plik
+i wyliczany jego skrót. Następnie, jeśli skrót nie jest taki sam, jak podany
+w tej linii, test pliku oznaczony zostanie jako nieudany. W przeciwnym razie
+plik zdaje test. Domyślnie, dla każdej poprawnej linii na standardowe wyjście
+wypisywana jest jedna linia wskazująca, czy dany plik przeszedł test.
+Po przeprowadzeniu wszystkich kontroli, jeżeli wystąpiły jakieś niepowodzenia,
+na standardowe wyjście błędów wysyłane jest ostrzeżenie. Opcja \fB--status\fP
+wyłącza ten komunikat. Jeżeli nie można otworzyć lub przeczytać któregoś
+ze wskazanych plików, któraś z poprawnych linii zawiera niezgodny z aktualnym
+skrót odpowiedniego pliku albo nie znaleziono żadnej poprawnej linii, to
+\fBmd5sum\fP kończy pracę z niezerowym kodem.
+W przeciwnym razie kończy pracę pomyślnie.
+.ig
+.TP
+.BR \-s ", " \-\-string= \fIłańcuch
+Zamiast liczyć skrót dla pliku, oblicza go dla podanego łańcucha
+\fIłańcuch\fP.  Rezultat jest taki sam, jak w przypadku pliku zawierającego
+dokładnie ów \fIłańcuch\fP.
+..
+.TP
+.BR \-t ", " \-\-text
+Traktuje wszystkie pliki wejściowe jako tekst.  Jest to opcja odwrotna do
+.BR \-\-binary .
+.TP
+.BR --status
+Opcja przydatna tylko przy weryfikacji skrótów. Zakazuje wówczas domyślnego
+tworzenia raportu (po jednej linii na plik) i wysyłania ostrzeżenia
+z podsumowaniem niepowodzeń. Nieudane otwarcia lub odczyty plików nadal
+powodują odrębne komunikaty na standardowym wyjściu błędów. Jeżeli wszystkie
+wskazane pliki dają się czytać i mają skróty zgodne z zapisanymi, to \fBmd5sum\fP
+pomyślnie kończy pracę. W przeciwnym przypadku kończy działanie z kodem
+wskazującym na niepowodzenie.
+.TP
+.BR -w ", " --warn
+Przy weryfikacji skrótów ostrzega o niepoprawnie sformatowanych liniach
+z sumami kontrolnymi MD5. Opcja przydatna tylko wtedy, gdy poprawne są
+wszystkie oprócz kilku linii sprawdzanego wejścia.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR wc (1),
+.BR sum (1),
+.BR cksum (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

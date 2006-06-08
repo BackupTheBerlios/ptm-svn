@@ -1,0 +1,150 @@
+.\" {PTM/PB/0.1/28-09-1998/"zmień prawa dostępu do pliku"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page chmod.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH CHMOD "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+chmod \- zmienia prawa dostępu do pliku
+.SH SKŁADNIA
+.B chmod
+.RI [ opcja ]...
+.IR tryb  [\fB, tryb ]...
+.IR plik ...
+.br
+.B chmod
+.RI [ opcja ]...
+.IR tryb-ósemkowo
+.IR plik ...
+.br
+.B chmod
+.RI [ opcja ]...
+.BI --reference= rplik
+.IR plik ...
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo chmod
+.RE
+lub
+.RS
+.BR "info chmod" .
+.RE
+.PP
+Ta strona podręcznika man opisuje \fBchmod\fP w wersji GNU.
+.PP
+\fBchmod\fP zmienia prawa dostępu do każdego podanego pliku według parametru
+.IR tryb ,
+który jest albo symboliczną przedstawieniem zmian, których dokonać, albo
+ósemkową liczbą reprezentującą wzorzec bitowy nowych praw.
+.PP
+Format trybu symbolicznego to
+`[ugoa...][[+-=][rwxXstugo...]...][,...]'.  Można podać wiele operacji
+symbolicznych, oddzielonych przecinkami.
+.PP
+Kombinacja liter `ugoa' kontroluje, czyje prawa mają zostać zmienione:
+właściciela (u), innych użytkowników z tej samej grupy (g), innych
+użytkowników (o), lub wszystkich (a). Jeśli żadnego z tych parametrów nie
+podano, rezultatem jest użycie domyślne `a', lecz bity, które są ustawione
+w umask nie są zmieniane.
+.PP
+Operator `+' powoduje dodanie wybranych praw do istniejących; `-' powoduje
+ich odjęcie; `=' powoduje ustawienie dokładnie takich praw, jakie wybrano.
+.PP
+Litery `rwxXstugo' wybierają nowe prawa dla użytkowników: odczytu (read)
+(r), zapisu (write) (w), wykonania (eXecute) (lub dostępu do katalogu) (x),
+wykonania tylko jeśli plik jest katalogiem, lub już ma prawa wykonania dla
+danego użytkownika (X), ustawienia ID grupy podczas wywołania (s),
+zachowania tekstu programu na urządzeniu wymiany (t), prawa które posiada
+właściciel pliku (u), prawa innego użytkownika z grupy posiadającej plik
+(g), prawa innych użytkowników (o).
+.PP
+Tryb numeryczny jest podaniem jednej do czterech ósemkowych liczb (0-7),
+wyprowadzonych przez dodawanie wartości bitowych 4,2,1. Każda ominięta cyfra
+jest traktowana jak zero. Pierwsza cyfra wybiera SUID (4) i SGID (2) oraz
+atrybut zachowania obrazu tekstowego (1). Następna cyfra wybiera prawa dla
+właściciela: odczytu (4), zapisu (2), wykonania (1); trzecia cyfra prawa dla
+grupy posiadającej plik, a czwarta dla innych użytkowników, spoza grupy
+(analogicznie do cyfry dla właściciela).
+.PP
+.B chmod
+nigdy nie zmienia praw dowiązań symbolicznych, gdyż funkcja systemowa
+.B chmod
+nie potrafi tego dokonać. Nie jest to problemem, ponieważ prawa dowiązań
+symbolicznych nigdy nie są używane.
+Jednakże, dla każdego dowiązania symbolicznego, wymienionego
+w wierszu poleceń,
+.B chmod
+zmienia prawa wskazywanego przez nie pliku.
+W przeciwieństwie do powyższego,
+.B chmod
+ignoruje dowiązania symboliczne napotkane podczas rekurencyjnego
+przechodzenia przez katalogi.
+.SS OPCJE
+.TP
+.BR \-c ", " \-\-changes
+Jak \fB--verbose\fP, ale wyświetla tylko pliki, których prawa
+rzeczywiście się zmieniły.
+.TP
+.BR \-f ", " \-\-silent ", " \-\-quiet
+Nie wyświetla komunikatów o błędach dla plików, których praw nie dało się
+zmienić.
+.TP
+.BR \-v ", " \-\-verbose
+Wyświetla komunikaty diagnostyczne dla każdego przetwarzanego pliku.
+.TP
+.BR \-R ", " \-\-recursive
+Rekurencyjnie zmienia prawa katalogów i ich zawartości.
+.TP
+.BI \-\-reference= rplik
+Posługuje się prawami dostępu wskazanego \fIrpliku\fP zamiast wprost
+podanego \fItrybu\fP.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.PP
+Każdy \fItryb\fP składa się z co najmniej jednej z liter \fBugoa\fP, jednego
+z symboli \fB+-=\fP oraz z co najmniej jednej z liter \fBrwxXstugo\fP.
+.PP
+Prawa dostępu do plików opisano bliżej w podręczniku \fBfileutils\fP(1).
+.SH AUTOR
+Napisane przez Davida MacKenzie.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR chown (1),
+.BR chgrp (1),
+.BR ls (1),
+.BR find (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

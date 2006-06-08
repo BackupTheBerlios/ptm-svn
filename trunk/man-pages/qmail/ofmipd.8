@@ -1,0 +1,111 @@
+.\" Translation (C) 2000 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/14-07-2000/"przyjmuje pocztę wychodzącą przez OFMIP"}
+.TH ofmipd 8
+.SH NAZWA
+ofmipd \- przyjmuj pocztę wychodzącą przez OFMIP
+.SH SKŁADNIA
+.B ofmipd
+[
+.I name.cdb
+]
+.SH OPIS
+.B ofmipd
+przyjmuje wiadomości pocztowe poprzez
+Old-Fashioned Mail Injection Protocol (OFMIP),
+przepisuje je zgodnie z lokalnymi regułami,
+i wywołuje
+.B qmail-queue
+by je odłożyć w kolejce wychodzącej.
+.B ofmipd
+musi być wsparte paroma zmiennymi środowiskowymi;
+zobacz
+.BR tcp-environ (5).
+
+Obejrzyj też 
+.B http://pobox.com/~djb/proto/ofmip.html
+po więcej informacji na temat OFMIP.
+.SH "UŻYWANIE OFMIP"
+Możesz użyć
+.B tcpserver
+by ustawić
+.B ofmipd
+na wolnym porcie TCP.
+Niektóre miejsca w sieci używają portu 26.
+Niektóre używają portu 25 na adresie IP, który nie odbiera poczty przychodzącej.
+
+Zauważ, że
+.B ofmipd
+będzie podawał wiadomości do jakiegokolwiek miejsca przeznaczenia.
+Powinien być wywołany tylko dla połączeń od wcześniej autoryzowanych
+użytkowników.
+Używając
+.B tcpserver
+możesz zabronić połączeń,
+które nie pochodzą z zaufanych adresów IP, jak np. 127.0.0.1.
+
+Większość klientów poczty, które twierdzą, że są
+``klientami SMTP'' są tak naprawdę klientami OFMIP.
+Powinieneś raczej wskazać im
+.B ofmipd
+niż
+.BR qmail-smtpd .
+Niektóre klienty używają portu 26
+.I serwera
+jeśli powiesz im, że ``SMTP serwer'' to
+.IR serwer\fB:26 .
+.SH "PRZEPISYWANIE WIADOMOŚCI"
+.B ofmipd
+przepisuje każdą wiadomość w dokładnie taki sam sposób jak
+czyni to
+.B new-inject .
+Zamienia każdy adres kopertowy
+tak jak to przedyskutowano w
+.BR rewriting (5);
+czyści listy adresów w polach
+.BR To ,
+.BR Cc ,
+.BR Notice-Requested-Upon-Delivery-To ,
+.BR From ,
+.BR Sender ,
+.BR Reply-To ,
+.BR Mail-Reply-To ,
+oraz
+.BR Mail-Followup-To ;
+dodaje
+.B Date
+i
+.BR Message-ID ;
+lekceważy
+.BR Bcc ,
+.BR Apparently-To ,
+.BR Content-Length ,
+i
+.BR Return-Path ;
+i przenosi poszczególne pola na sam wierzch wiadomości.
+
+.B ofmipd
+przekształca także adres kopertowego nadawcy i linie
+.B From
+zgodnie z
+.I name.cdb
+jeśli jest obecny plik
+.I name.cdb .
+Obejrzyj
+.BR ofmipname (8)
+po więcej szczegółów.
+
+.B ofmipd
+akceptuje zakończenia linii LF i CR LF wewnątrz wiadomości.
+
+.B ofmipd
+nie dokonuje zliczania skoków (hopów)
+ani nie dokonuje rozpoznawania lokalnych adresów IP.
+.SH "ZOBACZ TAKŻE"
+new-inject(1),
+tcpserver(1),
+addresses(5),
+tcp-environ(5),
+rewriting(5),
+qmail-control(5),
+qmail-queue(8),
+ofmipname(8)

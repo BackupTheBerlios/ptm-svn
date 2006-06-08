@@ -1,0 +1,163 @@
+.\" {PTM/PB/0.1/28-09-1998/"podsumuj zużycie miejsca na dysku"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page du.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH DU "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+du \- szacuje zużycie miejsca na dysku
+.SH SKŁADNIA
+.B du
+.RB [ opcja ]...
+.RI [ plik ]...
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo du
+.RE
+lub
+.RS
+.BR "info du" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBdu\fP w wersji GNU.
+.PP
+.B du
+wyświetla ilość przestrzeni dyskowej zajmowanej przez każdy argument, a dla
+każdego argumentu katalogowego również przez elementy tego katalogu.
+Jeżeli nie podano argumentów, to \fBdu\fP podaje przestrzeń dyskową
+zajmowaną przez katalog bieżący.
+Przestrzeń jest mierzona w blokach po 1K, ale może to zostać unieważnione,
+m.in. przez zdefiniowanie zmiennej środowiskowej \fBPOSIXLY_CORRECT\fP (w tym
+przypadku używane są bloki po 512B). Więcej na ten temat znajduje się
+w sekcji `Rozmiar bloku' podręcznika \fBfileutils\fP(1).
+.SH OPCJE
+.TP
+.BR \-a ", " \-\-all
+Wypisuje liczby dla wszystkich plików, nie tylko katalogów.
+.TP
+.BI \-\-block\-size= rozmiar
+Używa bloków o wielkości \fIrozmiar\fP bajtów.
+.TP
+.BR \-b ", " \-\-bytes
+Wypisuje rozmiary w bajtach, bez względu na ustalony rozmiar bloku.
+Zobacz `Rozmiar bloku' w \fBfileutils\fP(1).
+.TP
+.BR \-c ", " \-\-total
+Podaje całkowitą sumę wszystkich argumentów po ich przetworzeniu.
+Może być używane do znalezienia całkowitej objętości zadanego zestawu
+plików lub katalogów.
+.TP
+.BR \-D ", " \-\-dereference-args
+Dereferencjuje dowiązania symboliczne, które są argumentami z wiersza
+poleceń.  Nie dotyczy to innych dowiązań symbolicznych.  Pomocne do
+uzyskania wykorzystania dysku przez katalogi takie jak @file{/usr/tmp},
+które często są dowiązaniami symbolicznymi.
+.TP
+.BR \-h ", " \-\-human\-readable
+Pokazuje objętości w postaci czytelniejszej dla człowieka, dodając literowe
+przyrostki określające potęgi 1024, np. `M' dla megabajtów. `M' oznacza
+1.048.576 bajtów. Jeżeli wolisz potęgi 1000 - użyj opcji \fB-H\fP
+(\fB--si\fP).
+.TP
+.BR \-H ", " \-\-si
+Podobnie jak \fB--human-readable\fP, ale posługuje się potęgami 1000
+a nie 1024. (SI - Międzynarodowy System Miar definiuje przyrostki potęg 1000).
+Przy zastosowaniu tej opcji przyrostek `M' oznacza 1.000.000 bajtów. Posłuż
+się opcją \fB-h\fP (\fB--human-readable\fP), jeśli wolisz potęgi 1024.
+.TP
+.BR \-k ", " \-\-kilobytes
+Pokazuje rozmiary w blokach 1024-bajtowych (kilobajtach).
+Jak \fB--block-size=1024\fP.
+Przesłania to domyślną wielkość bloku. Zobacz `Rozmiar bloku'
+w \fBfileutils\fP(1).
+.TP
+.BR \-l ", " \-\-count-links
+Liczy rozmiar wszystkich plików, nawet jeśli już się pojawiły (jako inne
+dowiązania twarde). Rozmiary plików o wielu dowiązaniach twardych są
+wówczas zliczane wielokrotnie.
+.TP
+.BI \-\-max\-depth=max_głębokość
+Pokazuje całkowitą objętość każdego z katalogów (i plików, jeżeli posłużono
+się opcją \fB--all\fP) będącego co najwyżej \fImax_głębokość\fP poziomów w
+dół hierarchii plików licząc od korzenia. Korzeń położony jest
+na poziomie 0, zatem \fBdu --max-depth=0\fP jest równoważnikiem \fBdu -s\fP.
+.TP
+.BR \-L ", " \-\-dereference
+Dereferencjuje wszystkie dowiązania symboliczne (pokazuje objętość zajmowaną
+przez plik lub katalog, na który wskazuje dowiązanie, zamiast objętości
+samego dowiązania).
+.TP
+.BR \-m ", " \-\-megabytes
+Podobnie jak \fB--block-size=\1048576\fP.
+.TP
+.BR \-S ", " \-\-separate-dirs
+Wyszczególnia rozmiar każdego katalogu osobno, nie włączając rozmiarów
+podkatalogów.
+.TP
+.BR \-s ", " \-\-summarize
+Wyświetla tylko objętość całkowitą każdego argumentu.
+.TP
+.BR \-x ", " \-\-one-file-system
+Pomija katalogi leżące na innym systemie plików niż ten, na którym znajduje
+się przetwarzany właśnie argument.
+.TP
+.BI \-\-exclude= wzorzec
+Podczas przetwarzania rekurencyjnego pomija pliki lub katalogi pasujące do
+\fIwzorca\fP. Na przykład, \fBdu --exclude='*.o'\fP wyklucza pliki o nazwach
+kończących się na `.o'.
+.TP
+.BI \-X " plik_wz\fR, " \-\-exclude\-from= plik_wz
+Podobnie do \fB--exclude\fP, ale pobiera wzorce wykluczeń z \fIpliku_wz\fP,
+po jednym na wiersz. Jeżeli \fIplikiem_wz\fP jest \fB-\fP, to wzorce
+pobierane są ze standardowego wejścia.
+.TP
+.B \-\-help
+Wyświetl informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.SH AUTOR
+Napisane przez Torbjorna Granlund, Davida MacKenzie, Larry'ego McVoy oraz
+Paula Eggert.
+.SH BŁĘDY
+Na systemach BSD, dla plików zamontowanych przez NFS z systemu HP-UX,
+.B du
+zgłasza rozmiary, które są o połowę mniejsze od poprawnych wielkości.
+Na HP-UX zgłasza rozmiary dwa razy większe od poprawnych, jeśli pliki są
+zamontowane przez NFS z BSD.  Jest to usterka HP-UX i ma wpływ również
+na program \fBdu\fP z tego systemu.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR df (1),
+.BR ls (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

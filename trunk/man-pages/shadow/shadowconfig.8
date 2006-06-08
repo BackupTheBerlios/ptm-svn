@@ -1,0 +1,26 @@
+.\" {PTM/WK/1999-09-14}
+.\" $Id: shadowconfig.8,v 1.3 2000/10/28 09:57:16 wojtek2 Exp $
+.TH SHADOWCONFIG 8 "19 kwietnia 1997" "Debian GNU/Linux"
+.SH NAZWA
+shadowconfig - przełącza ochronę haseł i grup przez pliki shadow
+.SH SKŁADNIA
+.B "shadowconfig"
+.IR on " | " off
+.SH OPIS
+.PP
+.B shadowconfig on
+włącza ochronę haseł i grup przez dodatkowe, przesłaniane pliki (shadow);
+.B shadowconfig off
+wyłącza dodatkowe pliki haseł i grup.
+.B shadowconfig
+wyświetla komunikat o błędzie i kończy pracę z niezerowym kodem jeśli
+znajdzie coś nieprawidłowego. W takim wypadku należy poprawić błąd
+i uruchomić program ponownie.
+
+Włączenie ochrony haseł, gdy jest ona już włączona lub jej wyłączenie,
+gdy jest wyłączona jest nieszkodliwe.
+
+W
+.IR /usr/doc/passwd/README.debian.gz ,
+można znaleźć krótkie wprowadzenie do ochrony haseł z użyciem dodatkowych
+plików haseł przesłanianych (shadow passwords) i związanych tematów.

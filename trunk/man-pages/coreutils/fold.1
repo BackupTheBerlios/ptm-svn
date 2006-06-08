@@ -1,0 +1,95 @@
+.\" {PTM/GSN/0.5/23-02-1999/"zawiń każdą linię wejścia by pasowała do określonej szerokości"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page fold.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH FOLD "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+fold \- zawiń każdą linię wejścia aby pasowała do określonej szerokości
+.SH SKŁADNIA
+.TP 6
+.B fold
+.RB [ \-bs ]
+.RB [ \-w
+.IR szerokość ]
+.RB [ \-\-bytes ]
+.RB [ \-\-spaces ]
+.br
+.RB [ \-\-width= \fIszerokość\fP]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.RI [ plik ...]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo fold
+.RE
+lub
+.RS
+.BR "info fold" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBfold\fP w wersji GNU.
+.PP
+.B fold
+wypisuje na standardowe wyjście określone pliki, lub standardowe wejście
+gdy nie zostały podane żadne pliki lub napotkano nazwę pliku '\-'.
+Łamie on długie linie na większą ilość krótszych linii
+wstawiając znak nowej linii w kolumnie 80.  Liczy on kolumny ekranowe,
+zatem znaki tabulacji przeważnie zajmują więcej niż jedną kolumnę,
+znaki backspace zmniejszają licznik kolumn, a znaki powrotu
+karetki ustawiają licznik kolumn z powrotem na zero.
+.SH OPCJE
+.TP
+.BR \-b ", " \-\-bytes
+Liczy bajty, a nie kolumny, tak iż znaki tabulacji, backspace
+i powrót karetki są liczone za jedną kolumnę każdy, tak jak inne
+znaki.
+.TP
+.BR \-s ", " \-\-spaces
+Łamie na granicy słów. Linia jest łamana po ostatnim znaku pustym
+wypadającym przed maksymalna długością linii. Jeśli nie ma takich znaków
+pustych, linia jest łamana na maksymalnej długości linii, jak zwykle.
+.TP
+.BR \-w ", " \-\-width= \fIszerokość
+Używa maksymalnej długości linii
+.I szerokość
+kolumn zamiast 80-ciu.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR fmt (1),
+.BR pr (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

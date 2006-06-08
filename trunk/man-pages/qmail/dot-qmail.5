@@ -1,0 +1,387 @@
+.\" Translation (c) 1999 Paweł Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/10-11-1999/"kontroluj dostarczanie wiadomości pocztowych"}
+.TH dot-qmail 5
+.SH NAZWA
+dot-qmail \- kontrola dostarczania wiadomości pocztowych
+.SH OPIS
+Zazwyczaj program
+.B qmail-local
+dostarcza każdą nadchodzącą wiadomość do twojej systemowej skrzynki,
+.IR domowy\fB/Mailbox ,
+gdzie
+.I domowy
+jest twoim katalogiem domowym.
+
+Może jednak w zamian tego zapisać pocztę do innego pliku lub katalogu,
+przesłać ją do innego adresu,
+przekazać do listy dyskusyjnej,
+albo nawet wykonywać jakieś programy,
+wszystko zgodnie z twoją kontrolą.
+.SH "PLIK QMAIL"
+By zmienić zachowanie lokalnego agenta dostarczającego 
+.BR qmail-local
+ustaw plik
+.B .qmail
+w swoim katalogu domowym.
+
+.B .qmail
+zawiera jedną lub więcej linii.
+Każda linia jest instrukcją dostarczania.
+.B qmail-local
+podąża za każdą podaną w kolejności instrukcją.
+Rozróżniamy pięć typów instrukcji dostarczania:
+1 -- komentarz; 2 -- program; 3 -- forward; 4 -- mbox; 5 -- maildir.
+.TP 5
+(1)
+Linie komentarzy zaczynają się znakiem krzyżyka:
+
+.EX
+     # to jest komentarz
+.EE
+
+.B qmail-local
+ignoruje te linie.
+.TP 5
+(2)
+Linie programu do uruchomienia zaczynają się pionową kreską:
+
+.EX
+     |preline /usr/ucb/vacation djb
+.EE
+
+.B qmail-local
+traktuje resztę linii jako komendę wołaną z poziomu
+.BR sh .
+Zobacz
+.B qmail-command(8)
+by uzyskać więcej informacji.
+.TP 5
+(3)
+Linia typu forward zaczyna się znakiem ampersand:
+
+.EX
+     &ja@moja.nowa.praca.com
+.EE
+
+.B qmail-local
+traktuje resztę tej linii jako adres poczty elektronicznej;
+używa
+.B qmail-queue
+by przekazać dalej wiadomość i dostarczyć ją pod wskazany adres.
+Adres musi zawierać pełną nazwę domenową;
+nie może zawierać dodatkowych spacji, pojedynczych nawiasów, albo komentarzy:
+
+.EX
+     # poniższe przykłady są błędne
+.br
+     &ja@nowa
+.br
+     &<ja@moja.nowa.praca.com>
+.br
+     & ja@moja.nowa.praca.com
+.br
+     &me@moja.nowa.praca.com (Nowy Adres)
+.EE
+
+Jeśli adres zaczyna się literą lub liczbą,
+to możesz pominąć znak ampersand:
+
+.EX
+     ja@moja.nowa.praca.com
+.EE
+
+Zauważ, że
+.B qmail-local
+pomija swoją nową zawartość linii
+.B Return-Path
+podczas przekazywania wiadomości dalej.
+.TP 5
+(4)
+Linia
+.I mbox
+zaczyna się znakiem ukośnika (ang. slash) lub kropki,
+przy czym nigdy nie kończy się ukośnikiem:
+
+.EX
+     /home/djb/Mailbox.sos
+.EE
+
+.B qmail-local
+traktuje całą linię jako nazwę pliku.
+Dołącza wiadomość pocztową do tegoż pliku używając w tym celu zajmowania plików
+w stylu
+.BR flock-a
+jeśli to tylko możliwe.
+.B qmail-local
+przechowuje wiadomość pocztową w formacie
+.I mbox
+opisanym w
+.BR mbox(5) .
+
+.B UWAGA:
+Na wielu systemach,
+każdy kto może odczytywać plik może zająć go przy pomocy
+.B flock
+i zamknąć w ten sposób dostarczanie
+.BR qmail-local
+na zawsze.
+Nigdy nie dostarczaj poczty do publicznie dostępnych plików!
+
+Jeśli
+.B qmail-local
+potrafi zająć plik, ale wystąpiły kłopoty z zapisem do niego
+(na przykład, ponieważ dysk jest pełen),
+to plik zostanie obcięty do swej poprzedniej, oryginalnej długości.
+Nie zapobiega to jednak uszkodzeniu skrzynki odbiorczej jeśli system
+ulegnie wypadkowi podczas dostarczania poczty.
+.TP 5
+(5)
+Linia
+.I maildir
+zaczyna się znakiem ukośnika lub kropki,
+a kończy się ukośnikiem:
+
+.EX
+     /home/djb/Maildir/
+.EE
+
+.B qmail-local
+traktuje całą linię jako nazwę katalogu w formacie
+.I maildir
+Bezpiecznie zapamiętuje nadchodzącą wiadomość do tego katalogu.
+Obejrzyj podręcznik
+.B maildir(5)
+po więcej szczegółów.
+.PP
+Jeśli
+.B .qmail
+ma ustawiony bit wykonywalności,
+to nie może zawierać żadnych linii typu program,
+.I mbox
+lub
+.I maildir .
+Jeśli
+.B qmail-local
+ujrzy jakiekolwiek z tych linii,
+zakończy pracę i wskaże na chwilową usterkę.
+
+Gdy
+.B .qmail
+jest kompletnie pusty (0 bajtów długości), lub jeśli nie istnieje,
+.B qmail-local
+postępuje według instrukcji
+.I defaultdelivery
+ustawionych przez administratora twojego systemu;
+normalnie
+.I defaultdelivery
+wskazuje na
+.BR ./Mailbox ,
+więc
+.B qmail-local
+dołącza wiadomość pocztową do pliku
+.B Mailbox
+w formacie
+.I mbox .
+
+.B .qmail
+może zawierać dodatkowe spacje i znaki tabulacji na końcu linii.
+Linie puste są dozwolone, lecz nie mogą występować jako pierwsze w pliku
+.BR .qmail .
+
+Jeśli plik
+.B .qmail
+jest zapisywalny przez wszystkich lub przez grupę,
+wtedy
+.B qmail-local
+wstrzymuje pracę i wskazuje na tymczasową usterkę.
+.SH "BEZPIECZNA EDYCJA PLIKU QMAIL"
+Przychodzące wiadomości mogą dotrzeć w każdym momencie.
+Jeśli chcesz bezpiecznie edytować swój plik
+.B .qmail
+ustaw najpierw bit przyklejenia (ang. sticky) dla swojego
+katalogu domowego:
+
+.EX
+     chmod +t $HOME
+.EE
+
+.B qmail-local
+odłoży chwilowo dostarczanie jakiejkolwiek wiadomości do
+ciebie jeśli twój katalog domowy jest "klejący" (lub
+zapisywalny przez grupę lub zapisywalny przez wszystkich, co nie powinno
+nigdy wystąpić).
+Upewnij się by wykonać
+
+.EX
+     chmod -t $HOME
+.EE
+
+kiedy już skończysz!
+Jest dobrym pomysłem przetestowanie swojego nowego pliku 
+.B .qmail
+w następujący sposób:
+
+.EX
+     qmail-local -n $USER ~ $USER '' '' '' '' ./Mailbox
+.EE
+.SH "ADRESY ROZSZERZEŃ"
+W systemie pocztowym
+.B qmail
+sterujesz wszystkimi lokalnymi adresami używając formy
+.IR użytkownik\fB-\fIcokolwiek ,
+równie dobrze jak 
+.I użytkownik
+samodzielnie,
+gdzie
+.I użytkownik
+jest nazwą loginową.
+Dostarczanie do
+.I użytkownik\fB-\fIcokolwiek
+jest kontrolowane przez plik
+.IR homedir/\fB.qmail\-\fIcokolwiek .
+(Reguły te mogą być zmienione przez administratora systemu;
+obejrzyj
+.BR qmail-users (5).)
+
+Użytkownik
+.B alias
+kontroluje wszystkie inne adresy.
+Dostarczanie 
+.I lokalne
+jest kontrolowane przez plik
+.IR homedir/\fB.qmail\-\fIlocal ,
+gdzie
+.I homedir
+jest katalogiem domowym
+.BR aliasa .
+
+W następującym opisie
+.B qmail-local
+zajmuje się wiadomością zaadresowaną do
+.IR lokalny@domena ,
+gdzie
+.I lokalny
+jest kontrolowany przez
+.BR .qmail\-\fIdod .
+I oto co on czyni.
+
+Jeśli
+.B .qmail\-\fIdod
+jest pusty,
+.B qmail-local
+postępuje według wskazówek określonych przez
+.I defaultdelivery
+ustawionych przez administratora.
+
+Jeśli
+.B .qmail\-\fIdod
+nie istnieje
+.B qmail-local
+spróbuje użyć jakichś innych, domyślnych plików
+.B .qmail
+Na przykład,
+jeśli zamiast naszego
+.I dod
+wstawimy
+.BR foo-bar ,
+to
+.B qmail-local
+spróbuje najpierw
+.BR .qmail-foo-bar ,
+potem
+.BR .qmail-foo-default ,
+i w końcu
+.BR .qmail-default .
+Jeśli żaden z plików nie istnieje
+.B qmail-local
+odbije wiadomość.
+(Wyjątek: dla podstawowego adresu
+.I użytkownika ,
+.B qmail-local
+traktuje nieistniejący plik
+.B .qmail
+tak samo jak pusty plik
+.BR .qmail .)
+
+.B OSTRZEŻENIE:
+Ze względów bezpieczeństwa,
+.B qmail-local
+zastępuje wszelkie kropki ciągu rozszerzenia
+.I dod
+znakami myślnika zanim dokona sprawdzenia
+.BR .qmail\-\fIdod .
+Z powodu przyjętej konwencji,
+.B qmail-local
+konwertuje wszelkie duże litery w ciągu
+.I dod
+do liter małych.
+
+Kiedy
+.B qmail-local
+przesyła dalej wiadomość, zgodnie z instrukcjami w
+.B .qmail\-\fIdod
+(lub
+.BR .qmail-default ),
+to sprawdza czy istnieje plik
+.B .qmail\-\fIdod\fB-owner\fP .
+Jeśli tak to
+używa adresu
+.I lokalny\fB-owner@\fIdomena
+jako kopertowego nadawcy (ang. sender) przekazywanej dalej wiadomości.
+W przeciwnym wypadku przepisywany jest oryginalny nadawca nadchodzącej wiadomości.
+Wyjątek:
+.B qmail-local
+zawsze przepisze oryginalnego nadawcę kopertowego 
+jeśli adres ten był pusty lub
+.BR #@[] ,
+np. jest to wiadomość odbita.
+
+.B qmail-local
+wspiera również
+.B zmienne kopertowe ścieżki powrotu (ang. variable envelope return paths)
+(VERPs):
+jeśli istnieje
+.B .qmail\-\fIdod\fB-\fP
+i
+.B .qmail\-\fIdod\fB-owner-default\fP
+także, to jako kopertowy nadawca używany jest adres
+.I lokalny\fB\-owner\-@\fIdomena\fB-@[] .
+Spowoduje to, że odbiorca
+.I odbiorca\fB@\fIhostodbiorcy
+ujrzy nadawcę kopertowego jako
+.IR lokalny\fB\-owner\-\fIodbiorca\fB=\fIhostodbiorcy\fB@\fIdomena .
+.SH "PRZECHWYTYWANIE BŁĘDÓW"
+Jeśli instrukcje doręczania zawiodą,
+.B qmail-local
+wstrzymuje natychmiastowo działanie i zgłasza usterkę.
+.B qmail-local
+zajmuje się przesyłaniem dalej wiadomości po wszelkich innych instrukcjach,
+więc jakikolwiek błąd wcześniejszy może zakłócić forwarding.
+
+Jeśli program kończy działanie z kodem 99,
+.B qmail-local
+ignoruje wszystkie początkowe linie pliku
+.BR .qmail ,
+lecz wciąż ma na uwadze poprzednie linie typu forward.
+
+By ustawić niezależne od siebie instrukcje,
+gdzie chwilowy lub krytyczny błąd w jednej z nich
+nie wpływa na inne,
+przenieś każdą z instrukcji do oddzielnego pliku
+.B .qmail\-\fIdod
+i ustaw swój główny plik
+.B .qmail
+tak, żeby przesyłać używając wszystkich plików
+.BR .qmail\-\fIdod .
+Zauważ, że
+.B qmail-local
+może sobie poradzić z dowolną liczbą linii typu forward równocześnie.
+.SH "ZOBACZ TAKŻE"
+envelopes(5),
+maildir(5),
+mbox(5),
+qmail-users(5),
+qmail-local(8),
+qmail-command(8),
+qmail-queue(8),
+qmail-lspawn(8)

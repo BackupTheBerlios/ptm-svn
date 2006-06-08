@@ -1,0 +1,128 @@
+.\" {PTM/PB/0.1/02-03-1998/"udostępnij dane o urządzeniach ipc"}
+.\" Translation 1999 Przemek Borys <pborys@dione.ids.pl>
+.\" Translation update: Robert Luberda <robert@debian.org>, Mar 2005, util-linux 2.12p
+.\" $Id: ipcrm.8,v 1.4 2005/03/17 10:55:38 robert Exp $
+.\"
+.\" Copyright 2002 Andre C. Mazzone (linuxdev@karagee.com)
+.\" May be distributed under the GNU General Public License
+.TH IPCRM 8 "ostatnia zmiana: 19 marca 2002" "ipcrm" "Podręcznik programisy linuksowego"
+.SH NAZWA
+ipcrm \- usuwa kolejkę komunikatów, zbiór semaforów lub id pamięci współdzielonej
+.SH SKŁADNIA
+.B ipcrm
+[
+.B \-M
+.I klucz
+|
+.B \-m
+.I id
+|
+.B \-Q
+.I klucz
+|
+.B \-q
+.I id
+|
+.B \-S
+.I klucz
+|
+.B \-s
+.I id
+] ...
+
+przestarzałe użycie:
+
+.BI ipcrm
+[
+.B shm
+|
+.B msg
+|
+.B sem
+]
+.IR id " ..."
+.SH OPIS
+.I ipcrm
+usuwa z systemu obiekty komunikacji międzyprocesowej Systemu V (IPC) oraz
+skojarzone z nimi struktury danych.
+Aby usunąć takie obiekty, należy być superużytkownikiem lub twórcą albo
+właścicielem tego obiektu.
+
+Istnieją trzy typy obiektów IPC Systemu V: pamięć współdzielona, kolejki
+komunikatów i semafory.
+Usuwanie obiektu typu kolejka komunikatów lub semafor jest natychmiastowe
+(niezależnie od tego, czy jakiś proces wciąż trzyma identyfikator IPC tego
+obiektu).
+Obiekt typu pamięć współdzielona jest usuwany tylko wtedy, gdy wszystkie
+obecnie połączone procesy usuną
+.RB ( shmdt (2))
+ten obiekt z ich wirtualnej przestrzeni adresowej.
+
+Obsługiwane są dwa style składni. Stara, historyczna składnia linuksowa składa się
+trzyliterowego słowa kluczowego, mówiącego, jakiej klasy obiekt ma być usunięty,
+po którym następuje jeden lub więcej identyfikatorów obiektów tego typu.
+
+Składania zgodna z SUS pozwala na podanie zera lub więcej obiektów wszystkich
+typów w pojedynczym wywołaniu. Obiekty mogą być określone albo przez klucz,
+albo przez identyfikator (patrz niżej). Zarówno klucze, jak i identyfikatory
+mogą być podane w postaci dziesiętnej, szesnastkowej (zaczynającej się od '0x'
+lub '0X') lub ósemkowej (zaczynającej się od '0')
+
+.SH OPCJE
+.TP
+.BI \-M " shmkey"
+usuwa segment pamięci współdzielonej utworzony z kluczem
+.IR shmkey ,
+gdy tylko ostatni proces się od niego odłączy.
+.TP
+.BI \-m " shmid"
+usuwa segment pamięci współdzielonej identyfikowany przez
+.IR shmid ,
+gdy tylko ostatni proces się od niego odłączy.
+.TP
+.BI \-Q " msgkey"
+usuwa kolejkę komunikatów utworzoną z kluczem
+.IR msgkey .
+.TP
+.BI \-q " msgid"
+usuwa kolejkę komunikatów identyfikowaną przez
+.IR msgid .
+.TP
+.BI \-S " semkey"
+usuwa semafor utworzony z kluczem
+.IR semkey .
+.TP
+.BI \-s " semid"
+usuwa semafor identyfikowany przez
+.IR semid .
+.LP
+Szczegóły usuwania są opisane w
+.IR msgctl (2),
+.IR shmctl (2)
+i
+.IR semctl (2).
+Identyfikatory i klucze mogą być znalezione za pomocą
+.IR ipcs (8).
+.SH UWAGI
+W swojej pierwszej implementacji linuksowej, ipcrm używało
+przestarzałej składni pokazanej w sekcji
+.BR SKŁADNIA .
+Od tego czasu została dodana funkcjonalność obecna w innych implementacjach
+*niksowych, mianowicie możliwość usuwania zasobów przez podanie klucza
+(a nie tylko identyfikatora) oraz zgodność składni polecenia. Dla
+zachowania wstecznej zgodności poprzednia składnia jest wciąż obsługiwana.
+.\" .SH AUTHORS
+.\" Andre C. Mazzone (linuxdev@karagee.com)
+.\" .br
+.\" Krishna Balasubramanian (balasub@cis.ohio-state.edu)
+.SH ZOBACZ TAKŻE
+.nh
+.BR ipcs (8),
+.BR msgctl (2),
+.BR msgget (2),
+.BR semctl (2),
+.BR semget (2),
+.BR shmctl (2),
+.BR shmdt (2),
+.BR shmget (2),
+.BR ftok (3)

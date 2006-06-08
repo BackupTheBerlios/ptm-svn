@@ -1,0 +1,361 @@
+.\" {PTM/GSN/0.5/23-02-1999/"przetłumacz lub usuń znaki"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page tr.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH TR "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+tr \- przetłumacz lub usuń znaki
+.SH SKŁADNIA
+.TP 4
+.B tr
+.RB [ \-cst ]
+.RB [ \-\-complement ]
+.RB [ \-\-squeeze\-repeats ]
+.br
+.RB [ \-\-truncate\-set1 ]
+.I łańcuch1
+.I łańcuch2
+.TP 4
+.B tr
+.RB [ \-cs ]
+.RB [ \-\-complement ]
+.RB [ \-\-squeeze\-repeats ]
+.I łańcuch1
+.TP 4
+.B tr
+.RB [ \-cd ]
+.RB [ \-\-complement ]
+.RB [ \-\-delete ]
+.I łańcuch1
+.TP 4
+.B tr
+.RB [ \-cds ]
+.RB [ \-\-complement ]
+.RB [ \-\-delete ]
+.RB [ \-\-squeeze\-repeats ]
+.br
+.I łańcuch1
+.I łańcuch2
+.TP 4
+.B tr
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo tr
+.RE
+lub
+.RS
+.BR "info tr" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBtr\fP w wersji GNU.
+.B tr
+kopiuje standardowe wejście na standardowe wyjście, dokonując jednej
+z poniższych operacji:
+.IP
+\(bu przekład, opcjonalnie ściśnięcie powtórzonych znaków w wyniku
+.br
+\(bu ściśnięcie powtórzonych znaków
+.br
+\(bu usunięcie znaków
+.br
+\(bu usunięcie znaków, potem ściśnięcie powtórzonych znaków w wyniku
+.PP
+Argumenty \fIłańcuch1\fP i (jeśli podany) \fIłańcuch2\fP definiują
+uporządkowane zbiory znaków, poniżej nazwane zb1 i zb2.  Owe zbiory to
+znaki z wejścia, na których działa
+.BR tr .
+Opcja
+.B \-\-complement
+(\fB\-c\fP) zastępuje zb1 jego dopełnieniem (wszystkimi znakami, których
+nie ma w zb1).
+.SS "OKREŚLANIE ZBIORÓW ZNAKÓW"
+.PP
+Format argumentów \fIłańcuch1\fP i \fIłańcuch2\fP przypomina format
+wyrażeń regularnych; jednakowoż, nie są to wyrażenia regularne, lecz
+tylko listy znaków.  Większość znaków w tych łańcuchach reprezentuje
+po prostu same siebie, ale łańcuchy mogą też, dla wygody, zawierać wyliczone
+poniżej skróty.  Niektórych z nich można użyć tylko w \fIłańcuch1\fP lub
+\fIłańcuch2\fP, jak zaznaczono poniżej.
+.PP
+\fBOdwrotny ukośnik\fP, po którym nie następuje znak spośród wymienionych
+poniżej powoduje komunikat o błędzie.
+.IP \ea
+Control-G.
+.IP \eb
+Control-H.
+.IP \ef
+Control-L.
+.IP \en
+Control-J.
+.IP \er
+Control-M.
+.IP \et
+Control-I.
+.IP \ev
+Control-K.
+.IP \eooo
+Znak o wartości podanej przez \fIooo\fP, czyli od 1 do 3 cyfr ósemkowych.
+.IP \e\e
+Odwrotny ukośnik.
+.PP
+\fBZakresy\fP: notacja `\fIm\fP\-\fIn\fP' interpretowana jest jako wszystkie
+znaki od \fIm\fP do \fIn\fP, w porządku rosnącym. \fIm\fP powinno występować
+w porządku sortowania przed \fIn\fP; jeśli tak nie jest, następuje błąd.
+Dla przykładu, `0\-9' jest tym samym co `0123456789'.
+Chociaż GNU
+.BR tr
+nie obsługuje składni System V używającej nawiasów kwadratowych do
+zamykania zakresów, tłumaczenia określone w tym formacie nadal będą
+działać, o ile nawiasy w łańcuch1 odpowiadają identycznym nawiasom w
+łańcuch2.
+.PP
+\fBPowtórzone znaki\fP: notacja `[\fIc\fP*\fIn\fP]' w \fIłańcuch2\fP
+interpretowana jest jako \fIn\fP kopii znaku \fIc\fP.  Tak więc `[y*6]'
+jest tym samym co `yyyyyy'.  Notacja `[\fIc\fP*]' w \fIłańcuch2\fP
+rozszerzana jest na tyle kopii \fIc\fP, ile potrzeba na to aby zb2 był
+tak długi jak zb1.
+Jeśli \fIn\fP zaczyna się od 0, jest reprezentowane ósemkowo, w przeciwnym
+razie dziesiętnie.
+.PP
+\fBKlasy znaków\fP: notacji `[:\fInazwa-klasy\fP:]' odpowiadają wszystkie
+znaki z (predefiniowanej) klasy zwanej \fInazwa-klasy\fP. Znaki nie są
+rozszerzane w jakimś szczególnym porządku, z wyjątkiem klas 'upper' i
+'lower', rozszerzanych w porządku rosnącym.
+Gdy podano zarówno opcję
+.B \-\-delete
+(\fB\-d\fP) jak i
+.B \-\-squeeze\-repeats
+(\fB\-s\fP) w \fIłańcuch2\fP można użyć każdej klasy znaków.  W przeciwnym
+razie w \fIłańcuch2\fP akceptowane są tylko klasy znaków 'upper' i 'lower',
+i to tylko wtedy, kiedy odpowiednie klasy 'upper' i 'lower' zostały
+określone na tej samej pozycji względnej w \fIłańcuch1\fP.  Takie
+postępowanie określa konwersję wielkości liter.  Nazwy klas podano niżej;
+jeśli poda się nieprawidłową nazwę klasy, powstaje błąd.
+.IP alnum
+Litery i cyfry.
+.IP alpha
+Litery.
+.IP blank
+Poziomy biały znak.
+.IP cntrl
+Znaki sterujące.
+.IP digit
+Cyfry.
+.IP graph
+Znaki drukowalne, z wyłączeniem spacji.
+.IP lower
+Małe litery.
+.IP print
+Znaki drukowalne, łącznie ze spacją.
+.IP punct
+Znaki interpunkcyjne.
+.IP space
+Pionowy lub poziomy biały znak (odstęp).
+.IP upper
+Duże litery.
+.IP xdigit
+Cyfry szesnastkowe.
+.PP
+\fBKlasy równoważne\fP: składnia `[=\fIc\fP=]' oznacza wszystkie
+znaki równoważne \fIc\fP, bez szczególnej kolejności.  Klasy równoważne
+to niedawny wynalazek pomyślany dla obsługi alfabetów nie-angielskich.
+Jednak nie istnieje, zdaje się, standardowa metoda ich zdefiniowania
+lub określenia ich zawartości.  Z tego powodu nie są one w pełni
+zaimplementowane w GNU
+.BR tr ;
+klasa równoważna każdego znaku składa się tylko z tego znaku, co
+obecnie czyni je konstrukcją bezużyteczną.
+.SS TŁUMACZENIE
+.PP
+.B tr
+dokonuje tłumaczenia gdy podane są zarówno \fIłańcuch1\fP jak i \fIłańcuch2\fP,
+a nie podano opcji \fB\-\-delete\fP (\fB\-d\fP).
+.B tr
+tłumaczy każdy znak swojego wejścia znajdujący się w zb1 na odpowiedni
+znak w zb2.  Znaki, których nie ma w zb1 przepuszczane są w postaci
+niezmienionej. Gdy jakiś znak pojawia się więcej niż jeden raz w zb1,
+a odpowiadające mu znaki w zb2 nie są takie same, używany jest tylko
+ostatni z nich.  Dla przykładu, poniższe dwa polecenia są równoważne:
+.RS
+.nf
+tr aaa xyz
+tr a z
+.fi
+.RE
+Typowym zastosowaniem
+.B tr
+jest konwersja małych liter na duże.  Można to zrobić na wiele sposobów.
+Oto trzy z nich:
+.RS
+.nf
+tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ
+tr a-z A-Z
+tr '[:lower:]' '[:upper:]'
+.fi
+.RE
+Gdy
+.B tr
+dokonuje tłumaczenia, zb1 i zb2 powinny normalnie być tej samej długości.
+Jeśli zb1 jest krótszy od zb2, dodatkowe znaki na końcu zb2 są ignorowane.
+.PP
+Z drugiej strony, podanie zb1 dłuższego od zb2 nie jest przewidziane:
+POSIX.2 mówi, że rezultat jest niezdefiniowany.  W takiej sytuacji
+.B tr
+BSD wydłuża zb2 do długości zb1 powtarzając ostatni znak zb2 tyle razy
+ile potrzeba.
+.B tr
+z System V obcina zb1 do długości zb2.
+.PP
+Domyślnie, GNU
+.B tr
+załatwia ten przypadek tak jak robi to
+.B tr
+z BSD.  Gdy podano opcję \fB\-\-truncate\-set1\fP (\fB\-t\fP) GNU
+.B tr
+obsługuje ten przypadek tak jak wersja z System V.
+Opcja ta jest ignorowana dla operacji innych niż tłumaczenie.
+.PP
+Zachowywanie się jak
+.B tr
+z System V w tym przypadku psuje stosunkowo częsty idiom z BSD:
+.RS
+.nf
+tr -cs A-Za-z0-9 '\e012'
+.fi
+.RE
+ponieważ konwertuje na znaki nowej linii tylko bajty zerowe (pierwszy element
+dopełnienia zb1), a nie wszystkie znaki nie-alfanumeryczne.
+.SS "ŚCISKANIE POWTÓRZEŃ I USUWANIE"
+.PP
+Jeśli podano tylko opcję \fB\-\-delete\fP (\fB\-d\fP),
+.B tr
+usuwa z wejścia wszystkie znaki znajdujące się w zb1.
+.PP
+Jeśli podano tylko opcję \fB\-\-squeeze\-repeats\fP (\fB\-s\fP),
+.B tr
+zastępuje w wejściu każdą sekwencję powtórzonych znaków znajdujących
+się w zb1 pojedynczym wystąpieniem tegoż znaku.
+.PP
+Jeśli podano zarówno opcję \fB\-\-delete\fP jak i \fB\-\-squeeze\-repeats\fP,
+.B tr
+najpierw wykonuje wszelkie usunięcia używając zb1, potem ściska
+powtórzenia pozostałych znaków używając zb2.
+.PP
+Opcji \-\-squeeze\-repeats można także używać podczas tłumaczenia.
+Wówczas
+.B tr
+najpierw dokonuje tłumaczenia, potem ściska powtórzenia pozostałych
+znaków używając zb2.
+.PP
+Oto kilka przykładów ilustrujących różne kombinacje opcji:
+.PP
+Usuwanie wszystkich bajtów zerowych:
+.RS
+tr -d '\e000'
+.RE
+.PP
+Umieszczenie każdego słowa w osobnej linii.  Konwertuje to wszystkie
+znaki nie-alfanumeryczne na znaki nowej linii, potem ściska każdy
+łańcuch powtórzonych nowych linii w pojedynczą nową linię:
+.RS
+tr -cs '[a-zA-Z0-9]' '[\en*]'
+.RE
+.PP
+Konwersja każdej sekwencji powtórzonych nowych linii w pojedynczą nową linię:
+.RS
+tr -s '\en'
+.RE
+.PP
+Wyszukiwanie w dokumencie podwójnych wystąpień słów. Na przykład, 
+zdarza się pisanie "do do", powtórzonych słów rozdzielonych znakiem
+nowej linii. Poniższy skrypt powłoki Bourne'a najpierw zamienia każdą
+sekwencję znaków interpunkcyjnych i znaków pustych na pojedynczy znak
+nowej linii. Powoduje to umieszczenie każdego "słowa" w osobnej linii.
+Następnie zamienia wszystkie duże litery na małe, i, na koniec, uruchamia
+`uniq' z opcją `-d', co powoduje wypisanie tylko słów, które były powtórzone
+obok siebie.
+.RS
+.nf
+#!/bin/sh
+cat "$@" \\
+   | tr -s '[:punct:][:blank:]' '\n' \\
+   | tr '[:upper:]' '[:lower:]' \\
+   | uniq -d
+.fi
+.RE
+.PP
+GNU
+.B tr
+akceptuje także następujące opcje, w kombinacji z innymi:
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SS "KOMUNIKATY OSTRZEGAWCZE"
+.PP
+Ustawienie zmiennej środowiskowej POSIXLY_CORRECT wyłącza niektóre
+ostrzeżenia i komunikaty o błędach, dla ścisłej zgodności z POSIX.2.
+Komunikaty te występują normalnie w następujących okolicznościach:
+.PP
+1. Gdy podano opcję
+.BR \-\-delete ,
+ale nie
+.BR \-\-squeeze\-repeats ,
+a podano \fIłańcuch2\fP, GNU
+.B tr
+domyślnie wypisuje komunikat o użyciu i kończy pracę, ponieważ
+\fIłańcuch2\fP nie zostałby użyty.  Specyfikacja POSIX mówi, że
+\fIłańcuch2\fP należy w tej sytuacji zignorować.  Jednak milczące
+ignorowanie argumentów to zły pomysł.
+.PP
+2. Gdy podano niejednoznaczne specjalne sekwencje ósemkowe.  Dla
+przykładu, \e400 to faktycznie \e40 plus cyfra 0, ponieważ ósemkowa wartość
+400 nie mieści się w pojedynczym bajcie.
+.PP
+Zauważ że GNU
+.B tr
+nie zapewnia pełnej zgodności z BSD lub System V.  Dla przykładu,
+nie istnieje opcja wyłączająca interpretację konstrukcji POSIX-owych
+[:alpha:], [=c=], i [c*10].  GNU
+.B tr
+nie usuwa także automatycznie bajtów zerowych, w odróżnieniu od
+tradycyjnych wersji UNIXowych, w których nie ma sposobu zachowania
+bajtów zerowych.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR expand (1),
+.BR unexpand (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

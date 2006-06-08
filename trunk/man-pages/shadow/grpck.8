@@ -1,0 +1,103 @@
+.\" {PTM/WK/1999-09-17}
+.\" Copyright 1992 - 1993, Julianne Frances Haugh
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of Julianne F. Haugh nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY JULIE HAUGH AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL JULIE HAUGH OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.TH GRPCK 1
+.SH NAZWA
+grpck \- weryfikacja spójności plików grup
+.SH SKŁADNIA
+.B grpck
+.RB [ -r ]
+.RI [ group
+.IR shadow ]
+.SH OPIS
+\fBgrpck\fR weryfikuje integralność informacji autentykacji systemowej.
+Sprawdzane są wszystkie pozycje w plikach \fI/etc/group\fR
+i \fI/etc/gshadow\fR, by upewnić się, że każda z nich posiada właściwy format
+i poprawne dane w każdym z pól. Użytkownik monitowany jest o usunięcie
+pozycji, które są sformatowane niepoprawnie lub posiadają inne nie dające
+się skorygować błędy.
+.P
+Kontrolowane jest czy każda pozycja posiada
+.sp
+.in +.5i
+- właściwą liczbę pól
+.br
+- unikalną nazwę grupy
+.br
+- poprawną listę członków i administratorów
+.in -.5i
+.sp
+.P
+Kontrola właściwej liczby pól i niepowtarzalnej nazwy grupy jest
+decydująca. Jeżeli pozycja posiada błędną liczbę pól, to użytkownik jest
+proszony o usunięcie całej pozycji (wiersza).
+Jeżeli decyzja o usunięciu nie zostanie potwierdzona, to pomijane są wszelkie
+dalsze sprawdzenia.
+Pozycja z powtórzoną nazwą grupy powoduje monit o usunięcie, ale nadal
+będą wykonywane pozostałe sprawdzenia.
+Wszystkie inne błędy dają ostrzeżenia a użytkownik jest zachęcany
+do uruchomienia polecenia \fBgroupmod\fR, by je poprawić.
+.P
+Polecenia działające na pliku \fI/etc/group\fR nie potrafią zmieniać
+uszkodzonych lub powielonych pozycji. W takich okolicznościach powinien być
+używany \fBgrpck\fR, by usunąć nieprawidłową pozycję.
+.SH OPCJE
+Domyślnie \fBgrpck\fR działa na plikach \fI/etc/group\fR oraz \fI/etc/gshadow\fR.
+Przy pomocy parametrów \fIgroup\fR i \fIshadow\fR użytkownik może wybrać inne
+pliki.
+Dodatkowo, można wykonać polecenie w trybie tylko-do-odczytu, poprzez
+podanie flagi \fB-r\fR.
+Powoduje to, że na wszystkie pytania dotyczące zmian zostanie, bez ingerencji
+użytkownika, użyta odpowiedź \fBnie\fR.
+.SH PLIKI
+.IR /etc/group " - informacja o kontach grup"
+.br
+.IR /etc/gshadow " - zakodowana informacja o hasłach i administratorach grup"
+.br
+.IR /etc/passwd " -informacja o użytkownikach"
+.SH ZOBACZ TAKŻE
+.BR groupmod (8),
+.BR group (5),
+.BR passwd (5),
+.BR shadow (5)
+.SH DIAGNOSTYKA
+Polecenie \fBgrpck\fR kończy pracę z następującymi wartościami kodów:
+.IP 0 5
+Powodzenie
+.IP 1 5
+Błąd składni
+.IP 2 5
+Jedna lub więcej złych pozycji pliku grup
+.IP 3 5
+Niemożliwe otwarcie plików grup
+.IP 4 5
+Niemożliwa blokada plików grup
+.IP 5 5
+Niemożliwa aktualizacja plików grup
+.SH AUTOR
+Julianne Frances Haugh (jockgrrl@ix.netcom.com)

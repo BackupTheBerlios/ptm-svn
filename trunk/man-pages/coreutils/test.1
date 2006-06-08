@@ -1,0 +1,237 @@
+.\" {PTM/LK/0.1/23-12-1998/"sprawdzanie typów plików"}
+.\" Tłumaczenie: 23-12-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.\" poszerzenie i aktualizacja do GNU sh-utils 2.0 PTM/WK/2000-V
+.ig
+Transl.note: based on GNU man page test.1 and sh-utils.info
+
+Copyright (C) 1994, 95, 96 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH TEST "1" FSF "maj 2000" "Narzędzia powłokowe GNU 2.0"
+.SH NAZWA
+test \- sprawdzanie typów plików i porównywanie wartości
+.SH SKŁADNIA
+.B test
+.RI [ wyrażenie ]
+.br
+.B test
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.SH OPIS
+Ta strona podręcznika man opisuje program \fBtest\fP w wersji GNU.
+.PP
+Zauważ, że w większości powłok istnieje wbudowane polecenie o tej samej
+nazwie i podobnym działaniu. Posługując się czystą nazwą polecenia
+w skrypcie bądź interaktywnie można otrzymać funkcjonalność różną od tu
+opisanej.
+.PP
+.B test
+zwraca kod zakończenia 0 (prawda) lub 1 (fałsz) zależnie od wyniku ewaluacji
+wyrażenia warunkowego
+.IR \'wyrażenie\' .
+Wyrażenia mogą być jedno- lub dwuparametrowe. Każda część wyrażenia musi być
+osobnym argumentem.
+.SH WYRAŻENIA WARUNKOWE
+Zwróć uwagę na to, że nawiasy powinny być chronione (np. odwrotnym ukośnikiem)
+przed interpretacją przez powłokę.
+.SS Sprawdzanie typu plików
+.PD 0
+.TP
+.B \-b \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i jest urządzeniem blokowym.
+.TP
+.B \-c \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i jest urządzeniem znakowym.
+.TP
+.B \-d \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i jest katalogiem.
+.TP
+.B \-f \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i jest zwykłym plikiem.
+.TP
+.B \-h \fIplik\fP
+.TP
+.B \-L \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i jest dowiązaniem symbolicznym.
+.TP
+.B \-p \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i jest nazwanym łączem (named pipe).
+.TP
+.B \-S \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i jest gniazdem (socket).
+.TP
+.BR \-t " [" \fIfd\fP ]
+Prawda, jeżeli plik o deskryptorze
+.I fd
+jest otwarty na terminalu. Jeżeli
+.I fd
+nie jest podane, jego wartość przyjmowana jest jako 1 (standardowe wyjście).
+.PD
+.SS Sprawdzanie praw dostępu
+.PD 0
+.TP
+.B \-g \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i ma ustawiony bit set-group-id.
+.TP
+.B \-k \fIplik\fP
+Prawda, jeżeli \fIplik\fP ma ustawiony bit ``sticky''.
+.TP
+.B \-r \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i może być czytany.
+.TP
+.B \-u \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i ma ustawiony bit set-user-id.
+.TP
+.B \-w \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i można do niego pisać.
+.TP
+.B \-x \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i może być wykonany.
+.TP
+.B \-O \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i jego właścicielem jest użytkownik o
+numerze równym aktualnemu efektywnemu UID.
+.TP
+.B \-G \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i należy do grupy o numerze równym
+efektywnemu GID.
+.PD
+.SS Sprawdzanie właściwości plików
+.PD 0
+.TP
+.B \-e \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje.
+.TP
+.B \-s \fIplik\fP
+Prawda, jeżeli \fIplik\fP istnieje i ma rozmiar większy niż zero.
+.TP
+\fIplik1\fP \-\fBnt\fP \fIplik2\fP
+Prawda, jeżeli \fIplik1\fP jest nowszy (zgodnie z datą modyfikacji) niż
+\fIplik2\fP.
+.TP
+\fIplik1\fP \-\fBot\fP \fIplik2\fP
+Prawda, jeżeli \fIplik1\fP jest starszy niż \fIplik2\fP.
+.TP
+\fIplik1\fP \fB\-ef\fP \fIplik2\fP
+Prawda, jeżeli \fIplik1\fP i \fIplik2\fP mają te same numery urządzenia oraz
+i-węzła, tj. są wzajemnymi twardymi dowiązaniami.
+.PD
+.SS Sprawdzanie łańcuchów znakowych
+Poniższe opcje sprawdzają właściwości łańcuchów. Dla \fBtest\fP łańcuchy nie
+są cytowane, choć może zachodzić potrzeba takiej ochrony przed
+interpretacją przez powłokę znaków o specjalnym dla niej znaczeniu, np.
+spacji.
+.PD 0
+.TP
+.B \-z \fIłańcuch\fP
+Prawda, jeżeli \fIłańcuch\fP ma długość zero.
+.TP
+.RB [ \-n "] " \fIłańcuch\fP
+Prawda, jeżeli długość
+.I łańcucha
+jest różna od zera.
+.TP
+\fIłańcuch1\fP \fB=\fP \fIłańcuch2\fP
+Prawda, jeżeli łańcuchy są jednakowe.
+.TP
+\fIłańcuch1\fP \fB!=\fP \fIłańcuch2\fP
+Prawda, jeżeli łańcuchy nie są jednakowe
+.PD
+.SS Testy numeryczne
+.PD 0
+.TP
+.I argument1 \fBOP\fP argument2
+.SM
+.B OP
+jest może być jednym z niżej wymienionych:
+.BR \-eq ,
+.BR \-ne ,
+.BR \-lt ,
+.BR \-le ,
+.BR \-gt
+lub
+.BR \-ge .
+.PP
+Powyższe dwuargumentowe operatory arytmetyczne zwracają prawdę, jeżeli
+\fIargument1\fP jest odpowiedni równy, nierówny, mniejszy niż, mniejszy
+lub równy, większy niż albo większy lub równy w stosunku do \fIargumentu2\fP.
+.I argument1
+oraz
+.I argument2
+mogą być liczbami całkowitymi ze znakiem (lub bez znaku) albo specjalnym
+wyrażeniem \fB\-l\fP \fIłańcuch\fP, którego wartością jest długość \fIłańcucha\fP.
+.PP
+Na przykład:
+.nf
+     test -1 -gt -2 && echo yes
+     => yes
+     test -l abc -gt 1 && echo yes
+     => yes
+     test 0x100 -eq 1
+     error--> test: integer expression expected before -eq
+.fi
+.PD
+.SS Operatory logiczne
+.PD 0
+.TP
+.BI ( " wyrażenie " )
+Prawda, jeżeli
+.I wyrażenie
+jest prawdziwe.
+.TP
+.B ! \fIwyrażenie\fP
+Prawda, jeżeli
+.I wyrażenie
+jest fałszywe.
+.TP
+\fIwyrażenie1\fP \-\fBa\fP \fIwyrażenie2\fP
+Prawda jeżeli obydwa wyrażenia są prawdziwe.
+.TP
+\fIwyrażenie1\fP \-\fBo\fP \fIwyrażenie2\fP
+Prawda jeżeli przynajmniej jedno z wyrażeń jest prawdziwe.
+.PD
+.SH OPCJE
+Jeżeli GNU
+.B test
+zostanie wywołany z dokładnie jednym argumentem, rozpoznawane są następujące
+opcje:
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach,
+kończy pracę.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.PP
+Pojedynczy argument nie będący opcją jest również dozwolony: jeśli nie jest
+on pusty, to
+.B test
+zwróci prawdę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-sh-utils@gnu.org>..
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR false (1),
+.BR true (1),
+.BR expr (1),
+.BR sh-utils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi powłokowych
+GNU wersji 2.0.

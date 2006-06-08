@@ -1,0 +1,483 @@
+.\" {PTM/PB/0.1/02-02-1999/"pobierz/ustaw parametry dysku twardego"}
+.\" Updated to version 4.1 2001 Andrzej M. Krzysztofowicz <ankry@pld.org.pl>
+.\" Updated to version 5.2 2002 Grzegorz Goławski <grzegol@pld.org.pl>
+.\" Translation 1999,2000 Przemek Borys <pborys@dione.ids.pl>
+.\" Huh... to był trudny kawałek tekstu ;)
+.\" 
+.TH "HDPARM" "8" "Maj 2002" "Wersja 5.2" ""
+.SH "NAZWA"
+hdparm \- pobierz/ustaw parametry dysku twardego
+.SH "SKŁADNIA"
+.B hdparm
+[ opcje ] [urządzenie] ..
+.SH "OPIS"
+.BI hdparm
+daje interfejs linii poleceń do różnych ioctli dysków twardych
+obsługiwanych przez podsystem sterownika ATA/IDE. Niektóre opcje mogą
+działać prawidłowo tylko z najnowszymi jądrami. Aby uzyskać najlepsze wyniki,
+należy skompilować hdparm z plikami naglówkowymi pochodzącymi ze źródeł
+najnowszego jądra.
+.SH "OPCJE"
+Bez opcji, zakłada się
+.IR acdgkmnru .
+.TP 
+.I \-a 
+Pobierz/ustaw wskaźnik odczytu z wyprzedzeniem (read\-ahead) systemu plików. 
+Jest to używane do
+zwiększania wydajności w sekwencyjnych odczytach dużych plików poprzez
+pobieranie dodatkowych bloków, w nadziei, że będą potrzebne danemu
+zadaniu. W obecnej wersji jądra (2.0.10) domyślnym ustawieniem tej opcji
+jest 8 sektorów (4KB). Wartość ta wydaje się być dobra dla większości
+zastosowań, lecz w systemach, gdzie w większości używa się losowych
+repozycjowań plikowych, ustawienie mniejszej wartości może zapewnić lepszą
+wydajność. Poza tym, wiele sterowników IDE ma także wbudowane oddzielne
+funkcje tego typu, które w wielu sytuacjach niwelują potrzebę odczytu
+z wyprzedzeniem przez system plików.
+.TP 
+.I \-A
+Włącz/wyłącz właściwość odczytu wyprzedzającego (read\-lookahead) 
+napędu IDE (zwykle domyślnie ON \-\- włączoną).
+.TP 
+.I \-b
+Pobierz/ustaw stan magistrali.
+.TP 
+.I \-B
+Ustaw właściwości Zaawansowanego Zarzaądzania Energią (APM),
+o ile napęd posiada wspomaganie dla niej. Mała wartość oznacza
+agresywne zarządzanie energią, a duża lepszą wydajność. Wartość
+255 wyłączy zarządzanie energią na tym dysku.
+.TP 
+.I \-c
+Zapytaj/włącz obsługę 32\-bitowego I/O w (E)IDE. Można użyć numerycznego
+parametru włączającego/wyłączającego obsługę:
+Obecnie obsługiwane wartości zawierają
+.I 0
+dla wyłączenia obsługi 32\-bitowego I/O,
+.I 1
+dla włączenia 32\-bitowej transmisji danych,
+.I 3
+dla włączenia 32\-bitowej transmisji danych ze specjalną sekwencją
+.I sync
+wymaganą przez wiele chipsetów. Wartość
+.I 3
+działa z prawie wszystkimi 32\-bitowymi chipsetami IDE, lecz naraża na
+dodatkowe koszty. Zauważ, że "32\-bit" odnosi się do transmisji poprzez
+magistralę PCI lub VLB, ale tylko do karty interfejsu; wszystkie napędy
+(E)IDE mają wciąż tylko 16\-bitowe połączenie z kartą interfejsu.
+.TP 
+.I \-C
+Sprawdź obecny stan trybu zasilania IDE. Jest on zawsze jednym z
+.B unknown
+(dysk nie obsługuje tego polecenia),
+.B active/idle
+(normalne działanie),
+.B standby
+(tryb oszczędzania energii, dysk się zatrzymał),
+lub
+.B sleeping
+(najniższy tryb oszczędzania energii, dysk jest całkowicie wyłączony).
+Za pomocą opcji
+.BR \-S ,
+.BR \-y ,
+.BR \-Y ,
+i
+.B \-Z
+można manipulować trybami zasilania IDE.
+.TP 
+.I \-d
+Włącz/wyłącz flagę "using_dma" (używający DMA) dla tego napędu. Opcja ta 
+działa tylko z kilkoma kombinacjami napędów i interfejsów, które obsługują DMA, 
+i które są znane sterownikowi IDE.
+Dobrym pomysłem jest również użycie odpowiedniej opcji
+.I \-X
+w połączeniu z
+.I \-d1
+aby zapewnić, że sam napęd jest zaprogramowany odpowiedni tryb DMA,
+choć wiele BIOSów powinno zrobić to za ciebie podczas uruchamiania
+komputera.
+Używanie DMA prawie zawsze powoduje zwiększenie wydajności i przepustowości
+oraz zmniejsza zużycie procesora. Lecz jest co najmniej kilka zestawień
+chipsetów i dysków, dla których użycie DMA nie zrobi większej różnicy,
+lub nawet spowolni dysk (na naprawdę spapranym sprzęcie). Ale to zależy.
+.TP 
+.I \-D
+Wyłącz/włącz wbudowaną w dnapęd właściwość zarządzania uszkodzeniami, za
+pomocą której jego firmware próbuje automatycznie zarządzać uszkodzonymi
+sektorami, przenosząc je na sektory "zapasowe", zarezerwowane fabrycznie
+do tego celu.
+.TP 
+.I \-E
+Ustaw szybkość cdrom\-u. NIE jest to konieczne do normalnego działania, gdyż
+napęd automatycznie sam przełącza prędkości. Jednak jeśli chcesz się nim
+bawić, podaj po tej opcji wartość szybkości, zwykle liczbę taką jak 2 lub 4.
+.TP 
+.I \-f
+Synchronizuj (sync) i wypróżniaj (flush) bufory podręczne urządzenia przy
+wyjściu.
+Operacja ta jest również wykonywana jako część pomiarów
+.I \-t
+i
+.IR \-T .
+.TP 
+.I \-g
+Pokaż geometrię dysku (cylindry, głowice, sektory), rozmiar (w
+sektorach), a także przesunięcie (w sektorach) początku urządzenia,
+poczynając od początku napędu.
+.TP 
+.I \-h
+Pokaż krótką informację o użyciu (pomoc).
+.TP 
+.I \-i
+Pokaż informacje identyfikacyjne, które zostały pobrane z napędu podczas
+startu, o ile są one dostępne.
+Jest to właściwość nowoczesnych napędów IDE i może nie być obsługiwana przez
+starsze urządzenia.
+Zwracane dane mogą nie być aktualne, zależnie od czynności wykonanych po 
+uruchomieniu systemu.
+Pomimo tego, pokazywana jest zawsze bieżąca wartość trybu operacji
+wielosektorowych (multiple sector mode count).
+Dla dokładniejszej interpretacji informacji identyfikacyjnych, odsyłamy do
+.I AT Attachment Interface for Disk Drives
+(ANSI ASC X3T9.2 working draft, revision 4a, April 19/93).
+.TP 
+.I \-I
+Żądaj informacji identyfikacji bezpośrednio od napędu. Informacja jest
+wyświetlana w nowym, rozszerzonym formacie z większą ilością szczegółów,
+niż przy starszej opcji
+.IR \-i .
+Dostępna jest także specjalna odmiana tej opcji "bez pasów bezpieczeństwa"
+.IR \-Istdin ,
+która nie może być używana z żadną inną opcją. Dzięki niej blok
+identyfikacyjny dysku będzie pobrany ze standardowego wejścia zamiast
+używania parametru /dev/hd*. Format tego bloku musi być
+.I dokładnie
+taki sam jak w "plikach" /proc/ide/*/hd*/identify.
+Ta odmiana jest przeznaczona do użytku z "bibliotekami" informacji
+identyfikacyjnych dysku, oraz z dyskami ATAPI, dla których standardowe
+mechanizmy mogą działać błędnie.
+.TP 
+.I \-k
+Pobierz/ustaw flagę keep_settings_over_reset (zachowaj ustawienia po
+resecie). Gdy ta flaga jest ustawiona, sterownik będzie chronił opcje
+.I \-dmu
+po miękkim resecie.
+Flaga ta domyślnie jest wyłączona, aby uchronić napęd przed pętlami
+resetowań, które mogłyby być spowodowane kommbinacjami ustawień
+.I \-dmu
+Opcja
+.I \-k
+powinna więc być ustawiana tylko gdy jesteś przekonany, że to co robisz jest
+dobre. Praktycznie, wszystko co trzeba zrobić aby przetestować konfigurację
+(przed użyciem \-k) to sprawdzenie czy napęd daje się odczytać/zapisać i
+czy proces nie generuje błędów w logach (komunikaty jądra) (w większości
+systemów zajrzyj do /var/adm/messages).
+.TP 
+.I \-K
+Ustaw flagę keep_features_over_reset (zachowaj właściwości po resecie).
+Jej ustawienie powoduje, że napęd odzyskuje po miękkim resecie ustawienia dla
+.IR \-APSWXZ .
+Nie wszystkie napędy wspierają tę właściwość.
+.TP 
+.I \-L
+Ustaw flagę blokowania drzwiczek (doorlock flag). Wartość
+.B 1
+spowoduje zablokowanie drzwiczek niektórych wymiennych dysków twardych
+(np. Syquest, ZIP, Jazz...). Z kolei wartość
+.B 0
+spowoduje odblokowanie drzwiczek. Normalnie Linux automatycznie zarządza
+mechanizmem blokowania drzwiczek, w zależności od eksploatacji dysku
+(zablokowane, gdy system plików jest zamontowany). Lecz podczas zamykania
+systemu może być to uciążliwe, gdy główna partycja znajduje się na dysku
+wymiennym, gdyż partycja ta pozostaje zamontowana (w trybie
+tylko\-do\-odczytu) po zamknięciu systemu. Dzięki użyciu tej opcji
+.B po
+przemontowaniu głównego systemu plików w trybie tylko\-do\-odczytu możliwe jest
+wyjęcie kasety ze stacji po zamknięciu systemu.
+.TP 
+.I \-m
+Pobierz/ustaw licznik sektorów dla wielosektorowego I/O w napędzie.
+Ustawienie
+.B 0
+wyłącza tę właściwość. Tryb ten (inaczej znany jako IDE Block Mode) jest
+właściwością większości nowoczesnych dysków twardych IDE, zezwalającą na
+transfer wielu sektorów na przerwanie I/O, w przeciwieństwie do tradycyjnego
+jednego sektora. Gdy włączona jest ta właściwość, zazwyczaj obciążenie I/O
+przez system zmniejsza się o 30\-50%. W wielu systemach powoduje to także
+zwiększenie przepływu danych o 5% do 50%. Mimo to, niektóre napędy
+(najbardziej zauważalnie seria WD Caviar),
+wydają się działać wolniej w tym trybie. Różnie to jednak bywa.
+Większość napędów wspiera minimalny zestaw ustawień obejmujący 2, 4, 8 i 16
+(sektorów). Dla niektórych dysków możliwe są także większe wartości.
+Ustawienie 16 lub 32 wydaje się optymalnym dla wielu systemów.
+Western Digital zaleca niższe ustawienia od 4 do 8 na wielu z ich dysków,
+a to z powodu małych (32KB) buforów w napędach i niezoptymalizowanych
+algorytmów buforowania.
+Opcja
+.B \-i
+może służyć do znajdywania maksymalnej wspieranej wartości
+zainstalowanego napędu (szukaj MaxMultSect na wyjściu).
+Niektóre napędy twierdzą, że wspierają ten tryb, lecz tracą dane przy
+niektórych ustawieniach. W rzadkich wypadkach, takie błędy mogą spowodować
+\fBpoważne uszkodzenie systemu plików\fP.
+.TP 
+.I \-M
+Pobierz/ustaw wartość Automatycznego Zarządzania Głośnością (Automatic
+Acoustic Management \- AAM). Większość nowych dysków ma możliwość zwolnienia
+obrotów głowicy aby zredukować poziom hałasu. Wartości mogą być z przedziału
+od 0 do 254. 128 jest najcichszym (a zatem najwolniejszym) ustawieniem,
+a 254 najszybszym (i najgłośniejszym). Niektóre dyski mają tylko dwa poziomy
+(cichy / szybki), a inne mogą przyjmować wszystkie wartości od 128 do 254.
+.B TA OPCJA JEST EKSPERYMANTALNA I NIEZBYT DOBRZE PRZETESTOWANA. UŻYWASZ JEJ NA WŁASNE RYZYKO.
+.TP 
+.I \-n
+Pobierz lub ustaw flagę "ignore write errors" (ignoruj błędy zapisu) w
+sterowniku. NIE baw się tym bez uprzedniego zapoznania się z kodem źródłowym
+sterownika.
+.TP 
+.I \-p
+Próba przeprogramowania chipsetu interfejsu IDE na określony tryb PIO, lub
+próba automatycznego dostosowania się do "najlepszego" trybu PIO wspieranego
+przez napęd. Właściwość ta jest wspierana w jądrze tylko dla kilku "znanych"
+chipsetów. Niektóre chipsety IDE nie są w stanie zmienić trybu PIO dla
+pojedynczego napędu; wówczas opcja ta może spowodować ustawienie trybu
+PIO dla
+.I obydwu
+napędów. Wiele chipsetów IDE wspiera albo mniej, albo więcej niż standardowe
+6 (od 0 do 5) trybów PIO, więc dokładne ustawienie szybkości, które
+właściwie jest zaimplementowane, będzie różnić się zależnie od wyrafinowania
+chipsetu/sterownika.
+.I Używaj z wielką ostrożnością!
+Właściwość ta nie chroni przed nierozwagą, a niepomyślne działanie może
+spowodować
+.I poważne uszkodzenie systemu plików!
+.TP 
+.I \-P
+Ustaw maksymalny licznik sektorów dla wewnętrznych mechanizmów preodczytu
+napędu. Nie wszystkie napędy wspierają tę właściwość.
+.TP 
+.I \-q
+Obsłuż następną opcję cicho, nie wydając komunikatów na wyjście. Jest to
+przydatne do zmniejszenia zamieszania na ekranie w wypadku uruchamiania z
+/etc/rc.c/rc.local.
+Nie można stosować do opcji
+.IR \-i ,
+.IR \-v ,
+.IR \-t ,
+oraz
+.IR \-T .
+.TP 
+.I \-Q
+Ustaw głębokość tagowanej kolejki (tagged queue) (1 lub większą), lub
+wyłącz kolejkowanie (0). Działa to tylko z nowszymi jądrami serii 2.5.xx (lub
+późniejszych serii) i tylko z niektórymi, aktualnie wspierającymi tę funkcję
+sterownikami.
+.TP 
+.I \-r
+Pobierz/ustaw flagę read\-only (tylko do odczytu) urządzenia. Gdy jest
+ustawiona, operacje zapisu nie są na tym urządzeniu dozwolone.
+.TP 
+.I \-R
+Zarejestruj interfejs IDE.
+.B Niebezpieczne.
+Zobacz opis opcji
+.B \-U
+aby zdobyć więcej informacji.
+.TP 
+.I \-S
+Ustaw timeout standby dla napędu.
+Wartość ta jest używana przez napęd w celu uzyskania informacji o tym, jak
+długo oczekiwać (bez aktywności dyskowych) przed wyłączeniem silnika w
+celach oszczędności mocy. W takich warunkach, dysk może potrzebować do 30
+sekund aby odpowiedzieć na nagłe odwołanie, choć większość napędów robi to
+znacznie szybciej. Wartość 0 oznacza wyłączenie tej właściwości. Wartości od
+1 do 240 określają wielokrotności 5 sekund, czyli dają timeouty od 5 sekund
+do 20 minut. Wartości od 241 do 251 okreslają 1 do 11 jednostek po 30 minut
+dla timeoutów od 30 minut do 5.5 godzin. Wartość 252 oznacza timeout 21
+minut, 253 ustawia timeout zdefiniowany przez dostawcę, a 255 jest
+interpretowane jako 21 minut plus 15 sekund.
+.TP 
+.I \-T
+Dokonuj pomiarów czasu odczytów z cache dla celów porównawczych i testów
+wydajnościowych. Aby uzyskać miarodajne wyniki, operacja ta powinna być
+powtarzana 2\-3 razy na nieaktywnym pod innymi względami systemie (bez innych
+aktywnych procesów) z przynajmniej kilkoma megabajtami wolnej pamięci.
+Wyświetlana jest szybkość odczytu bezpośrednio z linuksowych buforów cache,
+bez dostępu do dysku. Wartość ta jest wskaźnikiem przepływu danych między
+procesorem, cache i pamięcią systemu.
+Jeśli podano również opcję
+.IR \-t ,
+to wynik zgłaszany przez operację
+.I \-t
+zostanie zmodyfikowany o czynnik korygujący oparty na wyniku
+.IR \-T .
+.TP 
+.I \-t
+Dokonuj pomiarów czasu odczytów z urządzenia dla celów porównawczych i
+testów wydajnościowych. Aby uzyskać miarodajne wyniki, operacja ta powinna
+być powtarzana 2\-3 razy na nieaktywnym pod innymi względami systemie (bez
+innych aktywnych procesów) z przynajmniej kilkoma megabajtami wolnej
+pamięci. Wyświetlana jest szybkość odczytu poprzez bufory cache z dysku, bez
+wcześniejszego cache'owania danych. Wartość ta jest miarą szybkości, z jaką
+napęd jest w stanie obsługiwać liniowe odczyty danych pod Linuksem
+bez obciążenia związanego z systemem plików. Aby zapewnić dokładne pomiary,
+cache jest opróżniany za pomocą ioctl BLKFLSBUF. Jeśli podano również opcję
+.IR \-T ,
+to wynik zgłaszany przez operację
+.I \-t
+zostanie zmodyfikowany o czynnik korygujący oparty na wyniku
+.IR \-T .
+.TP 
+.I \-u
+Pobierz/ustaw flagę interrupt\-unmask napędu. Ustawienie 
+.B 1
+zezwala sterownikowi na niemaskowanie innych przerwań podczas przetwarzania
+przerwania dyskowego, co w znaczącym stopniu zmniejsza czas reakcji na
+Linuksa na polecenia użytkownika i eliminuje błędy "serial port overrun".
+.B Używając tej opcji nleży zachować ostrożność:
+niektóre kombinacje napędu/kontrolera nie radzą sobie dobrze z tą
+właściwością, co może spowodować
+\fBpoważne uszkodzenie systemu plików\fP.
+Praktycznie, interfejsy
+.B CMD\-640B
+i
+.B RZ1000
+(E)IDE mogą być
+.B niestabilne
+(z powodu usterek sprzętowych) gdy opcja ta jest używana z wersjami jądra
+wcześniejszymi niż 2.0.13. Wyłączenie właściwości
+.B IDE prefetch
+tych interfejsów (zwykle ustawienie BIOS/CMOS) daje bezpieczne rozwiązanie
+tego problemu dla wcześniejszych jąder.
+.TP 
+.I \-U
+Wyrejestruj interfejs IDE.
+.B Niebezpieczne.
+Do użycia wraz z opcją
+.BR \-R .
+Dedykowane dla sprzętu skonstruowanego specjalnie do wymiany
+"na gorąco" (hot\-swapping, bardzo rzadki!).
+Używaj świadomie z zachowaniem
+.B szczególnej ostrożności
+gdyż może to łatwo zawiesić lub uszkodzić twój system.
+Źródłowa dystrybucja hdparm zawiera katalog 'contrib' z kilkoma skryptami
+wspomagającymi wymianę "na gorąco" na UltraBay z ThinkPad 600E.
+Używaj na własne ryzyko.
+.TP 
+.I \-v 
+Wypisz wszystkie ustawienia, poza \-i (tak jak \-acdgkmnru dla IDE, \-gr
+dla SCSI lub \-adgr dla XT). Jest to też domyślne zachowanie, kiedy nie poda
+się żadnych opcji.
+.TP 
+.I \-w
+Zresetuj urządzenie (NIEBEZPIECZNE). NIE używaj tej opcji. Jest ona tylko do
+użytku w nieoczekiwanych sytuacjach, gdy dla przywrócenia dysku do stanu
+używalności i tak może być konieczne przeładowanie systemu.
+.TP 
+.I \-W
+Włącz/wyłącz właściwość cache'owania zapisu w napędach IDE (domyślny stan
+jest nieokreślony i zależny od modelu/producenta).
+.TP 
+.I \-x 
+Przestaw urządzenie do wymiany "na gorąco" (hotswap) (NIEBEZBIECZNE).
+.TP 
+.I \-X 
+Ustaw tryb transferu IDE dla nowszych napędów (E)IDE/ATA.
+Jest to zazwyczaj używane łącznie z
+.I \-d1
+gdy włacza się DMA do/z napędu na wspieranym chipsecie interfejsu, przy czym
+.I \-X mdma2
+służy do wyboru trybu transferów multiword DMA mode2 a
+.I \-X sdma1
+do wyboru prostego trybu mode1 transferów DMA.
+Na systemach, które wspierają UltraDMA użycie
+.I \-X udma2
+służy do ustawiania trybu transferów UltraDMA mode2 (będziesz musiał
+przygotować wcześniej chipset do użycia UltraDMA). Poza tym, użycie tej opcji
+jest
+.I rzadko potrzebne
+gdyż większość/wszystkie nowoczesne napędy IDE domyślnie ustawiają się w
+najszybszym ze swoich trybów PIO przy włączaniu. Manipulowanie tym może być
+bezcelowe i ryzykowne. Na dyskach, które wspierają alternatywne tryby
+transferu,
+.I \-X
+może służyć do przełączania 
+.I tylko
+trybu napędu.
+Przed zmianą trybu transferu, interfejs IDE powinien być ustawiony za pomocą
+zworek lub zaprogramowany (zobacz opcję
+.IR \-p )
+do nowego trybu, aby zapobiec utracie i/lub zniszczeniu danych.
+.I Używaj tego ze szczególną uwagą!
+Dla trybów transferu PIO (Programmed Input/Output), używanych przez Linuksa,
+wartość ta jest zwyczajnie oczekiwanym numerem trybu PIO plus 8. Dlatego
+wartość 09 ustawia tryb PIO mode1, 10 PIO mode2, a 11 wybiera PIO mode3.
+Ustawienie 00 odtwarza "domyślny" tryb PIO dysku, a 01 wyłącza IORDY. Dla
+UltraDMA wartością jest oczekiwany numer trybu UltraDMA plus 64.
+.TP 
+.I \-y
+Zmuś napęd IDE do natychmiastowego przejścia w tryb mniejszego zużycia
+energii:
+.B standby.
+To najczęściej powoduje zwolnienie pracy dysku. aktualny tryb może być
+sprawdzony dzięki opcji
+.IR \-C .
+.TP 
+.I \-Y
+Zmuś napęd IDE do natychmiastowego przejścia w tryb najmniejszego zyżycia
+energii:
+.B sleep.
+To kompletnie wyłącza napęd. Aby napęd był dostępny ponownie potrzebny jest
+twardy lub miękki reset (sterownik IDE Linuksa automatycznie wykona reset
+gdy będzie potrzebny).
+Aktualny tryb może być sprawdzony dzięki opcji
+.IR \-C .
+.TP 
+.I \-z
+Zmuś jądro do ponownego odczytu tablicy partycji podanych urządzeń.
+.TP 
+.I \-Z
+Wyłącz automatyczne funkcje oszczędzania energii w niektórych napędach
+Seagate (modelach ST3xx?), aby uchronić je od wyłączania się w
+nieoczekiwanych momentach.
+.SH "BŁĘDY"
+Jak zauważono powyżej, opcje
+.B \-m sectcount
+i
+.B \-u 1
+powinny być używane z ostrożnością, najlepiej na systemie plików tylko dla
+odczytu. Większość napędów pracuje z tymi właściwościami dobrze, lecz
+zdarzają się wyjątki. System plików może wtedy ulec zniszczeniu. Pamiętaj o
+backupie przed takimi eksperymentami!
+.PP 
+Niektóre opcje (np. \-r dla SCSI) mogą nie działać ze starszymi jądrami,
+w których potrzebne ioctl()'e nie były wspierane.
+.PP 
+Chociaż to narzędzie jest skierowane przede wszystkim do użytku z 
+napędami dysków twardych (E)IDE, to część opcji jest również prawidłowa
+(i dozwolona) w użyciu z dyskami twardymi SCSI oraz z dyskami MFT/RLL z
+interfejsem XT.
+.SH "AUTOR"
+.B hdparm
+został napisany przez Marka Lorda <mlord@pobox.com>,
+głównego twórcę i opiekuna sterownika (E)IDE dla Linuxa.
+.PP 
+Kod wyłączający automatyczne oszczędzanie energii w Seagate został napisany
+przez Tomiego Leppikangasa <tomilepp@paju.oulu.fi>.
+.SH "ZOBACZ TAKŻE"
+.B AT Attachment Interface for Disk Drives,
+ANSI ASC X3T9.2 working draft, revision 4a, April 19, 1993.
+.PP 
+.B AT Attachment Interface with Extensions (ATA\-2),
+ANSI ASC X3T9.2 working draft, revision 2f, July 26, 1994.
+.PP 
+.B AT Attachment with Packet Interface \- 5 (ATA/ATAPI\-5),
+T13\-1321D working draft, revision 3, February 29, 2000.
+.PP 
+.B AT Attachment with Packet Interface \- 6 (ATA/ATAPI\-6),
+T13\-1410D working draft, revision 3b, February 26, 2002.
+.PP 
+.B Western Digital Enhanced IDE Implementation Guide,
+by Western Digital Corporation, revision 5.0, November 10, 1993.
+.PP 
+.B Enhanced Disk Drive Specification,
+by Phoenix Technologies Ltd., version 1.0, January 25, 1994.

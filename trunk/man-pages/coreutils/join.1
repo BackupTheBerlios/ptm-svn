@@ -1,0 +1,193 @@
+.\" {PTM/GSN/0.5/23-02-1999/"połącz linie dwóch plików według wspólnych pól"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page join.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH JOIN "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+join \- połącz linie dwóch plików według wspólnych pól
+.SH SKŁADNIA
+.TP 6
+.B join
+.RB [ \-a
+.BR 1 | 2 ]
+.RB [ \-v
+.BR 1 | 2 ]
+.RB [ \-e
+.IR łańcuch ]
+.RB [ \-i ]
+.RB [ \-\-ignore\-case ]
+.br
+.RB [ \-o
+.IR lista-pól ...]
+.RB [ \-t
+.IR znak ]
+.RB [ \-j [ 1 | 2 ]
+.IR pole ]
+.br
+.RB [ \-1
+.IR pole ]
+.RB [ \-2
+.IR pole ]
+.I plik1
+.I plik2
+.TP 6
+.B join
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo join
+.RE
+lub
+.RS
+.BR "info join" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBjoin\fP w wersji GNU.
+.PP
+.B join
+wypisuje na standardowe wyjście linię dla każdej pary linii wejściowych
+o identycznych polach połączeniowych.
+Domyślnym polem połączeniowym jest
+pierwsze, separowane pustym znakiem. Każdą z nazw plików
+(ale nie obydwoma) może być '\-', oznaczający standardowe wejście.
+.I plik1
+oraz
+.I plik2
+powinny zostać uprzednio posortowane w porządku rosnącym (nie numerycznie)
+według pól połączeniowych, z zastosowaniem porządku znaków określonego
+ustawieniem narodowym \fBLC_COLLATE\fP.
+Sortowanie winno być wykonane z pominięciem
+znaków pustych na początku pola połączeniowego, tak jak działa
+.B sort
+z podaną opcją
+.BR \-b ,
+chyba że podano opcję
+.BR \-t ,
+zmieniającą znak rozdzielający pola.
+Jeżeli podano opcję
+.BR --ignore-case ,
+linie powinny być posortowane bez rozróżniania wielkości znaków w polu
+połączeniowym, jak w
+.BR "sort -f".
+.PP
+Pola numerowane są od 1.
+Wartości domyślne to: pola połączeniowe są pierwszymi polami w każdej
+linii; pola w wejściu rozdzielone są jednym lub więcej znakami pustymi;
+znaki puste zaczynające linię są ignorowane (chyba że jawnie podano
+separator pól); pola w wyjściu rozdzielone są spacją; każda linia wyjścia
+składa się z pola połączeniowego, pozostałych pól z
+.IR plik1 ,
+a potem pozostałych pól z
+.IR plik2 .
+.SH OPCJE
+.TP
+.BR \-a " \fInumer-pliku"
+Oprócz normalnego wyjścia, wypisuje też niesparowane linie z pliku
+.I numer-pliku
+(1 albo 2).
+.TP
+.BR \-e " \fIłańcuch"
+Zastępuje puste pola wynikowe (te, których brakuje na wejściu)
+.IR łańcuchem .
+.TP
+.BR \-i ", " \-\-ignore\-case
+Ignoruje różnice między małymi i dużymi literami przy porównywaniu pól.
+Pola wejściowe muszą być wówczas uporządkowane według tej samej reguły.
+.TP
+.BR \-1 ", " \-j1 " \fIpole"
+Łączy według pola
+.I pole
+(dodatnia liczba całkowita) pliku 1
+.TP
+.BR \-2 ", " \-j2 " \fIpole"
+Łączy według pola
+.I pole
+(dodatnia liczba całkowita) pliku 2
+.TP
+.BR \-j " \fIpole"
+Równoważne
+.BR \-1 " \fIpole " \-2 " \fIpole\fP."
+.TP
+.BR \-o " \fIlista-pól\fP..."
+Konstruuje każdą linię wyjścia według formatu zawartego w
+.IR liście-pól .
+Każdy element listy jest albo pojedynczym znakiem '\fB0\fP' albo ma postać
+.IB M . N\fR,
+gdzie M to numeru pliku (1 albo 2), zaś N - numer pola (liczba naturalna).
+Element '0' odpowiada polu połączeniowemu.
+
+W większości przypadków funkcjonalność specyfikacji '0' można zastąpić
+użyciem bezpośredniego zapisu M.N, odpowiedniego dla pola połączeniowego.
+Jednak przy wydruku linii niesparowanych (użycie opcji \fB\-a\fP lub \fB\-v\fP)
+nie można w żaden sposób określić takiego pola przez użycie M.N w liście pól
+jeżeli linie niesparowane występują w obu plikach. Dla uzyskania takiej
+funkcjonalności \fBjoin\fP POSIX wynalazł notację '0'.
+
+Elementy listy pól oddzielone są przecinkami lub znakami pustymi.
+Można podawać wielokrotne argumenty
+.I lista-pól
+po jednej opcji
+.BR \-o ;
+wartości wszystkich list podanych po
+.B \-o
+są łączone razem.
+Zadana lista pól jest stosowana do wszystkich linii wyjściowych - także
+tworzonych wskutek działania opcji \fB\-a\fP czy \fB\-v\fP.
+.TP
+.BR \-t " \fIznak"
+Używa znaku
+.I znak
+jako separatora pól wejścia i wyjścia.
+.TP
+.BR \-v " \fInumer-pliku"
+Wypisuje tylko niesparowane linie z pliku
+.I numer-pliku
+(1 albo 2), zamiast normalnego wyjścia. Jak opcja
+.BR \-a ,
+ale eliminuje wspólne, połączone linie wynikowe.
+.PP
+Dodatkowo, kiedy GNU
+.B join
+wywoływane jest z dokładnie jednym argumentem, rozpoznawane są
+następujące opcje:
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR cut (1),
+.BR paste (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

@@ -1,0 +1,29 @@
+.\" {PTM/WK/2000-VI}
+.TH HOSTID "1" FSF "maj 2000" "Narzędzia powłokowe GNU 2.0"
+.SH NAZWA
+hostid \- wypisz numeryczny identyfikator bieżącego hosta
+.SH SKŁADNIA
+.B hostid
+.\" .RB [ -v ]
+.SH OPIS
+Ta strona podręcznika man opisuje polecenie \fBhostid\fP w wersji GNU.
+.PP
+.B Hostid
+wypisuje numeryczny identyfikator (szesnastkowo) bieżącego hosta.
+Identyfikator ten powinien dla każdego z hostów być unikalny.
+.SH OPCJE
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach,
+kończy pracę.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.SH BŁĘDY
+Wbrew informacji programu, opcja \fB-v\fP w obecnej wersji GNU 
+\fInie jest obsługiwana\fP.
+W innych implementacjach wypisuje ona identyfikator hosta dziesiętnie oraz,
+w nawiasach, szesnastkowo.
+.SH ZOBACZ TAKŻE
+.BR hostname (1),
+.BR sh-utils (1).

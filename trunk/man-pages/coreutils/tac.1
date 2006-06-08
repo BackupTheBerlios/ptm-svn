@@ -1,0 +1,94 @@
+.\"  {PTM/GSN/0.5/23-02-1999/"połącz i wypisz pliki odwrócone"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page tac.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH TACT "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+tac \- połącz i wypisz pliki odwrócone
+.SH SKŁADNIA
+.TP 5
+.B tac
+.RB [ \-br ]
+.RB [ \-s
+.IR separator ]
+.RB [ \-\-before ]
+.RB [ \-\-regex ]
+.br
+.RB [ \-\-separator= \fIłańcuch\fP]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.RI [ plik... ]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo tac
+.RE
+lub
+.RS
+.BR "info tac" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBtac\fP w wersji GNU.
+.PP
+.B tac
+kopiuje na standardowe wyjście każdy podany plik, lub standardowe wejście
+jeśli nie podano żadnego lub napotkano nazwę pliku '\-',
+odwracając w każdym z nich porządek rekordów.  Rekordy oddzielone są
+wystąpieniami pewnego łańcucha, lub nową linią jeśli nie podano
+żadnego.  Domyślnie w pliku łańcuch separujący występuje za rekordem,
+który rozgranicza.
+.SH OPCJE
+.TP
+.BR \-b ", " \-\-before
+Separator występuje przed rekordem (jest dołączony do początku rekordu).
+.TP
+.BR \-r ", " \-\-regex
+Separator jest wyrażeniem regularnym. Użytkownicy `tac' w systemach
+MS-DOS/MS-Windows powinni zwrócić uwagę na fakt, że z powodu czytania przez
+`tac' plików w trybie binarnym, każda linia pliku tekstowego może kończyć się
+parą CR/LF zamiast uniksowego LF.
+.TP
+.BR \-s " \fIłańcuch\fP, " \-\-separator= \fIłańcuch
+Używa
+.I łańcucha
+jako separatora rekordów.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR cat (1),
+.BR nl (1),
+.BR od (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

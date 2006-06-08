@@ -1,0 +1,434 @@
+.\" {PTM/WK/2000-V}
+.ig
+Transl.note: based on GNU man page ptx.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH PTX "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+ptx \- tworzy indeks permutacyjny zawartości pliku
+.SH SKŁADNIA
+.TP 5
+.B ptx
+[\fIopcja\fP]... [\fIwejście\fP]...\fI   (bez -G)\fP
+.TP 5
+.B ptx
+\fI-G \fP[\fIopcja\fP]... [\fIwejście \fP[\fIwyjście\fP]]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo ptx
+.RE
+lub
+.RS
+.BR "info ptx" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBptx\fP w wersji GNU.
+.PP
+\fBptx\fP czyta plik tekstowy i tworzy indeks permutacyjny, z każdym słowem
+kluczowym umieszczonym we własnym kontekście.
+
+Opcja \fB-G\fP (lub równoważna jej \fB--traditional\fP) wyłącza wszystkie
+rozszerzenia GNU i przywraca tryb tradycyjny, wprowadzając w ten sposób pewne
+ograniczenia i zmieniając niektóre wartości domyślne opcji programu.
+Jeżeli nie podano \fB-G\fP, to rozszerzenia GNU są zawsze aktywne. Są one
+opisane w odpowiednich miejscach tej dokumentacji.
+
+Poszczególne opcje wyjaśniono w dalszych sekcjach.
+
+Przy włączonych rozszerzeniach GNU, po opcjach może wystąpić zero, jeden
+lub kilka \fIplików\fP. Jeżeli nie podano plików, to program czyta
+standardowe wejście. Jeżeli podano jakieś pliki wejściowe, to są one czytane
+naraz tak, jakby były sklejone. Są jednak zupełnie rozdzielone kontekstowo,
+i, przy żądaniu automatycznego tworzenia odnośników, nazwy plików i numery
+linii odnoszą się do poszczególnych tekstowych plików wejściowych.
+We wszystkich przypadkach program tworzy indeks permutacyjny na standardowym
+wyjściu.
+
+Przy \fIwyłączonych\fP rozszerzeniach GNU, to znaczy, gdy program działa
+w tradycyjnym trybie pracy, oprócz opcji może istnieć zero, jeden lub dwa
+parametry.
+
+Jeśli nie ma parametrów, to program czyta standardowe wejście i tworzy indeks
+permutacyjny na standardowym wyjściu. Jeżeli jest tylko jeden parametr, to
+określa on nazwę pliku wejściowego, z którego, zamiast ze standardowego
+wejścia, będzie prowadzony odczyt. Jeżeli podano dwa parametry, to określają
+one odpowiednio plik wejściowy i tworzony plik wyjściowy.
+\fIBądź bardzo ostrożny\fP, gdyż w tym przypadku zawartość pliku podanego
+jako przez drugi parametr jest niszczona. Zachowanie takie podyktowane jest
+wyłącznie zgodnością z \fBptx\fP Systemu V, gdyż Standardy GNU stanowczo
+odradzają parametry wyjściowe nie poprzedzane opcją.
+
+Zauważ, że jako \fIdowolną\fP z nazw plików wejściowych lub wartość opcji
+określającej plik można podać pojedynczy myślnik '\fB-\fP'. W takim przypadku
+przyjmowane jest standardowe wejście. Jednak nie ma sensu używanie tej
+konwencji więcej niż raz w danym wywołaniu programu.
+
+Argumenty obowiązkowe dla długich opcji są również obowiązkowe
+dla krótkich opcji.
+.SH Opcje ogólne
+.TP
+.BR -C ", " --copyright
+Wypisuje krótką notę o prawach autorskich i warunkach kopiowania, następnie
+kończy pracę bez dalszego przetwarzania.
+.TP
+.BR -G ", " --traditional
+Jak już wyjaśniono, wyłącza wszystkie rozszerzenia GNU ptx i przełącza się
+na tradycyjny tryb działania.
+.TP
+.BR -t ", " --typeset-mode
+- nie zaimplementowano -
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH Wybór zestawu znaków
+Przy obecnej konfiguracji, program zakłada, że plik jest zakodowany
+przy zastosowaniu 8-bitowego ISO 8859-1, zwanego też zestawem znaków
+Latin-1, chyba że zostanie skompilowany dla MS-DOS, wówczas używa zestawu
+IBM-PC. (Nic nie wiadomo o tym, by GNU ptx nadal działał na mniejszych
+maszynach MS-DOS.) W porównaniu z 7-bitowym ASCII, zestaw znaków będących
+literami jest więc inny. Fakt ten zmienia zachowanie dopasowywania wyrażeń
+regularnych. Stąd też, domyślne wyrażenie regularne dla słowa kluczowego
+dopuszcza akcentowane litery i litery spoza alfabetu angielskiego.
+Sortowanie słów kluczowych jest jednak nadal niewykończone; przestrzega ślepo
+odnośnego uporządkowania zestawu znaków.
+.TP
+.BR -f ", " --ignore-case
+Do celów sortowania zamienia małe litery na duże.
+.SH Wybór słów i przetwarzanie wejścia
+.TP
+.BR -b " \fIplik\fP, " --break-file= \fIplik
+Zapewnia alternatywny (do \fB-W\fP) sposób opisywania, jakie znaki tworzą
+słowa. Podany w tej opcji \fIplik\fP zawiera listę znaków, które
+\fInie mogą\fP być częścią jednego słowa. Plik ten zwany jest "plikiem
+podziału" ("Break file"). Każdy ze znaków nie będący częścią pliku podziału
+jest składową słów. Jeżeli podano obie opcje: \fB-b\fP i \fB-W\fP,
+to \fB-W\fP ma pierwszeństwo a \fB-b\fP jest ignorowana.
+
+Przy włączonych rozszerzeniach GNU jedynym sposobem uniknięcia interpretacji
+znaku nowej linii jako znaku podziału jest zapisanie wszystkich znaków
+podziału w pliku nie zawierającym w ogóle znaku nowej linii, nawet na końcu.
+Przy wyłączonych rozszerzeniach GNU spacje, tabulacje i znaki nowej linii
+zawsze uważane są za znaki podziału, nawet jeśli nie ma ich w pliku podziału.
+.TP
+.BR -i " \fIplik\fP, " --ignore-file= \fIplik
+Plik związany z tą opcją zawiera listę słów, które nigdy nie powinny być
+brane jako słowa kluczowe w skorowidzu wyjściowym. Zwany jest "plikiem
+pomijania" ("Ignore file"). Zawiera w każdej linii dokładnie jedno słowo.
+Koniec linii rozdzielającej słowa nie podlega opcji \fB-S\fP.
+
+Istnieje domyślny plik pomijania używany przez ptx, gdy nie podano
+niniejszej opcji, zwykle w \fI/usr/local/lib/eign\fP, jeśli nie zmieniono tego
+podczas instalacji. Chcąc deaktywować domyślny plik pomijania należy
+podać plik \fI/dev/null\fP.
+.TP
+.BR -o " \fIplik\fP, " --only-file= \fIplik
+Plik związany z tą opcją zawiera listę słów, które pozostaną w skorowidzu
+wyjściowym. Każde słowo nie ujęte w tym pliku jest pomijane. Plik zwany
+jest "plikiem wyłączności" (Only file"). Zawiera po jednym słowie w każdej
+linii. Koniec linii rozdzielającej słowa nie podlega opcji \fB-S\fP.
+
+Dla pliku wyłączności nie ma ustawienia domyślnego. W przypadku wystąpienia
+zarówno pliku pomijania jak i pliku wyłączności słowo uważane jest
+za kluczowe tylko wtedy, gdy podano je w pliku wyłączności a nie podano
+w pliku pomijania.
+.TP
+.BR -r ", " --references
+W każdej linii wejściowej początkowa sekwencja nie-białych znaków zostanie
+przyjęta za odnośnik, którego celem jest identyfikacja tej linii
+w utworzonym indeksie permutacyjnym. Więcej na temat tworzenia odnośników
+znajdziesz w sekcji \fBFormatowanie wyników ptx\fP. Użycie tej opcji zmienia
+domyślną wartość opcji \fB-S\fP.
+
+Przy wykorzystaniu opcji \fB-r\fP program nie próbuje zbyt usilnie
+usuwać odnośników z kontekstów wyjścia, ale udaje mu się to poprawnie
+\fIjeśli\fP kontekst kończy się dokładnie na znaku nowej linii.
+Jeżeli opcji tej użyto z domyślną wartością opcji \fB-S\fP, lub jeśli
+wyłączone są rozszerzenia GNU, warunek ten jest zawsze spełniony.
+Odnośniki są wówczas całkowicie wykluczone z kontekstów wynikowych.
+.TP
+.BR -S " \fIregexp\fP, " --sentence-regexp= \fIregexp
+Określa, jakie wyrażenie regularne będzie opisywać koniec linii lub koniec
+zdania. W rzeczywistości istnieje inne rozróżnienie pomiędzy końcami linii
+czy końcami zdań niż wynik tego wyrażenia regularnego, a granice linii
+wejściowych nie mają żadnego specjalnego znaczenia poza tą opcją. Domyślnie,
+gdy włączone są rozszerzenia GNU, a nie jest używana opcja \fB-r\fP,
+używane są końce zdań. W tym przypadku używane jest dokładne \fIregexp\fP
+zapożyczone z GNU emacsa:
+.\"     [.?!][]\"')}]*\\($\\|\t\\|  \\)[ \t\n]*
+.nf
+
+    [.?!][]\\"')}]*\\($\\\\|\\t\\\\|  \\\\)[ \\t\\n]*
+
+.fi
+Gdy wyłączone są rozszerzenia GNU lub użyta opcja \fB-r\fP, używane są
+końce linii. W tym przypadku, domyślnym wyrażeniem regularnym jest po prostu:
+.nf
+
+    \\n
+
+.fi
+Zastosowanie pustego \fIregexp\fP jest równoważne całkowitemu wyłączeniu
+rozpoznawania końca linii lub końca zdania. Cały plik jest wówczas traktowany
+jak jedna długa linia lub zdanie. Użytkownik może również zakazać
+generowania wszystkich flag obcinania, korzystając z opcji \fB-F ""\fP.
+
+Gdy słowa kluczowe trafiają się blisko początku zdania lub linii wejściowej,
+często tworzy to niewykorzystany obszar na początku wynikowej linii
+kontekstu. Gdy słowa kluczowe są blisko końca zdania lub linii wejściowej,
+często tworzy to niewykorzystany obszar na końcu wynikowej linii.
+Program usiłuje wypełnić te obszary zawijając kontekst w ich wnętrzu.
+Końcówka zdania (linii wejściowej) używana jest do wypełnienia
+niewykorzystanego obszaru po lewej stronie linii wynikowej,
+początek używany jest do wypełnienia obszaru po prawej.
+
+Dla wygody użytkownika rozpoznawanych jest wiele zwyczajowych sekwencji
+specjalnych (poprzedzanych odwrotnym ukośnikiem), jakie występują w C.
+Są one przekształcane na odpowiadające im znaki przez sam ptx.
+.TP
+.BR -W " \fIregexp\fP, " --word-regexp= \fIregexp
+Określa, jakie wyrażenie regularne będzie opisywać każde ze słów kluczowych.
+Domyślnie, jeśli włączone są rozszerzenia GNU, słowo jest sekwencją liter:
+używanym \fIregexp\fP jest '\fB\\w+\fP'. Gdy rozszerzenia GNU są wyłączone,
+słowem jest domyślnie wszystko kończące się spacją, tabulacją lub znakiem
+nowej linii: używanym \fIregexp\fP jest '\fB[^ \\t\\n]+\fP'.
+
+Puste wyrażenie regularne jest równoważne nie podaniu tej opcji, pozwalając
+zadziałać domyślnemu.
+
+Dla wygody użytkownika rozpoznawanych jest wiele zwyczajowych sekwencji
+specjalnych (poprzedzanych odwrotnym ukośnikiem), jakie występują w C.
+Są one przekształcane na odpowiadające im znaki przez sam ptx.
+.SH Formatowanie wyników
+Format wynikowy jest sterowany głównie opcjami \fB-O\fP i \fB-T\fP,
+opisanych poniżej. Jeżeli nie wybrano ani opcji \fB-O\fP ani \fB-T\fP,
+a włączone są rozszerzenia GNU, to program wybiera format wyjściowy
+odpowiedni dla terminala uproszczonego. Każde wystąpienie słowa kluczowego
+wypisywane jest na środku jednej linii, otoczone przez swój lewy i prawy
+kontekst. Pola są poprawnie wyrównywane, więc skorowidz wynikowy można
+z łatwością studiować.
+Jeżeli wybrano automatyczne odnośniki opcją \fB-A\fP i są one wypisane przed
+lewym kontekstem, to jest, jeżeli \fInie\fP wybrano opcji \fB-R\fP, to po
+odnośniku dodawany jest dwukropek. Ładnie współpracuje to z przetwarzaniem
+przez GNU Emacsa 'next-error'. W tym domyślnym formacie wyjściowym, każdy
+biały znak, jak znak nowej linii czy tabulacja, jest po prostu zamieniany
+na dokładnie jedną spację, bez specjalnych prób kompresowania ciągu
+kolejnych spacji. W przyszłości może się to zmienić. Za wyjątkiem białych
+znaków, każdy inny znak odnośnego zestawu 256 znaków przekazywany jest
+dosłownie.
+
+Format wyjściowy sterowany jest dodatkowo poniższymi opcjami.
+.TP
+.BR -g " \fIliczba\fP, " --gap-size= \fIliczba
+Określa rozmiar minimalnej przerwy pomiędzy polami w linii wyjściowej.
+.TP
+.BR -w " \fIliczba\fP, " --width= \fIliczba
+Określa maksymalną szerokość każdej ostatecznej linii wyjścia. Jeżeli stosowane
+są odnośniki, to są one ujęte lub nie ujęte w tej szerokości w zależności
+od wartości opcji \fB-R\fP. Jeżeli nie użyto tej opcji, to znaczy, gdy
+odnośniki wypisywane są przed lewym kontekstem, maksymalna szerokość wyjścia
+bierze pod uwagę maksymalną długość wszystkich odnośników. Jeżeli użyto opcji
+\fB-R\fP, to znaczy, gdy odnośniki wypisywane są po prawym kontekście,
+maksymalna szerokość nie uwzględnia miejsca zajętego przez odnośniki ani
+przerw, które je poprzedzają.
+.TP
+.BR -A ", " --auto-reference
+Tworzy automatyczne odnośniki. Każda linia wejściowa będzie posiadać
+automatyczny odnośnik utworzony z nazwy pliku i liczby porządkowej linii,
+z pojedynczym dwukropkiem między nimi. Jednak nazwa pliku będzie pusta, jeśli
+odczytywane jest standardowe wejście. Jeżeli podano zarówno opcję \fB-A\fP
+jak i \fB-r\fP, to wejściowy odnośnik jest nadal czytany i przeskakiwany,
+ale podczas wypisywania wyników używany jest automatyczny odnośnik,
+przesłaniając wejściowy odnośnik.
+.TP
+.BR -R ", " --right-side-refs
+W domyślnym formacie wyjściowym, gdy nie jest używana opcja \fB-R\fP,
+każdy odnośnik utworzony w wyniku opcji \fB-r\fP lub \fB-A\fP podawany
+jest w skrajnej prawej części linii wyjściowej, po prawym kontekście.
+W domyślnym formacie wyjściowym, przy podanej opcji \fB-R\fP, odnośniki
+są natomiast podawane na początku linii wyjściowej, przed lewym kontekstem.
+W każdym innym formacie wyjściowym opcja \fB-R\fP jest niemal ignorowana,
+z wyjątkiem tego, że szerokość odnośników \fInie jest\fP wówczas jest
+wliczana do całkowitej szerokości wyjścia podanej przez \fB-w\fP.
+
+Opcja ta jest wybierana automatycznie przy wyłączeniu rozszerzeń GNU.
+.TP
+.BR -F " \fIłańcuch\fP, " --flac-truncation= \fIłańcuch
+Żąda, by każde obcięcie w wyjściu było zgłoszone za pomocą \fIłańcucha\fP.
+Większość pól wynikowych teoretycznie rozciąga się w stronę początku lub końca
+bieżącej linii, lub bieżącego zdania, jak ustalono opcją \fB-S\fP.
+Istnieje jednak maksymalna dozwolona szerokość linii wyjściowej, zmieniana
+opcją \fB-w\fP, która jest następnie dzielona na części dla różnych pól
+wyjściowych. Jeżeli pole nie może się rozciągać aż do początku lub końca
+bieżącej linii i mieścić w zadanej szerokości, wówczas następuje obcięcie.
+Domyślnie łańcuchem oznaczający obcięcie jest pojedynczy ukośnik,
+jak w '\fB-F /\fP'.
+
+\fIłańcuch\fP może mieć więcej niż jeden znak, jak w '\fB-F ...\fP'.
+W szczególnym przypadku, gdy \fIłańcuch\fP jest pusty ('\fB-F ""\fP'),
+oznaczanie obcięcia jest wyłączane. Nie są wówczas dołączane żadne znaczniki
+obcięcia.
+
+Dla wygody użytkownika rozpoznawanych jest wiele zwyczajowych sekwencji
+specjalnych (poprzedzanych odwrotnym ukośnikiem), jakie występują w C.
+Są one przekształcane na odpowiadające im znaki przez sam ptx.
+.TP
+.BR -M "\fIłańcuch\fP, " --macro-name= \fIłańcuch
+Określa inny \fIłańcuch\fP, jaki ma być stosowany zamiast 'xx' przy tworzeniu
+wyjścia odpowiedniego dla \fBnroff\fP, \fBtroff\fP lub \fBTeX\fP.
+.TP
+.BR -O ", " --format=roff
+Wybiera format wyjściowy odpowiedni dla przetwarzania przez \fBnroff\fP
+lub \fBtroff\fP. Linie wyjściowe są typu:
+.nf
+
+.xx "KOŃC" "PRZED" "SŁOWOKLUCZ_I_DALEJ" "POCZ" "ODNOŚNIK"
+
+.fi
+więc możliwe będzie napisanie makra '.xx' roff-a do obsługi składu otrzymanego
+wyjścia. Jest to domyślny format wyjścia, gdy wyłączone są rozszerzenia GNU.
+Opcją \fB-M\fP można zmienić 'xx' na inną nazwę makra.
+
+W tym formacie każdy znak nie-graficzny, jak znak nowej linii czy tabulacja,
+jest po prostu zamieniany na dokładnie jedną spację, bez specjalnych prób
+kompresowania ciągu kolejnych spacji. Wszystkie znaki cytowania: `"'
+są podwajane, by zostały poprawnie przetworzone przez \fBnroff\fP
+czy \fBtroff\fP.
+.TP
+.BR -T ", " --format=tex
+Wybiera format wyjściowy odpowiedni dla przetwarzania przez \fBTeX\fP.
+Linie wyjściowe są typu:
+.nf
+
+\\xx {KOŃC}{PRZED}{SŁOWOKLUCZ}{PO}{POCZ}{ODNOŚNIK}
+
+.fi
+więc możliwe będzie napisanie definicji '\\xx' do obsługi składu otrzymanego
+wyjścia. Zauważ, że gdy nie są tworzone odnośniki, to znaczy, gdy nie użyto
+ani opcji \fB-A\fP ani \fB-r\fP, nie pojawia się ostatni parametr każdego
+wywołania '\\xx'. Opcją \fB-M\fP można zmienić 'xx' na inną nazwę makra.
+
+W tym formacie niektóre znaki specjalne, jak '\fB$\fP','\fB%\fP', '\fB&\fP'
+'\fB#\fP' i '\fB_\fP' są automatycznie chronione przed cytowaniem przez
+poprzedzenie ich odwrotnym ukośnikiem. Nawiasy klamrowe '\fB{\fP','\fB}\fP'
+też są chronione w ten sposób, ale również ujęte między parę znaków dolara,
+by wymusić tryb matematyczny. Sam odwrotny ukośnik generuje
+sekwencję '\fB\\backslash{}\fP'. Daszki (circumflex) i tyldy nad literami
+generują odpowiednio sekwencje '\fB^\\{ }\fP' i '\fB~\\{ }\fP'. Inne znaki
+diakrytyczne w odnośnym zestawie znaków dają odpowiednie sekwencje TeX-a,
+na ile jest to możliwe. Inne znaki nie-graficzne, jak znak nowej linii,
+i tabulacja, i wszystkie inne znaki nie będące częścią ASCII,
+są po prostu zamieniane na dokładnie jedną spację, bez specjalnych prób
+kompresowania ciągu kolejnych spacji. Proszę dać znać autorowi jak
+ulepszyć przetwarzanie tych znaków specjalnych dla TeX-a.
+.SH Rozszerzenia GNU
+Ta wersja \fBptx\fP zawiera kilka cech nieistniejących w ptx z Systemu V.
+Można je wyeliminować przy pomocy opcji \fB-G\fP linii poleceń, chyba że
+zostanie ona przesłonięta przez inne opcje. Niektóre rozszerzenia nie mogą
+być przywrócone przez przesłonięcie, zatem prostą zasadą jest unikanie
+\fB-G\fP jeżeli chce się korzystać z rozszerzeń GNU. Poniżej podano różnice
+pomiędzy tym programem a ptx z Systemu V.
+.TP
+*
+Niniejszy program potrafi czytać wiele plików wejściowych naraz, zawsze
+zapisuje powstały skorowidz na standardowe wyjście. Z drugiej strony, ptx
+z System V czyta tylko jeden plik i tworzy wynik na standardowym wyjściu lub,
+jeśli w wywołaniu polecenia podano drugi parametr \fIplik\fP, w zadanym
+\fIpliku\fP.
+
+Posługiwanie się parametrami wyjścia nie poprzedzonymi opcjami jest dość
+niebezpieczną praktyką, której GNU w miarę możliwości unika. Zatem, przy
+posługiwaniu się ptx przenośnie między GNU a System V, powinno się zwracać
+uwagę, by zawsze używać go z jednym plikiem wejściowym i zawsze oczekiwać
+wyniku na standardowym wyjściu. Można również automatycznie skonfigurować
+wywoływania ptx z opcją \fB-G\fP w produktach go używających, jeśli
+konfigurator zauważy, że instalowany ptx akceptuje \fB-G\fP.
+.TP
+*
+Jedynymi opcjami dostępnymi w ptx z System V są 
+.RB ' -b ',
+.RB ' -f ',
+.RB ' -g ',
+.RB ' -i ',
+.RB ' -o ',
+.RB ' -r ',
+.RB ' -t '
+i
+.RB ' -w '.
+Wszystkie inne opcje są rozszerzeniami GNU i nie są powtórzone
+w tym wyliczeniu. Ponadto, niektóre opcje mają nieco inne znaczenie
+przy włączonych rozszerzeniach GNU, jak wyjaśniono poniżej.
+.TP
+*
+Domyślnie, skorowidz wyjściowy nie jest sformatowany dla '\fBtroff\fP'
+czy '\fBnroff\fP'. Zamiast tego sformatowany jest dla terminala uproszczonego.
+Wyjście dla '\fBtroff\fP' lub '\fBnroff\fP' można wybrać opcją \fB-O\fP.
+.TP
+*
+Dopóki nie użyto opcji \fB-R\fP maksymalna szerokość odnośników jest
+odejmowana od całkowitej szerokości linii wyjściowej. Przy wyłączonych
+rozszerzeniach GNU, szerokość odnośników nie jest uwzględniana w obliczeniach
+szerokości linii wyjściowej.
+.TP
+*
+Czytane i przetwarzane z pliku wejściowego są zawsze wszystkie z 256 znaków
+zestawu, nawet znaki NUL, bez niepoprawnego efektu, nawet gdy rozszerzenia
+GNU są wyłączone. Jednak ptx z Systemu V nie przyjmuje 8-bitowych znaków,
+odrzucanych jest kilka znaków sterujących, a tylda '\fB~\fP' jest potępiona.
+.TP
+*
+Długość linii wejściowej jest ograniczona tylko dostępną pamięcią, nawet
+przy wyłączonych rozszerzeniach GNU. Jednak ptx z Systemu V przetwarza tylko
+200 pierwszych znaków linii.
+.TP
+*
+Domyślnymi znakami podziału (nie-słowami) są wszystkie znaki oprócz liter
+odnośnego zestawu znaków, diakrytycznych lub nie. Przy wyłączonych
+rozszerzeniach GNU domyślnymi znakami podziału są wyłącznie spacja, tabulacja
+i znak nowej linii.
+.TP
+*
+Program lepiej posługuje się szerokością linii wyjściowej. Jeżeli wyłączono
+rozszerzenia GNU, program próbuje zamiast tego imitować ptx z System V, ale
+istnieje kilka niewielkich zakłóceń, których niniejszy program całkowicie
+nie powiela.
+.TP
+*
+Użytkownik może podać równocześnie plik pomijania i plik wyłączności.
+W ptx z System V nie jest to dozwolone.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR sort (1),
+.BR uniq (1),
+.BR comm (1),
+.BR tsort (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla
+narzędzi tekstowych GNU wersji 2.0.

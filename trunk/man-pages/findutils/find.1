@@ -1,0 +1,454 @@
+.\" 1999 PTM Przemek Borys
+.TH FIND 1L \" -*- nroff -*-
+.SH NAZWA
+find \- szuka plików w hierarchii katalogowej
+.SH SKŁADNIA
+.B find
+[ścieżka...] [wyrażenie]
+.SH OPIS
+Ta strona podręcznika man opisuje wersję GNU programu
+.BR find .
+.B find
+przeszukuje drzewo katalogowe, zakorzenione w każdej z podanych nazw plików.
+Wykonuje przy tym podane wyrażenie od lewej do prawej, zgodnie z zasadami
+priorytetów (zobacz sekcję OPERATORY), aż do ustalenia wyniku (lewa
+strona jest fałszywa dla operacji \fIand\fR, a prawdziwa dla \fIor\fR),
+co powoduje przejście do następnej nazwy pliku.
+.PP
+Pierwszy argument, rozpoczynający się od `\-', `(', `)', `,' lub `!' 
+jest uważany za początek wyrażenia; wszelkie argumenty przed nim są
+ścieżkami przeszukiwania, a wszystkie argumenty po nim są resztą wyrażenia.
+Jeśli nie podano ścieżek, używany jest katalog bieżący. Jeśli nie podano
+wyrażenia, używane jest wyrażenie `\-print'.
+.PP
+.B find
+kończy działanie ze statusem 0 tylko gdy wszystkie pliki zostaną poprawnie
+przetworzone. W przeciwnym wypadku status jest większy od zera.
+.SH WYRAŻENIA
+.P
+Wyrażenie jest złożone z opcji (które tyczą się raczej ogólnego działania,
+niż przetwarzania konkretnego pliku i zawsze zwracają prawdę), testów (które
+sprawdzają wartość prawdy lub fałszu) i akcji (które mają efekty uboczne i
+zwracają wartość prawdziwą lub fałszywą); wszystkie te elementy są
+rozdzielone operatorami.
+\-and jest domyślnym operatorem, przyjmowanym w przypadku pominięcia go w jawnym
+zapisie. Jeśli wyrażenie nie zawiera innych akcji niż \-prune, to na wszystkich
+plikach, dla których jest ono prawdziwe, wykonywany jest \-print.
+.SS OPCJE
+.P
+Wszystkie opcje zawsze zwracają prawdę. Zawsze działają, tzn. nie są
+przetwarzane jedynie gdy osiągnięta zostanie ich pozycja w wyrażeniu.
+Dlatego, dla jasności najlepiej umiejscawiać je na początku wyrażenia.
+.IP \-daystart
+Mierzy czasy (dla \-amin, \-atime, \-cmin, \-ctime, \-mmin, and \-mtime)
+od dziś, a nie od 24 godzin temu.
+.IP \-depth
+Przetwarza zawartość każdego katalogu przed samym katalogiem jako takim.
+.IP \-follow
+Rozwikłuje dowiązania symboliczne. Wymusza \-noleaf.
+.IP "\-help, \-\-help"
+Wypisuje sposób użycia 
+.B find
+z wiersza poleceń i kończy pracę programu.
+.IP "\-maxdepth \fIgłębokość\fR"
+Schodzi maksymalnie \fIgłębokość\fR (nieujemna liczba całkowita) poziomów
+katalogów od argumentów wiersza poleceń. `\-maxdepth 0' oznacza, by testy
+i akcje stosować tylko do argumentów wiersza poleceń.
+.IP "\-mindepth \fIlgłębokość\fR"
+Nie stosuje testów lub akcji w poziomach niższych niż \fIgłębokość\fR
+(nieujemna liczba całkowita). `\-mindepth 1' oznacza przetwarzanie
+wszystkich plików poza argumentami wiersza poleceń.
+.IP \-mount
+Nie zagłębia się w katalogi na innych systemach plików. Jest to alternatywna
+nazwa dla \-xdev, stworzona dla zgodności z innymi wersjami
+.BR find .
+.IP "\-noleaf"
+Zakazuje optymalizacji wykonywanej przez zakładanie, że katalogi zawierają o dwa
+mniej podkatalogi niż ich licznik twardych dowiązań. Opcja ta jest wymagana
+podczas przeszukiwania systemów plików, które nie używają uniksowej konwencji
+wiązania katalogów, takich jak systemy plików CD-ROM, MS-DOS czy wolumenów
+AFS. Każdy katalog w normalnym systemie uniksowym zawiera przynajmniej dwa
+twarde dowiązania: jego nazwę i `.'. Dodatkowo, jego podkatalogi mogą mieć
+dowiązania `..'.
+Gdy
+.B find
+testuje katalog po zbadaniu funkcją stat o 2 mniej podkatalogów niż licznik
+dowiązań, wie, że reszta wpisów jest niekatalogowa. Jeśli testowane mają być
+tylko nazwy plików, to nie ma potrzeby ich sprawdzać; daje to znaczące
+przyspieszenie.
+.IP "\-version, \-\-version"
+Wypisuje wersję i kończy pracę.
+.IP \-xdev
+Nie zagłębia się w katalogi na innych systemach plików.
+.SS TESTY
+.P
+Wartości numeryczne mogą być podawane jako
+.IP \fI+n\fP
+dla większych niż
+.IR n ,
+.IP \fI\-n\fP
+dla mniejszych niż
+.IR n ,
+.IP \fIn\fP
+dla równych
+.IR n .
+.IP "\-amin \fIn\fR"
+Dostęp do pliku nastąpił ostatnio \fIn\fR minut temu.
+.IP "\-anewer \fIplik\fR"
+Do pliku ostatnio dostano się wcześniej niż \fIplik\fR został zmodyfikowany.
+\-anewer podlega \-follow tylko jeśli \-follow pojawia się w linii komend
+przed \-anewer.
+.IP "\-atime \fIn\fR"
+Do pliku dostano się po raz ostatni \fIn\fR*24 godzin temu.
+.IP "\-cmin \fIn\fR"
+Status pliku został zmieniony \fIn\fR minut temu.
+.IP "\-cnewer \fIplik\fR"
+Status pliku był ostatnio zmieniony wcześniej niż zmodyfikowano \fIplik\fR.
+\-cnewer podlega \-follow tylko jeśli \-follow pojawia się w linii komend
+przed \-cnewer.
+.IP "\-ctime \fIn\fR"
+Status pliku zmienił się ostatnio \fIn\fR*24 godzin temu.
+.IP \-empty
+Plik jest pusty i jest albo plikiem regularnym, albo katalogiem.
+.IP \-false
+Zawsze fałszywe.
+.IP "\-fstype \fItyp\fR"
+Plik jest na systemie plików o typie \fItyp\fR. Prawidłowe typy systemów
+plików różnią się na różnych wersjach Uniksa; ich niekompletna lista, która
+jest przyjmowana w części systemów to: ufs, 4.2, 4.3, nfs, tmp, mfs, S51K, 
+S52K.  Aby zobaczyć typy twoich systemów plików, użyj
+\-printf z dyrektywą %F.
+.IP "\-gid \fIn\fR"
+Numeryczny GID pliku to \fIn\fR.
+.IP "\-group \fInazwag\fR"
+Plik należy do grupy \fInazwag\fR (numeryczny GID jest dopuszczalny).
+.IP "\-ilname \fIpattern\fR"
+Podobne do \-lname, lecz dopasowania są niewrażliwe na rozmiar liter.
+.IP "\-iname \fIpattern\fR"
+Podobne do \-name, lecz dopasowanie jest niewrażliwe na rozmiar liter.
+Na przykład wzorce `fo*' i `F??' dopasują się do nazw `Foo', `FOO', `foo',
+`fOo', itd.
+.IP "\-inum \fIn\fR"
+Plik ma numer iwęzła \fIn\fR.
+.IP "\-ipath \fIwzorzec\fR"
+Podobne do \-path, lecz dopasowanie jest niewrażliwe na rozmiar liter.
+.IP "\-iregex \fIwzorzec\fR"
+Podobne do \-regex, lecz dopasowanie jest niewrazliwe na rozmiar liter.
+.IP "\-links \fIn\fR"
+Plik ma \fIn\fR dowiązań.
+.IP "\-lname \fIwzorzec\fR"
+Plik jest dowiązaniem symbolicznym, którego zawartość odpowiada wzorcowi
+powłoki \fIwzorzec\fR. Metaznaki nie traktują specjalnie `/' i `.'.
+.IP "\-mmin \fIn\fR"
+Dane pliku były ostatnio modyfikowane \fIn\fR minut temu.
+.IP "\-mtime \fIn\fR"
+Dane pliku były ostatnio modyfikowane \fIn\fR*24 godzin temu.
+.IP "\-name \fIwzorzec\fR"
+Podstawa nazwy pliku (z usuniętą ścieżką i poprzedzającymi katalogami)
+odpowiada wzorcowi powłoki \fIwzorzec\fR. Metaznaki (`*', `?', `[]') nie
+odpowiadają `.' na początku nazwy pliku. Aby zignorować katalogi i pliki im
+podległe, użyj \-prune; zobacz przykład w opisie \-path.
+.IP "\-newer \fIplik\fR"
+Plik został zmodyfikowany wcześniej niż \fIplik\fR.
+\-newer podlega \-follow tylko jeśli \-follow znajduje się w linii komend
+przed \-newer.
+.IP \-nouser
+Do numerycznego UID pliku nie pasuje żaden użytkownik.
+.IP \-nogroup
+Do numerycznego GID pliku nie pasuje żadna grupa.
+.IP "\-path \fIwzorzec\fR"
+Nazwa pliku odpowiada wzorcowi powłoki \fIwzorzec\fR. Metaznaki nie traktują
+specjalnie `/' lub `.'; tak więc na przykład,
+.br
+.in +1i
+find . \-path './sr*sc'
+.br
+.in -1i
+wypisze wpis katalogowy o nazwie './src/misc' (jeśli taki istnieje).
+Aby zignorować całe drzewo katalogowe, użyj \-prune. Na przykład, aby
+pominąć katalog `src/emacs' i wszystkie jego pliki oraz wypisać nazwy
+innych znalezionych plików, użyj:
+.br
+.in +1i
+find . \-path './src/emacs' -prune -o -print
+.br
+.in -1i
+.IP "\-perm \fIprawa\fR"
+Bity praw pliku są dokładnie równe \fIprawom\fR (ósemkowym lub
+symbolicznym). Prawa symboliczne używają 0 jako punktu wyjścia.
+.IP "\-perm \-\fIprawa\fR"
+wszystkie bity \fIprawa\fR są ustawione dla pliku.
+.IP "\-perm +\fIprawa\fR"
+Któryś z bitów \fIpraw\fR jest ustawiony dla pliku.
+.IP "\-regex \fIwzorzec\fR"
+Nazwa pliku odpowiada wyrażeniu regularnemu \fIwzorzec\fR. Dopasowanie
+stosuje się do całej ścieżki, nie dla przeszukiwanej. Na przykład, aby
+dopasować plik o nazwie `./fubar3', możesz użyć wyrażenia regularnego
+`.*bar' lub `.*b.*3'.
+.IP "\-size \fIn\fR[bckw]"
+Plik zajmuje \fIn\fP jednostek miejsca. Jednostki to domyślnie 512-bajtowe
+bloki. Jeśli doklejona jest litera `c', jest to \fIn\fP bajtów, jeśli `k',
+kilobajtów, jeśli `w', dwubajtówych słów.
+Rozmiar nie wlicza niebezpośrednich bloków, lecz liczy bloki w plikach
+`sparse', które w rzeczywistości nie są zajęte.
+.IP \-true
+Zawsze prawda.
+.IP "\-type \fIc\fR"
+Plik jest typu \fIc\fR:
+.RS
+.IP b
+blokowy (buforowany) plik specjalny
+.IP c
+znakowy (niebuforowany) plik specjalny
+.IP d
+katalog
+.IP p
+łącze nazwane (FIFO)
+.IP f
+zwykły plik
+.IP l
+dowiązanie symboliczne
+.IP s
+gniazdo
+.RE
+.IP "\-uid \fIn\fR"
+Numeryczny UID pliku to \fIn\fR.
+.IP "\-used \fIn\fR"
+Do pliku ostatnio dostano się \fIn\fR dni po zmianie jego statusu.
+.IP "\-user \fIunazwa\fR"
+Właścicielem pliku jest użytkownik \fIunazwa\fR (numeryczny UID jest tu
+dozwolony).
+.IP "\-xtype \fIc\fR"
+Jest to to samo co \-type, chyba że plik jest dowiązaniem symbolicznym. Dla
+dowiązań symbolicznych: jeśli nie podano \-follow, jest prawdziwe gdy plik
+jest dowiązaniem do pliku typu \fIc\fR; jeśli podano \-follow, jest
+prawdziwe, jeśli \fIc\fR to `l'. Innymi słowy, dla dowiązań symbolicznych
+\-xtype sprawdza typ pliku, którego nie sprawdza \-type.
+.SS AKCJE
+.IP "\-exec \fIpolecenie\fR ;"
+Wykonuje \fIpolecenie\fR; prawdziwe jeśli zwrócony został status 0. Wszelkie
+następne argumenty
+.B find
+są brane za argumenty polecenia, aż nie zostanie napotkany argument,
+składający się z `;'. Łańcuch `{}' jest podmieniany na obecnie przetwarzaną
+nazwę pliku.
+Obydwie te konstrukcje być może będą wymagały wycytowania (znakiem `\e') aby
+uchronić je przed rozwinięciem przez powłokę. Polecenie jest wykonywane w
+katalogu startowym.
+.IP "\-fls \fIplik\fR"
+Prawdziwe; podobne do \-ls, lecz zapisuje do \fIpliku\fR jak \-fprint.
+.IP "\-fprint \fIplik\fR"
+Prawdziwe; wypisuje pełną nazwę pliku do \fIpliku\fR. Jeśli \fIplik\fR nie
+istnieje, zostanie utworzony; jeśli istnieje, zostanie obcięty. Nazwy plików
+``/dev/stdout'' i ``/dev/stderr'' są traktowane osobno; odnoszą się one
+odpowiednio do standardowego wyjścia i standardowego wyjścia błędów.
+.IP "\-fprint0 \fIplik\fR"
+Prawdziwe; podobne do \-print0, lecz zapisuje do \fIpliku\fR, podobnie jak
+\-fprint.
+.IP "\-fprintf \fIplik\fR \fIformat\fR"
+Prawdziwe; podobne do \-printf, lecz zapisuje do \fIpliku\fR, podobnie jak
+\-fprint.
+.IP "\-ok \fIpolecenie\fR ;"
+Podobne do \-exec, lecz pyta wpierw użytkownika (na standardowym wejściu);
+jeśli odpowiedź nie rozpoczyna się od `y' lub `Y', nie uruchamia polecenia i
+zwraca fałsz.
+.IP \-print
+Prawdziwe; wypisuje pełną nazwę pliku na standardowe wyjście. Za nazwą daje
+nową linię.
+.IP \-print0
+Prawdziwe; wypisje pełną nazwę pliku na standardowe wyjście. Za nazwą daje
+znak null. Umożliwia to poprawne wyświetlenie plików, zawierających w
+nazwach znaki nowej linii w programach, przetwarzających wyjście
+\fBfind\fRa.
+.IP "\-printf \fIformat\fR"
+Prawdziwe; wypisuje \fIformat\fR na standardowe wyjście, interpretując
+sekwencje specjalne `\e' i dyrektywy `%'. Szerokości pól i precyzje mogą być
+podawane dokładnie jak w printf(3) z C. W przeciwieństwie do \-print,
+\-printf nie dodaje nowej linii do końca łańcucha. Sekwencje specjalne i
+dyrektywy to:
+.RS
+.IP \ea
+Dzwonek.
+.IP \eb
+Backspace.
+.IP \ec
+Wstrzymuje wtypisywanie tego formatu i natychmiast wymiata wyjście.
+.IP \ef
+Form feed.
+.IP \en
+Nowa linia.
+.IP \er
+Powrót karetki.
+.IP \et
+Tabulacja pozioma.
+.IP \ev
+Tabulacja pionowa.
+.IP \e\e
+Literalny lewy ukośnik (`\e').
+.PP
+`\e', za którym następuje dowolny inny znak, jest traktowany jak zwykły
+znak, więc są wypisywane obydwa.
+.IP %%
+Literalny znak procenta.
+.IP %a
+Ostatni czas dostępu do pliku w formacie zwracanym przez funkcję ctime(3).
+.IP %A\fIk\fP
+Ostatni czas dostępu do pliku, w formacie okreslonym przez \fIk\fR, którym
+może być `@', lub dyrektywa dla funkcji C strftime(3). Możliwe wartości
+\fIk\fR są wymienione niżej; niektóre z nich mogą nie być dostępne na
+wszystkich systemach z powodu różnic w strftime(3) między systemami.
+.RS
+.IP @
+Sekundy od 1 stycznia, 1970, 00:00 GMT.
+.PP
+Pola czasowe:
+.IP H
+godzina (00..23)
+.IP I
+godzina (01..12)
+.IP k
+godzina ( 0..23)
+.IP l
+godzina ( 1..12)
+.IP M
+minuta (00..59)
+.IP p
+localowe AM lub PM
+.IP r
+czas, 12-godzinny (gg:mm:ss [AP]M)
+.IP S
+sekunda (00..61)
+.IP T
+czas, 24-godzinny (gg:mm:ss)
+.IP X
+lokalna reprezentacja czasu (G:M:S)
+.IP Z
+strefa czasowa (np. EDT), lub nic jeśli nie da się jej określić
+.PP
+Pola daty:
+.IP a
+lokalny skrót nazwy tygodnia (Sun..Sat)
+.IP A
+lokalna pełna nazwa tygodnia, zmiennej długości (Sunday..Saturday)
+.IP b
+lokalna skrócona nazwa miesiąca (Jan..Dec)
+.IP B
+lokalna pełna nazwa miesiąca, zmiennej długości (January..December)
+.IP c
+lokalna data i czas (Sat Nov 04 12:02:33 EST 1989)
+.IP d
+dzień miesiąca (01..31)
+.IP D
+data (mm/dd/rr)
+.IP h
+to samo co b
+.IP j
+dzień roku (001..366)
+.IP m
+miesiąc (01..12)
+.IP U
+numer tygodnia w roku, z niedzielą liczoną jako pierwszy dzień tygodnia
+(00..53)
+.IP w
+dzień tygodnia (0..6)
+.IP W
+numer tygodnia w roku, licząc z poniedziałkiem, jako pierwszym dniem
+tygodnia (00..53)
+.IP x
+lokalna reprezentacja daty (mm/dd/rr)
+.IP y
+ostatnie dwie cyfry roku (00..99)
+.IP Y
+rok (1970...)
+.RE
+.IP %b
+Rozmiar pliku w 512-bajtowych blokach (zaokrąglanych w górę).
+.IP %c
+Ostatni czas zmiany statusu pliku, w formacie zwróconym przez funkcję
+ctime(3) z C.
+.IP %C\fIk\fP
+Ostatni czas zmiany statusu pliku w formacie określonym przez \fIk\fR, w
+taki sam sposób, jak dla %A.
+.IP %d
+Głębokość pliku w drzewie katalogowym; 0 oznacza plik w argumencie wiersza
+poleceń.
+.IP %f
+Nazwa pliku z usuniętymi początkowymi katalogami (tylko ostatni element nazwy).
+.IP %F
+Rodzaj systemu plików, na którym znajduje się plik; wartość ta może być
+używana do \-fstype.
+.IP %g
+Nazwa grupy pliku lub numeryczny GID jeśli grupa nie ma nazwy.
+.IP %G
+Numeryczny GID pliku.
+.IP %h
+Początkowe katalogi nazwy pliku (wszystko poza ostatnim elementem).
+.IP %H
+Argument wiersza poleceń, pod którym plik został znaleziony.
+.IP %i
+Numer iwęzła pliku (dziesiętnie).
+.IP %k
+Rozmiar pliku w 1K blokach (zaokrąglane w górę).
+.IP %l
+Obiekt dowiązania symbolicznego (pusty łańcuch, jeśli plik nie jest
+dowiązaniem symbolicznym).
+.IP %m
+Prawa pliku (ósemkowo).
+.IP %n
+Liczba twardych dowiązań do pliku.
+.IP %p
+Nazwa pliku.
+.IP %P
+Nazwa pliku z usuniętą z początku nazwą argumentu wiersza poleceń,
+dla którego ją znaleziono.
+.IP %s
+Rozmiar pliku w bajtach.
+.IP %t
+Ostatni czas modyfikacji pliku w formacie zwróconym przez funkcję ctime(3) z C.
+.IP %T\fIk\fP
+Ostatni czas modyfikacji pliku, w formacie określonym przez \fIk\fR,
+podobnie jak dla %A.
+.IP %u
+Nazwa użytkownika pliku, lub numeryczny UID, jeśli użytkownik nie ma nazwy.
+.IP %U
+Numeryczny UID pliku.
+.PP
+Znak `%', za którym następuje dowolny inny znak jest usuwany (lecz drugi
+znak jest drukowany).
+.RE
+.IP \-prune
+Jeśli nie podano \-depth, prawdziwe; program nie wchodzi w głąb
+bieżącego katalogu.
+.br
+Jeśli podano \-depth, fałszywe; bez rezultatu.
+.IP \-ls
+Prawdziwe; listuje plik bieżący w formacie `ls \dils' na standardowe wyjście.
+Liczniki bloków są 1K blokami, chyba że ustawiono zmienną środowiskową
+POSIXLY_CORRECT, kiedy używane będą 512-bajtowe bloki.
+.SS OPERATORY
+.P
+Wymienione w malejącym priorytecie:
+.IP "( \fIwyraż\fR )"
+Wymusza pierwszeństwo.
+.IP "! \fIwyraż\fR"
+Prawdziwe jeśli \fIwyraż\fR jest fałszywe
+.IP "\-not \fIwyraż\fR"
+To samo co ! \fIwyraż\fR.
+.IP "\fIwyraż1 wyraż2\fR"
+And (jawny); \fIwyraż2\fR nie jest analizowany jesli \fIwyraż1\fR jest
+fałszywe.
+.IP "\fIwyraż1\fR \-a \fIwyraż2\fR"
+To samo, co \fIwyraż1 wyraż2\fR.
+.IP "\fIwyraż1\fR \-and \fIwyraż2\fR"
+To samo, co \fIwyraż1 wyraż2\fR.
+.IP "\fIwyraż1\fR \-o \fIwyraż2\fR"
+Or; \fIwyraż2\fR nie jest analizowane jeśli \fIwyraż1\fR jest prawdziwe.
+.IP "\fIwyraż1\fR \-or \fIwyraż2\fR"
+To samo, co \fIwyraż1\fR \-o \fIwyraż2\fR.
+.IP "\fIwyraż1\fR , \fIwyraż2\fR"
+Lista; zarówno \fIwyraż1\fR jak i \fIwyraż2\fR zawsze są analizowane.
+Wartość \fIwyraż1\fR jest niszczona; wartość listy jest wartością
+\fIwyraż2\fR.
+.SH "ZOBACZ TAKŻE"
+\fBlocate\fP(1L), \fBlocatedb\fP(5L), \fBupdatedb\fP(1L), \fBxargs\fP(1L)
+\fBZnajdowanie plików\fP (on-line w Info, lub w postaci wydrukowanej)

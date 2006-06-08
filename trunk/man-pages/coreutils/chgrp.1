@@ -1,0 +1,114 @@
+.\" {PTM/PB/0.1/28-09-1998/"zmień grupę właścicieli plików"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page chgrp.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH CHGRP "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+chgrp \- zmienia grupę właścicieli plików
+.SH SKŁADNIA
+.B chgrp
+.RI [ opcja ]...
+.I grupa
+.IR plik ...
+.br
+.B chgrp
+.RI [ opcja ]...
+.BI --reference= rplik
+.IR plik ...
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo chgrp
+.RE
+lub
+.RS
+.BR "info chgrp" .
+.RE
+.PP
+Ta strona podręcznika opisuje \fBchgrp\fP w wersji GNU.
+.PP
+.B chgrp
+zmienia grupę właścicieli każdego podanego pliku na podaną grupę (która może
+być albo nazwą grupy, albo jej numerycznym identyfikatorem) lub na grupę
+wskazanego pliku.
+.SS OPCJE
+.TP
+.BR \-c ", " \-\-changes
+Informuje użytkownika o czynnościach, ale tylko dla tych plików, których
+grupa rzeczywiście ulega zmianie.
+.TP
+.BR  \-\-dereference
+Działa na plikach wskazywanych przez dowiązania symboliczne zamiast na
+samych dowiązaniach.
+.TP
+.BR \-h ", " \-\-no\-dereference
+Działa na dowiązaniach symbolicznych zamiast na plikach, które one wskazują
+(dostępne tylko w systemach potrafiących zmienić właściciela dowiązania
+symbolicznego). Jest to zachowanie domyślne. Opiera się na wywołaniu funkcji
+systemowej \fIlchown\fP. Na systemach nie zapewniających tej funkcji chgrp
+zawodzi w przypadku próby zmiany grupy dowiązania symbolicznego. Domyślnie
+nie są emitowane żadne komunikaty diagnostyczne dla dowiązań symbolicznych
+napotykanych podczas rekurencyjnej pracy w katalogach, zobacz jednak opis
+opcji \fB--verbose\fP.
+.TP
+.BR \-f ", " \-\-silent ", " \-\-quiet
+Nie wyświetla komunikatów o błędach dla plików, których grupa nie może
+zostać zmieniona.
+.TP
+.BR \-v ", " \-\-verbose
+Informuje użytkownika o zmianach właściciela. Jeżeli podczas rekurencyjnego
+przetwarzania napotkane jest dowiązanie symboliczne, zaś system nie
+obsługuje funkcji systemowej \fIlchown\fP a działa opcja
+\fB--no-dereference\fP, to wysyła komunikat diagnostyczny informujący, że
+nie jest zmieniane ani dowiązanie ani wskazywany przez nie plik.
+.TP
+.BR \-R ", " \-\-recursive
+Rekurencyjnie zmień grupę dla katalogów i ich zawartości.
+.TP
+.BI \-\-reference= rplik
+Używa grupy wskazanego \fIrpliku\fP zamiast wprost podanej \fIgrupy\fP.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.SH AUTOR
+Napisane przez Davida MacKenzie.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR chown (1),
+.BR chmod (1),
+.BR newgrp (1),
+.BR passwd (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

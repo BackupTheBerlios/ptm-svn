@@ -1,0 +1,518 @@
+.\" {PTM/AB/0.1/21-12-1998/""}
+.\" translated by Adam Byrtek <alpha@irc.pl>
+.\" ------------
+.\" Date: Fri, 11 Sep 1998 19:13:45 +0100
+.\" From: Edward Betts <edward@hairnet.demon.co.uk>
+.\"
+.\" Derived from the GNU diff info page.
+.\" May be distributed under the GPL.
+.\"
+.\" Reformatted, added --binary option, output formats descriptions,
+.\" {PTM/WK/2001-I}  <wkotwica@post.pl>
+.\" ------------
+.TH DIFF 1 "1 października 1994" "Narzędzia różnicowe GNU" "Narzędzia GNU"
+.SH NAZWA
+diff \- szukanie różnic pomiędzy dwoma plikami
+.SH SKŁADNIA
+.B diff
+.RB [ opcje ]
+.I plik1 plik2
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo diff
+.RE
+lub
+.RS
+.BR "info diff" .
+.RE
+W najprostszym przypadku \fBdiff\fP porównuje zawartość dwóch plików,
+\fIplik1\fP i \fIplik2\fP. Nazwa pliku \fB\-\fP oznacza tekst
+odczytywany ze standardowego wejścia. W specjalnym przypadku \fB"diff \-
+\-"\fP porównuje kopię standardowego wyjścia ze samym sobą.
+.PP
+Jeśli \fIplik1\fP jest katalogiem a \fIplik2\fP nie, \fBdiff\fP
+porównuje plik z katalogu \fIplik1\fP, którego nazwa jest taka sama, jak
+\fIplik2\fP, i odwrotnie. Plik nie będący katalogiem nie może być \fB\-\fP.
+.PP
+Jeśli zarówno \fIplik1\fP jak i \fIplik2\fP są katalogami, \fBdiff\fP
+porównuje odpowiednie pliki w obu katalogach, w kolejności alfabetycznej. To
+porównanie nie jest rekurencyjne, chyba że podano opcję \fB\-r\fP lub
+\fB\--recursive\fP.
+\fBdiff\fP nigdy nie porównuje zawartości katalogu tak, jakby był on
+plikiem. Podany plik nie może być standardowym wejściem, ponieważ standardowe 
+wejście nie ma nazwy i nie dotyczy go zapis `plik o tej samej nazwie'.
+.PP
+Opcje \fBdiff\fP na ogół zaczynają się od \fB\-\fP, więc zwykle nazwy plików
+\fIplik1\fP oraz \fIplik2\fP nie mogą zaczynać się od \fB\-\fP, jednak
+argument \fB\-\-\fP traktuje pozostałe argumenty jako nazwy plików, nawet jeśli
+zaczynają się one od \fB\-\fP.
+.SH OPCJE
+Poniżej znajduje się podsumowanie wszystkich opcji akceptowanych przez GNU
+\fBdiff\fP. Większość opcji posiada dwie równoważne formy, jedną z nich jest
+pojedyncza litera poprzedzona kreską \fB\-\fP, a drugą pełna nazwa
+poprzedzona przez \fB\-\-\fP. Wiele pojedynczych liter opcji (nie
+wymagających argumentu) może być łączonych w pojedynczym słowie: `\fB\-ac\fP'
+jest równoważne z `\fB\-a \-c\fP'. Opcje w formie pełnej nazwy mogą być
+skracane do dowolnego unikalnego przedrostka.
+Klamry (\fB[\fP i \fB]\fP) oznaczają, że opcja pobiera opcjonalny argument.
+.TP
+.B \-i
+.br
+.ns
+.TP
+.B \-\-ignore\-case
+Ignorowanie zmian w wielkości liter, duże i małe litery są uznawane za
+równoważne.
+.TP
+.B \-w
+.br
+.ns
+.TP
+.B \-\-ignore\-all\-space
+Ignorowanie wszystkich odstępów przy porównywaniu plików.
+.TP
+.B \-b
+.br
+.ns
+.TP
+.B \-\-ignore\-space\-change
+Ignorowanie zmian w ilości odstępów.
+.TP
+.B \-B
+.br
+.ns
+.TP
+.B \-\-ignore\-blank\-lines
+Ignorowanie zmian, które jedynie dodają lub usuwają puste linie.
+.TP
+.BI "\-I " regexp
+.br
+.ns
+.TP
+.BI \-\-ignore\-matching\-lines= regexp
+Ignorowanie zmian, które jedynie dodają lub usuwają linie pasujące do
+wyrażenia regularnego \fIregexp\fP.
+.TP
+.B \-\-binary
+\fBdiff\fP normalnie czyta i zapisuje wszystkie dane jako tekst.  Ta opcja
+wymusza odczyt i zapis danych w trybie binarnym.  Nie ma efektu na systemach
+zgodnych z POSIX, jak GNU czy tradycyjne Uniksy.  Jednak wiele systemów
+operacyjnych komputerów osobistych oznacza koniec linii dwuznakową sekwencją:
+znakiem powrotu karetki plus znak nowej linii.
+Na takich systemach \fBdiff\fP normalnie ignoruje powroty karetki na wejściu
+i generuje je na końcu każdej linii wyjściowej, ale z opcją \fB\-\-binary\fP
+traktuje powrót karetki jak każdy inny znak wejściowy i nie dokłada go na
+końcu tworzonych linii.  Przydatne do operowania na plikach nie-tekstowych,
+które mają być wymieniane z systemami POSIX-owymi.
+.br
+Do porównywania dwu plików bajt po bajcie służy polecenie
+.BR cmp (1).
+.TP
+.B \-a
+.br
+.ns
+.TP
+.B \-\-text
+Traktowanie wszystkich plików jako pliki tekstowe i porównywanie ich linia
+po linii, nawet jeśli nie wyglądają one na pliki tekstowe.
+
+.TP
+.B \-c
+.br
+.ns
+.TP
+.BI "\-C " linie
+.br
+.ns
+.TP
+.BR \-\-context [ = \fIlinie\fP]
+Użycie kontekstowego formatu wyjściowego z pokazaniem ilości linii kontekstu
+podanej w \fIlinie\fP (wartość całkowita), lub trzy jeśli nie podano
+\fIlinie\fP. Do prawidłowego działania \fBpatch\fP potrzebuje co najmniej
+dwóch linii kontekstu.
+.TP
+.B \-u
+.br
+.ns
+.TP
+.BI "\-U " linie
+.br
+.ns
+.TP
+.BI \-\-unified[= linie ]
+Użycie zunifikowanego formatu wyjściowego i pokazanie ilości linii kontekstu
+podanej w \fIlinie\fP (wartość całkowita), lub trzy jeśli nie podano
+\fIlinie\fP. Do prawidłowego działania \fBpatch\fP potrzebuje co najmniej
+dwóch linii kontekstu.
+.TP
+.BI \- linie
+Wyświetlenie ilości linii kontekstu podanej w \fIlinie\fP (wartość
+całkowita). Ta opcja nie ustala wyjściowego formatu, nie ma ona efektu jeśli
+nie podano opcji \-c lub \-u. Ta opcja jest przestarzała. Do prawidłowego
+działania \fBpatch\fP potrzebuje co najmniej dwóch linii kontekstu.
+.TP
+.BI "\-L " etykieta
+.br
+.ns
+.TP
+.BI \-\-label= etykieta
+Użycie tekstu \fIetykieta\fP w miejsce nazwy plików w nagłówku formatu
+kontekstowego i zunifikowanego.
+.TP
+.B \-p
+.br
+.ns
+.TP
+.B \-\-show\-c\-function
+Pokazanie, do jakiej funkcji C należy każda ze zmian.
+.TP
+.BI "\-F " regexp
+.br
+.ns
+.TP
+.BI \-\-show\-function\-line= regexp
+Pokazanie ostatniej poprzedzającej linii, która pasuje do wyrażenia regularnego
+\fIregexp\fP dla każdego różniącego się fragmentu w formacie kontekstowym
+i zunifikowanym.
+.TP
+.B \-q
+.br
+.ns
+.TP
+.B \-\-brief
+Poinformowanie jedynie o tym, czy pliki się różnią, bez podawania szczegółów
+na temat różnic.
+.TP
+.B \-e
+.br
+.ns
+.TP
+.B \-\-ed
+Stworzenie wyjścia, które jest poprawnym skryptem \fPed\fP.
+.TP
+.B \-f
+.br
+.ns
+.TP
+.B \-\-forward\-ed
+Stworzenie wyjścia, które wygląda prawie tak jak skrypt \fBed\fP, ale
+zawiera modyfikacje w kolejności pojawiania się zmian w pliku.
+.TP
+.B \-n
+.br
+.ns
+.TP
+.B \-\-rcs
+Wyprowadzenie różnic w formacie RCS, tak jak \fB\-f\fP, z tym wyjątkiem,
+że każda komenda wyszczególnia numer linii, której dotyczy.
+.TP
+.B \-y
+.br
+.ns
+.TP
+.B \-\-side\-by\-side
+Użycie formatu wyjściowego jeden obok drugiego.
+.TP
+.BI "\-W " kolumny
+.br
+.ns
+.TP
+.BI \-\-width= kolumny
+Użycie szerokości wyjścia \fIkolumny\fP w formacie jedna obok drugiej.
+.TP
+.B \-\-left\-column
+Wyświetlenie jedynie lewej kolumny z dwóch wspólnych w formacie jedna obok
+drugiej.
+.TP
+.B \-\-suppress\-common\-lines
+Nie wyświetlanie wspólnych linii w formacie jedna obok drugiej.
+.TP
+.BI "\-D " nazwa
+.br
+.ns
+.TP
+.BI \-\-ifdef= nazwa
+Stworzenie połączonego wyjścia w formacie \fB\#ifdef\fP, zależnego od makra
+preprocesora \fInazwa\fP.
+.TP
+.BI \-\-old\-group\-format= formatgrupy
+Użycie formatu \fIformatgrupy\fP do wyprowadzenia grupy linii wziętej
+jedynie z pierwszego pliku.
+Pomocne w tworzeniu plików wynikowych o konstrukcji typu if\-then\-else.
+.TP
+.BI \-\-new\-group\-format= formatgrupy
+Użycie formatu \fIformatgrupy\fP do wyprowadzenia grupy linii wziętej
+jedynie z drugiego pliku.
+Pomocne w tworzeniu plików wynikowych o konstrukcji typu if\-then\-else.
+.TP
+.BI \-\-changed\-group\-format= formatgrupy
+Użycie formatu wyjściowego \fIformatgrupy\fP do wyświetlania grupy linii
+zawierających różniące się linie z obu plików.
+Pomocne w tworzeniu plików wynikowych o konstrukcji typu if\-then\-else.
+.TP
+.BI \-\-unchanged\-group\-format= formatgrupy
+Użycie formatu \fIformatgrupy\fP do wyprowadzenia wspólnej grupy linii
+wziętej z obu plików.
+Pomocne w tworzeniu plików wynikowych o konstrukcji typu if\-then\-else.
+.RS
+
+.B Format grupy linii
+.br
+W formacie określającym sposób wypisania grupy linii zwykłe znaki oznaczają
+same siebie;
+specyfikacje konwersji zaczynają się od znaku procentu \fB%\fP i mają jedną
+z poniższych postaci:
+.TP 3
+.B %\<
+linie z \fIplik1\fP, łącznie z końcowym znakiem nowej linii, formatowane
+zgodnie z formatem starych linii
+.TP 3
+.B %\>
+linie z \fIplik2\fP, formatowane zgodnie z formatem nowych linii
+.TP 3
+.B %\=
+linie wspólne dla obu plików, formatowane zgodnie z formatem linii
+niezmienionych
+.TP 3
+.BR % [ - ][\fIszer\fP][ . [\fIdokł\fP]]{ doxX } \fIlitera\fP
+wartość określona \fIliterą\fP, sformatowana w stylu printf.
+.I litery
+mają, w odniesieniu do grup linii w nowym pliku, następujące znaczenie
+(dla grup w starym pliku używa się małych liter):
+.nf
+   \fBF\fP  numer pierwszej linii
+   \fBL\fP  numer ostatniej linii
+   \fBN\fP  ilość linii = L-F+1
+   \fBE\fP  F-1
+   \fBM\fP  L+1
+.fi
+.TP 3
+.B %%
+pojedynczy dosłowny znak procentu \fB%\fP.
+.TP 3
+.BI %c' C '
+gdzie \fIC\fP jest pojedynczym znakiem, oznacza \fIC\fP.  Nie może to być
+odwrotny ukośnik ani apostrof. Na przykład,
+.B %c':'
+oznacza dwukropek, nawet wewnątrz części then formatu if\-then\-else, którą
+normalnie by kończył.
+.TP 3
+.BI %c'\e O '
+gdzie \fIO\fP jest łańcuchem 1, 2 lub 3 cyfr ósemkowych, oznacza
+znak o kodzie ósemkowym \fIO\fP.  Na przykład, 
+.B %c'\e0'
+oznacza znak null.
+.TP 3
+.BI ( A = B ? T : E )
+Jeśli \fIA\fP równa się \fIB\fP, to \fIT\fP, w przeciwnym razie \fIE\fP.
+\fIA\fP i \fIB\fP są albo obie stałymi podanymi dziesiętnie albo pojedynczymi
+literami, interpretowanymi jak wyżej.
+.RE
+.TP
+.BI \-\-line\-format= formatlinii
+Użycie formatu \fIformatlinii\fP do wyprowadzenia wszystkich linii.
+To samo, co równoczesne użycie wszystkich opcji formatowania linii
+.RB ( --old-line-format ", " --new-line-format ", " --unchanged-line-format )
+z tym samym formatem.
+Pomocne w tworzeniu plików wynikowych o konstrukcji typu if\-then\-else.
+.TP
+.BI \-\-old\-line\-format= formatlinii
+Użycie formatu \fIformatlinii\fP do wyprowadzenia linii wziętej jedynie
+z pierwszego pliku.
+Pomocne w tworzeniu plików wynikowych o konstrukcji typu if\-then\-else.
+.TP
+.BI \-\-new\-line\-format= formatlinii
+Użycie formatu \fIformatlinii\fP do wyprowadzenia linii wziętej jedynie
+z drugiego pliku.
+Pomocne w tworzeniu plików wynikowych o konstrukcji typu if\-then\-else.
+.TP
+.BI \-\-unchanged\-line\-format= formatlinii
+Użycie formatu \fIformatlinii\fP do wyprowadzenia wspólnej linii wziętej
+z obu plików.
+Pomocne w tworzeniu plików wynikowych o konstrukcji typu if\-then\-else.
+.RS
+
+.B Format linii
+.br
+W formacie określającym sposób wypisania linii zwykłe znaki oznaczają
+same siebie;
+specyfikacje konwersji zaczynają się od znaku procentu \fB%\fP i mają jedną
+z poniższych postaci:
+.TP 3
+.B %l
+zawartość danej linii, nie licząc kończącego ją znaku nowej linii (jeśli
+jest takowy).  Ten format ignoruje czy linia jest niekompletna czy
+poprawnie zakończona.
+.ns
+.TP 3
+.B %L
+zawartość danej linii, łącznie z kończącym ją znakiem nowej linii (jeśli
+jest takowy).  Jeżeli linia jest niekompletna, to zachowuje tę niekompletność.
+.ns
+.TP 3
+.BR % [ - ][\fIszer\fP][ . [\fIdokł\fP]]{ doxX } n
+numer linii wejściowej, sformatowany w stylu printf.
+.TP 3
+.B %%
+dosłowny znak procentu \fB%\fP.
+.TP 3
+.BI %c' C '
+dosłowny znak \fIC\fP.  Nie może to być odwrotny ukośnik ani apostrof.
+.TP 3
+.BI %c'\e O '
+znak o kodzie ósemkowym \fIO\fP.
+.RE
+
+.TP
+.B \-l
+.br
+.ns
+.TP
+.B \-\-paginate
+Przesłanie wyjścia przez \fBpr\fP, aby podzielić je na strony.
+.TP
+.B \-t
+.br
+.ns
+.TP
+.B \-\-expand\-tabs
+Rozszerzanie tabulatorów do spacji na wyjściu, aby zachować oryginalne
+ułożenie tabulatorów pliku wejściowego.
+.TP
+.B \-T
+.br
+.ns
+.TP
+.B \-\-initial\-tab
+Wyprowadzenie tabulatora zamiast spacji przed tekstem linii w formacie
+normalnym lub kontekstowym. Powoduje to normalny wygląd tabulatorów w linii.
+
+.TP
+.B \-r
+.br
+.ns
+.TP
+.B \-\-recursive
+Rekurencyjne porównanie wszystkich podkatalogów, jeśli porównywane są katalogi.
+.TP
+.B \-N
+.br
+.ns
+.TP
+.B \-\-new\-file
+Jeśli podczas porównywania katalogów plik istnieje jedynie w jednym z
+katalogów, będzie traktowany tak, jakby był obecny w drugim katalogu, ale
+pusty.
+.TP
+.B \-P
+.br
+.ns
+.TP
+.B \-\-unidirectional\-new\-file
+Jeśli podczas porównywania katalogów plik istnieje jedynie w drugim katalogu,
+będzie traktowany tak, jakby był obecny w pierwszym katalogu, ale pusty.
+.TP
+.B \-s
+.br
+.ns
+.TP
+.B \-\-report\-identical\-files
+Poinformowanie, jeśli oba pliki są identyczne.
+.TP
+.BI "\-x " wzorzec
+.br
+.ns
+.TP
+.BI \-\-exclude= wzorzec
+Podczas porównywania katalogów, ignorowanie plików i podkatalogów, których
+nazwy pasują do wzorca \fIwzorzec\fP.
+.TP
+.BI "\-X " plik
+.br
+.ns
+.TP
+.BI \-\-exclude\-from= plik
+Podczas porównywania katalogów, ignorowanie plików i podkatalogów, których
+nazwa pasuje do jednego z wzorców podanych w pliku \fIplik\fP.
+.TP
+.BI "\-S " plik
+.br
+.ns
+.TP
+.BI \-\-starting\-file= plik
+Podczas porównywania katalogów rozpoczęcie od pliku \fIplik\fP. Opcja ta
+jest użyteczna podczas wznawiania przerwanego porównania.
+
+.TP
+.BI \-\-horizon\-lines= linie
+Nie ignorowanie ostatnich \fIlinie\fP linii wspólnego przedrostka oraz
+pierwszych \fIlinie\fP linii wspólnego przyrostka.
+.TP
+.B \-d
+.br
+.ns
+.TP
+.B \-\-minimal
+Zmiana algorytmu na taki, który może czasami znaleźć mniejszą liczbę zmian.
+Spowalnia to działania \fBdiff\fP (czasami bardzo znacznie).
+.TP
+.B \-H
+.br
+.ns
+.TP
+.B \-\-speed\-large\-files
+Użycie algorytmów heurystycznych aby przyspieszyć przeszukiwanie dużych
+plików ze znaczną liczbą rozrzuconych małych zmian.
+
+.TP
+.B \-h
+Ta opcja aktualnie nie ma żadnego efektu, ale istnieje dla zgodności
+z systemem Unix.
+.TP
+.B \-\-sdiff\-merge\-assist
+Wyświetlenie dodatkowych informacji pomocnych dla \fBsdiff\fP. \fBsdiff\fP
+korzysta z tej opcji gdy uruchamia \fBdiff\fP. Użytkownicy nie powinni
+korzystać z tej opcji bezpośrednio.
+
+.TP
+.B \-\-help
+Wyświetlenie informacji o stosowaniu programu i dostępnych opcjach.
+.TP
+.B \-v
+.br
+.ns
+.TP
+.B \-\-version
+Wyświetlenie numeru wersji programu.
+.SH KOPIOWANIE
+Plik ten powstał na podstawie podręcznika info pakietu diffutils.
+
+Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+.SH ZOBACZ TAKŻE
+.BR cmp (1),
+.BR comm (1),
+.BR diff3 (1),
+.BR ed (1),
+.BR patch (1),
+.BR pr (1),
+.BR sdiff (1).
+.SH DIAGNOSTYKA
+Zwracana wartość 0 oznacza, że nie odnaleziono różnic, 1 oznacza znalezienie
+różnic, a 2 kłopoty.

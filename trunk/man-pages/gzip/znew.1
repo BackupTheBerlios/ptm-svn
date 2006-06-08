@@ -1,0 +1,44 @@
+.\" {PTM/LK/0.1/27-09-1998/"znew - konersja plików .Z na .gz"}
+.\" Tłumaczenie: 27-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH ZNEW 1
+.SH NAZWA
+znew \- dokonaj konwersji pliku .Z do pliku .gz
+.SH SKŁADNIA
+.B znew
+[ \-ftv9PK] [ name.Z ...  ]
+.SH OPIS
+.I  Znew
+dokonuje konwersji wszystkich plików w formacie .Z (utworzonych programem
+compress) do formatu .gz (utworzonych programem gzip). Jeżeli chcesz wymusić
+ponowną kompresję pliku będącego już w formacie programu gzip, zmień
+rozszerzenie nazwy tego pliku na .Z, a następnie użyj programu znew.
+.SH OPCJE
+.TP
+.B \-f
+Wymusza konwersję z formatu .Z do formatu .gz nawet, jeżeli plik .gz już
+istnieje
+.TP
+.B \-t
+Testuje nowy plik przed usunięciem oryginału.
+.TP
+.B \-v
+Pełna informacja. Wyświetla nazwę i procent, o jaki został zredukowany
+rozmiar każdego pliku.
+.TP
+.B \-9
+Używa najwolniejszej (lecz najbardziej wydajnej) kompresji.
+.TP
+.B \-P
+Używa przetwarzania potokowego, by zredukować zużycie przestrzeni dysku.
+.TP
+.B \-K
+Nie usuwa pliku .Z, jeżeli jest mniejszy od nowoutworzonego pliku .gz
+.SH "ZOBACZ TAKŻE"
+gzip(1), zmore(1), zdiff(1), zgrep(1), zforce(1), gzexe(1), compress(1)
+.SH BŁĘDY
+.I Znew
+nie zachowuje pola daty/czasu pliku przy użyciu opcji -P, jeżeli polecenie
+.IR cpmod (1)
+jest niedostępne, zaś
+.IR touch (1)
+nie obsługuje opcji \-r

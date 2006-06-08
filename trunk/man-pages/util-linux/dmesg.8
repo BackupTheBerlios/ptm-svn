@@ -1,0 +1,58 @@
+.\" {PTM/WK/1999-XII}
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH DMESG 8 
+.SH NAZWA
+dmesg \- drukuje bufor warstwy jądra lub steruje buforem
+.SH SKŁADNIA
+.B dmesg
+.RB [ \-c ]
+.RB [ \-n \fIpoziom\fP]
+.RB [ \-s \fIrozm_buf\fP]
+.SH OPIS
+.B dmesg
+służy do sprawdzania bufora warstwy jądra (kernel ring buffer) lub sterowania
+nim.
+
+Program ten pomaga użytkownikom wyświetlić komunikaty startowe ładowania
+systemu. Zamiast ręcznego kopiowania komunikatów, wystarczy jedynie:
+.RS
+dmesg > boot.messages
+.RE
+i przesłanie pliku
+.I boot.messages
+do kogoś, kto potrafi zdiagnozować kłopot.
+.SH OPCJE
+.TP
+.B \-c
+wyczyść zawartość bufora po wyświetleniu.
+.TP
+.BI \-s rozm_buf
+do odpytania bufora jądra użyj bufora o wielkości rozm_buf. Domyślnie jest to
+8196 (odpowiada to domyślnej wielkości bufora syslog dla jądra
+2.0.33 i 2.1.103). Jeżeli ustawiłeś bufor jądra większy od domyślnego,
+to możesz posłużyć się tą opcją do przeglądnięcia całego bufora.
+.TP
+.BI \-n poziom
+ustaw
+.IR poziom ,
+na którym odbywa się rejestrowanie komunikatów na konsoli. Na przykład,
+.B \-n 1
+zapobiega pojawianiu się na konsoli wszelkich komunikatów poza komunikatami
+typu 'panic'. Wszystkie poziomy komunikatów są nadal zapisywane do
+.IR /proc/kmsg ,
+zatem wciąż można posługiwać się
+.BR syslogd (8)
+do dokładnej kontroli, gdzie pojawiają się komunikaty jądra.
+Gdy używana jest opcja
+.BR \-n ,
+to
+.B dmesg
+.I nie
+wyświetla ani nie czyści bufora warstwy jądra.
+
+Jeżeli użyto obu opcji, to zadziała tylko ostatnia opcja z wiersza poleceń.
+.SH ZOBACZ TAKŻE
+.BR syslogd (8)
+.SH AUTOR
+Theodore Ts'o (tytso@athena.mit.edu)

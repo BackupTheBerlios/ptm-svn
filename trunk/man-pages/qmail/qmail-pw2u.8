@@ -1,0 +1,241 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/14-06-1999/"buduje przypisania adresów na podstawie pliku passwd"}
+.TH qmail-pw2u 8
+.SH NAZWA
+qmail-pw2u \- zbuduj przypisania adresów na podstawie pliku passwd
+.SH SKŁADNIA
+.B qmail-pw2u
+[
+.B \-/ohHuUC
+]
+[
+.B \-c\fIchar
+]
+.SH OPIS
+.B qmail-pw2u
+czyta plik passwd w formacie V7 ze standardowego wejścia
+i drukuje plik w formacie
+.BR qmail-users .
+
+Format V7 pliku passwd jest to seria linii.
+Każda linia ma format
+
+.EX
+   użytkownik:hasło:uid:gid:gecos:domowy:shell
+.EE
+
+gdzie
+.I użytkownik
+jest nazwą konta,
+.I uid
+i
+.I gid
+to identyfikatory grupy i użytkownika tego konta,
+a
+.I domowy
+to katalog domowy.
+.IR hasło ,
+.IR gecos ,
+i
+.I shell
+są ignorowane przez
+.BR qmail-pw2u .
+
+Jeśli skierujesz wyjście programu
+.B qmail-pw2u
+do pliku
+.BR /var/qmail/users/assign ,
+a potem uruchomisz
+.BR qmail-newu ,
+to
+.B qmail-lspawn
+będzie postępować zgodnie z wypisanymi przez
+.BR qmail-pw2u
+przypisaniami.
+.B OSTRZEŻENIE:
+Po zmianach dotyczących użytkowników, ich identyfikatorów lub katalogów
+domowych w pliku passwd
+musisz ponownie uruchomić
+.B qmail-pw2u
+i
+.B qmail-newu
+jeśli chcesz by
+.B qmail-lspawn
+zauważył zmiany.
+.SH REGUŁY
+Domyślnie,
+.B qmail-pw2u
+postępuje zgodnie z tymi samymi regułami co
+.BR qmail-getpw .
+Pomija
+.I użytkownika
+jeśli (1)
+.I uid
+ma wartość zero,
+(2) katalog
+.I domowy
+nie istnieje,
+(3)
+.I użytkownik
+nie jest właścicielem katalogu
+.IR domowy ,
+lub
+(4)
+.I użytkownik
+a (właściwie to jego nazwa - przyp. tł.:) zawiera duże litery.
+Potem przekazywana jest kontrola 
+.I użytkownika
+nad adresem podstawowym widocznym jako
+.I użytkownik
+i nad wszystkimi adresami w formie
+.IR użytkownik\fB-\fIcokolwiek .
+Łapacz wszystkich użytkowników,
+.BR alias ,
+kontroluje wszystkie pozostałe adresy
+(jego katalogiem jest /var/qmail/alias - przyp. tł.).
+Możesz zmieniać te reguły przez zmiany w plikach z
+.BR /var/qmail/user :
+.TP
+.B include
+Dozwoleni użytkownicy, jeden na linię.
+Jeśli plik
+.B include
+istnieje, a
+.I użytkownik
+nie jest w nim wyszczególniony
+to
+.I użytkownik
+ten jest ignorowany.
+.TP
+.B exclude
+Użytkownicy ignorowani, jeden na linię.
+Jeśli plik
+.B exclude
+istnieje, a
+.I użytkownik
+jest w nim wyszczególniony
+to
+.I użytkownik
+ten jest ignorowany.
+.TP
+.B mailnames
+Zmiana nazw dla użytkowników.
+Każda linia posiada formę
+
+.EX
+   użytkownik:nazwapocztowa1:nazwapocztowa2:...
+.EE
+
+Listy zaadresowane do
+.I nazwapocztowa1
+i
+.I nazwapocztowa1\fB-\fIdod
+oraz
+.I nazwapocztowa2
+i inne wyszczególnione będą dostarczone 
+do
+.IR użytkownika .
+
+.B OSTRZEŻENIE:
+Listy zaadresowane do
+.I użytkownik
+i
+.I użytkownik\fB-\fIdod
+nie będą dostarczone do
+.I użytkownika
+dopóki sam
+.I użytkownik
+nie jest wyszczególniony jako jedno z pól
+.IR nazwapocztowa .
+
+Linia w pliku
+.B mailnames
+jest cichutko ignorowana jeśli użytkownik nie istnieje.
+.TP
+.B subusers
+adresy dodatkowe.
+Każda linia ma postać
+
+.EX
+   pod:użytkownik:przed:
+.EE
+
+.I pod
+będzie obsługiwane przez
+.IR domowy\fB/.qmail\-\fIprzed ,
+gdzie
+.I domowy
+to katalog domowy
+.IR użytkownika ;
+.I pod\fB-\fIdod
+będzie obsługiwane przez
+.IR domowy\fB/.qmail\-\fIprzed\fB\-\fIdod .
+.TP
+.B append
+dodatkowe przypisania,
+wypisywane na końcu wyjścia
+.BR qmail-pw2u .
+.SH OPCJE
+.TP
+.B \-o
+(Domyślna.)
+Przeskocz
+.I użytkownika
+jeśli jego katalog
+.I domowy
+nie istnieje (lub nie jest widoczny dla
+.BR qmail-pw2u ).
+Pomiń
+.I użytkownika
+jeśli katalog
+.I domowy
+nie jest własnością
+.IR użytkownika .
+.TP
+.B \-h
+Zatrzymaj się jeśli
+katalog
+.I domowy
+nie istnieje.
+Jest to odpowiednie jeśli każdy użytkownik przypuszczalnie posiada katalog domowy.
+Pomiń
+.I użytkownika
+jeśli katalog
+.I domowy
+do niego nie należy.
+.TP
+.B \-H
+Nie sprawdzaj obecności posiadania katalogu
+.IR domowego .
+.TP
+.B \-U
+(Domyślna.)
+Pomiń
+.I użytkownika
+jeśli są jakieś duże litery w nazwie
+.IR użytkownika .
+.TP
+.B \-u
+Pozwól na duże litery w nazwie
+.IR użytkownika .
+.TP
+.B \-c\fIznak
+Użyj
+.I znaku
+jako oddzielacza nazwy użytkownika od rozszerzenia
+w zamian znaku
+.BR - .
+.TP
+.B \-C
+Wyłącz mechanizm użytkownik-rozszerzenie.
+.TP
+.B \-/
+Używaj
+.IR domowy\fB/.qmail\-/ ...
+zamiast
+.IR domowy\fB/.qmail\- ...
+.SH "ZOBACZ TAKŻE"
+qmail-users(5),
+qmail-lspawn(8),
+qmail-newu(8),
+qmail-getpw(8)

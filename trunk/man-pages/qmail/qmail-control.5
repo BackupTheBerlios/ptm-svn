@@ -1,0 +1,83 @@
+.\" Translation (c) 1999 Paweł Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/10-11-1999/"pliki konfiguracyjne qmail"}
+.TH qmail-control 5
+.SH "NAZWA"
+qmail-control \- pliki konfiguracyjne qmail
+.SH "WPROWADZENIE"
+Możesz zmienić zachowanie systemu
+.B qmail
+poprzez modyfikację
+.I plików kontrolnych
+.BR qmail
+w katalogu
+.BR /var/qmail/control .
+
+.B qmail
+może przetrwać z tylko jednym plikiem kontrolnym,
+o nazwie
+.IR me ,
+zawierającym pełną domenową nazwę obecnego hosta.
+Plik ten jest używany jako domyślny
+także dla innych zależących od nazwy maszyny
+plików kontrolnych.
+
+Komentarze są dozwolone
+w plikach
+.IR badmailfrom ,
+.IR locals ,
+.IR percenthack ,
+.IR qmqpservers ,
+.IR rcpthosts ,
+.IR smtproutes ,
+i
+.IR virtualdomains .
+Początkowe spacje i tabulatory są dozwolone w każdym z
+plików kontrolnych.
+
+Poniższa tabela zawiera listę wszystkich plików
+kontrolnych innych niż
+.IR me .
+Obejrzyj odpowiednie strony podręczników ekranowych
+po więcej szczegółów.
+
+.RS
+.nf
+.ta 5c 10c
+plik	domyślnie	używane przez
+
+.I badmailfrom	\fR(brak)	\fRqmail-smtpd
+.I bouncefrom	\fRMAILER-DAEMON	\fRqmail-send
+.I bouncehost	\fIme	\fRqmail-send
+.I concurrencylocal	\fR10	\fRqmail-send
+.I concurrencyremote	\fR20	\fRqmail-send
+.I defaultdomain	\fIme	\fRqmail-inject
+.I defaulthost	\fIme	\fRqmail-inject
+.I databytes	\fR0	\fRqmail-smtpd
+.I doublebouncehost	\fIme	\fRqmail-send
+.I doublebounceto	\fRpostmaster	\fRqmail-send
+.I envnoathost	\fIme	\fRqmail-send
+.I helohost	\fIme	\fRqmail-remote
+.I idhost	\fIme	\fRqmail-inject
+.I localiphost	\fIme	\fRqmail-smtpd
+.I locals	\fIme	\fRqmail-send
+.I morercpthosts	\fR(brak)	\fRqmail-smtpd
+.I percenthack	\fR(brak)	\fRqmail-send
+.I plusdomain	\fIme	\fRqmail-inject
+.I qmqpservers	\fR(brak)	\fRqmail-qmqpc
+.I queuelifetime	\fR604800	\fRqmail-send
+.I rcpthosts	\fR(brak)	\fRqmail-smtpd
+.I smtpgreeting	\fIme	\fRqmail-smtpd
+.I smtproutes	\fR(brak)	\fRqmail-remote
+.I timeoutconnect	\fR60	\fRqmail-remote
+.I timeoutremote	\fR1200	\fRqmail-remote
+.I timeoutsmtpd	\fR1200	\fRqmail-smtpd
+.I virtualdomains	\fR(brak)	\fRqmail-send
+.fi
+.RE
+.SH "ZOBACZ TAKŻE"
+qmail-inject(8),
+qmail-qmqpc(8),
+qmail-remote(8),
+qmail-send(8),
+qmail-showctl(8),
+qmail-smtpd(8)

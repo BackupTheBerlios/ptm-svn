@@ -1,0 +1,125 @@
+.\" {PTM/WK/1999-XII}
+.\" Translation update: Robert Luberda <robert@debian.org>, May 2003, man-db 2.4.1
+.\" $Id: manpath.5,v 1.2 2003/05/29 10:59:27 robert Exp $
+.\"
+.\" Man page for format of the manpath.config data file
+.\"
+.\" Copyright (C), 1994, 1995, Graeme W. Wilford. (Wilf.)
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the file COPYING that comes with the
+.\" man-db distribution.
+.\"
+.\" Sat Oct 29 13:09:31 GMT 1994  Wilf. (G.Wilford@ee.surrey.ac.uk)
+.\"
+.TH manpath 5 "7 września 2001" "2.4.1" "/etc/man_db.config"
+.SH NAZWA
+manpath \- format pliku /etc/man_db.config
+.SH OPIS
+Plik konfiguracyjny ścieżek przeszukiwania stron man stosowany
+jest przez narzędzia obsługi stron man do oszacowania ścieżek manpath
+użytkowników na bieżąco, podczas wykonywania programu.
+Wskazuje, jakie hierarchie stron man (manpaths) powinny być traktowane
+jako globalne oraz przypisuje im katalogi, które będą użyte do składowania
+plików cat.
+
+Jeżeli jest już ustawiona zmienna środowiska
+.RB $ MANPATH ,
+to informacja zawarta w /etc/man_db.config nie będzie jej unieważniać.
+.\" override
+.SH FORMAT
+Obecnie rozpoznawane są następujące typy pól:
+.TP
+.BI # \ komentarz
+Wiersze puste bądź rozpoczynające się znakiem
+.B #
+zostaną uznane za komentarze i zignorowane.
+.TP
+.BI MANDATORY_MANPATH \ element_manpath
+Wiersze tej postaci wskazują ścieżki man, które powinna zawierać każda
+automatycznie utworzona wartość zmiennej
+.RB $ MANPATH .
+Zwykle obejmuje to
+.IR /usr/man .
+.TP
+.BI MANPATH_MAP \ element_path\ element_manpath
+Wiersze tej postaci ustawiają odwzorowania
+.RB $ PATH
+na
+.RB $ MANPATH .
+Dla każdego
+.I elementu_path
+znalezionego w ścieżce
+.RB $ PATH
+użytkownika do zmiennej
+.BR $ MANPATH
+zostanie dodany
+.IR element_manpath .
+.TP
+\fBMANDB_MAP \fIelement_manpath \fR\|[\| \fIelement_catpath\fR \|]
+Wiersze tej postaci wskazują, które ścieżki man powinny być traktowane
+jako systemowe, i opcjonalnie, gdzie powinny być składowane ich pliki cat.
+Ten typ pola jest szczególnie ważny, gdy
+.B man
+jest programem setuid, gdyż (jeżeli jest umieszczony w systemowym pliku
+konfiguracyjnym /etc/man_db.config, a nie w pliku konfiguracyjnym
+użytkownika .manpath) mówi, do których hierarchii (katalogów) stron man
+sięgać jako użytkownik setuid, a do których jako użytkownik wywołujący
+program.
+
+Systemowe hierarchie stron man są zwykle składowane wewnątrz katalogu
+.I /usr
+jak na przykład
+.IR /usr/man ,
+.I /usr/local/man
+czy
+.IR /usr/X11R6/man .
+
+Jeśli strony cat z danej ścieżki
+.I element_manpath
+mają nie być przechowywane albo mają być składowane w tradycyjnym miejscu,
+to
+.I element_catpath
+można pominąć.
+
+Tradycyjne umieszczanie stron cat nie jest możliwe dla hierarchii stron man
+zamontowanych jako read-only. Z tego powodu można podać dowolną
+poprawną hierarchię katalogów dla ich składowania. W celu przestrzegania
+.B Linuksowego FSSTND
+(File System Standard Group - ustalenia standardu struktury drzewa
+katalogów Linuksa) można posłużyć się słowem kluczowym
+.RB ` FSSTND '
+w miejscu faktycznego katalogu.
+
+Niestety, niezbędne jest podanie
+.B wszystkich
+systemowych ścieżek drzew man, łącznie ze ścieżkami kolejnych systemów, jak
+np.
+.I /usr/man/sun
+czy też ścieżki
+.BR "NLS locale" ,
+takie jak
+.IR /usr/man/de_DE.88591 .
+
+Ponieważ informacja jest analizowana wiersz po wierszu, w kolejności zapisu,
+każda ścieżka manpath będąca podhierarchią innej hierarchii powinna być
+podana jako pierwsza. W przeciwnym razie zostaną wykonane niepoprawne
+dopasowania.
+Na przykład
+.I /usr/man/de_DE.88591
+musi wystąpić przed
+.IR /usr/man .
+.TP
+.BI DEFINE \ klucz\ wartość
+Linie tej postaci definiują różnorodne zmienne konfiguracyjne \-
+domyślny plik konfiguracyjny zawiera zmienne używane przez programy użytkowe
+przeglądarki stron man.
+Zawierają one domyślne ścieżki do różnych programów (takich jak
+.I grep
+i
+.IR tbl )
+oraz domyślne argumenty wywołań tych programów.
+.SH BŁĘDY
+Jeżeli nie są ściśle przestrzegane powyższe reguły, to narzędzia
+przeglądania stron man nie będą działać w pożądany sposób.
+.\" The rules are overly complicated.

@@ -1,0 +1,85 @@
+.\" {PTM/PB/0.1/28-09-1998/"uruchom program z priorytetem"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU sh-utils 2.0 PTM/WK/2000-VI
+.ig
+Transl.note: based on GNU man page nice.1 and sh-utils.info
+
+Copyright (C) 1994, 95, 96 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH NICE "1" FSF "maj 2000" "Narzędzia powłokowe GNU 2.0"
+.SH NAZWA
+nice \- uruchom program ze zmodyfikowanym priorytetem
+.SH SKŁADNIA
+.TP 6
+.B nice
+.RB [ \-n
+.IR dostrojenie ]
+.RB [ \-\-adjustment=\fIdostrojenie ]
+.br
+.RI [ \fB\-\fPdostrojenie ]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.br
+.RI [ polecenie
+.RI [ arg ...]]
+.SH OPIS
+Ta strona podręcznika opisuje program \fBnice\fP w wersji GNU.
+.PP
+Zauważ, że  większość powłok ma wbudowane polecenie o tej samej nazwie
+i podobnej funkcjonalności.
+.PP
+Jeśli nie ma podanych argumentów,
+.B nice
+wypisuje obecny priorytet przydzielania (przełączania zadań w jądrze). Jest
+to ten priorytet, który program odziedziczył dla siebie.
+W przeciwnym wypadku,
+.B nice
+uruchamia podane
+.I polecenie
+z dostrojonym priorytetem przydzielania.
+Jeśli nie podano
+.I dostrojenia,
+priorytet polecenia jest zwiększany o 10. Superużytkownik może podawać ujemne
+dostrojenie.
+.B nice
+może dostrajać priorytet w granicach
+od -20 (najwyższy priorytet) do 19 (najniższy).
+.SH OPCJE
+.TP
+.BR \-n " \fIdostrojenie\fP, " \-\fIdostrojenie ", " \-\-adjustment= \fIdostrojenie
+Dodaj
+.I dostrojenie
+zamiast 10 do priorytetu polecenia.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+pracę.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-sh-utils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR sh-utils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi powłokowych
+GNU wersji 2.0.

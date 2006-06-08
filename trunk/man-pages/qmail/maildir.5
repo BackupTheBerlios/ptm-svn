@@ -1,0 +1,217 @@
+.\" PTM/WK/2001-VI
+.TH maildir 5
+.SH "NAZWA"
+maildir \- katalog na przychodzące wiadomości pocztowe
+.SH "WPROWADZENIE"
+.I maildir
+jest strukturą drzewiastą katalogów listów przychodzących.
+Rozwiązuje problemy niezawodności, jakie trapiły pliki
+.I mbox
+i katalogi pocztowe
+.IR mh .
+.SH "KWESTIE NIEZAWODNOŚCI"
+Podczas przekazywania listu może nastąpić załamanie się systemu.
+W przypadku plików
+.IR mbox ,
+jak i katalogów
+.I mh
+list ten zostanie wówczas milcząco obcięty. Co gorsza: przy formacie
+.IR mbox ,
+jeśli list zostanie ucięty w środku linii, to milcząco zostanie złączony
+z następnym.
+Agent transportu poczty (MTA) będzie później próbował ponownie dostarczyć
+list, ale jest niedopuszczalne, żeby popsuta wiadomość w ogóle się pojawiała.
+W
+.I maildir
+każdy list po przesłaniu jest z pewnością kompletny.
+
+Na danej maszynie mogą równocześnie pracować dwa programy dostarczające
+pocztę do tego samego użytkownika.
+Formaty
+.I mbox
+i
+.I mh
+wymagają, by oba programy aktualizowały jeden centralny plik. Jeśli
+nie korzystają one z jakiegoś mechanizmu blokowania, to plik ten zostanie
+uszkodzony.
+Istnieje kilka mechanizmów blokowania
+.I mbox
+i
+.IR mh ,
+z których żaden nie działa przenośnie i niezawodnie.
+W przeciwieństwie do tego, przy
+.I maildir
+żadne blokady nie są nigdy potrzebne.
+Różne procesy dostarczania nigdy nie tykają tego samego pliku.
+
+Użytkownik może próbować usunąć listy ze swojej skrzynki w tej samej
+chwili, gdy maszyna dostarcza nowy list.
+Przy formatach
+.I mbox
+i
+.I mh
+czytnik poczty użytkownika musi wiedzieć, jakiego
+mechanizmu blokowania używają programy dostarczające pocztę.
+Inaczej jest w przypadku
+.IR maildir ,
+gdzie czytnik poczty może bezpiecznie aktualizować lub usuwać dowolny
+dostarczony list.
+
+Wiele ośrodków korzysta z Sunowego
+.B Network F\fPa\fBil\fPur\fBe System
+(NFS),
+zapewne dlatego, że dostawca systemu operacyjnego nie oferuje niczego innego.
+NFS pogarsza wszystkie powyższe problemy.
+Niektóre z implementacji NFS nie zapewniają
+.B żadnego
+solidnego mechanizmu blokowania.
+Przy formatach
+.I mbox
+i
+.IR mh ,
+gdy dwie maszyny dostarczają pocztę do tego samego użytkownika lub gdy
+użytkownik czyta pocztę gdzieś poza maszyną dostarczającą, jego poczta
+jest zagrożona.
+.I maildir
+działa z NFS bez kłopotów.
+.SH "STRUKTURA MAILDIR"
+Katalog w formacie
+.I maildir
+ma trzy podkatalogi, wszystkie na tym samym systemie plików:
+.BR tmp ,
+.BR new
+i
+.BR cur .
+
+Każdy plik w
+.B new
+jest świeżo dostarczonym listem. Czas modyfikacji pliku jest czasem
+dostarczenia. List jest dostarczany
+.I bez
+dodatkowej linii
+.B From_
+w stylu UUCP,
+.I bez
+żadnego cytowania
+.B >From
+i
+.I bez
+dodatkowej pustej linii na końcu.
+Wiadomość ma normalnie format RFC 822, zaczynając się liniami
+.B Return-Path
+i
+.BR Delivered-To ,
+ale może zawierać dowolne dane binarne.
+Może nawet nie kończyć się znakiem nowej linii.
+
+Pliki w
+.B cur
+są takie jak w
+.BR new .
+Różnicę stanowi to, że pliki w
+.B cur
+nie są już nowymi listami: czytnik poczty użytkownika już je widział.
+.SH "JAK LIST JEST DOSTARCZANY"
+Do zapewnienia niezawodności dostarczania wykorzystuje się katalog 
+.BR tmp .
+
+Program dostarcza przesyłkę pocztową w sześciu etapach.
+Najpierw, wykonuje
+.B chdir()
+do katalogu
+.IR maildir .
+Potem pobiera za pomocą
+.B stat()
+informacje o pliku o nazwie
+.BR tmp/\fItime.pid.host ,
+gdzie
+.I time
+to liczba sekund od początku 1970 GMT,
+.I pid
+to identyfikator procesu programu, a
+and
+.I host
+jest nazwą hosta.
+W kroku trzecim, jeśli
+.B stat()
+zwrócił coś innego niż ENOENT [ENOENT=plik nie istnieje], program zasypia
+na dwie sekundy, aktualizuje
+.IR time ,
+i ponownie próbuje
+.BR stat() ,
+ograniczoną liczbę razy.
+W czwartym kroku program tworzy
+.BR tmp/\fItime.pid.host .
+W piątym zapisuje przez
+.I zapis-NFS
+przesyłkę do utworzonego pliku.
+W szóstym kroku program, za pomocą
+.B link()
+tworzy nowe dowiązanie tego pliku,
+.BR new/\fItime.pid.host .
+W tym momencie list dostał pomyślnie dostarczony.
+
+Program dostarczający przed utworzeniem
+.B tmp/\fItime.pid.host
+powinien uruchomić 24-godzinny licznik czasu i porzucić dostarczanie jeśli
+licznik zostanie przekroczony. W przypadku wystąpienia błędu, przekroczenia
+limitu czasu czy normalnego zakończenia działania, program może spróbować
+użyć
+.BR unlink()
+do usunięcia
+.BR tmp/\fItime.pid.host .
+
+.I Zapis-NFS
+oznacza
+(1) jak zwykle, sprawdzenie liczby bajtów zwracanych z każdego wywołania
+.BR write() ;
+(2) wywołanie
+.B fsync()
+i sprawdzenie zwróconej wartości;
+(3) wywołanie
+.B close()
+i sprawdzenie zwróconej wartości.
+(Standardowe implementacje NFS obsługują
+.B fsync()
+niepoprawnie, ale poprawiają to niewłaściwym użyciem
+.BR close() .)
+.SH "JAK LIST JEST CZYTANY"
+Czytnik poczty działa jak następuje.
+
+Przegląda katalog
+.B new
+szukając nowych wiadomości.
+Powiedzmy, że mamy nowy list,
+.BR new/\fIunikat .
+Czytnik może swobodnie wyświetlić zawartość pliku
+.BR new/\fIunikat ,
+usunąć go lub zmienić mu nazwę na
+.BR cur/\fIunikat:info .
+Znaczenie
+.IR info
+opisano na stronie
+.BR http://pobox.com/~djb/proto/maildir.html .
+
+Oczekuje się również, że czytnik przeglądnie katalog
+.B tmp
+i wyczyści ewentualne znalezione tam stare pliki.
+Plik w 
+.B tmp
+można bezpiecznie usunąć jeśli nie sięgano do niego w ciągu ostatnich
+36 godzin.
+
+Warto, by czytniki pomijały wszystkie te pliki w
+.B new
+i
+.BR cur ,
+których nazwy zaczynają się od kropki. Czytniki nie powinny próbować
+analizować innych nazw plików.
+.SH "ZMIENNE ŚRODOWISKOWE"
+Czytniki poczty obsługujące
+.I maildir
+korzystają ze zmiennej środowiskowej
+.B MAILDIR
+jako nazwy podstawowego katalogu pocztowego użytkownika.
+.SH "ZOBACZ TAKŻE"
+.BR mbox (5),
+.BR qmail-local (8)

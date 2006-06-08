@@ -1,0 +1,36 @@
+.\" {PTM/GSN/0.5/23-02-1999/"przeszukaj bazę danych whatis pod kątem całych słów"}
+.\"
+.\" Generated automatically from whatis.1.in by the
+.\" configure script.
+.\"
+.\" Man page for whatis
+.\"
+.\" Copyright (c) 1990, 1991, John W. Eaton.
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the README file that comes with the man 1.0
+.\" distribution.  
+.\"
+.\" John W. Eaton
+.\" jwe@che.utexas.edu
+.\" Department of Chemical Engineering
+.\" The University of Texas at Austin
+.\" Austin, Texas  78712
+.\"
+.TH whatis 1 "Jan 5, 1991"
+.LO 1
+.SH NAZWA
+whatis - przeszukaj bazę danych whatis pod kątem całych słów
+.SH SKŁADNIA
+.B whatis
+.IR klucz ...
+.SH OPIS
+whatis przeszukuje zestaw plików bazy danych zawierających krótkie
+opisy komend systemowych pod kątem słów kluczowych, i wyświetla
+wyniki na standardowym wyjściu. Wyszukiwane są tylko pełne słowa pasujące do
+nazwy polecenia. Nie są przeszukiwane opisy.
+.PP
+Bazę danych whatis tworzy się używając komendy /usr/sbin/makewhatis.
+.SH "ZOBACZ TAKŻE"
+.BR apropos (1),
+.BR man (1).

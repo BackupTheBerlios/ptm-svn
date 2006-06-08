@@ -1,0 +1,195 @@
+.\" {PTM/PB/0.1/07-05-1999/"tabele dla crona"}
+.\"/* Copyright 1988,1990,1993,1994 by Paul Vixie
+.\" * All rights reserved
+.\" *
+.\" * Distribute freely, except: don't remove my name from the source or
+.\" * documentation (don't take credit for my work), mark your changes (don't
+.\" * get me blamed for your possible bugs), don't alter or remove this
+.\" * notice.  May be sold if buildable source is provided to buyer.  No
+.\" * warrantee of any kind, express or implied, is included with this
+.\" * software; use at your own risk, responsibility for damages (if any) to
+.\" * anyone resulting from the use of this software rests entirely with the
+.\" * user.
+.\" *
+.\" * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
+.\" * I'll try to keep a version up to date.  I can be reached as follows:
+.\" * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+.\" */
+.\"
+.\" $Id: crontab.5,v 1.6 2000/10/22 16:15:31 wojtek2 Exp $
+.\" 
+.TH CRONTAB 5 "24 stycznia 1994"
+.UC 4
+.SH NAZWA
+crontab \- tabele dla crona
+.SH OPIS
+Plik
+.I crontab
+zawiera wskazówki dla demona
+.IR cron (8),
+sformatowane w ogólnej postaci: ``uruchom tę komendę o tej porze i tego
+dnia''. Każdy użytkownik ma swoją własną tabelę crontab, a komendy z każdej
+podanej tabeli są
+wykonywane z uprawnieniami jej właściciela. News i uucp zazwyczaj mają swoje
+własne tabele, eliminując w ten sposób potrzebę jawnego wywoływania
+.IR su (1)
+jako części komendy crona.
+.PP
+Puste linie, spacje oraz tabulacje są ignorowane. Linie, w których pierwszym
+nie-białym znakiem jest `#', są komentarzami i też są ignorowane.
+Zauważ, że komentarze nie mogą wystąpić w tej samej linii co komendy crona,
+ponieważ będą one wtedy potraktowane jak część komendy. Podobnie, komentarze nie
+są dozwolone w liniach ustawień zmiennych środowiskowych.
+.PP
+Linia aktywna tabeli może być albo ustawieniem środowiska, albo komendą
+crona. Ustawienie zmiennej środowiskowej ma postać
+.PP
+    nazwa = wartość,
+.PP
+gdzie spacje wokół znaku równości są opcjonalne, a wszelkie kolejne,
+niepoczątkowe spacje w
+.I wartości
+zostaną częścią wartości przypisanej zmiennej
+.IR nazwa .
+Łańcuch
+.I wartość
+może być umieszczony w cudzysłowach (pojedynczych lub podwójnych). Zachowa
+to początkowe i końcowe spacje.
+.PP
+Wiele zmiennych środowiskowych jest ustawianych automatycznie przez demona
+.IR cron (8).
+SHELL jest ustawiany na /bin/sh, LOGNAME i HOME są ustawiane na podstawie
+linii /etc/passwd właściciela tabeli.
+Zmienne HOME i SHELL mogą być przeciążone przez ustawienia tabeli. Nie można
+tak zrobić z LOGNAME.
+.PP
+(Inna uwaga: zmienna LOGNAME nazywa się czasem USER na systemach BSD... na
+tych systemach ustawiana będzie również zmienna USER.)
+.PP
+Dodatkowo, poza powyższymi zmiennymi,
+.IR cron (8)
+będzie korzystał z MAILTO jeśli zajdzie potrzeba wysłania listu jako wyniku
+wykonania komend z ``tej'' tabeli. Jeśli MAILTO jest zdefiniowane, to list
+zostanie wysłany do wskazanego tam użytkownika. Jeśli MAILTO jest
+zdefiniowane, lecz puste (MAILTO=""), to nie są wysyłane żadne listy.
+W innych wypadkach listy są wysyłane do właściciela tabeli. Opcja ta jest
+użyteczna jeśli zdecydujesz się na mailer /bin/mail  zamiast
+/usr/lib/sendmail podczas instalacji crona -- /bin/mail nie robi
+aliasowania, a UUSP zwykle nie czyta jego listów.
+.PP
+Format komendy crona jest podobny do standardu V7, z wieloma rozszerzeniami.
+Każda linia ma pięć pól czasu i daty, za którymi znajduje się nazwa
+użytkownika (jeśli jest to tabela systemowa), oraz komenda. Komendy są
+wywoływane przez demona
+.IR cron (8),
+gdy minuta, godzina i miesiąc z wpisu odpowiadają czasowi bieżącemu
+.I oraz
+gdy przynajmniej jedno z dwóch pól dnia (dzień miesiąca lub dzień tygodnia)
+odpowiadają czasowi bieżącemu (zobacz ``Uwagi'' poniżej).
+Zauważ, że oznacza to, iż nieistniejace czasy, jak "brakujące godziny" podczas
+konwersji związanej ze zmianami czasu z uwagi na oszczędność energii,
+[czas letni/zimowy] nigdy nie będą pasować. Zatem zadania zaplanowane
+na takie "brakujące czasy" nie zostaną uruchomione. Podobnie, czas występujący
+więcej niż raz (znów, przypadek zmiany czasów, w drugim kierunku) spowoduje,
+że odpowiadające mu zadania będą uruchomione dwukrotnie.
+.IR cron (8)
+testuje wpisy tabel co minutę.
+Pola czasu i daty to:
+.IP
+.ta 1.5i
+Pole	dozwolone wartości
+.br
+-----	--------------
+.br
+minuta	0-59
+.br
+godzina	0-23 
+.br
+dzień miesiąca	0-31
+.br
+miesiąc	0-12 (lub nazwy, patrz niżej)
+.br
+dzień tygodnia	0-7 (0 lub 7 jest niedzielą, lub użyj nazw)
+.br
+.PP
+Pole może mieć gwiazdkę (*), która oznacza ``pierwszy\-ostatni''.
+.PP
+Dozwolone są zakresy liczb. Zakresy są dwiema liczbami, oddzielonymi
+myślnikiem. Zakres ten jest domknięty. Np, 8-11 dla ``godzin'' oznacza
+wywoływanie w godzinach 8, 9, 10, 11.
+.PP
+Dozwolone są też listy. Lista jest zbiorem liczb (lub zakresów),
+oddzielonych przecinkami. Przykłady: ``1,2,5,9'', ``0-4,8-12''.
+.PP
+W połączeniu z zakresami można używać wartości krokowych. Napisanie za
+zakresem elementu ``/<liczba>'' oznacza odstępy między wartościami liczby w
+zakresie. Na przykład ``0-23/2'' oznacza liczby parzyste w tym zakresie.
+Wartości krokowe dozwolone są też za gwiazdkami, więc jeśli chciałbyś
+powiedzieć ``co drugą godzinę'', użyj po prostu ``*/2''.
+.PP
+Dla ``miesięcy'' i ``dni tygodnia'' można używać również nazw. Użyj
+pierwszych trzech liter konkretnego dnia lub miesiąca (po angielsku,
+wielkość liter nie ma znaczenia). Zakresy lub listy nazw są niedozwolone.
+.PP
+Szóste pole (reszta linii) określa komendę, jaką należy wykonać. Cała część
+komendowa linii, aż do nowej linii, lub znaku %, zostanie wykonana przez
+/bin/sh, lub przez inną powłokę, jaką podałeś w zmiennej SHELL pliku crona.
+Procenty w komendzie (%), o ile nie są chronione odwrotnymi ukośnikami, 
+zostaną
+zamienione w znaki nowej linii, a wszelkie dane za pierwszym % zostaną
+przesłane na standardowe wejście komendy.
+.PP
+Uwaga: Dzień wywołania komendy może być podany w dwóch polach
+\(em dniu miesiąca, i dniu tygodnia.  Jeśli obydwa pola są podane
+(np, nie są *),  to komenda zostanie wywołana gdy
+.I dowolne
+z pól będą odpowiadały bieżącemu czasowi. Na przykład,
+.br
+``30 4 1,15 * 5''
+spowoduje wywołanie komendy o 4:30am pierwszego i 15-tego każdego miesiąca
+plus każdy piątek.
+.SH PRZYKŁADOWA TABELA
+.nf
+
+# używaj /bin/sh do wywoływania komend. Nie ważne co jest w /etc/passwd.
+SHELL=/bin/sh
+# przesyłaj wyjście do użytkownika paul
+MAILTO=paul
+#
+# uruchamiaj się 5 minut po północy, codziennie
+5 0 * * *       $HOME/bin/daily.job >> $HOME/tmp/out 2>&1
+# uruchamiaj się od 2:15pm 1-szego w każdym miesiącu -- wyjście jest 
+# przesyłane do paul'a
+15 14 1 * *     $HOME/bin/monthly
+# uruchamiaj się o 10 pm w weekendy, denerwuj Joe.
+0 22 * * 1-5	mail -s "Jest 10pm" joe%Joe,%%Gdzie są twoje dzieci?%
+23 0-23/2 * * * echo "uruchamiaj 23 min po polnocy, 2am, 4am ..., codziennie"
+5 4 * * sun     echo "Uruchamiaj się 5 po 4 w niedziele"
+.fi
+.SH ZOBACZ TAKŻE
+cron(8), crontab(1)
+.SH ROZSZERZENIA
+Podczas podawania dnia tygodnia, zarówno 0 jak i 7 jest uważane za
+niedzielę. BSD i ATT nie zgadzają się z tym.
+.PP
+Listy i zasięgi mogą koegzystować w tym samym polu. "1-3,7-9" będzie
+odrzucone przez crona ATT i BSD -- chcą one widzieć TYLKO "1-3" lub "7,8,9".
+.PP
+Zakresy mogą zawierać "kroki", więc "1-9/2" jest tym samym co "1,3,5,7,9".
+.PP
+Nazwy miesiąca lub dnia tygodnia mogą być podawane przez nazwę.
+.PP
+W tabeli można ustawiać zmienne środowiskowe. W BSD i ATT, 
+środowisko przekazywane procesom potomnym jest po prostu tym z /etc/rc.
+.PP
+Jeżeli uid właściciela jest równy 0, może on użyć "-" jako pierwszego znaku
+pozycji tabeli. Wówczas cron nie zapisze w dzienniku syslog komunikatu o tym
+poleceniu.
+.PP
+Wyjście komend jest przesyłane właścicielowi tabeli (BSD nie tego potrafi),
+może być przesyłane do osoby innej niż właściciel tabeli (tego nie potrafi
+SysV) lub funkcja ta może być wyłączona i nie będzie wysyłana żadna poczta
+(SysV tego też nie potrafi).
+.SH AUTOR
+.nf
+Paul Vixie <paul@vix.com>

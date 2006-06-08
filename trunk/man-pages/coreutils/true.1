@@ -1,0 +1,79 @@
+.\" {PTM/PB/0.1/28-06-1999/"."}
+.\" poszerzenie i aktualizacja do GNU sh-utils 2.0 PTM/WK/2000-V
+.ig
+Transl.note: based on source, GNU man page true.1 and sh-utils.info
+
+Copyright (C) 1994, 95, 96 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH TRUE "1" FSF "maj 2000" "Narzędzia powłokowe GNU 2.0"
+.SH NAZWA
+true \- nic nie rób, z powodzeniem
+.SH SKŁADNIA
+.B true
+.SH OPIS
+Ta strona podręcznika man opisuje polecenie \fBtrue\fP w wersji GNU.
+.PP
+.B true
+nie robi nic, poza zwróceniem kodu zakończenia o wartości 0, oznaczającym
+``powodzenie''. Może być używane jako wypełniacz miejsca w skryptach
+powłokowych, wymagających polecenia kończącego się powodzeniem, chociaż
+wbudowane polecenie powłoki `:' (dwukropek) robi to samo, szybciej.
+Ta wersja
+.B true
+zaimplementowana jest jako program C, i z tego powodu jest bezpieczniejsza
+i szybsza niż implementacja w postaci skryptu powłoki. Może być bezpiecznie
+stosowana jako fikcyjna powłoka przeznaczona do wyłączania kont.
+.SH OPCJE
+Jeżeli ustawiona jest zmienna środowiska
+.BR POSIXLY_CORRECT ,
+to
+.B true
+ignoruje
+.I wszelkie
+argumenty wiersza poleceń, nawet
+.B --help
+i
+.BR --version ,
+gdyż inne postępowanie zmieniłoby oczekiwane zachowanie, na którym może
+polegać część programistów.
+Jeżeli
+.B POSIXLY_CORRECT
+nie jest ustawione, to wywołane z jednym argumentem
+.B true
+rozpoznaje następujące opcje:
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach,
+kończy pracę.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-sh-utils@gnu.org>..
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR false (1),
+.BR test (1),
+.BR expr (1),
+.BR sh-utils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi powłokowych
+GNU wersji 2.0.

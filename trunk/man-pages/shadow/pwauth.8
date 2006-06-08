@@ -1,0 +1,65 @@
+.\" {PTM/WK/1999-09-15}
+.\" Copyright 1992, Julianne Frances Haugh
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of Julianne F. Haugh nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY JULIE HAUGH AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL JULIE HAUGH OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	$Id: pwauth.8,v 1.3 2000/10/28 09:57:16 wojtek2 Exp $
+.\"
+.TH PWAUTH 8
+.SH NAZWA
+pwauth \- definiowane przez administratora uwierzytelnianie haseł
+.SH OPIS
+Administrator systemu może zdefiniować listę programów, jakie są używane
+do potwierdzenia tożsamości użytkownika.
+Programy te podawane są zamiast informacji o zakodowanym haśle obecnej
+w pliku \fI/etc/passwd\fR albo \fI/etc/shadow\fR.
+Narzędzia administrujące kontami użytkowników sprawdzają pole zakodowanego
+hasła i stwierdzają czy użytkownik posiada zdefiniowany przez administratora
+program uwierzytelniający (autentykujący).
+Funkcja \fBpw_auth\fR zostanie wywołana każdorazowo, gdy jeden z tych
+programów administracyjnych stwierdzi, że zmieniany użytkownik posiada
+zdefiniowane programy uwierzytelniania.
+.PP
+Początkowy wpis tworzony jest przez polecenie \fBuseradd\fR.
+Zmiany, takie jak zmiana informacji autentykującej lub usunięcie konta
+użytkownika, spowodują wywołanie funkcji \fBpw_auth\fR. Pozwala to
+na utrzymanie aktualności informacji dla każdego konta.
+.PP
+Programy uwierzytelniające nie tworzą sesji pracy (loginowych) ani
+sesji sieciowych. Kod zakończenia programu uwierzytelniającego jest
+wskazaniem czy akcja będzie dozwolona.
+Proces wołający musi posiadać odpowiednie uprawnienia do samodzielnego
+utworzenia sesji pracy lub sesji sieciowej.
+.SH ZOBACZ TAKŻE
+.BR login (1),
+.BR passwd (1),
+.BR su (1),
+.BR useradd (8),
+.BR userdel (8),
+.BR usermod (8),
+.BR pw_auth (3)
+.SH AUTOR
+Julianne Frances Haugh (jockgrrl@ix.netcom.com)

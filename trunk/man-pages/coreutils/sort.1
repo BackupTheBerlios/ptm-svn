@@ -1,0 +1,419 @@
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page sort.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH SORT "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+sort \- posortuj linie plików tekstowych
+.SH SKŁADNIA
+.TP 6
+.B sort
+.RB [ \-cgmus ]
+.RB [ \-t
+.IR separator ]
+.RB [ \-o
+.IR plik-wyj ]
+.RB [ \-T
+.IR kat-tymcz ]
+.br
+.RB [ \-bdfiMnrz ]
+.RI [ \fB+\fPpoz1
+.RI [ \fB\-\fPpoz2 ]]
+.RB [ \-k
+.IR poz1 [, poz2 ]]
+.br
+.RI [ plik ...]
+.TP 6
+.B sort
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo sort
+.RE
+lub
+.RS
+.BR "info sort" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBsort\fP w wersji GNU.
+.PP
+.B sort
+sortuje, zlepia lub porównuje wszystkie linie z podanych plików, lub
+standardowego wejścia jeśli nie podano żadnych.  Nazwa pliku '\-' oznacza
+standardowe wejście.
+Domyślnie,
+.B sort
+wypisuje rezultaty na standardowe wyjście.
+.PP
+.B sort
+ma trzy tryby działania: sortowanie (domyślnie), zlepianie i sprawdzanie
+posortowania.  Następujące opcje zmieniają tryb działania:
+.TP
+.B \-c
+Sprawdza czy podane pliki są już posortowane; jeśli nie wszystkie są,
+wypisuje komunikat o błędzie i kończy pracę z kodem równym 1.
+.TP
+.B \-m
+Zlepia podane pliki sortując je jako grupę.  Każdy plik wejściowy powinien
+być już posortowany indywidualnie.  \fBsort\fP działa zawsze sortując, a nie
+lepiąc; zlepianie udostępniono ponieważ jest ono szybsze w tych
+przypadkach, w których działa.
+.PP
+Para linii porównywana jest jak następuje:
+Jeśli podano jakieś pola kluczowe,
+.B sort
+porównuje każdą parę pól, w porządku podanym w linii komend, według
+skojarzonych opcji porządkowania, aż znaleziona zostanie różnica albo
+przeszukane zostaną wszystkie pola.  Wszystkie porównania wykorzystują 
+porządek znaków określony przez ustawienie narodowe \fBLC_COLLATE\fP,
+chyba że podano inaczej.
+.PP
+Jeśli użyto której z globalnych opcji
+.BR Mbdfinr ,
+ale nie podano pól kluczowych,
+.B sort
+porównuje całe linie według opcji globalnych.
+.PP
+W końcu, w ostatniej próbie, kiedy wszystkie porównywane klucze są równe
+(lub nie podano żadnych opcji porządkujących),
+.B sort
+porównuje linie bajt po bajcie w kolejności sklejania zależnej od maszyny.
+Ostatnia próba porównania bierze pod uwagę opcję
+.BR -r .
+Opcja
+.B \-s
+(stable) wyłącza ostatnią próbę porównania, tak że linie, w których wszystkie
+pola są równie w porównaniu zostają pozostawione w pierwotnej kolejności
+względnej.  Jeśli nie podano żadnych pól ani opcji globalnych,
+.B \-s
+nie wywołuje efektów.
+.PP
+GNU
+.B sort
+nie ma limitów co do długości linii ani ograniczeń co do bajtów
+dozwolonych w linii.  Dodatkowo, jeśli ostatni bajt pliku wejściowego
+nie jest nową linią, GNU
+.B sort
+po cichu takową dostawia. Kończący linię znak nowej linii w porównywaniu
+jest jej częścią. Na przykład, bez opcji, przy sortowaniu ASCII, linia
+rozpoczynająca się tabulacją zostanie umieszczona przed pustą linią, gdyż
+w porządku leksykograficznym ASCII znak tabulacji poprzedza znak nowej linii.
+.PP
+Przy błędzie \fBsort\fP kończy pracę z kodem '2'.
+.PP
+Jeśli ustawiono zmienną środowiskową
+.BR TMPDIR ,
+.B sort
+używa jej jako katalogu w którym należy umieścić pliki tymczasowe,
+zamiast domyślnego /tmp.  Opcja
+.BI \-T " kat-tymcz"
+jest jeszcze jednym sposobem wybrania katalogu dla plików tymczasowych;
+zastępuje ona ową zmienną środowiskową.
+.PP
+Poniższe opcje wpływają na porządkowanie linii wyjścia.  Mogą być
+one określone globalnie lub jako część konkretnego pola kluczowego.
+Jeśli nie podano żadnego pola kluczowego, opcje globalne stosują się
+do porównań całych linii; w przeciwnym razie opcje globalne są dziedziczone
+przez pola kluczowe, dla których nie określono żadnych specjalnych opcji.
+Opcje
+.BR -b ", " -d ", " -f " i " -i
+klasyfikują znaki zgodnie z ustawieniami narodowymi \fBLC_CTYPE\fP.
+.TP
+.B \-b
+Ignoruje początkowe znaki puste podczas szukania kluczy sortowania w
+każdej linii.
+.TP
+.B \-d
+Sortuje w porządku 'książki telefonicznej': podczas sortowania ignoruje
+wszystkie znaki oprócz liter, cyfr i znaków pustych.
+.TP
+.B \-f
+Podstawia znaki małych liter za odpowiednie znaki dużych liter podczas
+sortowania tak aby, na przykład, 'b' sortowało się tak samo jak 'B'.
+.TP
+.B \-g
+Sortuje numerycznie, posługując się standardową funkcją C \fIstrtod\fP,
+przekształcając przedrostek każdej linii na liczbę zmiennoprzecinkową
+podwójnej precyzji. Umożliwia to podawanie liczb zmiennoprzecinkowych
+w notacji naukowej, jak '1.0e-34' czy '10e100'. Nie zgłasza nadmiaru,
+niedomiaru czy błędów konwersji. Wykorzystuje następujący porządek
+leksykograficzny:
+.IP
+* linie nie rozpoczynające się liczbami (wszystkie uważane za równe).
+.IP
+* wartości NaN ("Not a Number") w arytmetyce zmiennoprzecinkowej IEEE
+w spójnej, ale zależnej od architektury komputera kolejności.
+.IP
+* minus nieskończoność.
+.IP
+* liczby skończone w kolejności rosnącej (z równymi -0 i +0).
+.IP
+* plus nieskończoność.
+.PP
+Opcji tej należy używać tylko wtedy, gdy nie ma innej alternatywy; jest
+znacznie wolniejsza niż \fB-n\fP i przy konwersji na zmiennoprzecinkowe można
+utracić informację.
+.TP
+.B \-i
+Ignoruje znaki niedrukowalne (spoza zakresu ASCII 040-176 ósemkowo, włącznie)
+podczas sortowania.
+.TP
+.B \-M
+Każdy początkowy łańcuch składający się z dowolnej ilości białych znaków
+plus trzy litery będące skrótem nazwy miesiąca jest zamieniany na
+DUŻE litery i porównywany w porządku 'JAN' < 'FEB' < ... < 'DEC.'
+Przy porównywaniu nieprawidłowe nazwy są mniejsze od poprawnych.
+Ustawienie narodowe \fBLC_TIME\fP wyznacza pisownię nazw miesięcy.
+.TP
+.B \-n
+Sortowanie numeryczne: każdą linię rozpoczyna liczba. Składają się na nią
+opcjonalne białe znaki, opcjonalny znak \-, oraz zero lub więcej cyfr,
+które mogą być oddzielone separatorami tysięcy, plus opcjonalnie występujący
+separator dziesiętny i zero lub więcej cyfr dziesiętnych. Ustawienie narodowe
+\fBLC_NUMERIC\fP określa znak separatora dziesiętnego i separatora tysięcy.
+
+\fBsort -n\fP wykorzystuje coś, co może być uważane za niekonwencjonalną metodę
+porównywania łańcuchów reprezentujących liczby zmiennoprzecinkowe. Zamiast
+najpierw zamieniać każdy łańcuch na typ 'double' języka C a następnie
+porównywać ich wartości, sort wyrównuje znaki separatora dziesiętnego w dwu
+łańcuchach i porównuje je znak po znaku. Jedną z korzyści z takiego podejścia
+jest jego szybkość. W praktyce jest to o wiele wydajniejsze niż wykonywanie
+dwu odpowiednich konwersji string-double (lub nawet string-integer)
+i następnie porównywanie liczb podwójnej precyzji. Dodatkowo, nie występuje
+tu towarzysząca utrata dokładności. Konwersja przed porównaniem każdego
+łańcucha na typ 'double' ograniczałaby dokładność do około 16 cyfr w większości
+systemów.
+
+Nie jest rozpoznawany ani początkowy znak '+', ani notacja wykładnicza.
+Do porównywania numerycznego takich łańcuchów należy użyć opcji \fB-g\fP.
+.TP
+.B \-r
+Odwraca rezultat porównania, tak iż linie z większymi wartościami
+klucza pojawiają się w wyniku wcześniej, a nie później.
+.PP
+Inne opcje to:
+.TP
+.BI \-o " plik-wyj"
+Wypisuje wynik do
+.IR plik-wyj ,
+a nie na standardowe wyjście.  Jeśli
+.I plik-wyj
+jest jednym z plików wejściowych,
+.B sort
+kopiuje go do pliku tymczasowego przed sortowaniem i wypisaniem wyniku
+do
+.IR plik-wyj .
+.TP
+.BI \-t " separator"
+Używa znaku
+.I separator
+jako separatora pól podczas szukania kluczy sortowania w każdej linii.
+Domyślnie pola oddzielone są łańcuchem pustym pomiędzy znakami nie
+będącymi białym znakiem i białymi znakami.  To znaczy, linię wejścia
+' foo bar',
+.B sort
+rozkłada na pola ' foo' i ' bar'.  Separator pól nie jest uważany
+za część ani pola, które go poprzedza ani tego, które po nim następuje.
+.TP
+.B \-u
+W przypadku domyślnym lub opcji
+.BR \-m ,
+wypisuje tylko pierwszą z sekwencji linii porównanych jako równe.  Dla opcji
+.B \-c
+sprawdza czy żadna para kolejnych linii w wyniku porównania nie jest równa.
+.TP
+.RI \fB\-k\fP " poz1" [, poz2 ]
+Zalecana, POSIX-owa składnia określania pól sortowania.
+Pole jest częścią linii pomiędzy \fIpoz1\fP i \fIpoz2\fP (lub końcem linii,
+jeśli pominięto \fIpoz2\fP) \fBwłącznie\fP.
+Pola i pozycje znaków numerowane są począwszy od 1.
+Zatem sortowanie według drugiego pola wymagałoby '\fB-k 2,2\fP'.
+Poniżej znajdziesz więcej przykładów.
+.TP
+.B \-z
+Traktuje wejście jako zestaw linii zakończonych bajtem zerowym (znak ASCII NUL
+(null)) a nie ASCII LF (koniec linii). Opcja ta może być przydatna w połączeniu
+z `\fBperl -0\fP' lub `\fBfind -print0\fP' i `\fBxargs -0\fP', które robią to
+samo w celu niezawodnego zachowania dowolnych nazw ścieżek (nawet zawierających
+znaki końca linii).
+.TP
+.IR \fB+\fPpoz1 " [" \fB-\fPpoz2 ]
+Przestarzała, tradycyjna opcja określania pól sortowania.
+Określa pole w każdej linii, którego należy użyć jako klucza sortowanie.
+Pole to składa się z części linii zaczynającej się na \fIpoz1\fP aż do
+(ale nie włącznie z) \fIpoz2\fP (albo do końca linii jeśli nie podano
+\fIpoz2\fP).  Pola i pozycje znaków numerowane są począwszy od 0.
+.PP
+Pozycja w polu sortowania w opcjach \fB-k\fP i \fB+\fP ma postać 
+.IB f . c\fR,
+gdzie \fIf\fP to numer
+pola, które ma zostać użyte a \fIc\fP to numer pierwszego znaku od
+początku pola (dla \fB+\fP\fIpoz\fP) albo od końca poprzedniego pola
+(dla \fB-\fP\fIpoz\fP).  Część \fB.\fP\fIc\fP pozycji może zostać pominięta;
+w tym przypadku uważa się ją za oznaczającą pierwszy znak
+pola.  Jeśli podano opcję
+.BR \-b ,
+część \fB.\fP\fIc\fP określenia pola liczona jest od pierwszego niepustego
+znaku pola (dla \fB+\fP\fIpoz\fP) lub ostatniego niepustego znaku stojącego
+po poprzednim polu (dla \fB-\fP\fIpoz\fP).
+.PP
+Argument \fB+\fP\fIpoz\fP lub \fB-\fP\fIpoz\fP może także zawierać dołączoną
+dowolną z liter opcji
+.BR Mbdfinr ,
+wówczas dla tego konkretnego pola nie są używane globalne opcje
+porządkowania.  Opcja
+.B \-b
+może być dołączona niezależnie do jednej z lub obu części \fB+\fP\fIpoz\fP i
+\fB-\fP\fIpoz\fP określenia pola, a jeśli została odziedziczona z opcji
+globalnych, zostanie dołączona do obydwu.
+Jeśli użyto opcji
+.B \-n
+lub
+.BR \-M ,
+co zakłada opcję
+.BR \-b ,
+opcja
+.B \-b
+stosuje się do zarówno do części \fB+\fP\fIpoz\fP jak i \fB-\fP\fIpoz\fP
+określenia pola.  Klucze mogą się rozciągać na kilka pól.
+.PP
+Dodatkowo, kiedy GNU
+.B sort
+wywołany został z dokładnie jednym argumentem, rozpoznawane są
+następujące opcje:
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH ZGODNE Z
+.PP
+Historyczne (z BSD i System V) implementacje
+.B sort
+różniły się w interpretacji niektórych opcji, szczególnie
+.BR \-b ,
+.BR \-f ,
+oraz
+.BR \-n .
+GNU sort naśladuje zachowanie POSIXowe, które jest zwykle (ale nie
+zawsze!) podobne do zachowania z System V.
+Według POSIX
+.B \-n
+nie zakłada już
+.BR \-b .
+Dla spójności, w ten sam sposób zmieniono
+.BR \-M .
+Może to wpłynąć na znaczenie pozycji znaków w określeniach pól w pewnych
+zagmatwanych przypadkach.
+Jeśli cię to gryzie, rozwiązaniem jest dodanie wyraźnej opcji
+.BR \-b .
+.SH PRZYKŁADY
+A oto nieco przykładów ilustrujących rozmaite kombinacje opcji.
+Do określania kluczy sortowania wykorzystywana jest w nich POSIX-owa
+opcja \fB-k\fP zamiast przestarzałej składni
+.BI + poz1 - poz2 \fR.
+.PP
+* Sortowanie w malejącej (odwrotnej) kolejności numerycznej:
+.nf
+    \fBsort -nr\fP
+.fi
+.PP
+* Sortowanie alfabetyczne, przy pominięciu pierwszych i drugich pól. Posługuje
+się pojedynczym kluczem złożonym ze znaków od początku trzeciego pola
+do końca każdej linii:
+.nf
+    \fBsort -k3\fP
+.fi
+.PP
+* Sortowanie numeryczne według drugiego pola i rozstrzyganie przeszkód przez
+.\" resolve ties by sorting
+sortowanie alfabetyczne wg trzeciego i czwartego znaku piątego pola.
+Znakiem ograniczającym pola jest ':'
+.nf
+    \fBsort -t : -k 2,2n -k 5.3,5.4\fP
+.fi
+Zauważ, że w przypadku napisania '\fB-k 2\fP' zamiast '\fB-k 2,2\fP',
+\fPsort\fP wykorzystałby wszystkie znaki począwszy od drugiego pola,
+a skończywszy na końcu linii jako pierwszy klucz \fInumeryczny\fP.
+W większości zastosowań, traktowanie jako numeryczne kluczy złożonych
+z więcej niż jednego pola nie daje oczekiwanego wyniku.
+
+Zauważ też, że do określnika końca pola dla pierwszego klucza został
+zastosowany modyfikator \fB-n\fP. Byłby równoważny podaniu '\fB-k 2n,2\fP'
+lub '\fB-k 2n,2n\fP'. Wszystkie modyfikatory z wyjątkiem \fBb\fP odnoszą się
+do odnośnego \fIpola\fP, niezależnie od tego czy są dołączone do określenia
+początku pola, końca czy obu.
+.PP
+* Sortowanie pliku haseł według piątego pola, ignorowane są początkowe
+białe znaki. Sortowanie linii z równymi wartościami piątego pola według
+numerycznego identyfikatora użytkownika z pola trzeciego:
+.nf
+    \fBsort -t : -k 5b,5 -k 3,3n /etc/passwd\fP
+.fi
+Alternatywą jest zastosowanie globalnego modyfikatora numerycznego \fB-n\fP:
+.nf
+    \fBsort -t : -n -k 5b,5 -k 3,3 /etc/passwd\fP
+.fi
+.PP
+* Utworzenie pliku znaczników (tags) w kolejności sortowania niewrażliwej
+na wielkość liter:
+.nf
+    \fBfind src -type f -print0 | \\
+         sort -t / -z -f | xargs -0 etags --append\fP
+.fi
+Użycie w tym przypadku '\fB-print0\fP', '\fB-z\fP' i '\fB-0\fP' oznacza, że
+ścieżki zawierające znaki nowej linii nie będą rozbijane przez operację
+operację sortowania.
+.PP
+* Na koniec: do zignorowania zarówno początkowych jak i końcowych białych
+znaków można zastosować modyfikator \fBb\fP do końcowego określnika
+pierwszego klucza
+.nf
+    \fBsort -t : -n -k 5b,5b -k 3,3 /etc/passwd\fP
+.fi
+lub użyć globalnego modyfikatora \fB-b\fP zamiast \fB-n\fP i bezpośredniego
+\fBn\fP przy określeniu drugiego klucza:
+.nf
+    \fBsort -t : -b -k 5,5 -k 3,3n /etc/passwd\fP
+.fi
+.SH UWAGI
+Różne znaczenie numerów pól w zależności od użycia opcji
+.B -k
+stwarza zamieszania.  To wszystko wina POSIX!
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR uniq (1),
+.BR comm (1),
+.BR ptx (1),
+.BR tsort (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

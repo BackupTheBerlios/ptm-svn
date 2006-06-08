@@ -1,0 +1,121 @@
+.\" PTM/WK/2001-I
+.TH CMP 1 "22 września 1994" "Narzędzia różnicowe GNU" "Narzędzia GNU"
+.SH NAZWA
+cmp \- porównuje dwa pliki lub zakresy bajtów
+.SH SKŁADNIA
+.TP 5
+.B cmp
+.RB [ -clsv ]
+.RB [ -i
+.IR ile ]
+.RB [ --help ]
+.RB [ --print-chars ]
+.RB [ --ignore-initial= \fIile\fP]
+.RB [ --verbose ]
+.RB [ --quiet ]
+.RB [ --silent ]
+.RB [ --version ]
+.I plik1 plik2
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo cmp
+.RE
+lub
+.RS
+.BR "info cmp" .
+.RE
+.PP
+Narzędzie
+.B cmp
+porównuje dwa dowolnego typu pliki i wypisuje wynik na standardowym wyjściu.
+Domyślnie,
+.B cmp
+milczy gdy pliki są takie same.  Jeśli się różnią, zgłaszany jest numer bajtu
+i linii, gdzie wystąpiła pierwsza różnica. Bajty i linie są numerowane
+od jeden.
+.PP
+Podana w wierszu poleceń nazwa pliku
+.RB ` - '
+oznacza standardowe wejście.
+.SH OPCJE
+Dostępne są następujące opcje:
+.TP
+.B -c
+.br
+.ns
+.TP
+.B --print-chars
+Wypisuje różniące się znaki.  Znaki sterujące pokazywane są w postaci
+\fB^\fP plus litera, a znaki z ustawionym bardziej znaczącym bitem (high bit)
+poprzedzane są przedrostkiem \fBM-\fP (oznaczającym ``meta'').
+.TP
+.BI "-i " ile
+.br
+.ns
+.TP
+.BI --ignore-initial= ile
+Ignoruje wszelkie różnice w
+.I ile
+początkowych bajtach każdego z plików.  Traktuje pliki zawierające mniej niż
+.I ile
+bajtów jakby były puste.
+.TP
+.B -l
+.br
+.ns
+.TP
+.B --verbose
+Dla każdej różnicy wypisuje numer bajtu (dziesiętnie) i wartości różniących
+się bajtów (ósemkowo).
+.TP
+.B -s
+.br
+.ns
+.TP
+.B --quiet
+.br
+.ns
+.TP
+.B --silent
+Nic nie wypisuje.  Zwraca tylko kod zakończenia wskazujący, czy pliki
+się różnią.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+pracę.
+.TP
+.B -v
+.br
+.ns
+.TP
+.B --version
+Wyświetla numer wersji programu i kończy pracę.
+.SH KOPIOWANIE
+Plik ten powstał na podstawie podręcznika info pakietu diffutils.
+
+Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+.SH DIAGNOSTYKA
+Zwracana wartość 0 oznacza, że nie odnaleziono różnic, 1 znaczy różnice,
+a 2 kłopoty.
+.SH ZOBACZ TAKŻE
+.BR comm (1),
+.BR diff (1),
+.BR diff3 (1),
+.BR sdiff (1).

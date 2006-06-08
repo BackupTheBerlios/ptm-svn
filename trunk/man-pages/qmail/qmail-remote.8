@@ -1,0 +1,210 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/5-12-1999/"wysyła pocztę używając SMTP"}
+.TH qmail-remote 8
+.SH NAZWA
+qmail-remote \- wyślij pocztę używając SMTP
+.SH SKŁADNIA
+.B qmail-remote
+.I host
+.I nadawca
+.I odbiorca
+[
+.I odbiorca ...
+]
+.SH OPIS
+.B qmail-remote
+czyta wiadomość pocztową ze swojego wejścia
+i wysyła ją do jednego lub
+większej ilości odbiorców
+na zdalnym hoście.
+
+Zdalny host jest pierwszym argumentem wywołania
+.BR qmail-remote
+i oznaczonym wcześniej jako
+.IR host .
+.B qmail-remote
+wysyła wiadomość do komputera podanego jako
+.IR host ,
+lub komputera odpowiedzialnego za zarządzanie pocztą dla
+.I host
+pobranego z Systemu Nazw Domen (ang. DNS) poprzez 
+Prosty Protokół Przesyłania Poczty (ang. SMTP).
+.I host
+może być zarówno w pełni kwalifikowaną nazwą domenową:
+
+.EX
+     serek.arch.pwr.wroc.pl
+.EE
+
+lub też adresem IP ujętym w nawiasy kwadratowe:
+
+.EX
+     [156.17.29.1]
+.EE
+
+Kopertowe adresy odbiorców są przedstawiane jako argumenty oznaczone
+.I odbiorca
+podawane przy wywoływaniu
+.BR qmail-remote .
+Kopertowy adres nadawcy jest podawany jako argument oznaczony przez
+.I nadawca\fP.
+
+Zauważ, że
+.B qmail-remote
+nie pobiera opcji
+i nie podąża w tym kontekście za standardem
+.B getopt .
+.SH PRZEZROCZYSTOŚĆ
+Znacznik końca pliku (End-of-file) w SMTP jest kodowany za pomocą kombinacji 
+'kropka CR LF'.
+Kropka na początku linii jest kodowana jako kropka kropka.
+Nie jest możliwym w SMTP by przesłać wiadomość, która nie kończy się znakiem
+nowej linii.
+.B qmail-remote
+konwertuje konwencję nowej linii pochodzącą z systemu UNIX do konwencji SMTP
+poprzez wstawienie CR przed każdym LF.
+
+Jest naruszeniem protokołu SMTP
+wysyłanie wiadomości zawierającej długie linie lub znaki nie będące 
+kodami ASCII.
+Jakkolwiek,
+.B qmail-remote
+szczęśliwie prześle takie wiadomości.
+Jest to odpowiedzialność użytkownika by zapobiegać generowaniu niepoprawnych
+wiadomości.
+.SH "REZULTATY"
+.B qmail-remote
+wypisuje pewną liczbę
+raportów odbiorców zwanych 
+.I recipient reports\fP,
+poprzedzoną raportem wiadomości, zwanym
+.I message report\fR.
+Każdy raport jest zakończony bajtem 0.
+Każdy raport zaczyna się pojedynczą literą:
+.TP 5
+r
+Raport odbiorcy: akceptacja.
+.TP 5
+h
+Raport odbiorcy: trwałe odrzucenie.
+.TP 5
+s
+Raport odbiorcy: chwilowe odrzucenie.
+.TP 5
+K
+Raport wiadomości: sukces.
+.I host
+bierze na siebie odpowiedzialność za dostarczenie wiadomości do
+każdego akceptowalnego odbiorcy.
+.TP 5
+Z
+Raport wiadomości: tymczasowa awaria.
+.TP 5
+D
+Raport wiadomości: trwała awaria.
+.PP
+Po tym, w liście przychodzi opis tego co się stało w postaci
+zrozumiałej dla człowieka.
+
+Raporty odbiorców będą zawsze drukowane w takiej samej kolejności co
+kolejne argumenty oznaczone wcześniej jako
+.I odbiorca
+programu
+.BR qmail-remote .
+Zauważ, że w przypadkach awarii może być więcej
+raportów niż argumentów oznaczonych jako
+.I odbiorca .
+
+.B qmail-remote
+zawsze zwraca zero.
+.SH "PLIK KONTROLNE"
+.TP 5
+.I helohost
+Obecna nazwa hosta,
+używana wyłącznie przy przedstawianiu się odległemu serwerowi SMTP.
+Domyślnie:
+.IR me ,
+jeśli jest to ustawione;
+w przeciwnym razie
+.B qmail-remote
+odmawia uruchomienia się.
+.TP 5
+.I smtproutes
+Sztuczne trasy SMTP.
+Każda trasa ma formę
+.IR domena\fB:\fIretransmiter ,
+bez żadnych dodatkowych spacji.
+Jeśli
+.I domena
+pasuje do podanego argumentu
+.IR host ,
+.B qmail-remote
+połączy się z komputerem określanym tu jako
+.IR retransmiter ,
+tak jakby
+.I host
+miał maszynę nazywaną
+.I retransmiter
+jako jedynego wymiennika poczty (MX).
+(Zapobiega to także wykonywaniu zapytań typu CNAME na maszynie na której 
+znajduje się
+.IR odbiorca .)
+.I host
+może zawierać dwukropek i numer portu przeznaczonego do użycia zamiast
+normalnego portu SMTP czyli 25:
+
+.EX
+   inside.pld.org.pl:firewall.pld.org.pl:26
+.EE
+
+.I retransmiter
+może być pusty;
+mówi to programowi
+.B qmail-remote
+by wykonać zapytanie o rekord MX jak zazwyczaj.
+.I smtproutes
+może zawierać znaki globalne:
+
+.EX
+   .pld.org.pl:
+   :niebo.pld.org.pl
+.EE
+
+Tutaj
+każdy adres kończący się na
+.B .pld.org.pl
+(lecz nie sam
+.B pld.org.pl )
+jest kierowany przez odpowiednie rekordy MX;
+każdy inny adres jest sztucznie kierowany do
+.BR niebo.pld.org.pl .
+
+System
+.B qmail
+nie zabezpiecza cię jeśli stworzysz sztuczną pętlę
+pocztową pomiędzy maszynami.
+Jednakże,
+zawsze bezpiecznie używasz
+.I smtproutes
+jeśli nie akceptujesz poczty z sieci.
+.TP 5
+.I timeoutconnect
+Liczba sekund przez jaką
+.B qmail-remote
+będzie czekać na zaakceptowanie połączenia przez zdalny serwer SMTP.
+Domyślnie: 60.
+Jądro normalnie przeznacza na to limit najwyżej 75-sekundowy.
+.TP 5
+.I timeoutremote
+Liczba sekund przez jaką
+.B qmail-remote
+będzie czekać na każdą odpowiedź od zdalnego serwera SMTP.
+Domyślnie: 1200.
+.SH "ZOBACZ TAKŻE"
+addresses(5),
+envelopes(5),
+qmail-control(5),
+qmail-send(8),
+qmail-smtpd(8),
+qmail-tcpok(8),
+qmail-tcpto(8)

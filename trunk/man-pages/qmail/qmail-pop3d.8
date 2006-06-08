@@ -1,0 +1,45 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/14-06-1999/"rozprowadza pocztę poprzez POP"}
+.TH qmail-pop3d 8
+.SH NAZWA
+qmail-pop3d \- rozprowadzaj pocztę poprzez POP
+.SH SKŁADNIA
+.B qmail-pop3d
+.I maildirname
+.SH OPIS
+.B qmail-pop3d
+pozwala użytkownikowi czytać i kasować pocztę poprzez sieć.
+
+Poczta przechowywana jest w folderze
+.B maildir
+zwanym
+.IR maildirname ,
+normalnie
+.BR Maildir ,
+znajduje się katalogu domowym użytkownika.
+
+.B qmail-pop3d
+jest zazwyczaj wywoływany
+przez
+.BR qmail-popup ,
+odczytującego nazwę użytkownik i hasło,
+oraz
+.BR /bin/checkpassword ,
+który sprawdza hasło i ustawia zmienne środowiskowe.
+
+.B qmail-pop3d
+ma ustawiony maksymalnie 20-minutowy czas bezczynności.
+
+.B qmail-pop3d
+wspiera UIDL, TOP, a także LAST.
+
+.B qmail-pop3d
+dołącza dodatkową pustą linię do każdej wiadomości
+by przeciwdziałać poważnym błędom w większości klientów poczty.
+
+.B qmail-pop3d
+bazuje na programie współtworzonym przez Russa Nelsona.
+.SH "ZOBACZ TAKŻE"
+maildir(5),
+qmail-local(8),
+qmail-popup(8)

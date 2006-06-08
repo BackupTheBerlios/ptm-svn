@@ -1,0 +1,343 @@
+.\" -*- nroff -*-
+.\" {PTM/WK/1999-XII}
+.\" Last update: Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>, Apr 2002
+.\" 
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH FSCK 8 "Marzec 2002" "e2fsprogs version 1.27"
+.SH NAZWA
+fsck \- sprawdzenie i naprawa linuksowego systemu plików
+.SH SKŁADNIA
+.B fsck
+[
+.B \-sACVRTNP
+]
+[
+.B \-t
+.I fstype
+]
+.I filesys [ ... ]
+[\-\-] [
+.B fsck-options
+]
+.SH OPIS
+.B fsck
+służy do sprawdzania i, opcjonalnie, do naprawy jednego lub kilku
+linuksowych systemów plików.
+.I filesys
+może być nazwą urządzenia (np.
+.IR /dev/hdc1 ", " /dev/sdb2 ),
+punktem montowania (np.
+.IR / ", " /usr ", " /home ),
+albo etykietą ext2 lub identyfikatorem UUID (np.
+UUID=8868abf6-88c5-4a83-98b8-bfc24057f7bd lub LABEL=root).
+W celu skrócenia łącznego czasu potrzebnego do sprawdzenia wszystkich
+systemów plików, program
+.B fsck
+będzie usiłował sprawdzać równolegle systemy plików umieszcone na fizycznie
+różnych napędach dysków.
+.PP
+Kod zakończenia zwracany przez
+.B fsck
+jest sumą następujących warunków:
+.br
+\	0\	\-\ Bez błędów
+.br
+\	1\	\-\ Poprawiono błędy systemu plików
+.br
+\	2\	\-\ System powinien zostać przeładowany (reboot)
+.br
+\	4\	\-\ Pozostawiono nie naprawione błędy systemu plików
+.br
+\	8\	\-\ Błąd działania
+.br
+\	16\	\-\ Błąd użycia (składni)
+.br
+\	128\	\-\ Błąd biblioteki współdzielonej
+.br
+Kod zakończenia zwracany, gdy w wyniku użycia opcji
+.B -A
+sprawdzane są wszystkie systemy plików jest bitową alternatywą (OR) kodów
+zakończenia dla każdego ze sprawdzanych systemów plików.
+.PP
+Faktycznie,
+.B fsck
+jest po prostu interfejsem dla różnych programów sprawdzających dostępne w
+Linuksie systemy plików (\fBfsck\fR.\fIfstype\fR). Poszukiwanie programu
+specyficznego dla danego systemu plików odbywa się w pierwszej kolejności w
+.IR /sbin ,
+następnie w
+.I /etc/fs
+i
+.IR /etc ,
+a ostatecznie w katalogach wymienionych w zmiennej środowiskowej PATH.
+Więcej szczegółów można znaleźć na stronach podręcznika programów
+sprawdzających właściwych dla poszczególnych systemów plików.
+.SH OPCJE
+.TP
+.B \-s
+Wykonywanie operacji
+.B fsck
+kolejno, szeregowo. Dobre podejście, jeśli sprawdzanych jest wiele systemów
+plików, a programy sprawdzające działają w trybie interaktywnym. (Uwaga:
+.BR e2fsck (8)
+domyślnie działa w trybie interaktywnym. By uruchomić
+.BR e2fsck (8)
+w trybie nieinteraktywnym, trzeba podać opcję
+.BR \-p
+lub
+.BR \-a ,
+gdy błędy mają być naprawiane automatycznie, albo opcję
+.BR \-n ,
+gdy nie mają być naprawiane.)
+.TP
+.BI -t " fslist"
+Określa typ(y) sprawdzanego(ych) systemu(ów) plików. Jeśli podano opcję
+.BR \-A ,
+to sprawdzane będą tylko te systemy plików, które pasują do listy
+.IR fslist .
+Parametr
+.I fslist
+stanowi rozdzieloną przecinkami listę systemów plików oraz specyfikatorów
+opcji. Dowolny z systemów plików na tej liście może być poprzedzony operatorem
+negacji
+.RB ' no '
+lub
+.RB ' ! ',
+co oznacza sprawdzanie wyłącznie systemów plików nie występujących na liście
+.IR fslist .
+Jeśli żaden z systemów plików w
+.I fslist
+nie zostanie poprzezdzony operatorem negacji, to sprawdzane będą wyłącznie
+systemy plików występujące na liście
+.IR fslist .
+.sp
+Na rozdzielonej przecinkami liście
+.I fslist
+mogą również występować specyfikatory opcji. Muszą one mieć postać
+.BI opts= fs-option\fR,
+i mogą być poprzedzone operatorem negacji. Jeśli na liście występuje
+specyfikator opcji, to będą sprawdzane tylko te systemy plików, których
+wpis w
+.B /etc/fstab
+zawiera (lub nie zawiera, gdy specyfikator został poprzedzony operatorem
+negacji) opcję
+.I fs-option
+w odpowiednim polu pliku
+.BR /etc/fstab .
+.sp
+Dla zgodności z dystrybucją Mandrake, w której skrypty startowe uzależnione są
+od nieautoryzowanej zmiany interfejsu użytkownika programu
+.BR fsck ,
+gdy typem systemu plików jest
+.BR loop ,
+to jest to traktowane tak, jakby podano
+.B opts=loop
+jako argument opcji
+.BR \-t .
+.sp
+Zwykle, typ systemu plików można określić wyszukując dany system plików
+.I filesys
+w pliku
+.I /etc/fstab
+i korzystając z odpowiedniego wpisu. Jeżeli nie da się go określić, a podano
+jako argument opcji
+.B \-t
+pojedynczy system plików, to
+.B fsck
+użyje typu wyznaczonego przez tę opcję.
+Jeżeli typ ten nie jest dostępny, to używany jest typ domyślny (obecnie ext2).
+.TP
+.B \-A
+Przechodzi przez plik
+.I /etc/fstab
+i próbuje sprawdzić wszystkie systemy plików w jednym przebiegu. Opcja ta jest
+najczęściej wykorzystywana przez plik startowy
+.IR /etc/rc ,
+zamiast wielu poleceń sprawdzających pojedyncze systemy plików.
+.sp
+Główny system plików (/) zostanie sprawdzony jako pierwszy, chyba że
+podano opcję
+.B \-P
+(patrz poniżej). Następnie będą sprawdzane systemy plików w kolejności
+określonej przez liczbę występującą w polu
+.I fs_passno
+(szóstym) pliku
+.IR /etc/fstab .
+Systemy plików z wartością
+.I fs_passno
+wynoszącą 0 będą pomijane i w ogóle nie będą sprawdzane. Systemy plików
+z wartością
+.I fs_passno
+większą od zera będą sprawdzane w kolejności rosnącej, tzn. systemy plików
+z mniejszą wartością
+.I fs_passno
+będą sprawdzane wcześniej.
+Jeżeli istnieje kilka systemów plików o tym samym numerze przejścia, to
+e2fsck będzie usiłował sprawdzić je równolegle, jednakże będzie unikał
+jednoczesnego sprawdzania wielu systemów plików na tym samym dysku fizycznym.
+.sp
+Stąd też, bardzo powszechną konfiguracją w
+.I /etc/fstab
+jest ustawienie dla głównego systemu plików pola
+.I fs_passno
+o wartości 1, zaś dla wszystkich pozostałych systemów plików przypisanie
+.I fs_passno
+wartości 2. Pozwoli to
+.B fsck
+na automatyczne równoległe uruchamianie programów sprawdzających systemy
+plików, jeżeli tylko było by to korzystne. Administratorzy systemów mogą
+zrezygnować z używania takiej konfiguracji jeśli z jakiegoś powodu chcą
+uniknąć równoległego sprawdzania systemów plików --- na przykład, jeśli dana
+maszyna ma niewiele pamięci, tak że problemem jest intensywne zastępowanie
+stron pamięci (paging).
+.TP
+.B \-C
+Wyświetla wskaźniki zakończenia/postępu dla systemów plików, które je
+wspieraja (aktualnie tylko dla ext2). fsck będzie tak sterować programami
+sprawdzającymi systemy plików, aby tylko jeden z nich wyświetlał wskaźnik
+postępu w danej chwili.
+.TP
+.B \-N
+Nie wykonuje operacji, jedynie pokazuje co byłoby wykonane.
+.TP
+.B \-P
+Jeśli włączona jest opcja
+.BR \-A ,
+to sprawdza główny system plików równolegle ze sprawdzaniem innych systemów.
+Nie jest to najbezpieczniejsza czynność pod słońcem, jaką móżna wykonać,
+ponieważ jeśli główny system plików jest wątpliwy, to nawet
+binarium
+.BR e2fsck (8)
+może być uszkodzone! Opcja ta jest przeznaczona głównie dla tych
+administratorów systemów, którzy nie chcą repartycjonować głównego systemu
+plików, tak by był mały i zwarty (co jest tak naprawdę poprawnym rozwiązaniem).
+.TP
+.B \-R
+Podczas sprawdzania wszystkich systemów plików z opcją
+.BR \-A ,
+omija główny system plików (w przypadku, gdy jest on już zamontowany
+do odczytu/zapisu).
+.TP
+.B \-T
+Nie pokazuje tytułu przy starcie.
+.TP
+.B \-V
+Tryb gadatliwy. Wyświetlane są szczegółowe komunikaty, łącznie ze wszystkimi
+wykonywanymi poleceniami specyficznymi dla poszczególnych systemów plików.
+.TP
+.B fsck-options
+Opcje nie rozumiane przez
+.BR fsck
+są przekazywane programowi sprawdzającemu, specyficznemu dla danego systemu
+plików. Parametry te nie
+.B mogą
+zawierać włanych argumentów, gdyż
+.B fsck
+nie ma możliwości rozpoznania, które z parametrów posiadają argumenty,
+a które nie. Dowolne opcje występujące po
+.B \-\-
+są traktowane jako opcje specyficzne dla danego systemu plików, które mają
+zostać przekazane do odpowiedniego programu sprawdzającego ten system plików.
+.IP
+Proszę zauważyć, że fsck nie został zaprojektowany w celu przekazywania
+dowolnie skomplikowanych opcji do programów sprawdzających specyficznych
+dla poszczególnych systemów plików. Jeśli istnieje potrzeba zrobienia
+czegoś skomplikowanego, proszę po prostu bezpośrednio uruchomić właściwy
+dla danego systemu plków program sprawdzający. Jeśli programowi
+.B fsck
+zostanie przekazana niezmiernie skomplikowana opcja wraz z argumentami
+i programowi nie uczyni tego, czego się spodzewano, to nie należy nikomu
+zawracać głowy zgłaszaniemtego jako błędu. Prawie na pewno robi się wówczas
+coś, czego nie należy robić za pomocą
+.BR fsck.
+.PP
+Obecnie zestandaryzowany zestaw opcji specyficznych dla systemów plików jest
+dość płynny. Mimo, że nie jest to zagwarantowane, większość programów
+sprawdzających systemy plików obsługuje poniższe opcje:
+.TP
+.B \-a
+Automatycznie naprawia system plików bez zadawania pytań (należy używać tej
+opcji ostrożnie). Warto zauważyć, że
+.BR e2fsck (8)
+wspiera
+.B \-a
+tylko dla zgodności z wcześniejszymi wersjami. Opcja ta została przekształcona
+na opcję
+.B \-p
+polecenia
+.BR e2fsck ,
+która jest bezpieczna w użyciu, w przeciwieństwie do opcji
+.BR \-a ,
+obsługiwanej przez większość programów sprawdzających systemy plików.
+.TP
+.B \-r
+Naprawa systemu plików w trybie interaktywnym (z pytaniami o potwierdzenia).
+Uwaga: na ogół złym pomysłem jest używanie tej opcji podczas równoległego
+sprawdzania wielu systemów plików. Trzeba też zwrócić uwagę, że jest to
+domyślne zachowanie
+.BR e2fsck ;
+polecenie to wspiera tę opcję tylko z powodu zgodności z wcześniejszymi
+wersjami.
+.SH AUTOR
+Theodore Ts'o (tytso@mit.edu)
+.SH PLIKI
+.IR /etc/fstab .
+.SH "ZMIENNE ŚRODOWISKOWE"
+Na zachowanie programu
+.B fsck
+mają wpływ następujące zmienne środowiskowe:
+.TP
+.B FSCK_FORCE_ALL_PARALLEL
+Jeśli ta zmienna jest ustawiona,
+.B fsck
+będzie próbował uruchomić równolegle programy sprawdzające wszystkie podane
+systemy plików, niezależnie od tego, czy systemy plików znajdują sie na tym
+samym, czy na różnych urządzeniach. (Jest to przydatne w przypadku systemów
+RAID wysokiej klasy systemów pamięci masowej, jak np. sprzedawane przez
+firmy takie, jak IBM czy EMC.)
+.TP
+.B FSCK_MAX_INST
+Ta zmienna środowiskowa ogranicza maksymalną liczbę uruchamianych
+jednocześnie programów sprawdzających systemy plików. W przypadku
+konfiguracji zawierających dużą liczbę dysków, pozwala to uniknąć
+jednoczesnego uruchamiania przez
+.B fsck
+zbyt wielu programów sprawdzających, co mogłoby przeciążyć dostępne
+w systemie zasoby procesorów i pamięci. Wartość zero pozwala na
+nieograniczone mnożenie się procesów. Jest to aktualnie zachowanie domyślne,
+jednakże przyszłe wersje
+.B fsck
+mogą próbować automatycznie określać ilość jednoczesnych sprawdzań systemów
+plików na podstawie zgromadzonych przez system operacyjny danych
+ewidencyjnych.
+.TP
+.B PATH
+Zmienna środowiskowa
+.B PATH
+służy do poszukiwania programów sprawdzających systemy plików. Pewne
+katalogi systemowe są przeszukiwane najpierw:
+.BR /sbin ,
+.BR /sbin/fs.d ,
+.BR /sbin/fs ,
+.B /etc/fs
+i
+.BR /etc .
+A następnie są przeszukiwane katalogi znajdujące się w zmiennej środowiskowej
+.BR PATH .
+.TP
+.B FSTAB_FILE
+Ta zmienna środowiskowa pozwala administratorowi systemu zmianę
+standardowego położenia pliku
+.BR /etc/fstab .
+Służy ona również osobom rozwijającym program do testowania
+.BR fsck .
+.SH "ZOBACZ TAKŻE"
+.BR fstab (5),
+.BR mkfs (8),
+.BR fsck.minix (8),
+.BR fsck.ext2 (8)
+lub
+.BR e2fsck (8),
+.BR fsck.xiafs (8).

@@ -1,0 +1,194 @@
+'\" t
+.\" Man page for mandb
+.\"
+.\" Copyright (C), 1994, 1995, Graeme W. Wilford. (Wilf.)
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the file COPYING that comes with the
+.\" man-db distribution.
+.\"
+.\" Tue Apr 26 12:56:44 BST 1994  Wilf. (G.Wilford@ee.surrey.ac.uk)
+.\"
+.\" {PTM/WK/1999-XII}
+.\" Translation update: Robert Luberda <robert@debian.org>, May 2003, man-db 2.4.1
+.\" $Id: mandb.8,v 1.3 2003/05/29 10:59:27 robert Exp $
+.\"
+.TH mandb 8 "7 września 2001" "2.4.1" "Narzędzia przeglądarki stron man"
+.SH NAZWA
+mandb \- tworzy lub aktualizuje bufory indeksowe stron man.
+.SH SKŁADNIA
+.B mandb
+.RB [\| \-dqsuc \||\| \-h \||\| \-V\c
+.RI "\|] [\|" manpath \|]
+.SH OPIS
+.B mandb
+służy do inicjowania lub ręcznej aktualizacji
+.B indeksowych
+buforów baz danych
+(index database caches), zwykle obsługiwanych przez
+.BR man .
+Bufory zawierają informację związaną z aktualnym stanem systemu stron man.
+Informacja w nich przechowywana używana jest przez narzędzia man-db do
+poprawy ich szybkości i funkcjonalności działania.
+
+Podczas tworzenia bądź aktualizacji
+.BR indeksu ,
+.B mandb
+ostrzega o złych żądaniach .so ROFF, niepoprawnych nazwach plików
+stron man oraz stronach, z których nie można utworzyć zapisu dla
+.BR whatis .
+
+Wywołanie
+.B mandb
+z opcjonalną ścieżką rozdzielonych dwukropkami hierarchii katalogów unieważni
+wewnętrzną globalną ścieżkę przeszukiwań, określaną na podstawie informacji
+znalezionej w pliku konfiguracyjnym man-db.
+.SH "BUFORY BAZY DANYCH"
+.B mandb
+może zostać skompilowane z obsługą jednego z następujących typów baz.
+.PP
+
+.TS
+tab (@);
+l l l l.
+Nazwa@Typ@Async@Nazwa pliku
+_
+Berkeley db@Binary tree@Tak@\fIindex.bt\fR
+GNU gdbm v >= 1.6@Hashed@Tak@\fIindex.db\fR
+GNU gdbm v <  1.6@Hashed@Nie@\fIindex.db\fR
+UNIX ndbm@Hashed@Nie@\fIindex.(dir|pag)\fR
+.TE
+
+Typy baz danych obsługujące aktualizacje asynchroniczne zapewniają
+lepszą szybkość kosztem możliwego uszkodzenia w przypadku nienormalnego
+przerwania pracy.
+W niezbyt częstym przypadku takiego przerwania, może być niezbędne ponowne
+uruchomienie
+.B mandb
+z opcją
+.B \-c
+do odbudowania bazy danych od zera.
+.SH OPCJE
+.TP
+.B \-d, \-\-debug
+Tworzy informację diagnostyczną (debug).
+.TP
+.B \-q, \-\-quiet
+Nie generuje ostrzeżeń.
+.TP
+.B \-s, \-\-no-straycats
+Nie traci czasu na poszukiwanie lub dodawanie do bazy informacji dotyczącej
+zabłąkanych stron cat. [tłum: stray cats - również "zabłąkane koty" :)].
+.TP
+.B \-p, \-\-no-purge
+Nie traci czasu na poszukiwanie usuniętych stron podręcznika i usuwanie ich
+z bazy danych.
+.TP
+.B \-c, \-\-create
+Domyślnie
+.B mandb
+próbuje zaktualizować uprzednio utworzone bazy. Jeśli baza nie
+istnieje, to ją utworzy. Niniejsza opcja wymusza na
+.B mandb
+usunięcie poprzednich baz i utworzenie ich od zera i automatycznie włącza
+.B \-\-no-purge.
+Może to być niezbędne,
+jeśli baza została uszkodzona lub jeśli wprowadza się nowy układ przechowywania
+baz.
+.TP
+.B \-u, \-\-user-db
+Twórz wyłącznie bazy danych użytkownika, nawet przy prawach zapisu niezbędnych
+do utworzenia baz systemowych.
+.TP
+.B \-t, \-\-test
+Sprawdza poprawność stron podręcznika znajdująych się w ścieżce poszukiwań.
+Jeżeli podano tę opcję, to
+.B mandb
+w żaden sposób nie zmieni istniejącej bazy danych.
+.TP
+.B \-h, \-\-help
+Wyświetla komunikaty o zastosowaniu i kończy pracę.
+.TP
+.B \-V, \-\-version
+Wyświetla numer wersji i kończy pracę.
+.SH "KOD WYJŚCIA"
+.TP
+.B 0
+Pomyślne wykonanie programu.
+.TP
+.B 1
+Błąd użycia, składni lub w pliku konfiguracyjnym.
+.TP
+.B 2
+Błąd wykonywania programu.
+.TP
+.B 3
+Błąd procesu potomnego.
+.SH DIAGNOSTYKA
+Podczas tworzenia bazy danych mogą być pomijane następujące komunikaty
+ostrzegawcze:
+.TP
+.B <plik>: whatis parse for page(sec) failed
+Nieudana próba uzyskania wiersza(y) whatis z zadanego <pliku>. Zwykle
+spowodowana kiepsko napisaną stroną man, ale jeśli wysyłanych jest wiele
+takich komunikatów, to prawdopodobnie system zawiera niestandardowe strony
+man, niezgodne z analizatorem składni whatis wbudowanym w man-db.
+Więcej informacji można znaleźć w sekcji
+.B PARSOWANIE WHATIS
+na stronie
+.BR lexgrog (1).
+.TP
+.B <plik>: is a dangling symlink
+<plik> o podanej nazwie nie istnieje, ale jest wskazywany przez dowiązanie
+symboliczne (symbolic link). Zwykle generowane jest dodatkowa informacja
+diagnostyczna dla identyfikacji <pliku> z błędnego dowiązania.
+.TP
+.B <plik>: bad symlink or ROFF `.so' request
+<plik> jest albo dowiązaniem symbolicznym do nieistniejącego pliku, albo
+zawiera żądanie włączenia ROFF (include) nieistniejącego pliku.
+.TP
+.B <plik>: ignoring bogus filename
+<plik> być może być lub nie być poprawną stroną man, ale jego nazwa jest
+niepoprawna. Spowodowane zwykle przez stronę man z rozszerzeniem sekcji <x>
+umieszczoną w sekcji stron <y>.
+.TP
+.B <maska_pliku>: competing extensions
+Wzorzec nazwy <maska_pliku> nie daje unikalnego wyniku. Zwykle spowodowane
+istnieniem zarówno skompresowanej jak i niekompresowanej wersji tej
+samej strony man. Ignorowane wszystkie z wyjątkiem ostatniej [najnowszej?].
+.SH PLIKI
+.TP
+.I /etc/man_db.config
+Plik konfiguracyjny man-db.
+.TP
+.I /usr/man/index.(bt|db|dir|pag)
+Tradycyjny globalny
+.I indeks
+bazy danych.
+.TP
+.I /var/catman/index.(bt|db|dir|pag)
+Alternatywny lub zgodny z FSSTND globalny
+.I indeks
+bazy danych.
+.TP
+.I /var/cache/man/index.(bt|db|dir|pag)
+Zgodny z FHS globalny
+.I indeks
+bazy danych.
+.SH "ZOBACZ TAKŻE"
+.BR man (1),
+.BR lexgrog (1),
+.BR manpath (5),
+.BR catman (8).
+.PP
+Sekcja
+.BR "PARSOWANIE WHATIS" ,
+będąca poprzednio w tej stronie podręcznika, została
+przeniesiona do
+.BR lexgrog (1).
+.SH AUTOR
+.nf
+Wilf. (G.Wilford@ee.surrey.ac.uk).
+Fabrizio Polacco (fpolacco@debian.org).
+Colin Watson (cjwatson@debian.org).
+.fi

@@ -1,0 +1,35 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/5-12-1999/"odbiera wiadomość pocztową poprzez QMTP"}
+.TH qmail-qmtpd 8
+.SH NAZWA
+qmail-qmtpd \- odbierz wiadomość pocztową poprzez QMTP
+.SH SKŁADNIA
+.B qmail-qmtpd
+.SH OPIS
+.B qmail-qmtpd
+odbiera pocztę przez Protokół Szybkiego Przesyłania Poczty - z ang.
+Quick Mail Transfer Protocol (QMTP)
+i wywołuje
+.B qmail-queue
+by ustawić ją w kolejce wychodzącej. Polecenie
+.B qmail-qmtpd
+musi być poparte kilkoma zmiennymi środowiskowymi;
+obejrzyj 
+.BR tcp-environ(5) .
+
+.B qmail-qmtpd
+korzysta z
+.IR rcpthosts ,
+.IR morercpthosts ,
+.BR RELAYCLIENT ,
+.IR databytes ,
+i mechanizmów
+.B DATABYTES
+opisanych w
+.BR qmail-smtpd(8) .
+.SH "ZOBACZ TAKŻE"
+tcp-env(1),
+tcp-environ(5),
+qmail-control(5),
+qmail-queue(8),
+qmail-smtpd(8)

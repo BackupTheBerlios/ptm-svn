@@ -1,0 +1,149 @@
+.\" {PTM/LK/0.1/27-09-1998/"zmore - przeglądanie skompresowanych plików"}
+.\" Tłumaczenie: 27-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH ZMORE 1
+.SH NAZWA
+zmore \- pełnoekranowe przeglądanie skompresowanych plików tekstowych
+.SH SKŁADNIA
+.B zmore
+[ plik ... ]
+.SH OPIS
+.I zmore 
+pozwala na przeglądanie zwykłych lub skompresowanych plików tekstowych 
+na ekranie terminala.
+.I zmore
+rozpoznaje pliki skompresowane za pomocą programów
+.IR compress ", " pack
+lub
+.I gzip
+oraz pliki nieskompresowane.
+Jeżeli podany plik nie istnieje,
+.I zmore
+poszukuje pliku o tej samej nazwie z dodanym rozszerzeniem .gz, .z lub .Z.
+.I zmore
+zatrzymuje wyświetlanie pliku po każdorazowym pokazaniu pełnego
+ekranu, wypisując w ostatniej linii \-\-More\-\-. Jeżeli użytkownik
+naciśnie klawisz Enter, wyświetlana jest kolejna linia. Po naciśnięciu
+spacji wyświetlany jest nastepny ekran. Niżej podane są pozostałe
+możliwości.
+.PP
+.I zmore
+do poznania charakterystyki terminala i domyślnego rozmiaru okna
+korzysta z pliku
+.IR /etc/termcap .
+Na terminalu, 
+który jest w stanie wyświetlić 24 linie, domyślnym rozmiarem okna są 22 linie.
+Domyślnie pliki są przeglądane za pomocą programu
+.IR more ;
+aby użyć innego programu, użyj zmiennej środowiskowej PAGER, ustawiając ją
+na nazwę nowego programu, na przykład
+.IR less .
+.PP
+Poniżej podano pozostałe polecenia, które można wydać, gdy 
+.I zmore
+zatrzymuje wyświetlanie tekstu oraz ich efekty (\fIi\fP jest opcjonalną liczbą
+całkowitą, domyślnie 1) :
+.PP
+.IP \fIi\|\fP<spacja>
+wyświetla kolejne
+.I i
+linii (lub następny ekran gdy nie podano liczby)
+.PP
+.IP ^D
+wyświetla kolejne 11 linii. Jeżeli podano
+.IR i ", "
+ekran jest przewijany o \fIi\fP linii.
+.PP
+.IP d
+to samo, co ^D (control\-D)
+.PP
+.IP \fIi\|\fPz
+to samo co spacja, jeżeli podano \fIi\|\fP, nowy rozmiar okna jest ustawiany na 
+\fIi\fP linii. Gdy zostanie zakończone wyświetlanie bieżącego pliku, wielkość
+okna jest przywracana do poprzedniego rozmiaru,.
+.PP
+.IP \fIi\|\fPs
+wyświetla kolejny ekran omijając \fIi\|\fP linii
+.PP
+.IP \fIi\|\fPf
+wyświetla kolejny ekran omijając \fIi\fP ekranów
+.PP
+.IP "q lub Q"
+kończy wyświetlanie bieżącego pliku i wyświetla następny plik
+.PP
+.IP "e lub q"
+Jeżeli wyświetlany jest napis \-\-More\-\-(Next file:
+.IR file )
+polecenie powoduje zakończenie działania
+.I zmore
+.PP
+.IP s
+Jeżeli wyświetlany jest napis \-\-More\-\-(Next file:
+.IR file )
+polecenie powoduje ominięcie kolejnego pliku
+.PP
+.IP =
+wyświetla bieżący numer linii
+.PP
+.IP \fIi\|\fP/wzorzec
+znajduje \fIi\|\fP\-te wystąpienie \fIwzorca\|\fP. Jeżeli wzorzec nie został
+znaleziony, 
+.I zmore
+przechodzi do przeszukiwania kolejnego pliku. W przeciwnym wypadku wyświetlany
+jest fragment pliku ze znalezionym wzorcem rozpoczynający się dwie linie
+przed tą, w której znaleziono wzorzec. Do edycji wzorca (wyrażenia regularnego)
+można użyć standardowych klawiszy usuwających znaki i linie. Próba usunięcia 
+znaku na lewo od pierwszej kolumny spowoduje anulowanie polecenia wyszukiwania.
+.PP
+.IP \fIi\|\fPn
+znajduje \fIi\|\fP\-te wystąpienie ostatnio wprowadzonego wzorca
+.PP
+.IP !polecenie
+wywołuje powłokę z \fIpoleceniem\|\fP. Znak `!' w "poleceniu" jest zastępowany
+poprzednio wprowadzonym poleceniem. Aby w poleceniu użyć znaku `!', wprowadź
+`\\!'
+.PP
+.IP ":q lub :Q"
+kończy wyświetlanie bieżącego pliku i przechodzi do następnego (to samo, co
+q lub Q).
+.PP
+.IP .
+(kropka) powtarza poprzednie polecenie
+.PP
+Polecenia wykonywane są natychmiast po ich wprowadzeniu tzn. nie trzeba
+potwierdzać ich klawiszem Enter. Do czasu, gdy nie zostało wydane właściwe
+polecenie, można usunąć dotychczas wpisaną liczbę za pomocą klawisza
+usuwającego linię. Dodatkowo, naciśnięcie klawisza usuwającego znak spowoduje
+ponowne wyświetlenie wiadomości \-\-More\-\-
+.PP
+W każdym momencie, gdy na terminalu wyświetlana jest zawartość pliku,
+można nacisnąć klawisz zatrzymania (zwykle control\-\\); wówczas
+.I zmore
+ponownie wyświetli standardowy komunikat \-\-More\-\-. Wtedy można ponownie
+wpisać dowolne z powyższych poleceń. Niestety, w takiej sytuacji może dojść
+do utraty części informacji ponieważ w momencie, gdy naciśnięty zostanie
+klawisz zatrzymania, tracone są wszystkie wpisane znaki nie odebrane do
+tej pory przez terminal.
+.\" [ flush - ?? ]
+.\" The user may then enter one of the above commands in the normal manner.
+.\" Unfortunately, some output is lost when this is done, due to the
+.\" fact that any characters waiting in the terminal's output queue
+.\" are flushed when the quit signal occurs.
+.PP
+Terminal jest przez 
+.I zmore
+ustawiany w tryb
+.IR noecho ,
+aby wyświetlanie plików mogło odbywać się w sposób ciągły. W związku z tym
+polecenia wydawane przez użytkownika będą niewidoczne z wyjątkiem poleceń /
+oraz !.
+.PP
+Jeżeli standardowym wyjściem nie jest terminal, wówczas
+.I zmore
+zachowuje się jak
+.IR zcat ,
+ale w przeciwieństwie do niego wypisuje nagłówek przed każdym plikiem.
+.SH PLIKI
+.DT
+/etc/termcap Baza danych o terminalach
+.SH "ZOBACZ TAKŻE"
+more(1), gzip(1), zdiff(1), zgrep(1), znew(1), zforce(1), gzexe(1)

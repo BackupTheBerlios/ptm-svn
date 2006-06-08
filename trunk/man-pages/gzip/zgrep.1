@@ -1,0 +1,46 @@
+.\" {PTM/LK/0.1/27-09-1998/"zgrep - szukanie wyrażenia regularnego w skompresowanych plikach"}
+.\" Tłumaczenie: 27-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH ZGREP 1
+.SH NAZWA
+zgrep \- znajdź wyrażenie regularne również w skompresowanych plikach
+.SH SKŁADNIA
+.B zgrep
+[ opcje_grepa ]
+.BI [ \-e ] " wzorzec"
+.IR plik ".|.|."
+.SH OPIS
+.IR zgrep
+wywołuje program
+.I grep
+na plikach skompresowanych programami compress lub gzip. Wszystkie podane
+opcje są przekazywane bezpośrednio do programu 
+.IR grep "."
+Jeżeli nie podano żadnych plików, dane są pobierane ze standardowego wejścia,
+w razie potrzeby dekompresowane, a następnie przekazywane do programu
+.IR grep "."
+W przeciwnym wypadku podane pliki są dekompresowane, a następnie przekazywane
+do programu
+.IR grep "."
+.PP
+Jeżeli
+.I zgrep
+jest uruchomiony pod nazwą
+.IR zegrep " lub " zfgrep ", "
+wówczas zamiast programu
+.I grep
+uruchamiany jest odpowiednio program
+.IR egrep " lub " fgrep "."
+Jeżeli istnieje zmienna środowiskowa
+.BR GREP ", "
+.I zgrep
+używa jej wartości, jako nazwy programu do uruchomienia, na przykład:
+
+.IP "dla sh: " 
+GREP=fgrep; zgrep wzorzec pliki 
+.IP "dla csh: "
+(setenv GREP fgrep; zgrep wzorzec pliki)
+.SH AUTOR
+Charles Levert (charles@comm.polymtl.ca)
+.SH "ZOBACZ TAKŻE"
+grep(1), egrep(1), fgrep(1), zdiff(1), zmore(1), znew(1), zforce(1),
+gzip(1), gzexe(1)

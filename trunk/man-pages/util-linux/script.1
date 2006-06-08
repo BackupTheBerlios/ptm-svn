@@ -1,0 +1,142 @@
+.\" {PTM/TW/0.1/17-04-1999/tworzy maszynopis sesji"}
+.\" Translation (c) 1999 Tomasz Wendlandt <juggler@cp.pl>
+.\" Translation update: Robert Luberda <robert@debian.org>, May 2003, util-linux 2.11z
+.\" $Id: script.1,v 1.3 2003/05/07 08:40:16 robert Exp $
+.\"
+.\" Copyright (c) 1980, 1990 Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)script.1	6.5 (Berkeley) 7/27/91
+.\"
+.Dd 30 lipca 2000
+.Dt SCRIPT 1
+.Os Linux
+.Sh NAZWA
+.Nm script
+.Nd tworzy maszynopis sesji 
+.Sh SKŁADNIA
+.Nm script
+.Op Fl a
+.Op Fl f
+.Op Fl q
+.Op Fl t
+.Op Ar plik
+.Sh OPIS
+.Nm Script
+tworzy maszynopis wszystkiego, co zostało wydrukowane na Twoim terminalu.
+Jest to przydatne dla studentów, którzy potrzebują wydruk zapisu interakcyjnej
+sesji jako dowód na wykonanie wyznaczonego zadania, maszynopis ten może być
+wydrukowany później za pomocą
+.Xr lpr 1 .
+.Pp
+Jeżeli argument 
+.Ar plik
+jest podany,
+.Nm
+zapisuje cały dialog w
+.Ar pliku .
+Jeżeli nie zostanie podana nazwa pliku, wówczas maszynopis jest zapisany w pliku
+.Pa typescript  .
+.Pp
+Opcje:
+.Bl -tag -width Ds
+.It Fl a
+Dołącza wyjście do
+.Ar pliku
+albo
+.Pa typescript ,
+zachowując uprzednią zawartość.
+.It Fl f
+Opróżnia wyjście po każdym zapisie. Jest to użyteczne w przypadku
+współpracy kilku osób: pierwsza wykonuje "mkfifo foo; script -f foo", 
+a druga w czasie rzeczywistym nadzoruje jej poczynania, używając "cat foo".
+.It Fl q
+Tryb cichy.
+.It Fl t
+Wypisuje na stderr informacje o czasie. Dane te składają się z dwóch pól
+rozdzielonych spacją. Pierwsze pole zawiera informację, jak dużo czasu upłynęło
+od poprzedniego wyjścia. Drugie pole określa, ile znaków zostało wypisanych
+tym razem. Informacja ta może zostać użyta do powtórzenia zapisanego skryptu, tak
+jak rzeczywiście był wprowadzany.
+.El
+.Pp
+Skrypt kończy się kiedy wychodzisz z powłoki 
+.Em ( control-D ,
+aby wyjść z 
+powłoki Bourne
+.Pf ( Xr sh 1 ) ,
+i
+.Em exit ,
+.Em logout
+albo
+.Em control-d
+(jeżeli
+.Em ignoreeof
+nie jest ustawiona) dla
+powłoki C,
+.Xr csh 1 ) .
+.Pp
+Pewne interakcyjne komendy, takie jak
+.Xr vi 1 ,
+tworzą śmieci w pliku maszynopisu
+.Nm Script
+działa najlepiej z komendami, które nie manipulują obrazem, rezultaty są
+słabsze od naśladowanego wydruku terminala. 
+.Sh Środowisko
+Następująca zmienna środowiskowa jest wykorzystywana przez
+.Nm script :
+.Bl -tag -width SHELL
+.It Ev SHELL
+Jeżeli zmienna
+.Ev SHELL
+istnieje, powłoka rozwidlona przez
+.Nm script
+będzie tą powłoką. Jeżeli 
+.Ev SHELL
+nie jest ustawiona, wówczas przybierana jest powłoka Bourne. (Większość
+powłok ustawia tę zmienną automatycznie).
+.El
+.Sh ZOBACZ TAKŻE
+.Xr csh 1
+(dla 
+.Em historii 
+mechanizmu),
+.Xr replay 1 .
+.Sh HISTORIA
+Komenda
+.Nm script
+pojawiła się w
+.Bx 3.0 .
+.Sh BŁĘDY
+.Nm Script
+umieszcza wszystko w pliku z logami, wliczając znaki wysuwu wiersza i znaki
+cofania się (backspace).
+To nie jest to, czego naiwny użytkownik by się spodziewał.

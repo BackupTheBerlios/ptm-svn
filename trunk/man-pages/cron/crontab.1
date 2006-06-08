@@ -1,0 +1,106 @@
+.\" {PTM/LK/0.1/30-09-1998/"zarządzanie plikami crontab użytkowników"}
+.\" Tłumaczenie: 30-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.\"/* Copyright 1988,1990,1993 by Paul Vixie
+.\" * All rights reserved
+.\" *
+.\" * Distribute freely, except: don't remove my name from the source or
+.\" * documentation (don't take credit for my work), mark your changes (don't
+.\" * get me blamed for your possible bugs), don't alter or remove this
+.\" * notice.  May be sold if buildable source is provided to buyer.  No
+.\" * warrantee of any kind, express or implied, is included with this
+.\" * software; use at your own risk, responsibility for damages (if any) to
+.\" * anyone resulting from the use of this software rests entirely with the
+.\" * user.
+.\" *
+.\" * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
+.\" * I'll try to keep a version up to date.  I can be reached as follows:
+.\" * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+.\" */
+.\"
+.\" $Id: crontab.1,v 1.2 2000/02/12 10:01:39 siefca Exp $
+.\"
+.TH crontab 1 "29 grudnia 1993"
+.UC 4
+.SH NAZWA
+crontab \- zarządzanie plikami crontab należącymi do użytkowników (V3)
+.SH SKŁADNIA
+crontab [ -u nazwa_użytkownika ] plik
+.br
+crontab [ -u nazwa_użytkownika ] { -l | -r | -e }
+.SH OPIS
+.I crontab 
+jest programem służącym do instalacji, deinstalacji lub
+oglądania zawartości tabel używanych przez demon cron z pakietu Vixie Cron.
+Każdy użytkownik może posiadać własną tabelę. Tabele cron są plikami
+przechowywanymi w katalogu /var lecz nie powinny być bezpośrednio
+modyfikowane.
+.PP
+Jeżeli istnieje plik
+.IR allow ,
+użytkownik musi być w nim wymieniony, by mieć możliwość używania polecenia
+.IR crontab .
+Jeżeli nie istnieje plik
+.I allow
+lecz istnieje plik
+.IR deny ,
+użytkownik \fBnie\fR może być w nim wymieniony, by używać tego polecenia.
+Jeżeli nie istnieje żaden z tych plików, wówczas dostępność polecenia zależy
+od ustawień konkretnego systemu. Możliwa jest zarówno sytuacja, kiedy każdy
+użytkownik ma dostęp do tego polecenia, jak i sytuacja, kiedy dostęp do niego
+ma tylko administrator.
+.PP
+Jeżeli podana zostanie opcja
+.IR -u ,
+określa ona użytkownika, którego tabele cron mają być modyfikowane. Jeżeli
+ta opcja nie jest podana, modyfikowane będą tabele należące do użytkownika
+uruchamiającego program. Zauważ, że polecenie 
+.IR su (8)
+może zdezorientować program
+.IR crontab .
+Jeżeli uruchamiasz
+.I crontab
+po wydaniu polecenia 
+.IR su ,
+powinieneś zawsze używać opcji 
+.I \-u
+ze względów bezpieczeństwa.
+.PP
+Pierwsza forma wywoływania programu
+.I crontab
+służy do utworzenia nowej tabeli na podstawie podanego pliku lub danych
+pobranych ze standardowego wejścia, jeżeli podana zostanie pseudo-nazwa pliku
+``-''.
+.PP
+Opcja 
+.I -l
+powoduje wypisanie bieżącej tabeli na standardowym wyjściu.
+.PP
+Opcja 
+.I -r
+usuwa bieżącą tabelę.
+.PP
+Opcja
+.I -e
+służy do modyfikacji bieżącej tabeli przy pomocy edytora, którego nazwa
+znajduje się w jednej ze zmiennych środowiskowych
+\s-1VISUAL\s+1 lub \s-1EDITOR\s+1. Po opuszczeniu edytora zmodyfikowana
+tabela zostanie automatycznie zainstalowana.
+.SH "ZOBACZ TAKŻE"
+crontab(5), cron(8)
+.SH PLIKI
+.nf
+/etc/cron.allow
+/etc/cron.deny
+.fi
+.SH STANDARDY
+Polecenie
+.I crontab
+jest zgodne ze standardem IEEE Std1003.2-1992 (``POSIX'').  
+Nowa składnia polecenia różni się od składni używanej przez poprzednie
+wersje Vixie Cron, jak również od klasycznej składni V3.
+.SH DIAGNOSTYKA
+Po uruchomieniu programu z błędną opcją pojawi się zrozumiały opis
+popełnionego błędu.
+.SH AUTOR
+.nf
+Paul Vixie <paul@vix.com>

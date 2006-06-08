@@ -1,0 +1,253 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/5-12-1999/"dostarcza wiadomości pocztowe z kolejki"}
+.TH qmail-send 8
+.SH NAZWA
+qmail-send \- dostarcz skolejkowane wiadomości pocztowe
+.SH SKŁADNIA
+.B qmail-send
+.SH OPIS
+.B qmail-send
+obsługuje wiadomości umiejscowione w kolejce wyjściowej przy użyciu
+.BR qmail-queue .
+Używa
+.B qmail-lspawn
+by doręczyć wiadomości odbiorcom lokalnym i
+.B qmail-rspawn
+by doręczyć wiadomości odbiorcom odległym.
+Jeśli wiadomość chwilowo nie może być doręczona do jednego lub więcej adresów,
+.B qmail-send
+pozostawia ją w kolejce i próbuje obsłużyć te adresy później.
+
+.B qmail-send
+drukuje odczytywalny rekord swoich działań na deskryptorze 0.
+Zapisuje komendy do
+.BR qmail-lspawn ,
+.BR qmail-rspawn ,
+i
+.B qmail-clean
+na deskryptorach 1, 3, oraz 5,
+a czyta odpowiedzi z deskryptorów 2, 4, oraz 6.
+.B qmail-send
+jest odpowiedzialny za zapobieganie blokadom.
+
+Jeśli
+.B qmail-send
+odbierze sygnał TERM to
+poprawnie zakończy działanie, po zakończeniu oczekiwania
+(możliwie więcej niż jedną minutę)
+na wysłanie wszystkich obecnie wysyłanych wiadomości.
+
+Jeśli
+.B qmail-send
+odbierze sygnał ALRM to
+przeszereguje każdą czekającą wiadomość tak, żeby była dostarczona natychmiast.
+.SH "PLIKI KONTROLNE"
+.B OSTRZEŻENIE:
+.B qmail-send
+czyta pliki kontrolne tylko podczas startu.
+Jeśli zmienisz pliki kontrolne,
+musisz zatrzymać i wznowić działanie
+.BR qmail-send .
+Wyjątek:
+Jeśli
+.B qmail-send
+odbierze sygnał HUP,
+odczyta ponownie pliki
+.I locals
+i
+.IR virtualdomains .
+.TP 5
+.I bouncefrom
+Nazwa użytkownika, którą opatrywane będą wiadomości odbite.
+Domyślnie:
+.BR MAILER-DAEMON .
+.TP 5
+.I bouncehost
+Nazwa hosta, którą opatrywane będą wiadomości odbite.
+Domyślnie:
+.IR me ,
+jeśli to ustawiono;
+w przeciwnym razie literalna nazwa
+.BR bouncehost ,
+która pewnie nie jest tym czego chcesz.
+Jeśli całkowicie niemożliwym jest dostarczenie wiadomości to
+.B qmail-send
+wysyła powiadomienie
+.B single-bounce
+do kopertowego nadawcy wiadomości.
+
+Powiadomienie to
+.B From: \fIbouncefrom\fB@\fIbouncehost\fR,
+chyba że kopertowy nadawca jest pusty.
+.TP 5
+.I concurrencylocal
+Maksymalna liczba niezależnych prób dostarczeń lokalnych.
+Domyślnie: 10.
+Jeśli 0, lokalne dostarczenia będą zawieszone.
+Wartość
+.I concurrencylocal
+jest ograniczona podczas kompilacji do
+120.
+.TP 5
+.I concurrencyremote
+Maksymalna liczba niezależnych prób dostarczeń zdalnych.
+Domyślnie: 20.
+Jeśli 0, zdalne dostarczenia będą zawieszone.
+Wartość
+.I concurrencyremote
+jest ograniczona podczas kompilacji do
+120.
+.TP 5
+.I doublebouncehost
+Nazwa hosta dla podwójnego odbicia.
+Domyślnie:
+.IR me ,
+jeśli jest ustawione;
+w przeciwnym wypadku literalna nazwa
+.BR doublebouncehost ,
+która pewnie nie jest tym czego oczekujesz.
+.TP 5
+.I doublebounceto
+Użytkownik odbierający podwójne odbicia.
+Domyślnie:
+.BR postmaster .
+Jeśli dostarczenie informacji o pojedynczym odbiciu jest całkowicie niemożliwe,
+.B qmail-send
+przesyła zawiadomienie określane jako
+.B podwójne-odbicie
+do
+.IR doublebounceto\fB@\fIdoublebouncehost .
+(Jeśli to też się odbije,
+.B qmail-send
+się poddaje.)
+.TP 5
+.I envnoathost
+Przypuszczalna nazwa domeny dla adresów bez znaku @.
+Domyślnie:
+.IR me ,
+jeśli plik ten istnieje i jest odpowiednio ustawiony;
+w przeciwnym razie literalna nazwa
+.BR envnoathost ,
+która pewnie nie jest tym czego oczekujesz.
+Jeśli
+.B qmail-send
+widzi adres kopertowego odbiorcy bez znaku @ to
+dodaje
+.B @\fIenvnoathost\fR.
+.TP 5
+.I locals
+Lista nazw domen, dla których ten host odbiera pocztę,
+jedna nazwa domeny na linię.
+Domyślnie:
+.IR me ,
+jeśli jest to ustawione;
+w przeciwnym wypadku
+.B qmail-send
+odmawia uruchomienia się.
+Adres
+.I użytkownik@domena
+jest rozważany jako lokalny, jeśli
+.I domena
+jest podana w pliku
+.IR locals .
+.TP 5
+.I percenthack
+Lista nazw domen, dla których działa rozbijanie procentów.
+Jeśli
+.I domena
+jest wyszczególniona w pliku
+.IR percenthack ,
+to każdy adres w formie
+.I użytkownik%fqdn@domena
+jest przepisywany jako
+.IR użytkownik@fqdn .
+.I użytkownik
+może zawierać %,
+więc rozbijanie procentów może być gdzieś potem przeprowadzone ponownie.
+.B qmail-send
+obsługuje plik
+.I percenthack
+przed plikiem
+.IR locals .
+.TP 5
+.I queuelifetime
+Liczba sekund przez jaką wiadomość może
+pozostać w kolejce.
+Domyślnie: 604800 (tydzień).
+Po tym czasie wiadomość wygasa,
+.B qmail-send
+spróbuje ją jeszcze raz wysłać ,
+ale potraktuje każdą tymczasową awarię dostarczania jako
+awarię trwałą.
+.TP 5
+.I virtualdomains
+Lista wirtualnych użytkowników lub domen, jeden wpis na linię.
+Wirtualny użytkownik ma formę
+.IR użytkownik\fB@\fIdomena\fB:\fIdodatek ,
+bez żadnych dodatkowych spacji.
+Gdy
+.B qmail-send
+widzi adres odbiorcy
+.IR użytkownik\fB@\fIdomena ,
+to konwertuje go do postaci
+.I dodatek\fB-\fIużytkownik\fB@\fIdomena
+i traktuje wiadomość jako lokalną.
+
+Wirtualna domena posiada formę
+.IR domena\fB:\fIdodatek .
+Odnosi się do każdego adresu odbiorcy w
+.IR domenie .
+Na przykład, jeśli w pliku
+.IR virtualdomains
+istnieje wpis
+
+.EX
+     nigdzie.mil:jasiek-foo
+.EE
+
+i wiadomość przybędzie zaadresowana do
+.BR info@nigdzie.mil ,
+to wtedy
+.B qmail-send
+przepisze adres jej odbiorcy jako
+.B jasiek-foo-info@nigdzie.mil
+i dostarczy wiadomość lokalnie.
+
+Plik
+.I virtualdomains
+może zawierać znaki globalne:
+
+.EX
+     .fax:uucp-fax
+     :alias-catchall
+     .nigdzie.mil:jasiek-foo-host
+.EE
+
+.I virtualdomains
+może też zawierać wyjątki:
+pusty
+.I dodatek
+oznacza, że
+.I domena
+nie jest domeną wirtualną.
+
+.B qmail-send
+obsługuje plik
+.I virtualdomains
+po pliku
+.IR locals :
+jeśli więc podana domena jest wpisana do pliku
+.IR locals ,
+to umieszczenie jej w
+.I virtualdomains
+nie poskutkuje.
+.SH "ZOBACZ TAKŻE"
+nice(1),
+addresses(5),
+envelopes(5),
+qmail-control(5),
+qmail-log(5),
+qmail-queue(8),
+qmail-clean(8),
+qmail-lspawn(8),
+qmail-rspawn(8)

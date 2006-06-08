@@ -1,0 +1,206 @@
+.\" {PTM/GSN/0.5/23-02-1999/"ponumeruj linie plików"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page nl.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH NL "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+nl \- ponumeruj linie plików
+.SH SKŁADNIA
+.TP 4
+.B nl
+.RB [ \-h
+.IR styl ]
+.RB [ \-b
+.IR styl ]
+.RB [ \-f
+.IR styl ]
+.RB [ \-p ]
+.RB [ \-d
+.IR zz ]
+.br
+.RB [ \-v
+.IR numer-pocz ]
+.RB [ \-i
+.IR przyrost ]
+.RB [ \-l
+.IR linie ]
+.br
+.RB [ \-s
+.IR separator-linii ]
+.RB [ \-w
+.IR numer ]
+.RB [ \-n " \fIformat\fP]"
+.br
+.RB [ \-\-header-numbering= \fIstyl\fP]
+.RB [ \-\-body-numbering= \fIstyl\fP]
+.br
+.RB [ \-\-footer-numbering= \fIstyl\fP]
+.RB [ \-\-first-page= \fInumer\fP]
+.br
+.RB [ \-\-page-increment= \fInumer\fP]
+.RB [ \-\-join-blank-lines= \fInumer\fP]
+.br
+.RB [ \-\-no-renumber ]
+.RB [ \-\-number-separator= \fIłańcuch\fP]
+.br
+.RB [ \-\-number-width= \fInumer\fP]
+.RB [ \-\-number-format= \fIformat\fP]
+.br
+.RB [ \-\-section-delimiter= \fIzz\fP]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.br
+.RI [ plik ...]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo nl
+.RE
+lub
+.RS
+.BR "info nl" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBnl\fP w wersji GNU.
+.PP
+.B nl
+kopiuje na standardowe wyjście każdy podany plik, lub standardowe wejście
+jeśli nie podano żadnego lub podano plik zwany '\-', dodając do wszystkich
+lub niektórych linii ich numery.
+.PP
+.B nl
+traktuje swoje wejście jako złożone ze stron logicznych; domyślnie,
+numer linii jest zmieniany na 1 na górze każdej strony logicznej.
+.B nl
+traktuje wszystkie pliki wejściowe jako pojedynczy dokument; nie zmienia
+on numerów linii ani stron logicznych między plikami.
+.PP
+Strona logiczna składa się trzech sekcji: nagłówka, treści i stopki.
+Każda z tych sekcji może być pusta.  Każdą można ponumerować w stylu
+innym od pozostałych.
+.PP
+Początki sekcji stron logicznych są zaznaczone w pliku wejściowym
+przez linię zawierającą niczego poza jednym z łańcuchów ograniczających
+pokazanych poniżej:
+.PP
+.nf
+
+\e:\e:\e: początek nagłówka
+\e:\e: początek treści
+\e: początek stopki
+.fi
+.PP
+Owe dwa znaki, z których składają się te łańcuchy można zmienić opcją
+(patrz niżej), ale wzoru i długości każdego z nich zmienić nie można.
+.PP
+Łańcuchy ograniczające sekcję są zastępowane w wyjściu pustą linią.
+Wszelki tekst występujący przed pierwszym łańcuchem ograniczającym
+sekcję w pliku wejściowym jest uważany za część sekcji treści, tak więc
+plik, który nie zawiera żadnych łańcuchów ograniczających sekcje jest
+uważany za składający się z pojedynczej sekcji treści.
+.SH OPCJE
+.TP
+.BR \-h ", " \-\-header-numbering= \fIstyl
+Styl nagłówka.
+Patrz \-\-footer-numbering.
+.TP
+.BR \-b ", " \-\-body-numbering= \fIstyl
+Styl treści.
+Patrz \-\-footer-numbering.
+.TP
+.BR \-f ", " \-\-footer-numbering= \fIstyl
+Wybiera styl numerowania linii w sekcji stopki każdej strony logicznej.
+Kiedy linia nie jest numerowana, bieżący jej numer nie jest zwiększany,
+ale znak oddzielający numery jest nadal przed nią wstawiany.  Style to:
+.RS
+.IP \fBa
+numeruje wszystkie linie
+.IP \fBt
+numeruje tylko linie niepuste (domyślnie w treści)
+.IP \fBn
+nie numeruje żadnych linii (domyślnie w nagłówku i stopce)
+.IP \fBp\fIregexp\fP
+numeruje tylko linie zawierające coś pasującego do \fIregexp\fP
+.RE
+.TP
+.BR \-p ", " \-\-no-renumber
+Nie zaczyna numerów linii od nowa na początku strony logicznej.
+.TP
+.BR \-v ", " \-\-first-page= \fInumer
+Ustawia początkowy numer linii na każdej stronie logicznej na \fInumer\fP
+(domyślnie 1).
+.TP
+.BR \-i ", " \-\-page-increment= \fIliczba
+Zwiększa numery linii o \fIliczba\fP (domyślnie 1).
+.TP
+.BR \-l ", " \-\-join-blank-lines= \fInumer
+Uważa przy numerowaniu \fIliczba\fP (domyślnie 1) kolejnych linii pustych
+za jedną linię logiczną, i numeruje tylko ostatnią z nich. Tam gdzie
+występuje mniej niż \fIliczba\fP kolejnych linii pustych, nie numeruje ich.
+Pusta linia to taka, która nie zawiera żadnych znaków, nawet spacji czy
+tabulacji.
+.TP
+.BR \-s ", " \-\-number-separator= \fIłańcuch
+Oddziela w wyjściu numer linii od tekstu linii używając
+\fIłańcucha\fP (domyślnie znak tabulacji).
+.TP
+.BR \-w ", " \-\-number-width= \fIliczba
+Używa \fIliczba\fP znaków dla numerów linii (domyślnie 6).
+.TP
+.BR \-n ", " \-\-number-format= \fIformat
+Wybiera format numerowania linii:
+.RS
+.IP \fBln
+wyrównane do lewej, bez początkowych zer
+.IP \fBrn
+wyrównane do prawej, bez początkowych zer (domyślnie)
+.IP \fBrz
+wyrównane do prawej, początkowe zera
+.RE
+.TP
+.BR \-d ", " \-\-section-delimiter= \fIzz
+Ustawia dwa znaki ogranicznika, które oznaczają początki sekcji strony
+logicznej -- domyślnie '\:'.  Jeśli podano tylko jeden, drugim pozostaje ':'.
+(Pamiętaj o ochronie '\e' lub innych znaków przed interpretacją przez powłokę.
+Użyj cytowania lub dodatkowych odwrotnych ukośników.
+Aby wprowadzić '\e', należy użyć '\e\e').
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR cat (1),
+.BR tac (1),
+.BR od (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

@@ -1,0 +1,104 @@
+.\" {PTM/PB/0.1/28-09-1998/"utwórz specjalne pliki"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page mknod.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH MKNOD "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+mknod \- tworzy pliki specjalne blokowe lub znakowe
+.SH SKŁADNIA
+.B mknod
+.RI [ opcje ]
+.I nazwa
+.I typ
+.RI [ major
+.IR minor ]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo mknod
+.RE
+lub
+.RS
+.BR "info mknod" .
+.RE
+.PP
+Ta strona podręcznika man opisuje polecenie \fBmknod\fP w wersji GNU.
+.PP
+.B mknod
+tworzy FIFO, specjalne pliki znakowe lub specjalne pliki blokowe o podanej
+nazwie. Domyślnie, prawa tworzonych plików to 0666 minus bity
+ustawione w umask.
+Termin "plik specjalny" ("special file") posiada w Uniksie znaczenie
+techniczne: coś, co potrafi tworzyć lub odbierać dane. Zwykle odpowiada on
+jakiemuś elementowi sprzętowemu, np. drukarce czy dyskowi. (Pliki te są na
+ogół tworzone podczas konfiguracji systemu.) To właśnie polecenie \fBmknod\fP
+tworzy pliki tego rodzaju. Z takich urządzeń może być jednorazowo
+odczytywany albo pojedynczy znak albo "blok" (wiele znaków), zatem mówimy,
+że istnieją "blokowe pliki specjalne" i "znakowe pliki specjalne".
+.PP
+Argument następujący po
+.I nazwie
+tworzonego pliku podaje, jaki typ pliku utworzyć:
+.TP
+.B b
+dla blokowego (buforowanego) pliku specjalnego
+.TP
+.BR c ", " u
+dla znakowego (niebuforowanego) pliku specjalnego
+.TP
+.B p
+dla FIFO
+.fi
+.PP
+Gdy tworzy się znakowy bądź blokowy plik specjalny, trzeba podać po typie
+również jego numer główny (\fImajor\fP) i poboczny (\fIminor\fP).
+Przy tworzeniu pliku FIFO podawanie tych numerów jest zabronione.
+.SH OPCJE
+.TP
+.BR \-m " \fItryb\fP, " \-\-mode= \fItryb\fP
+Tworzonym plikom nadaje prawa dostępu zgodnie z parametrem
+.IR tryb ,
+przekazanym w formie symbolicznej, jak w \fBchmod\fP.  Jako punktu wyjścia
+używa `a=rw' (odczyt i zapis dozwolony dla wszystkich) minus bity ustawione
+w umask. Zobacz `Prawa pliku' w podręczniku \fBfileutils\fP(1).
+.TP
+.BR \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach,
+kończy działanie.
+.TP
+.BR \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.SH AUTOR
+Napisane przez Davida MacKenzie.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

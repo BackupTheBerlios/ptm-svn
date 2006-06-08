@@ -1,0 +1,116 @@
+.\"  {PTM/GSN/0.5/23-02-1999/"wypisz liczbę bajtów, słów i linii w plikach"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page wc.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH WC "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+wc \- wypisz liczbę bajtów, słów i linii w plikach
+.SH SKŁADNIA
+.TP 4
+.B wc
+.RB [ \-clwL ]
+.RB [ \-\-bytes ]
+.RB [ \-\-chars ]
+.RB [ \-\-lines ]
+.RB [ \-\-words ]
+.br
+.RB [ \-\-max\-line\-length ]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.RI [ plik ...]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo wc
+.RE
+lub
+.RS
+.BR "info wc" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBwc\fP w wersji GNU.
+.PP
+.B wc
+(word count)
+liczy liczbę bajtów, słów oddzielonych białymi znakami, oraz znaków końca
+linii w każdym podanym pliku lub w standardowym wejściu (jeśli nie
+podano żadnego pliku albo podano plik zwany '\-').  Wypisuje jedną
+linię danych o liczbach dla każdego pliku, a jeśli plik ów został podany jako
+argument, po liczbie(ach) wypisuje nazwę pliku.  Jeśli podano więcej
+niż jedną nazwę pliku,
+.B wc
+wypisuje linię końcową zawierającą łączne liczby, z nazwą pliku 'total'.
+Liczby są wypisywane w kolejności: linie, słowa, bajty.
+.PP
+Domyślnie każda z liczb wypisywana jest w wyrównanym do prawej 7-bajtowym polu,
+z jedną spacją między polami. Wówczas liczby i nazwy plików ładnie wyrównują się
+w kolumnach. Jednak POSIX wymaga, by kolumny były rozdzielone dokładnie jedną
+spacją. Można wymusić na \fBwc\fP przestrzeganie formatu wyjścia zgodnego
+z POSIX ustawiając zmienną środowiska \fBPOSIXLY_CORRECT\fP.
+.PP
+Domyślnie
+.B wc
+wypisuje wszystkie trzy liczby. Opcjami można określić wypisywanie
+tylko niektórych liczb. Kolejne opcje nie unieważniają innych, poprzednich,
+tak więc
+.RS
+.B wc " \-\-bytes \-\-words"
+.RE
+wypisze liczbę bajtów oraz liczbę słów.
+.PP
+Z opcją \fB--max-line-length\fP wypisuje długość najdłuższej linii w każdym
+z plików, a jeżeli podano więcej niż jeden plik, to również największą
+(nie sumę) z tych długości.
+.SH OPCJE
+.TP
+.BR \-c ", " \-\-bytes ", " \-\-chars
+Wypisuje tylko liczbę bajtów.
+.TP
+.BR \-w ", " \-\-words
+Wypisuje tylko liczbę słów.
+.TP
+.BR \-l ", " \-\-lines
+Wypisuje tylko liczbę znaków nowej linii.
+.TP
+.BR \-L ", " \-\-max\-line\-length
+Wypisuje tylko długość najdłuższej linii.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR sum (1),
+.BR cksum (1),
+.BR md5sum (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

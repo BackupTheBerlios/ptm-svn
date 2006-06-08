@@ -1,0 +1,154 @@
+.\" {PTM/PB/0.1/28-09-1998/"przemianuj nazwy plików"}
+.\" Translation (c) 1998 Przemek Borys pborys@p-soft.silesia.linux.org.pl
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page mv.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH MV "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+mv \- przemianowuje pliki
+.SH SKŁADNIA
+.B mv
+.RI [ opcja ]...
+.I źródło cel
+.br
+.B mv
+.RI [ opcja ]...
+.IR źródło ... " katalog"
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo mv
+.RE
+lub
+.RS
+.BR "info mv" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBmv\fP w wersji GNU.
+.PP
+Jeśli ostatnim argumentem jest istniejący katalog, to \fBmv\fP
+przeniesie do tego katalogu pliki podane jako poprzednie argumenty
+(nie zmieniając ich nazw).
+Jeżeli podano tylko dwie nazwy plików, zmieni nazwę pierwszego pliku
+na drugą nazwę.
+.PP
+Podanie więcej niż dwu argumentów, z których ostatni nie jest katalogiem,
+jest błędem.
+.PP
+\fBmv\fP potrafi przenosić dowolny typ plików z jednego systemu plików na inny.
+Przed wersją \fB4.0\fP pakietu fileutils, potrafił przesuwać pomiędzy systemami
+plików tylko pliki zwykłe. Na przykład, teraz potrafi przenieść całą hierarchię
+(poddrzewo) katalogów łącznie ze specjalnymi plikami urządzeń z jednej partycji
+na inną. Najpierw do przekopiowania żądanych plików i katalogów posługuje się
+tym samym kodem co używany przez `cp -a', następnie (zakładając, że
+kopiowanie się powiodło) usuwa ich oryginały. Jeśli kopiowanie zawiedzie, to
+część, która została już skopiowana na partycję docelową, jest usuwana. Jeśli
+przesuwano trzy katalogi z jednej partycji na inną i kopia pierwszego
+powiodła się, ale nie udała się kopia drugiego, to pierwszy zostanie na
+partycji docelowej, zaś drugi i trzeci pozostaną na pierwotnej partycji.
+.PP
+Jeśli plik docelowy istnieje, ale normalnie jest niezapisywalny, standardowym
+wejściem jest terminal, a nie podano opcji \fB\-f\fP lub \fB\-\-force\fP,
+to \fBmv\fP pyta użytkownika czy nadpisać plik.
+(Usuwający może być właścicielem pliku lub mieć prawo zapisu w tym katalogu.)
+Jeśli odpowiedź nie zaczyna się od `y' lub `Y', plik jest pomijany.
+.SS OPCJE
+.TP
+.BR \-b " [\fImetoda\fR], " \-\-backup [ =\fImetoda\fP ]
+Tworzy kopie zapasowe plików, które mają zostać nadpisane lub usunięte.
+Więcej szczegółów znajdziesz w sekcji `Opcje kopii zapasowych'
+w \fBfileutils\fP(1).
+.TP
+.BR \-f ", " \-\-force
+Usuwa istniejące pliki docelowe nie pytając użytkownika.
+.TP
+.BR \-i ", " \-\-interactive
+Pyta użytkownika czy nadpisywać pliki docelowe, które już istnieją. Jeśli
+odpowiedź nie zaczyna się od `y' lub `Y', plik jest pomijany.
+.TP
+.BI \-S " przyr_kopii\fR, " \-\-suffix= przyr_kopii
+Dodaje przyrostek \fIprzyr_kopii\fP do nazwy każdego pliku kopii zapasowej
+wykonanego przy pomocy \fB\-b\fP. Jeśli opcja \fB\-S\fP nie zostanie
+podana, to użyta zostanie wartość zmiennej środowiskowej
+.BR SIMPLE_BACKUP_SUFFIX .
+Jeśli ona również nie jest określona, to użyty zostanie domyślny znak
+`~', jak w Emacsie.
+.TP
+.BI \-\-target\-directory= katalog
+Przesuwa wszystkie argumenty \fIźródłowe\fP do zadanego \fIkatalogu\fP.
+Zobacz opis opcji \fB-V\fP oraz sekcja `Katalog docelowy' w podręczniku
+\fBfileutils\fP(1).
+.TP
+.BR \-u ", " \-\-update
+Aktualizacja. Nie przenosi pliku, który ma istniejący cel o takiej samej
+lub nowszej dacie modyfikacji.
+.TP
+.BR \-v ", " \-\-verbose
+Wypisuje nazwę każdego pliku przed jego przeniesieniem.
+.TP
+.BI \-V " metoda\fR, " \-\-version\-control= metoda
+Zmienia typ kopii zapasowych wykonywanych przy pomocy \fB\-b\fP. Jeśli opcja
+ta nie zostanie podana, to użyta zostanie wartość zmiennej środowiskowej
+\fBVERSION_CONTROL\fP. Jeśli nie zdefiniowano również \fBVERSION_CONTROL\fP
+to użyta zostanie domyślny typ kopii zapasowej: `existing'.
+
+Opcja ta odpowiada zmiennej `version-control' Emacsa: używane są te same
+wartości dla typu kopii. Rozpoznają także bardziej opisowe synonimy.
+Prawidłowe wartości to (unikalne skróty są dopuszczalne):
+.RS
+.TP
+.BR t ", " numbered
+Zawsze tworzy numerowane kopie zapasowe.
+.TP
+.BR nil ", " existing
+Tworzy numerowane kopie zapasowe plików, które już je mają, zwykłe kopie dla
+reszty.
+.TP
+.BR never ", " simple
+Robi zawsze zwykłe kopie zapasowe (uzyskiwane przez dodanie przyrostka
+wg opcji \fB-S\fP).
+.RE
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.PP
+.SH AUTOR
+Napisane przez Mike'a Parker, Davida MacKenzie i Jima Meyering.
+.SH ZGŁASZANIE BŁĘDÓW
+Błędy proszę zgłaszać, w jęz. ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR cp (1),
+.BR ln (1),
+.BR rm (1).
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

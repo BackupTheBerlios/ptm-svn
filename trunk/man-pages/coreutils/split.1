@@ -1,0 +1,135 @@
+.\" {PTM/GSN/0.5/23-02-1999/"rozdziel plik na kawałki"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page split.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH SPLIT "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+split \- rozdziel plik na kawałki
+.SH SKŁADNIA
+.TP 7
+.B split
+.RB [ \-\fIlinie ]
+.RB [ \-l
+.IR linie ]
+.RB [ \-\-lines= \fIlinie\fP]
+.br
+.RB [ \-b
+.IR bajty [\fBbkm\fP]]
+.RB [ \-\-bytes= \fIbajty\fP[ bkm ]]
+.br
+.RB [ \-C
+.IR bajty [\fBbkm\fP]]
+.RB [ \-\-line-bytes= \fIbajty\fP[ bkm ]]
+.br
+.RB [ \-\-verbose ]
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.br
+.RI [ plikwej
+.RI [ plikwyj-prefiks ]]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo split
+.RE
+lub
+.RS
+.BR "info split" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBsplit\fP w wersji GNU.
+.PP
+.B split
+tworzy jeden lub więcej plików wynikowych (tyle ile potrzeba),
+zawierających kolejne sekcje z
+.IR plikwej ,
+lub ze standardowego wejścia jeśli nie podano żadnego lub podano
+nazwę '\-'.  Domyślnie
+.B split
+do każdego pliku wynikowego wstawia 1000 linii, albo to co pozostało
+jeśli jest odeń mniejszy.
+.PP
+Nazwy plików wynikowych składają się z przedrostka, po którym następuje
+grupa liter, wybrana tak, iż połączenie plików wynikowych posortowanych
+wedle nazwy daje oryginalny plik wejściowy, w odpowiednim porządku.
+Domyślny przedrostek nazwy pliku wynikowego to 'x'. Jeśli podano argument
+.IR plikwyj-prefiks ,
+jest on używany zamiennie jako przedrostek nazwy pliku wyjściowego.
+.SS OPCJE
+.TP
+.BR \-\fIlinie ", " \-l " \fIlinie\fP, " \-\-lines= \fIlinie
+Wstawia
+.I linie
+linii pliku wejściowego do każdego pliku wyjściowego.
+.TP
+.BR \-b " \fIbajty\fP[" bkm "], " \-\-bytes= \fIbajty\fP[ bkm ]
+Wstaw
+.I bajty
+bajtów pliku wejściowego do każdego pliku wyjściowego.
+.I bajty
+to niezerowa liczba całkowita, plus opcjonalnie jeden z poniższych
+znaków określających inną jednostkę:
+.RS
+.IP \fBb
+bloki 512-bajtowe.
+.IP \fBk
+bloki kilobajtowe.
+.IP \fBm
+bloki megabajtowe.
+.RE
+.TP
+.BR \-C " \fIbajty\fP[" bkm "], " \-\-line-bytes= \fIbajty\fP[ bkm ]
+Wstawia do każdego pliku wynikowego tyle kompletnych linii pliku
+wejściowego ile jest możliwe bez przekraczania
+.I bajty
+bajtów. Jeśli istnieje linia dłuższa, wstawia z niej wskazaną liczbę bajtów
+do każdego pliku wynikowego aż pozostanie mniej niż
+.I bajty
+bajtów linii, potem kontynuuje normalnie.
+.I bajty
+ma taki sam format jak w opcji
+.BR \-\-bytes .
+.TP
+.B --verbose
+Wyświetla komunikat na standardowym wyjściu diagnostycznym przed otwarciem
+każdego z plików wynikowych.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR head (1),
+.BR tail (1),
+.BR csplit (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

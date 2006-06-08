@@ -1,0 +1,80 @@
+.\" {PTM/WK/2000-VI} - w oparciu o kod źródłowy
+.TH EXPR "1" FSF "maj 2000" "Narzędzia powłokowe GNU 2.0"
+.SH NAZWA
+pinky \- odchudzony finger, podaje informację o użytkownikach
+.SH SKŁADNIA
+.B pinky
+.RB [ opcja ...]
+.RI [ użytkownik ...]
+.SH OPIS
+.B pinky
+jest odchudzonym programem typu \fBfinger\fP. Wypisuje informację o zadanych
+użytkownikach.
+Jeśli nie zostały podane żadne argumenty, \fBpinky\fP wypisze informacje o
+każdym użytkowniku zalogowanym w danej chwili w systemie.
+.PP
+Każdy z wypisywanych wierszy zawiera: nazwę zgłoszeniową
+użytkownika (login name), jego pełną nazwę, terminal, na którym pracuje,
+czas bezczynności (iddle), czas zalogowania się i nazwę hosta.
+Czas bezczynności podawany jest w godzinach i minutach, chyba że przekroczy
+dobę, wówczas w pełnych dniach. Czas zalogowania wyświetlany jest w postaci
+standardowej, zwracanej przez funkcję \fIctime\fP(3).
+.PP
+Przy długim formacie wyświetlania informacja o każdym z użytkowników
+umieszczana jest w kilku wierszach i poza nazwą zgłoszeniową i pełną
+obejmuje również: powłokę i katalog domowy użytkownika oraz zawartości
+plików \fI.project\fP i \fI.plan\fP z katalogu domowego.
+.SH OPCJE
+.TP
+.B \-l
+Wyświetlanie w długim formacie.
+.TP
+.B \-b
+Pomija informację o powłoce i katalogu domowym użytkownika.
+Używana w długim formacie.
+.TP
+.B \-h
+Pomija wyświetlanie zawartości pliku \fI.project\fP użytkownika.
+Używana w długim formacie.
+.TP
+.B \-p
+Pomija wyświetlanie zawartości pliku \fI.plan\fP użytkownika.
+Używana w długim formacie.
+.TP
+.B \-s
+Wyświetlanie w formacie krótkim. Jest to opcja domyślna.
+.TP
+.B \-f
+Pomija wiersz z nagłówkami kolumn, stosowana przy formacie krótkim.
+.TP
+.B \-w
+Pomija pełną nazwę użytkownika, stosowana przy formacie krótkim.
+.TP
+.B \-i
+Pomija pełną nazwę użytkownika i nazwę zdalnego hosta, stosowana przy
+formacie krótkim.
+.TP
+.B \-q
+Pomija pełną nazwę użytkownika, nazwę zdalnego hosta i czas bezczynności,
+stosowana przy formacie krótkim.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+pracę.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.SH ZGODNOŚĆ
+.B pinky
+nie obsługuje jeszcze używanej przez program \fBfinger\fP opcji \fB\-m\fP,
+służącej do wyłączania poszukiwań podanych jako argumenty nazw użytkowników
+również w polu pełnej, prawdziwej nazwy. Wyszukiwanie tych ciągów odbywa się
+zarówno wśród nazw zgłoszeniowych jak i pełnych.
+.PP
+Nie jest także obsługiwana notacja użytkownik@host, służąca do poszukiwania
+użytkowników na odległym systemie.
+.SH ZOBACZ TAKŻE
+.BR chfn (1),
+.BR passwd (1),
+.BR w (1),
+.BR who (1),

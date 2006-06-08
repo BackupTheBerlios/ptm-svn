@@ -1,0 +1,242 @@
+.\" {PTM/PB/0.1/28-09-1998/"kopiuj pliki"}
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page cp.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH CP "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+cp \- kopiuje pliki i katalogi
+.SH SKŁADNIA
+.B cp
+.RI [ opcja ]...
+.I źródło przeznaczenie
+.br
+.B cp
+.RI [ opcja ]...
+.IR źródło ... " katalog_docelowy"
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo cp
+.RE
+lub
+.RS
+.BR "info cp" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBcp\fP w wersji GNU.
+.PP
+\fBcp\fP kopiuje pliki (lub, opcjonalnie, katalogi). Kopia jest całkowicie
+niezależna od oryginału. Można kopiować jeden plik na inny albo też kopiować
+dowolną liczbą plików do katalogu docelowego. Istniejące docelowe pliki są
+nadpisywane.
+.PP
+Jeśli ostatni argument określa istniejący katalog, to \fBcp\fP cp
+kopiuje każdy z podanych plików źródłowych do tego katalogu (pod tymi
+samymi nazwami). W przeciwnym przypadku, gdy podano tylko dwa pliki
+program kopiuje pierwszy z nich na drugi. Jest błędem, jeśli ostatni argument
+nie jest katalogiem a podano więcej niż dwa argumenty.
+Zasadniczo, pliki są zapisywane tak, jak są odczytywane. Wyjątki opisano
+poniżej w opcji \fB\-\-sparse\fP.
+.PP
+Domyślnie \fBcp\fP nie kopiuje katalogów (patrz opis opcji \fB\-r\fP poniżej).
+.PP
+Ogólnie \fBcp\fP odmawia skopiowania pliku na ten sam plik, z następującym
+jednak wyjątkiem: jeśli użyto opcji \fB\-\-force \-\-backup\fP przy
+identycznym źródle i przeznaczeniu, odnoszących się do zwykłego pliku,
+\fBcp\fP utworzy kopię zapasową (backup) pliku (prostą lub numerowaną, w
+zależności od użytej opcji). Opcja ta jest przydatna do tworzenia kopii
+zapasowej istniejącego pliku przed jego zmianą. Zobacz `Opcje kopii zapasowych'
+w podręczniku \fBfileutils\fP(1).
+.SH OPCJE
+.TP
+.B \-a ", " \-\-archive
+Zachowuje w kopiach tyle ile możliwe ze struktury i atrybutów oryginalnych
+plików (ale nie próbuje zachować wewnętrznej struktury katalogów, tzn.
+\fBls \-U\fP może pokazywać pozycje w skopiowanym katalogu w innej kolejności).
+To samo co \fB\-dpR\fP.
+.TP
+.BR \-b " [\fImetoda\fR], " \-\-backup [ = \fImetoda\fR]
+Tworzy kopie zapasowe tych plików, które mają być nadpisane lub usunięte.
+Zobacz opis opcji \fB-V\fP oraz sekcja `Opcje kopii zapasowych' w podręczniku
+\fBfileutils\fP(1).
+.TP
+.BR \-d ", " \-\-no-dereference
+Kopiuje dowiązania symboliczne jako dowiązania, zamiast kopiowania plików,
+na które one wskazują i zachowuje połączenia dowiązań twardych (hardlinks)
+pomiędzy plikami źródłowymi w kopiach.
+.TP
+.BR \-f ", " \-\-force
+Usuwa istniejące pliki docelowe.
+.TP
+.BR \-i ", " \-\-interactive
+Pyta czy nadpisywać istniejące pliki docelowe.
+.TP
+.BR \-l ", " \-\-link
+Tworzy dowiązania twarde zamiast kopii plików innych niż katalogi.
+.TP
+.BR \-p ", " \-\-preserve
+Zachowuje atrybuty (właściciela, grupę, prawa i czasy) oryginalnych plików.
+Przy braku tej opcji każdy z plików docelowych jest tworzony z prawami
+odpowiedniego pliku źródłowego minus bity ustawione w \fIumask\fP.
+Zobacz `Prawa pliku' w podręczniku \fBfileutils\fP(1).
+.TP
+.BR \-P ", " \-\-parents
+Kopiuje pliki do katalogu docelowego traktując go jako macierzysty;
+powiela strukturę katalogów, w której były pliki źródłowe.
+Ta opcja tworzy nazwę każdego z plików docelowych przez dodanie do katalogu
+docelowego ukośnika i podanej nazwy pliku źródłowego. Ostatni argument podany
+\fBcp\fP musi być nazwą istniejącego katalogu. Na przykład, polecenie:
+.RS
+.RS
+.BI "cp \-\-parents " "miesiac/dzien/godzina rok"
+.RE
+kopiuje plik \fImiesiac/dzien/godzina\fP na plik
+\fIrok/miesiac/dzien/godzina\fP, tworząc wszystkie brakujące katalogi
+pośrednie (katalog `rok' musi istnieć przed kopiowaniem).
+.RE
+.TP
+.B \-r
+Kopiuje rekurencyjnie całe poddrzewa katalogów wejściowych do katalogu
+docelowego. Kopiowane są wszystkie pliki inne niż katalogi i dowiązania
+symboliczne (tzn. nazwane potoki/FIFO i pliki specjalne) tak, jakby były
+zwykłymi plikami. Oznacza to próbę odczytu danych z każdego z plików
+źródłowych i zapisu w docelowych. Zatem, przy użyciu tej opcji \fBcp\fP może
+czekać w nieskończoność przy odczycie łącza nazwanego, póki coś innego do
+niego nie zapisze. Zwykle błędem jest zastosowanie `cp -r' do plików
+specjalnych jak potoki FIFO i inne znajdujących się w katalogu \fI/dev\fP.
+W większości przypadków `cp -r' zawiśnie próbując czytać z FIFO i plików
+specjalnych w rodzaju \fI/dev/console/\fP i przepełni dysk docelowy jeśli
+użyje się go do skopiowania \fI/dev/zero\fP.
+Zamiast tego, jeśli chce się kopiować pliki specjalne, należy użyć opcji
+\fB--recursive\fP (\fB-R\fP). Zachowa to ich specyficzną naturę, zamiast
+czytania z nich w celu skopiowania zawartości.
+.TP
+.BR \-R ", " \-\-recursive
+Kopiuje rekurencyjnie całe poddrzewa katalogów wejściowych zachowując
+nie-katalogi (w przeciwieństwie do \fB\-r\fP).
+.TP
+.BI \-\-sparse= kiedy
+Określa sposób tworzenia "rzadkich" plików. Plik "rzadki" ("sparse file")
+zawiera "dziury" \-\- sekwencje zerowych bajtów, które nie zajmują żadnych
+fizycznych bloków na dysku; systemowa funkcja odczytu (\fIread\fP) czyta je
+jako zera. Oszczędza to znacząco miejsce na dysku jak i powiększa prędkość,
+gdyż wiele plików binarnych zawiera wiele kolejnych bajtów zerowych. Domyślnie
+\fBcp\fP wykrywa dziury w pliku źródłowym przy pomocy zgrubnych metod
+heurystycznych i tworzy odpowiedni plik wynikowy również jako rzadki. Argument
+\fIkiedy\fP opcji \fB\-\-sparse\fP może mieć jedną z następujących wartości:
+.RS
+.TP
+.BR auto
+Zachowanie domyślne. Plik wynikowy jest rzadki jeśli plik źródłowy jest rzadki.
+.TP
+.BR always
+Zawsze tworzy rzadki plik wynikowy. Przydatne, gdy plik źródłowy
+przechowywany jest w systemie plików nie obsługującym plików rzadkich
+(najistotniejszym przykładem są systemy `efs' w SGI IRIX 5.3
+i wcześniejszych), ale plik wynikowy jest w innego typu systemie plików.
+.TP
+.BR never
+Nigdy nie tworzy rzadkich plików wynikowych. Daj nam znać jeśli znajdziesz
+zastosowanie dla tej opcji.
+.RE
+.TP
+.BR \-s ", " \-\-symbolic-link
+Tworzy dowiązania symboliczne zamiast kopii plików innych niż katalogi.
+Wszystkie nazwy plików źródłowych muszą być bezwzględne (zaczynające się
+od `/'), chyba że pliki docelowe są w bieżącym katalogu. Opcja ta wypisuje
+komunikat o błędzie na systemach, które nie obsługują dowiązań symbolicznych.
+.TP
+.BI \-S " przyr_kopii\fR, " \-\-suffix= przyr_kopii
+Dodaje przyrostek \fIprzyr_kopii\fP do nazwy każdego pliku kopii zapasowej
+wykonanego przy pomocy \fB\-b\fP. Jeśli opcja ta nie zostanie podana, to użyta
+zostanie wartość zmiennej środowiskowej \fBSIMPLE_BACKUP_SUFFIX\fP. Jeśli
+ona również nie jest określona, to użyty zostanie domyślny znak `~',
+jak w Emacsie.
+.TP
+.BI \-\-target\-directory =katalog
+Określa \fIkatalog\fP docelowy. Zobacz sekcja `Katalog docelowy'
+w \fBfileutils\fP(1).
+.TP
+.BR \-u ", " \-\-update
+Aktualizacja. Nie kopiuje pliku (innego niż katalog), który ma już istniejący
+cel o tej samej lub nowszej dacie modyfikacji.
+.TP
+.BR \-v ", " \-\-verbose
+Wypisuje nazwę każdego pliku przed jego skopiowaniem.
+.TP
+.BI \-V " metoda\fR, " -\-version-control= metoda
+Zmienia typ kopii zapasowych wykonywanych za pomocą \fB\-b\fP. Jeśli
+opcja ta nie zostanie podana, to użyta zostanie wartość zmiennej
+środowiskowej \fBVERSION_CONTROL\fP. Jeśli nie zdefiniowano również
+\fBVERSION_CONTROL\fP to użyta zostanie domyślny typ kopii zapasowej:
+`existing'.
+
+Opcja ta odpowiada zmiennej `version-control' Emacsa: używane są te same
+wartości dla typu kopii. Rozpoznają także bardziej opisowe synonimy.
+Prawidłowe wartości to (unikalne skróty są dopuszczalne):
+.RS
+.TP
+.BR t ", " numbered
+Zawsze tworzy numerowane kopie zapasowe.
+.TP
+.BR nil ", " existing
+Tworzy numerowane kopie zapasowe plików, które już je mają, zwykłę kopie dla
+reszty.
+.TP
+.BR never ", " simple
+Robi zawsze zwykłe kopie zapasowe (uzyskiwane przez dodanie przyrostka
+wg opcji \fB-S\fP).
+.RE
+.TP
+.BR \-x ", " \-\-one-file-system
+Pomija podkatalogi, które znajdują się na innym systemie plików niż ten, na
+którym rozpoczęło się kopiowanie. Jednak katalogi stanowiące punkty montowania
+\fBsą\fP kopiowane.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach,
+kończy działanie.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy działanie.
+.RE
+.PP
+.SH AUTOR
+Napisane przez Torbjorna Granlund, Davida MacKenzie i Jima Meyering.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR cpio (1),
+.BR mcopy (1),
+.BR ln (1),
+.BR mv (1),
+.BR rm (1),
+.BR chmod (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

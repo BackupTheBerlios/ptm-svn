@@ -1,0 +1,642 @@
+.\" {PTM/PB/0.1/28-09-1998/"listuj zawartości katalogów"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page ls.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH LS "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+ls \- listuje zawartość katalogu
+.SH SKŁADNIA
+.B ls
+.RI [ opcja ]...
+.RI [ plik ]...
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo ls
+.RE
+lub
+.RS
+.BR "info ls" .
+.RE
+.PP
+Ta strona podręcznika man opisuje polecenie \fBls\fP w wersji GNU.
+.PP
+.B dir
+i
+.B vdir
+są wersjami
+.B ls
+o różnych domyślnych formatach wyjściowych.
+Polecenia te wyświetlają informację o plikach (dowolnego typu, łącznie z
+katalogami). Opcje i argumenty określające pliki mogą być używane w dowolnej
+kolejności.
+.PP
+Dla nieopcyjnych argumentów wiersza poleceń określających katalogi
+domyślnie \fBls\fP podaje zawartość katalogów, bez podkatalogów i z
+pominięciem plików o nazwach rozpoczynających się kropką. Dla innych
+argumentów, nie stanowiących opcji \fBls\fP wyświetla jedynie nazwę pliku.
+Jeżeli nie podano innych niż opcje argumentów, to wyświetlana jest zawartość
+bieżącego katalogu.
+.PP
+Domyślnie wyniki są sortowane alfabetycznie. Jeżeli standardowym wyjściem
+jest terminal to wyniki wyświetlane są w szpaltach (kolumnach) posortowanych
+pionowo a znaki sterujące wyprowadzane są jako znaki zapytania; w innym
+wypadku są listowane jeden na wiersz a znaki sterujące wyprowadzane są bez
+zmian.
+W \fBdir\fP pliki domyślnie są wyświetlane w kolumnach, posortowanych pionowo.
+W \fBvdir\fP pliki są domyślnie listowane w długim formacie.
+.SH OPCJE
+Ponieważ \fBls\fP jest programem podstawowym, to w ciągu wielu lat
+zgromadził mnóstwo opcji. Opisane są one w podsekcjach grupujących opcje
+dotyczące różnych aspektów pracy \fBls\fP. Podział ten nie jest sztywny,
+gdyż niektóre opcje mają wpływ na więcej niż jeden aspekt działania \fBls\fP.
+.SS Jakie pliki są wyświetlane
+Opcje te określają, dla których plików \fBls\fP będzie wyświetlać
+informacje. Domyślnie wyświetlane są wszystkie pliki i zawartości katalogów
+podanych w wierszu poleceń (z wyjątkiem rozpoczynających się kropką, chyba
+że jawnie podano je jako argumenty).
+.TP
+.BR \-a ", " \-\-all
+Listuje wszystkie pliki w katalogach, również pliki zaczynające się od `.'.
+.TP
+.BR \-A ", " \-\-almost-all
+Listuje wszystkie pliki w katalogach, poza `.' i `..'.
+.TP
+.BR \-B ", " \-\-ignore-backups
+Nie pokazuje plików, które kończą się na `~', chyba że podano je w wierszu
+poleceń. Są to zwyczajowo pliki kopii zapasowych.
+.TP
+.BR \-d ", " \-\-directory
+Wypisuje tylko nazwy katalogów, tak jak innych plików, zamiast wyświetlać ich
+zawartość.
+.TP
+.BR \-I " \fIwzorzec\fR, " \-\-ignore= "\fIwzorzec\fR"
+Nie listuj plików, których nazwy odpowiadają wzorcowi powłokowemu (nie
+wyrażeniu regularnemu)
+.IR wzorzec ,
+chyba że podano je w wierszu poleceń. Podobnie jak w powłoce, `.' na
+początku
+.I wzorca
+nazwy pliku nie oznacza znaku uogólnienia. Czasami przydaje się kilkakrotne
+podanie tej opcji. Na przykład:
+.nf
+
+$ ls --ignore='.??*' --ignore='.[^.]' --ignore='#*'
+
+.fi
+Pierwsza z opcji pomija nazwy o długości 3 lub więcej znaków rozpoczynające
+się od `.', druga pomija wszystkie dwuznakowe nazwy rozpoczynające się od
+`.' z wyjątkiem `..', a trzecia pomija nazwy rozpoczynające się od `#'.
+.TP
+.BR \-L ", " \-\-dereference
+W długim formacie wyświetlania pokazuje dane (np. czasy, prawa) dotyczące
+plików wskazywanych przez dowiązania symboliczne, zamiast danych samych
+dowiązań.
+.TP
+.BR \-R ", " \-\-recursive
+Listuje rekurencyjnie zawartości wszystkich katalogów (czyli wyświetla
+również podkatalogi).
+.SS Jakie dane są wyświetlane
+Opcje te wpływają na to, jaką informację wyświetla \fBls\fP. Domyślnie
+pokazywane są tylko nazwy plików.
+.TP
+.BR \-D ", " \-\-dired
+Przy użyciu "długiego" formatu (\fB-l\fP) podaje dodatkowy wiersz po wyświetleniu
+głównych informacji:
+.nf
+      //DIRED// POCZ1 KON1 POCZ2 KON2 ...
+.fi
+POCZN i KONN są liczbami całkowitymi bez znaku (unsigned integer),
+opisującymi pozycję w bajtach początku i końca każdej nazwy pliku w
+wyświetlonej liście. Ułatwia to Emacsowi odnalezienie nazw plików, nawet
+jeśli zawierają nietypowe znaki, jak spacje czy znaki nowej linii, bez
+potrzeby udziwnionego wyszukiwania.
+.PP
+.RS
+Jeśli katalogi wyświetlane są rekurencyjnie (\fB-R\fP), to dodatkowo
+wyświetlany jest podobny wiersz, opisujący podkatalogi:
+.nf
+      //SUBDIRED// POCZ1 KON1 ...
+.fi
+Na końcu podawany jest wiersz w postaci:
+.nf
+      //DIRED-OPTIONS// --quoting-style=SŁOWO
+.fi
+gdzie SŁOWO jest stylem cytowania (zobacz \fBFormatowanie nazw plików\fP).
+.RE
+.TP
+.BR \-G ", " \-\-no\-group
+Nie wyświetla informacji o grupie przy długim formacie listingu katalogu.
+(Jest to domyślne zachowanie niektórych wersji polecenia ls innych niż
+wersje GNU, więc opcja ta została dodana z uwagi na zgodność.)
+
+.TP
+.BR \-i ", " \-\-inode
+Wypisuje numer indeksowy (numer i-węzła, numer seryjny) każdego pliku po
+lewej stronie jego nazwy. (Numer ten jednoznacznie identyfikuje plik w ramach
+danego systemu plików.)
+.TP
+.BR \-l ", " \-\-format=long ", " \-\-format=verbose
+Oprócz nazwy każdego pliku, wypisuje jego typ, prawa, liczbę
+dowiązań twardych, właściciela, grupę, rozmiar w bajtach i timestamp (czas
+modyfikacji, chyba że wybrano inne czasy). Dla plików z czasem, który jest
+wysunięty więcej niż 6 miesięcy w przeszłość lub 1 godzinę w przyszłość,
+timestamp zawiera określenie roku zamiast godziny.
+.PP
+.RS
+Zawartość każdego wyświetlanego katalogu poprzedzana jest wierszem z napisem
+`total BLOKÓW', gdzie BLOKI są całkowitą przestrzenią dysku
+zajmowaną przez wszystkie pliki w tym katalogu. Domyślnie używane są obecnie
+bloki 1024-bajtowe, ale można to zmienić -- zobacz `Rozmiar bloku'
+w podręczniku \fBfileutils\fP(1).
+BLOKI zliczane są osobno dla każdego dowiązania twardego;
+jest to usterka dyskusyjna.
+.PP
+Prawa dostępu wyświetlane są w sposób zbliżony do specyfikacji trybu
+symbolicznego (zobacz `Tryby symboliczne' w podręczniku \fBfileutils\fP(1)).
+Jednakże \fBls\fP w trzecim znaku każdej z grup praw łączy wiele bitów.
+Znaki te ustalane są według następujących reguł:
+.TP
+.B s
+Jeżeli ustawione są bity SETUID lub SETGID oraz odpowiedni bit wykonywalności.
+.TP
+.B S
+Jeżeli ustawione są bity SETUID lub SETGID, ale odpowiedni bit wykonywalności
+nie jest ustawiony.
+.TP
+.B t
+Jeżeli równocześnie ustawione są bit lepkości (sticky bit) i bit wykonywania
+dla innych użytkowników.
+.TP
+.B T
+Jeżeli ustawiony jest bit lepkości, ale nie jest ustawiony bit
+wykonywania dla innych użytkowników.
+.TP
+.B x
+Bit prawa wykonywania jest ustawiony, ale nie zachodzi żadna z powyższych
+sytuacji.
+.TP
+.B \-
+W pozostałych przypadkach.
+.PP
+Po bitach uprawnień  następuje pojedynczy znak określający, czy do danego
+pliku stosuje się alternatywna metoda dostępu. Gdy znakiem tym jest spacja,
+to nie ma żadnej alternatywnej metody dostępu. Jeśli jest to znak drukowalny
+(np. `+'), to istnieje taka metoda.
+.RE
+.TP
+.B \-o
+Używa długiego formatu wyświetlania, ale nie wyświetla informacji o grupie.
+Równoważne użyciu opcji \fB--format=long\fP wraz z opcją \fB--no-group\fP.
+Opcja zapewniana w celu zgodności z innymi wersjami \fBls\fP.
+.TP
+.BR \-s ", " \-\-size
+Dla każdego pliku wypisuje na lewo od jego nazwy zajętość dysku przez
+ten plik.  Jest to wielkość przestrzeni dyskowej zużytej przez plik, co
+zwykle wynosi nieco więcej niż rozmiar pliku, ale może to być również mniej,
+jeśli plik ma dziury.
+
+Zwykle zajętość dysku drukowana jest w jednostkach 1024-bajtowych, może to
+być jednak zmienione. Więcej na ten temat znajdziesz w sekcji `Rozmiar bloku'
+podręcznika \fBfileutils\fP(1).
+.SS Sortowanie wyników
+.TP
+.BR \-c ", " \-\-time=ctime ", " \-\-time=status
+Jeżeli używany jest długi format wyświetlania (np. \fB-l\fP, \fB-o\fP),
+wypisuje czas zmiany statusu (\fIctime\fP i-węzła) zamiast czasu
+modyfikacji. Przy jawnym sortowaniu według czasu (\fB--sort=time\fP lub
+\fB-t\fP) lub, gdy nie jest używany długi format, sortuje zawartość katalogu
+według czasu zmiany statusu plików.
+.TP
+.BR \-f
+Przede wszystkim, jak \fB-U\fP -- nie sortuje zawartości katalogów. Podaje
+je w takiej kolejności, w jakiej są zapisane w katalogu. Ale również
+włącza opcję
+.B \-a
+(listowanie wszystkich plików)
+a wyłącza
+.BR \-l ,
+.BR \-s ,
+i
+.B \-\-color
+(jeśli zostały podane przed \fB-f\fP).
+.TP
+.BR \-r ", " \-\-reverse
+Odwraca stosowany sposób sortowania -- tzn. podaje pliki w odwrotnej
+kolejności alfabetycznej, najpierw najmłodsze, najpierw najmniejsze itp.,
+zależnie od podstawowej metody sortowania.
+.TP
+.BR \-S ", " \-\-sort=size
+Sortuje zawartość katalogu według rozmiaru pliku, zamiast sortowania
+alfabetycznego. Największe pliki wyświetlane będą na początku.
+.TP
+.BR \-t ", " \-\-sort=time
+Sortuje zawartość katalogów według czasu modyfikacji (\fImtime\fP i-węzła),
+zamiast sortowania alfabetycznego. Najnowsze pliki są pierwsze.
+.TP
+.BR \-u ", " \-\-time=atime ", " \-\-time=access ", " \-\-time=use
+Jeżeli używany jest długi format wyświetlania (np. \fB--format=long\fP),
+wypisuje czas ostatniego dostępu do pliku (\fIatime\fP i-węzła).
+Przy jawnym sortowaniu według czasu (\fB--sort=time\fP lub
+\fB-t\fP) lub, gdy nie jest używany długi format, sortuje zawartość katalogu
+według czasu dostępu do plików.
+.TP
+.BR \-U ", " \-\-sort=none
+Nie sortuje -- pokazuje pliki w takiej kolejności, w jakiej są
+zapisane w katalogu. (Nie wykonuje żadnych innych, związanych z tym, rzeczy,
+jakie robi \fB-f\fP.)
+Opcja ta nie jest nazwana
+.B \-f
+ponieważ uniksowy
+.B ls
+.B \-f
+włącza
+.B \-a
+i wyłącza
+.BR \-l ,
+.BR \-s
+i
+.BR \-t .
+.br
+Wydaje się bezużytecznym i brzydkim grupowanie niezwiązanych rzeczy naraz
+w jednej opcji. Skoro ta opcja tego nie robi, ma inną nazwę. Szczególnie
+przydatna przy listowaniu obszernych katalogów, gdyż brak sortowania
+znacznie przyspiesza otrzymanie wyniku.
+.TP
+.BR \-v ", " --sort=version
+Sortuje według nazwy i numeru wersji, najpierw o najmniejszym numerze.
+Zachowuje się podobnie jak domyślne sortowanie, z wyjątkiem tego, że każda
+sekwencja cyfr dziesiętnych traktowana jest numerycznie jako indeks/numer
+wersji. (zobacz \fBSzczegóły dotyczące sortowania wersji\fP).
+.TP
+.BR \-X ", " \-\-sort=extension
+Sortuje zawartość katalogów alfabetycznie według rozszerzeń plików (znaki po
+ostatniej kropce). Pliki bez rozszerzenia są podawane jako pierwsze.
+.SS Szczegóły dotyczące sortowania wersji
+Sortowanie wersji bierze pod uwagę fakt, że nazwy plików często zawierają
+indeksy lub numery wersji. Standardowe funkcje sortowania zwykle nie tworzą
+uporządkowania, jakiego się oczekuje, gdyż porównywania dokonywane są znak
+po znaku. Sortowanie wersji rozwiązuje ten problem i jest szczególnie
+przydatne przy przeglądaniu katalogów zawierających wiele plików z
+indeksami/numerami wersji w nazwach:
+.nf
+    > ls -1            > ls -1v
+    foo.zml-1.gz       foo.zml-1.gz
+    foo.zml-100.gz     foo.zml-2.gz
+    foo.zml-12.gz      foo.zml-6.gz
+    foo.zml-13.gz      foo.zml-12.gz
+    foo.zml-2.gz       foo.zml-13.gz
+    foo.zml-25.gz      foo.zml-25.gz
+    foo.zml-6.gz       foo.zml-100.gz
+.fi
+Zauważ też, że numeryczne części z początkowymi zerami są traktowane jako
+ułamkowe.
+.nf
+    > ls -1            > ls -1v
+    abc-1.007.tgz      abc-1.007.tgz
+    abc-1.012b.tgz     abc-1.01a.tgz
+    abc-1.01a.tgz      abc-1.012b.tgz
+.fi
+.SS Ogólne formatowanie wyników
+Poniższe opcje mają wpływ na wygląd całości wyniku.
+.TP
+.BR \-1 ", " \-\-format=single-column
+Wypisuje po jednym pliku na wiersz. Domyślna, gdy standardowym wyjściem nie
+jest terminal.
+.TP
+.BI \-\-block\-size= rozmiar
+Używa bloków o wielkości \fIrozmiar\fP bajtów.
+.TP
+.BR \-C ", " \-\-format=vertical
+Listuje pliki w kolumnach, posortowanych pionowo. Sposób domyślny, gdy
+standardowe wyjście stanowi terminal. Zawsze domyślny dla programów
+\fBdir\fP i \fBd\fP.  GNU \fBls\fP posługuje się zmienną szerokością kolumn,
+by wyświetlić możliwie najwięcej plików w najmniejszej liczbie wierszy.
+.TP
+.BR \-\-color " [" =\fIkiedy
+.\" "], " \-\-colour " [" =\fIkiedy\fR]
+.\" Można podać nazwę opcji zarówno w pisowni brytyjskiej (colour),
+.\" jak i amerykańskiej (color).
+Opcja ta decyduje, kiedy posłużyć się kolorami do rozróżnienia typów plików.
+Argument \fIkiedy\fP może być pominięty lub być jednym z poniższych:
+.RS
+.TP
+.BR none ", " no
+Wyłącza kolory. Jest to opcja domyślna. Udostępniona w celu wyłączania
+poprzedniej opcji color.
+.TP
+.BR tty ", " auto
+Używa kolorowania nazw plików, lecz tylko, jeśli standardowym wyjściem jest
+terminal. Bardzo przydatne w skryptach powłoki i aliasach poleceń,
+szczególnie jeśli nasz ulubiony pager nie obsługuje kodów sterujących
+kolorami.
+.TP
+.BR yes ", " always
+Zawsze. Używa kolorów bez względu na rodzaj standardowego wyjścia.
+.PP
+Użycie opcji \fB--color\fP bez podania argumentu \fIkiedy\fP jest równoważne
+\fB--color=always\fP.
+.br
+Więcej szczegółów podano niżej w sekcji \fBKOLOROWY LS\fP.
+.RE
+.TP
+.BR \-F ", " \-\-classify ", " \-\-indicator\-style=classify
+Dodaje do każdej nazwy pliku znak oznaczający typ pliku. Dla plików
+wykonywalnych będzie to `*'. Dla katalogów `/', `@' dla dowiązań
+symbolicznych, `|' dla potoków FIFO, `=' dla gniazd i nic dla zwykłych
+plików.
+.TP
+.B \-\-full-time
+Podaje czasy w pełnej postaci, a nie w zwykłym heurystycznym uproszczeniu.
+Format jest taki sam jak domyślny dla polecenia \fBdate\fP.  Jego zmiana
+jest niemożliwa, ale można wyciąć łańcuch opisujący datę poleceniem \fBcut\fP
+i przesłać wynik do \fBdate -d\fP.
+.br
+Najprzydatniejsze, gdyż wyświetlany czas będzie zawierać sekundy (uniksowe
+systemy plikowe przechowują czasy modyfikacji/dostępu z dokładnością do
+najbliższej sekundy, więc opcja ta pokazuje pełną istniejącą informację).
+Może, na przykład, być pomocne gdy używany plik Makefile nie odbudowuje
+prawidłowo plików.
+.TP
+.BI \-\-indicator\-style= słowo
+Do nazwy pliku dodaje znak oznaczający jego typ według stylu \fIsłowo\fP.
+Możliwe style oznaczania:
+.RS
+.TP
+.B none
+Nie dodaje żadnego oznaczenia pliku; typ domyślny.
+.TP
+.B file-type
+Dodaje `/' dla katalogów, `@' dla dowiązań symbolicznych, `|' dla potoków
+FIFO, `=' dla gniazd i nic dla zwykłych plików. Jest to to samo, co opcja
+\fB-p\fP lub \fB--file-type\fP.
+.TP
+.B classify
+Dodaje `*' dla zwykłych plików wykonywalnych, dla pozostałych zachowuje się
+jak dla \fBfile-type\fP. Jest to to samo, co opcja \fB-F\fP lub
+\fB--classify\fP.
+.RE
+.TP
+.BR \-h ", " \-\-human\-readable
+Pokazuje objętości w postaci czytelniejszej dla człowieka, dodając literowe
+przyrostki określające potęgi 1024, np. `M' dla megabajtów. `M' oznacza
+1.048.576 bajtów. Jeżeli wolisz potęgi 1000 - użyj opcji \fB-H\fP
+(\fB--si\fP).
+.TP
+.BR \-H ", " \-\-si
+Podobnie jak \fB--human-readable\fP, ale posługuje się potęgami 1000
+a nie 1024. (SI - Międzynarodowy System Miar definiuje przyrostki potęg 1000).
+Przy zastosowaniu tej opcji przyrostek `M' oznacza 1.000.000 bajtów. Posłuż
+się opcją \fB-h\fP (\fB--human-readable\fP), jeśli wolisz potęgi 1024.
+.TP
+.BR \-k ", " \-\-kilobytes
+Pokazuje rozmiary w blokach 1024-bajtowych (kilobajtach), przesłaniając
+domyślną wielkość bloku. Zobacz `Rozmiar bloku' w \fBfileutils\fP(1).
+.TP
+.BR \-m ", " \-\-format=commas
+Wypisuje pliki poziomo, w takiej ilości, jaka pomieści się w każdym wierszu,
+oddziela je sekwencją złożoną z przecinka i spacji (`, ').
+.TP
+.BR \-n ", " \-\-numeric-uid-gid
+Podaje numeryczne wartości UID i GID (identyfikatorów użytkowników i grup),
+zamiast nazw.
+.TP
+.BR \-p ", " --file-type ", " --indicator-style=file-type
+Dodaje do każdej nazwy pliku znak wskazujący na typ pliku. Podobne do
+\fB-F\fP, z wyjątkiem tego, że nie są oznaczane pliki wykonywalne.
+.TP
+.BR \-x ", " \-\-format=across ", " \-\-format=horizontal
+Listuje pliki wierszami zamiast kolumnami.
+.\" w kolumnach, posortowanych poziomo.
+.TP
+.BR \-T " \fIcols\fP, " \-\-tabsize= "\fIcols\fR"
+Przyjmuje, że tabulator ma szerokość
+.I cols
+kolumn. Domyślnie jest to 8. Dla efektywności, \fBls\fP używa, gdzie
+jest to możliwe, znaków tabulacji. Zerowa wartość argumentu \fIcols\fP
+powoduje wyłączenie używania tabulacji.
+.TP
+.BR \-w " \fIcols\fP, " \-\-width=  "\fIcols\fR"
+Przyjmuje, że szerokość ekranu wynosi
+.I cols
+kolumn. Domyślna wartość jest pobierana ze sterownika terminala (jeśli to
+możliwe); w przeciwnym wypadku używa się (o ile jest ustawiona) zmiennej
+środowiskowej
+.BR COLUMNS .
+W pozostałych przypadkach używa się domyślnej wartości 80.
+.SS Formatowanie nazw plików
+Poniższe opcje zmieniają sposób, w jaki wypisywane są same nazwy plików.
+.TP
+.BR \-b ", " \-\-escape ", " --quoting-style=escape
+Cytuje niegraficzne znaki w nazwach plików używając sekwencji alfabetycznych
+i ósemkowych z odwrotnymi ukośnikami, podobnych do używanych w języku C.
+.TP
+.BR \-N ", " \-\-literal
+Nie cytuje nazw plików. Pokazuje je w takiej postaci w jakiej występują.
+.TP
+.BR \-q ", " \-\-hide-control-chars
+Wypisuje znaki zapytania zamiast niegraficznych znaków w nazwach plików.
+Ustawienie domyślne gdy wyjście stanowi terminal
+a wywołanym programem jest \fBls\fP.
+.TP
+.BR \-Q ", " \-\-quote-name ", " --quoting-style=c
+Umieszcza nazwy plików w podwójnych cudzysłowach i cytuje niegraficzne znaki
+jak w C.
+.TP
+.BI --quoting-style= słowo
+Używa stylu \fIsłowo\fP do cytowania wynikowych nazw. \fISłowo\fP powinno być
+jednym z poniższych:
+.RS
+.TP
+.B literal
+(Dosłownie). Wypisuje nazwy bez zmian, takie jakie są.
+.TP
+.B shell
+Cytuje nazwy dla powłoki, jeśli zawierają metaznaki powłoki (znaki
+uogólniające) lub mogą powodować niejednoznaczność wyniku.
+.TP
+.B shell-always
+Cytuje nazwy dla powłoki, nawet jeśli normalnie nie wymagałyby cytowania.
+.TP
+.B c
+Cytuje nazwy jak w łańcuchu znakowym języka C.  Jest to to samo, co opcja
+\fB-Q\fP lub \fB--quote-name\fP.
+.TP
+.B escape
+Cytuje jak opcja \fBc\fP z wyjątkiem pomijania otaczających znaków
+podwójnego cudzysłowu.  To samo, co opcja \fB-b\fP lub \fB--escape\fP.
+.TP
+.B locale
+Cytujw jak opcja \fBc\fP z wyjątkiem użycia znaków cytowania
+właściwych do ustawień regionalnych (locale). Znakami cytowania dla
+domyślnych ustawień locale są \fB`\fP oraz \fB'\fP.
+.PP
+Domyślną wartość opcji \fB--quoting-style\fP określa się za pomocą
+zmiennej środowiskowej \fBQUOTING_STYLE\fP. Jeśli nie jest ona ustawiona, to
+wartością domyślną jest \fBliteral\fP. Wartość domyślna może się jednak
+zmienić na \fBshell\fP w przyszłej wersji tego pakietu.
+.RE
+.TP
+.BR \-\-show-control-chars
+Pokazuje bez zmian niegraficzne znaki w nazwach plików. Jest to ustawienie
+domyślne, chyba że programem jest \fBls\fP, a wyjście stanowi terminal.
+.SS Inne opcje
+.TP
+.B \-g
+Ta opcja jest akceptowana, ale ignorowana; istnieje dla zgodności z Unixem.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.SH KOLOROWY LS
+Gdy używa się opcji
+.BR "\-\-color",
+obecna wersja
+.B ls
+pokoloruje nazwy plików odpowiednio do nazwy i typu pliku. Domyślnie to
+kolorowanie zależy tylko od typu pliku, a użyte kody są zgodne z ISO 6429
+(ANSI).
+.PP
+Można przesłonić domyślne kolory przez zdefiniowanie zmiennej środowiskowej
+.B LS_COLORS
+(lub
+.BR LS_COLOURS ).
+Format tej zmiennej jest podobny do formatu pliku termcap(5): oddzielona
+dwukropkami lista wyrażeń w formie "xx=napis", gdzie "xx" jest dwuznakową
+nazwą zmiennej. Zmienne wraz z towarzyszącymi im wartościami domyślnymi to:
+.sp
+.RS +.2i
+.ta 1.0i 2.5i
+.nf
+\fBno\fR       0       Normalny tekst (nie nazwy pliku)
+\fBfi\fR       0       Normalny plik
+\fBdi\fR       32      Katalog
+\fBln\fR       36      Dowiązanie symboliczne
+\fBpi\fR       31      Nazwany potok (FIFO)
+\fBso\fR       33      Gniazdo
+\fBbd\fR       44;37   Urządzenie blokowe
+\fBcd\fR       44;37   Urządzenie znakowe
+\fBex\fR       35      Plik wykonywalny
+\fBmi\fR       (none)  Brakujący plik (domyślnie jak fi)
+\fBor\fR       (none)  Osierocone dowiązanie symboliczne (domyślnie jak ln)
+\fBlc\fR       \ee[     Kod lewa
+\fBrc\fR       m       Kod prawa
+\fBec\fR       (none)  Kod końca (End code) (zastępuje lc+no+rc)
+.fi
+.RE
+.sp
+Trzeba włączyć tylko te zmienne, które chcemy zmienić z wartości domyślnych.
+.PP
+Nazwy plików mogą być też kolorowane według rozszerzeń plików. Jest to
+określone w zmiennej LS_COLORS wg składni "*rozszerzenie=napis". Na
+przykład, używając kodów ISO 6429 pokolorujmy pliki języka C na kolor
+niebieski. Zrobimy to przez podanie "*.c=34". Kolor ten pokoloruje wszystkie
+pliki kończące się na .c na niebiesko.
+.PP
+Znaki kontrolne mogą być pisane zarówno w notacji w stylu C (notacja
+\e-eskejpowa) jaki i w ^-notacji typu
+.BR stty .
+Notacja C dodaje dla Escape \ee, \e_ dla normalnej spacji, a \e? dla Delete.
+Dodatkowo, znak \e może zostać użyty do przesłaniania domyślnej interpretacji
+\e, ^, :, =.
+.PP
+Każdy plik będzie wypisany jako <lc> <kod\ koloru> <rc> <nazwa pliku> <ec>.
+Jeśli kod <ec> jest niezdefiniowany, użyta zostanie sekwencja <lc> <no>
+<rc>. Jest to generalnie bardziej przekonujące w użyciu, lecz mniej ogólne.
+Kody lewo, prawo i końca są udostępniane, aby nie trzeba było ciągle
+wypisywać wspólnych elementów i aby obsłużyć dziwne terminale;
+ogólnie zwykle w ogóle nie chcemy ich zmieniać, chyba że nasz terminal nie
+używa sekwencji ISO 6429, a innego systemu.
+
+.PP
+Jeśli terminal korzysta z kodów kolorów ISO 6429, możemy składać
+rodzaje kodów (np. wszystkich poza
+.BR lc ,
+.BR rc ,
+i
+.BR ec )
+z numerycznych komend oddzielonych średnikami.  Najpopularniejszymi
+komendami są:
+.sp
+.RS +.2i
+.ta 1.0i
+.nf
+ 0     Odtwarza domyślny kolor
+ 1     Rozjaśnia kolor
+ 4     Podkreśla tekst
+ 5     Miga tekstem
+30     Czarny kolor
+31     Czerwony kolor
+32     Zielony kolor
+33     Żółty (lub brązowy) kolor
+34     Niebieski kolor
+35     Purpurowy kolor
+36     Turkusowy kolor
+37     Biały (lub szary) kolor
+40     Czarny kolor tła
+41     Czerwony kolor tła
+42     Zielony kolor tła
+43     Żółty (lub brązowy) kolor tła
+44     Niebieski kolor tła
+45     Purpurowy kolor tła
+46     Turkusowy kolor tła
+47     Biały (lub szary) kolor tła
+.fi
+.RE
+.sp
+Nie wszystkie komendy będą działać na wszystkich systemach lub
+wyświetlaczach.
+.PP
+Niektóre programy terminali nie rozpoznają domyślnego kodu końca. Jeśli
+tekst nabiera kolorów po wylistowaniu katalogu, należy spróbować zmienić kody
+.B no
+i
+.B fi
+z 0 na numeryczne kody własnego standardowego koloru i tła.
+.PP
+.SH AUTOR
+Napisane przez Richarda Stallmana i Davida MacKenzie.
+.SH BŁĘDY
+Na systemach BSD, dla plików zamontowanych przez NFS z systemu HP-UX, opcja
+.B \-s
+zgłasza rozmiary, które są o połowę mniejsze od poprawnych wielkości.
+Na HP-UX zgłasza rozmiary dwa razy większe od poprawnych, jeśli pliki są
+zamontowane przez NFS z BSD.  Jest to usterka HP-UX i ma wpływ również
+na program \fBls\fP z tego systemu.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR dircolors (1),
+.BR find (1).
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

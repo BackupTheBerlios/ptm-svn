@@ -1,0 +1,427 @@
+.\" Man page for man (and the former manpath)
+.\"
+.\" Copyright (c) 1990, 1991, John W. Eaton.
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the README file that comes with the man 1.0
+.\" distribution.  
+.\"
+.\" John W. Eaton
+.\" jwe@che.utexas.edu
+.\" Department of Chemical Engineering
+.\" The University of Texas at Austin
+.\" Austin, Texas  78712
+.\"
+.\" Many changes - aeb
+.\"
+.\" Tłumaczenie - 950322 Rafał Maszkowski <rzm@pdi.net>
+.\" 960619 - aktualizacja -K
+.\" 20011102 - aktualizacja do wersji z man-1.5i2, częściowo w oparciu
+.\"            o alternatywne tłumaczenie PB z PTM - AMK
+.\"
+.TH man 1 "2 września 1995"
+.LO 1
+.SH NAZWA
+man \- formatowanie i wyświetlanie dostępnych stron podręcznika man
+.br
+manpath \- wyznaczanie ścieżki poszukiwania stron podręcznika odpowiedniej dla
+danego użytkownika
+.SH SKŁADNIA
+.TP 4
+.B man
+.RB [ \-adfhkKtwW ]
+.RB [ \-m
+.IR system ]
+.RB [ \-p
+.IR łańcuch_znaków ]
+.RB [\-C
+.IR plik_konfiguracyjny ]
+.RB [ \-M
+.IR ścieżka ]
+.RB [ \-P
+.IR pager ]
+.RB [ \-S
+.IR lista_rozdziałów ]
+.RI [ rozdział ]
+.IR nazwa ...
+.SH OPIS
+.B man
+formatuje i wyświetla dostępne w systemie strony podręcznika man.
+.\" Ta wersja sprawdza zmienne środowiskowe
+.\" .B MANPATH
+.\" i
+.\" .BR (MAN)PAGER ,
+.\" więc możesz mieć swój własny zestaw stron podręcznika man i wybrać do ich
+.\" wyświetlania ulubiony program.
+Jeżeli zostanie podany
+.IR rozdział ,
+.B man
+sprawdza tylko ten rozdział podręcznika.
+.\" Używając opcji lub zmiennych środowiskowych możesz także podać porządek,
+.\" w jakim należy przeszukiwać rozdziały oraz jakie preprocesory powinny
+.\" zostać użyte do wstępnego przetworzenia stron.
+Jeżeli
+.I nazwa
+zawiera znak /, to man próbuje najpierw znaleźć podany plik, więc można np.
+wydać polecenie
+.B "man ./foo.5"
+a nawet
+.B "man /cd/foo/bar.1.gz\fR.\fP"
+.PP
+Niżej znajdziesz informacje, gdzie
+.B man
+szuka plików stron podręcznika.
+
+.SH OPCJE
+.TP
+.B \-\^C " plik_konfiguracyjny"
+Określa plik konfiguracyjny, którego należy użyć. Domyślnym jest
+.BR /etc/man.config .
+(Zobacz
+.BR man.conf (5).)
+.TP
+.B \-\^M " ścieżka"
+Określa listę katalogów, w których będą szukane strony podręcznika man.
+Katalogi należy rozdzielać dwukropkami. Pusta lista jest równoznaczna z nie
+podaniem tej opcji. Zobacz
+.BR "ŚCIEŻKA PRZESZUKIWANIA DLA STRON PODRĘCZNIKA" .
+.TP
+.B \-\^P " pager"
+Określa, który pager ma zostać użyty.  Jeżeli podana jest ta opcja,
+ignorowana jest zmienna środowiskowa
+.BR MANPAGER ,
+której użycie z kolei powoduje zignorowanie zmiennej środowiskowej
+.BR PAGER .
+Domyślnie
+.B man
+używa
+.BR /usr/bin/less .
+.TP
+.B \-\^S " lista_rozdziałów"
+Rozdzielona dwukropkami lista rozdziałów podręcznika, które mają być
+przeszukane. Jeżeli podana jest ta opcja, zmienna środowiskowa
+.B MANSECT
+jest ignorowana.
+.TP
+.B \-\^a
+Domyślnie man kończy działanie po wyświetleniu pierwszej znalezionej
+strony. Podanie tej opcji powoduje wyświetlenie wszystkich stron
+podręcznika, które pasują do
+.BR nazwa , 
+a nie tylko pierwszej.
+.TP
+.B \-\^c
+Przeformatowuje źródłową stronę podręcznika, nawet jeżeli istnieje aktualna
+strona cat. Może to być istotne, jeżeli strona cat jest sformatowana
+dla ekranu z inną liczbą kolumn.
+.TP
+.B \-\^d
+Zamiast stron podręcznika wyświetla mnóstwo informacji diagnostycznych.
+.TP
+.B \-\^D
+Wyświetla zarówno stronę podręcznika jak i informacje diagnostyczne.
+.TP
+.B \-\^f
+Równoważne
+.BR whatis .
+.TP
+.B \-\^h
+Wyświetla krótką informację pomocy i kończy pracę.
+.TP
+.B \-\^k
+Równoważne
+.BR apropos .
+.TP
+.B \-\^K
+Szuka podanego łańcucha znaków we *wszystkich* stronach podręcznika. Uwaga:
+będzie to prawdopodobnie bardzo powolne! Podanie rozdziałów pomaga
+przyspieszyć szukanie. (Dla ogólnej orientacji: na mojej maszynie zajmuje to
+ok. minuty na każde 500 stron podręcznika.)
+.TP
+.B \-\^m " system"
+Podanie alternatywnego zestawu stron podręcznika, odpowiedniego dla
+systemu o podanej nazwie.
+.TP
+.B \-\^p " łańcuch_znaków"
+Podanie listy nazw preprocesorów, ktore zostaną uruchomione przed
+.B nroff
+i
+.BR troff .
+Nie wszystkie intalacje mają pełny zestaw preprocesorów.
+Niektóre z nich oraz oznaczające je litery to:
+eqn (e), grap (g), pic (p), tbl (t), vgrind (v), refer (r).
+Podanie tej opcji powoduje zignorowanie zmiennej środowiskowej
+.BR MANROFFSEQ .
+.TP
+.B \-\^t
+Sformatuj stronę podręcznika za pomocą
+.BR "/usr/bin/groff -S -Tps -mandoc" ,
+a wynik wyślij na
+.B stdout
+(standardowe wyjście).
+Może być konieczne przepuszczenie wyniku z
+.B "/usr/bin/groff -S -Tps -mandoc"
+przez jakiś filtr przed wydrukowaniem.
+.TP
+.B \-\^w \fRlub\fP \-\-path
+Nie wyświetlaj stron podręcznika, podaj tylko gdzie znajdują się pliki, które
+byłyby sformatowane i wyświetlone. Jeżeli nie podano żadnych argumentów:
+wyświetla (na stdout) listę katalogów, w których
+.B man
+poszukuje stron podręcznika. Jeżeli
+.B manpath
+jest dowiązaniem man to "manpath" jest równoważne "man --path".
+.TP
+.B \-\^W
+Podobne do \-\^w, lecz podaje nazwy plików, każdą w osobnej linii, bez
+dodatkowych informacji. Przydaje się w poleceniach powłoki, np.
+.ft CW
+.B "man -aW man | xargs ls -l"
+.ft
+
+.SH "STRONY CAT"
+Man będzie próbował zachować sformatowane strony podręcznika aby
+skrócić czas potrzebny na sformatowanie ich po raz kolejny,
+kiedy te strony będą znowu potrzebne.
+Tradycyjnie, sformatowane wersje stron podręcznika z katalogu DIR/manX są
+zachowywane w DIR/catX, ale można też w pliku
+.BR /etc/man.config
+określić inne zasady.
+Strony cat nie są tworzone, jeżeli wymagany katalog nie istnieje.
+.PP
+Możliwe jest uczynienie programu
+.B man
+suidowym na użytkownika man. Wtedy, jeśli katalogi cat mają właściciela man
+i prawa dostępu 0755 (zapisywalne tylko przez użytkownika man), a pliki cat
+mają właściciela man i prawa dostępu 0644 lub 0444 (zapisywalne przez
+użytkownika man lub przez nikogo), to żaden zwykły użytkownik nie może
+zmieniać stron cat lub umieszczać w katalogach cat innych plików. Jeżeli
+.B man
+nie jest suidowy to katalog cat powinien mieć prawa dostępu 0777,
+o ile wszyscy użytkownicy powinni mieć możliwość pozostawiania tam stron cat.
+.PP
+Opcja
+.B \-c
+wymusza przeformatowanie strony nawet jeżeli istnieje już odpowiednia strona
+cat.
+
+
+.SH "ŚCIEŻKA PRZESZUKIWANIA DLA STRON PODRĘCZNIKA"
+.B man
+stosuje wymyślną metodę poszukiwania plików stron podręcznika, opartą na
+opcjach wywołania, zmiennych środowiskowych, pliku konfiguracyjnym
+.B /etc/man.config
+oraz na pewnych wbudowanych konwencjach i heurystyce.
+.PP
+Najpierw, gdy argument
+.I nazwa
+polecenia
+.B man
+zawiera ukośnik
+.RB ( / ),
+.B man
+zakłada, że jest on nazwą właściwego pliku i nie prowadzi poszukiwania.
+.PP
+Ale zazwyczaj, gdy
+.I nazwa
+nie zawiera ukośnika,
+.B man
+poszukuje pliku, który mógłby stanowić stronę podręcznika o zadanym temacie,
+w różnych katalogach.
+.PP
+Jeśli zostanie podana opcja
+.BI "-M " ścieżka\fR,
+to
+.I ścieżka
+jest rozdzieloną dwukropkami listą przeszukiwanych przez program
+.B man
+katalogów.
+.PP
+Gdy opcja
+.B -M
+nie zostanie podana, ale zostanie zdefiniowana zmienna środowiskowa
+.BR MANPATH ,
+wartość tej zmiennej stanowi listę przeszukiwanych przez program
+.B man
+katalogów.
+.PP
+Jeśli ścieżka nie zostanie podana w sposób jawny ani za pomocą
+.B -M
+ani poprzez
+.BR MANPATH ,
+.B man
+rozwija swoją własną ścieżkę w oparciu o zawartość pliku konfiguracyjnego
+.BR /etc/man.config .
+Instrukcje
+.B MANPATH
+w pliku konfiguracyjnym określają poszczególne katalogi włączane do ścieżki
+przeszukiwania.
+.PP
+Ponadto, instrukcje
+.B MANPATH_MAP
+dodają do ścieżki przeszukiwania katalogi zależne od ścieżki przeszukiwania
+dla poleceń (tzn. zawartej w zmiennej środowiskowej
+.B PATH
+).
+Instrukcja
+.B MANPATH_MAP
+dodaje do ścieżki przeszukiwania dla stron podręcznika po jednym katalogu dla
+każdego katalogu zawartego w ścieżce przeszukiwania dla poleceń.
+.B man
+przegląda zmienną
+.B PATH
+i dodaje odpowiednie katalogi do ścieżki przeszukiwania dla stron podręcznika.
+Zatem przy właściwym użyciu
+.BR MANPATH_MAP ,
+po wydaniu polecenia
+.BR "man xyz" ,
+otrzyma się stronę podręcznika dla programu, który zostałby uruchomiony
+poprzez wydanie polecenia
+.BR xyz .
+.PP
+Dodatkowo, dla każdego katalogu w ścieżce przeszukiwania dla poleceń
+(będziemy go nazywać "katalogiem poleceń"), dla którego
+.I nie
+ma instrukcji
+.BR MANPATH_MAP ,
+.B man
+automatycznie poszukuje "bliskiego" katalogu stron podręcznika jako
+podkatalogu właściwego katalogu poleceń lub w katalogu nadrzędnym dla katalogu
+poleceń.
+.PP
+Można wyłączyć automatyczne "bliskie" przeszukiwania dołączając instrukcję
+.B NOAUTOPATH
+do
+.BR /etc/man.config .
+.PP
+Jak opisano powyżej, w każdym z katalogów ścieżki przeszukiwania
+.B man
+poszukuje pliku o nazwie
+.IB tytuł . rozdział\fR,
+z opcjonalnym przyrostkiem dla numeru rozdziału i możliwym przyrostkiem
+kompresji. Jeśli nie znajdzie takiego pliku, będzie szukał w podkatalogach 
+o nazwach
+.BI man N
+i
+.BI cat N\fR,
+gdzie
+.I N
+jest numerem rozdziału podręcznika.
+Jeśli plik znajduje się w podkatalogu
+.BI cat N\fR,
+.B man
+zakłada, że jest to sformatowany plik strony podręcznika (cat page). 
+W przeciwnym przypadku,
+.B man
+zakłada, że jest ona niesformatowana. W obu przypadkach, jeśli nazwa pliku
+zawiera znany przyrostek kompresji (jak
+.BR .gz ),
+.B man
+zakłada, że jest ona spakowania gzipem.
+.PP
+Aby zobaczyć, gdzie (lub czy)
+.B man
+znajdzie stronę podręcznika o określonym tytule, należy posłużyc się opcją
+.BR "--path " ( -w ).
+
+.SH "ŚRODOWISKO"
+.TP
+.B MANPL
+Jeśli zmienna
+.B MANPL
+jest zdefinowana, to jej wartość jest używana do określenia długości strony.
+W przeciwnym przypadku, cała strona podręcznika będzie stanowić jedną (długą)
+stronę.
+.TP
+.B MANROFFSEQ
+Jeśli zmienna
+.B MANROFFSEQ
+jest zdefinowana, to jej wartość jest używana do zdefinowania zestawu
+preprocesorów uruchamianych przed
+.B nroff
+i
+.BR troff .
+Domyślnie strony są przepuszczane przez preprocesor tbl przed użyciem nroff.
+.TP
+.B MANSECT
+Jeśli zmienna
+.B MANSECT
+jest zdefiniowana, to jej wartość jest używana do określenia jakie rozdziały
+podręcznika powinny zostać przeszukane.
+.TP
+.B MANWIDTH
+Jeśli zmienna
+.B MANWIDTH
+jest zdefiniowana, to jej wartość jest używana jako szerokość wyświetlanych
+stron podręcznika man. W przeciwnym wypadku, strony będą wyświetlane na całej
+szerokości ekranu.
+.TP
+.B MANPAGER
+Jeśli zmienna
+.B MANPAGER
+jest zdefiniowana, to jej wartość jest używana jako nazwa programu do
+wyświetlania strony podręcznika man. Jeśli nie jest zdefiniowana, to używana
+jest zmienna
+.BR PAGER .
+Jeżeli ta również nie ma nadanej wartości, to używany jest
+.BR /usr/bin/less .
+.TP
+.B LANG
+Jeśli zmienna
+.B LANG
+jest zdefiniowana, to jej wartość określa nazwę podkatalogu, w którym man
+najpierw będzie szukać stron podręcznika. Zatem polecenie `LANG=pl man 1 coś'
+(w sh lub bash) spowoduje, że man będzie szukać strony "coś"
+w .../pl/man1/coś.1, a następnie, jeżeli takiego pliku nie znajdzie,
+w .../man1/coś.1, gdzie ... jest katalogiem ze ścieżki przeszukiwania.
+.TP
+.B "NLSPATH, LC_MESSAGES, LANG"
+Zmienne środowiskowe
+.B NLSPATH
+i
+.B LC_MESSAGES
+(lub
+.BR LANG ,
+jeżeli ta druga nie istnieje)
+sterują przeszukiwaniem katalogów z komunikatami.
+(Komunikaty angielskie są wkompilowane, więc dla angielskiego taki
+katalog nie jest potrzebny.)
+Zauważ, że programy takie jak
+.BR col(1) ,
+wołane przez man, również używają np. LC_TYPE.
+.TP
+.B PATH
+.B PATH
+pomaga określić ścieżkę przeszukiwania dla plików stron podręcznika.
+Zobacz
+.BR "ŚCIEŻKA PRZESZUKIWANIA DLA STRON PODRĘCZNIKA" .
+.TP
+.B SYSTEM
+.B SYSTEM
+jest używana do pobierania domyślnej alternatywnej nazwy systemu (do używania
+razem z opcją
+.BR \-m ). 
+.SH "ZOBACZ TAKŻE"
+apropos(1), whatis(1), less(1), groff(1), man.conf(5).
+.SH BŁĘDY
+Opcja
+.B \-t
+działa tylko jeżeli jest zainstalowany jakiś program działający jak troff.
+.br
+Jeżeli zamiast myślników pojawią się migające \e255 lub <AD>, to należy
+ustawić w środowisku użytkownika `LESSCHARSET=latin1'.
+.SH ZAKOŃCZENIE
+Jeśli do pliku
+.IR .emacs
+użytkownika dodana zostanie linia
+
+  (global-set-key [(f1)] (lambda () (interactive) (manual-entry (current-word))))
+
+to naciśnięcie F1 spowoduje wyświetlenie strony podręcznika dla funkcji
+bibliotecznej, na której ustawiony jest kursor.
+.LP
+Aby uzyskać czysto tekstową wersję strony podręcznika, bez cofnięć
+i podkreśleń, należy wydać polecenie
+
+  # man coś | col -b > coś.mantxt
+

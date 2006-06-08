@@ -1,0 +1,125 @@
+.\" {PTM/WK/1999-XII}
+.\" Copyright (c) 1990 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Michael Rendell.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)col.1	6.8 (Berkeley) 6/17/91
+.\"
+.Dd June 17, 1991
+.Dt COL 1
+.Os
+.Sh NAZWA
+.Nm col
+.Nd filtruje z wejścia znaki cofnięcia o wiersz
+.Sh SKŁADNIA
+.Nm col
+.Op Fl bfx
+.Op Fl l Ar num
+.Sh OPIS
+.Nm Col
+filtruje znaki cofnięcia o wiersz (i o pół wiersza), tak że wyjście jest
+poprawnie uporządkowane, zawierając wyłącznie znaki wysuwu i połowy wysuwu
+do nowego wiersza. Gdzie jest to możliwe wymienia również białe spacje
+na znaki tabulacji.
+Może to być przydatne przy przetwarzaniu wyjścia z 
+.Xr nroff 1
+i
+.Xr tbl  1 .
+.Pp
+.Nm Col
+czyta ze standardowego wejścia i zapisuje na standardowe wyjście.
+.Pp
+Posiada następujące opcje:
+.Bl -tag -width "-lnum"
+.It Fl b
+Nie wysyłaj na wyjście znaków backspace, dla każdej pozycji (kolumny) drukuj
+wyłącznie ostatni znak w niej zapisany.
+.It Fl f
+Dozwolone są wysuwy o połowę wiersza (tryb ``fine'' - ładny). Normalnie znaki
+drukowane na granicy połowy wiersza drukowane są w następnym wierszu.
+.It Fl x
+Wysyłaj na wyjście wielokrotne spacje zamiast znaków tabulacji.
+.It Fl l Ns Ar num
+Buforuj w pamięci co najmniej
+.Ar num
+wierszy.
+Domyślnie buforowanych jest 128 wierszy.
+.El
+.Pp
+Sekwencje sterujące ruchem karetki, rozumiane przez
+.Nm col
+oraz ich wartości dziesiętne podano w poniższej tabeli:
+.Pp
+.Bl -tag -width "carriage return" -compact
+.It ESC\-7
+cofnięcie o wiersz (reverse line feed) (escape, potem 7)
+.It ESC\-8
+cofnięcie o połowę wiersza (half reverse line feed) (escape, potem 8)
+.It ESC\-9
+wysuw do przodu o połowę wiersza (half forward line feed (escape, potem 9)
+.It backspace
+cofnięcie o jedną kolumnę (8); ignorowane w pierwszej kolumnie
+.It powrót karetki
+(carriage return) (13)
+.It nowy wiersz
+wysuw wiersza (forward line feed) (10); wykonuje również powrót karetki
+.It shift in
+przełącza na normalny zestaw znaków (15)
+.It shift out
+przełącza na alternatywny zestaw znaków (14)
+.It spacja
+przesuwa do przodu o jedną kolumnę (32)
+.It tab
+przesuwa do przodu na następną pozycję tabulacji (9)
+.It tabulacja pionowa
+(vertical tab) cofnięcie o wiersz (11)
+.El
+.Pp
+Wszystkie nierozpoznane znaki sterujące i sekwencje specjalne są odrzucane.
+.Pp
+.Nm Col
+zapamiętuje zestaw znaków podczas ich czytania i upewnia się, że zestaw ten
+jest poprawny, gdy są one wysyłane na wyjście.
+.Pp
+Jeśli wejście usiłuje powrócić do ostatniego, opróżnionego już z bufora
+na wyjście wiersza, 
+.Nm col
+wyświetli komunikat ostrzegawczy.
+.Sh ZOBACZ TAKŻE
+.Xr expand 1 ,
+.Xr nroff 1 ,
+.Xr tbl 1
+.Sh HISTORIA
+Polecenie
+.Nm col
+pojawiło się w wersji AT&T UNIX.

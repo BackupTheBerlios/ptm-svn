@@ -1,0 +1,98 @@
+.\" {PTM/WK/1999-XII}
+.\" Copyright (c) 1983, 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)logger.1	8.1 (Berkeley) 6/6/93
+.\"
+.Dd June 6, 1993
+.Dt LOGGER 1
+.Os BSD 4.3
+.Sh NAZWA
+.Nm logger
+.Nd twórz wpisy w dzienniku (logu) systemowym
+.Sh SKŁADNIA
+.Nm logger
+.Op Fl is
+.Op Fl f Ar plik
+.Op Fl p Ar pri
+.Op Fl t Ar znacz
+.Op Ar komunikat ...
+.Sh OPIS
+.Nm Logger
+zapewnia na poziomie poleceń powłoki interfejs do systemowego modułu
+zapisu dziennika
+.Xr syslog  3 .
+.Pp
+Opcje:
+.Pp
+.Bl -tag -width "komunikat"
+.It Fl i
+Rejestruj id procesu logger w każdym wierszu.
+.It Fl s
+Oprócz zapisu komunikatu do dziennika systemowego wyślij go na standardowe
+wyjście błędów.
+.It Fl f Ar plik 
+Zapisz do dziennika zawartość podanego pliku.
+.It Fl p Ar pri 
+Zapisz komunikat z zadanym priorytetem. Priorytet może być określony liczbowo
+lub jako para "podsystem.poziom-zagrożenia" ("facility.level").
+Na przykład, "\-p local3.info" rejestruje komunikat(y) jako o poziomie
+istotności
+.Ar info Ns rmacyjnym
+pochodzące z podsystemu
+.Ar local3 .
+Domyślnym priorytetem jest "user.notice"
+.It Fl t Ar znacz
+Oznakuj każdy wiersz rejestru podanym
+.Ar znacznikiem  .
+.It Ar komunikat
+Zapisz komunikat do dziennika; jeśli nie podano i nie została użyta flaga
+.Fl f ,
+to zapis wykonywany jest ze standardowego wejścia.
+.El
+.Pp
+Narzędzie
+.Nm logger
+kończy pracę z kodem 0 przy powodzeniu operacji, zaś >0 jeśli wystąpił błąd.
+.Sh PRZYKŁADY
+.Bd -literal -offset indent -compact
+logger System rebooted
+
+logger \-p local0.notice \-t HOSTIDM \-f /dev/idmc
+.Ed
+.Sh ZOBACZ TAKŻE
+.Xr syslog 3 ,
+.Xr syslogd 8
+.Sh STANDARDY
+Polecenie
+.Nm logger
+powinno być zgodne z
+.St -p1003.2

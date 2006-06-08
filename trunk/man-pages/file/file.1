@@ -1,0 +1,432 @@
+.\" {PTM/PB/0.1/21-06-1999/"określenie typ pliku"}
+.\" Last update: Andrzej M. Krzysztofowicz <ankry@pld.org.pl>, Apr 2002
+.\"
+.TH FILE 1 "Chronione prawem autorskim ale dystrybuowalne"
+.\" $Id: file.1,v 1.8 2002/04/09 22:29:29 ankry Exp $
+.SH NAZWA
+file
+\- określenie typu pliku
+.SH SKŁADNIA
+.B file
+[
+.B \-bciknsvzL
+]
+[
+.B \-f
+.I nazwapliku
+]
+[
+.B \-m
+.I lista
+]
+.I plik
+\&...
+.br
+.B plik
+.B -C
+[
+.B \-m
+.I plikmag
+]
+.SH OPIS
+Ta strona podręcznika opisuje wersję 3.37 polecenia
+.BR file .
+.PP
+.B file
+sprawdza każdy ze swoich argumentów, próbując go sklasyfikować. Istnieją trzy
+zestawy testów, które są wykonywane w następującej kolejności: testy systemu
+plików, testy liczb magicznych, testy języka.
+.I Pierwszy
+zakończony powodzeniem test powoduje wypisanie typu pliku.
+.PP
+Wypisany typ będzie zwykle zawierał jedno ze słów
+.B text
+(plik zawiera tylko znaki drukowalne i kilka spośród znaków sterujących oraz
+prawdopodobnie można go bezpiecznie czytać na terminalu
+.SM ASCII
+),
+.B executable
+(wykonywalny --
+plik zawiera wyniki kompilacji w formacie zrozumiałym dla jądra pewnego
+Uniksa lub innego systemu) lub
+.B data
+(dane) oznaczające cokolwiek innego (zwykle jest to binarny, niedrukowalny
+plik). Wyjątkami są ogólnie znane formaty plików (pliki core, archiwa tar),
+o których wiadomo, że zawierają dane binarne.
+Podczas modyfikacji pliku
+.I /usr/share/misc/magic
+lub też samego programu
+.BR "zachowaj te słowa kluczowe" .
+Wielu polega na tym, że dla wszystkich czytelnych plików wypisywane jest słowo
+,,text''. Nie należy więc robić tego, co zrobiono w Berkeley \- zmieniono tam
+,,shell commands text'' na ,,shell script''.
+Należy też zauważyć, że plik
+.I /usr/share/misc/magic
+jest tworzony mechanicznie z wielu małych plików z podkatalogu
+.I Magdir
+dystrybuowanych źródeł niniejszego programu.
+.PP
+Testy systemu plików są oparte o sprawdzanie wartości zwracanej przez funkcję
+systemową
+.BR stat (2).
+Program sprawdza czy plik jest pusty oraz czy jest jakiegoś rodzaju plikiem
+specjalnym. Powinno się dać rozpoznać wszystkie rodzaje plików występujące
+w danym systemie (gniazda, dowiązania symboliczne, nazwane potoki (FIFO),
+itd.), o ile te rodzaje plików będą zdefiniowane w systemowym pliku
+nagłówkowym
+.IR sys/stat.h .
+.PP
+Testy liczb magicznych służą do sprawdzania plików, które zawierają dane w
+określonym formacie. Kanonicznym tego przykładem jest wykonywalne binarium
+(skompilowany program)
+.IR a.out ,
+którego format jest zdefiniowany w
+.I a.out.h
+i prawdopodobnie w
+.I exec.h
+w standardowym katalogu plików nagłówkowych.
+Pliki te zawierają ,,liczby magiczne'' w określonym miejscu w pobliżu początku
+pliku. Liczby te informują uniksowy system operacyjny o tym, że plik jest
+wykonywalnym binarium oraz który z możliwych typów binariów reprezentuje.
+Koncepcja ,,liczb magicznych'' została jako rozszerzenie zastosowana również
+do plików z danymi. Można tak opisać każdy plik posiadający niezmienny
+identyfikator przy małym i określonym przesunięciu względem początku pliku.
+Informacje identyfikujące te pliki są odczytywane ze skompilowanego pliku
+liczb magicznych
+.I /usr/share/misc/magic.mgc
+lub z
+.IR /usr/share/misc/magic ,
+gdy skompilowany plik nie istnieje.
+.PP
+Jeśli plik nie pasuje do żadnego z wpisów w pliku liczb magicznych,
+dokonywane jest sprawdzenie czy jest to plik tekstowy. Rozpoznawane są zestawy
+znaków: ASCII, ISO-8859-x, 8-bitowe rozszerzenia ASCII niezgodne z ISO
+(używane w systemach Macintosh i IBM PC), Unicode w kodowaniu UTF-8, Unicode w
+kodowaniu UTF-16 oraz EBCDIC. Sprawdzane są zakresy i ciągi bajtów, które
+stanowią drukowalny tekst w każdym z tych zestawów znaków.
+Jeśli plik przejdzie któryś z tych testów, zgłaszany jest odpowiadający mu
+zestaw znaków. Pliki w ASCII, ISO-8859-x, UTF-8 oraz w rozszerzeniach ASCII są
+identyfikowane jako ,,text'', gdyż są one na ogół czytejne na dowolnym
+terminalu; pliki w UTF-16 i EBCDIC stanowią jedynie ,,character data'' (dane
+znakowe), gdyż jeśli zawierają one tekst, tekst ten wymaga przed przeczytaniem
+konwersji. Dodatkowo,
+.B file
+będzie próbował określić inne charakterystyki plików tekstowych. Jeśli wiersze
+są zakończone znakami CR, CRLF lub NEL, zamiast standardowego uniksowego LF,
+zostanie to zgłoszone. Zostaną również zidentyfikowane pliki zawierające
+wbudowane sekwencje unikowe lub wielokrotnego drukowania.
+.PP
+Po określeniu przez
+.B file
+zestawu znaków używanego w pliku tekstowym, spróbuje on odgadnąć w jakim
+języku plik został napisany.
+Testy językowe składają się z poszukiwań określonych łańcuchów znakowych
+(por.
+.IR names.h ),
+które mogą pojawić się gdziekolwiek w kilku pierwszych blokach pliku.
+Na przykład słowo kluczowe
+.B .br
+wskazuje, że plik jest najprawdopodobniek plikiem wejściowym dla programu
+.BR troff (1)
+podobnie, jak
+.B struct
+wskazuje na program w C.
+Testy te są mniej godne zaufania niż poprzednie dwie grupy, więc są
+wykonywane na końcu. Testy językowe testują również niektóre pliki zbiorcze
+(jak archiwa
+.BR tar (1)).
+.PP
+Plik, który nie może zostać określony jako jako zapisany w jednym
+z powyższych zestawów znaków, jest po prostu określany jako ,,data'' (dane).
+.SH OPCJE
+.TP 8
+.B \-b
+Nie podawanie nazw plików na początku wierszy wynikowych (tryb skrócony).
+.TP 8
+.B \-c
+Powoduje sprawdzanie wydruku przetworzonej postaci pliku magicznego. Jest to
+zwykle używane w połączeniu z
+.BE \-m ,
+aby odpluskwić plik liczb magicznych przed jego zainstalowaniem.
+.TP 8
+.B \-C
+Zapisuje plik wynikowy magic.mgc, który zawiera wstępnie przetworzoną wersję
+pliku.
+.TP 8
+.BI \-f " nazwapliku"
+Odczytuje nazwy testowanych plików z
+.I nazwapliku
+(po jednym w wierszu)
+przed listą argumentów.
+Obecna musi być albo
+.I nazwapliku
+albo przynajmniej jeden argument będący nazwą pliku; aby testować standardowe
+wejście, należy użyć argumentu ,,-''jako nazwy pliku.
+.TP 8
+.B \-i
+Powoduje wypisywanie przez polecenie file łańcuchów stanowiących typy MIME,
+zamiast bardziej tradycyjnej postaci czytelnej dla człowieka. Zatem może ono
+raczej wypisać ,,text/plain; charset=us-ascii'' zamiast ,,ASCII text''.
+Aby ta opcja działała, file zmienia sposób w jaki obsługuje rozpoznane pliki
+(takie jak wiele typów plików tekstowych, katalogi itd.) oraz posługuje się
+alternatywnym plikiem ,,liczb magicznych''.
+(Zobacz sekcję ,,PLIKI'', poniżej.)
+.TP 8
+.B \-k
+Nie zatrzymuje się po znalezieniu pierwszego dopasowania, kontynuuje
+testowanie.
+.TP 8
+.BI \-m " lista"
+Podaje alternatywną listę plików z liczbami magicznymi. Może to być
+pojedynczy plik lub rozdzielona dwukropkami lista plików.
+.TP 8
+.B \-n
+Wymusza wyprowadzenie danych wyjściowych po sprawdzeniu każdego pliku. Jest
+to przydatne jedynie podczas sprawdzania listy plików. W zamierzeniu ma być
+przydatne programom, które wymagają wyprowadzania typów plików w potoku.
+.TP 8
+.B \-v
+Drukuje informacje o wersji i kończy.
+.TP 8
+.B \-z
+Próbuje zaglądać do plików skompresowanych.
+.TP 8
+.B \-L
+powoduje, że program podąża za dowiązaniami symbolicznymi, podobnie jak
+w przypadku opcji
+.BR ls (1) 
+o identycznej nazwie
+(na systemach, które obsługują dowiązania symboliczne).
+.TP 8
+.B \-s
+Normalnie,
+.B file
+próbuje czytać i określać rodzaj pliku jedynie dla tych argumentów, które są
+plikami zgłoszonymi przez
+.BR stat (2)
+jako zwykłe pliki.
+Pozwala to uniknąć problemów, gdyż czytanie plików specjalnych może mie
+nieprzyjemne konsekwencje. Podanie opcji
+.BR \-s
+powoduje, że
+.B file
+czyta również argumenty będące plikami specjalnymi urządzeń blokowych i
+znakowych. Jest to przydatne do określania rodzaju systemu plików w przypadku
+danych na surowych partycjach dysków, stanowiących pliki specjalne urządzeń
+blokowych. Opcja ta powoduje również, że
+.B file
+nie zważa na zgłaszany przez
+.BR stat (2)
+rozmiar pliku, gdyż w niektórych systemach funkcja ta zgłasza zero dla
+surowych partycji dysków.
+.SH PLIKI
+.I /usr/share/misc/magic.mgc
+\- domyślna skompilowana lista liczb magicznych
+.PP
+.I /usr/share/misc/magic
+\- domyślna lista liczb magicznych
+.PP
+.I /usr/share/misc/magic.mime
+\- domyślna lista liczb magicznych, służąca do wypisywania typów MIME
+w przypadku podania opcji \-i.
+
+.SH ŚRODOWISKO
+Zmienna środowiskowa
+.B MAGIC
+ustawia domyślny plik liczb magicznych.
+.SH "ZOBACZ TAKŻE"
+.BR magic (5)
+\- opis formatu pliku liczb magicznych.
+.br
+.BR strings (1), " od" (1), " hexdump" (1)
+\- narzędzia do testowania plików nietekstowych.
+.SH "ZGODNOŚĆ ZE STANDARDAMI"
+Program ten prawdopodobnie wykracza poza definicję FILE(CMD) z definicji
+interfejsu Systemu V (System V Interface Definition). Wydaje się tak
+przynajmniej z tego, co można zrozumieć z tamtejszego niejasnego języka...
+Zachowanie programu jest w większości zgodne z zachowaniem programu z Systemu
+V o tej samej nazwie. Wersja niniejsza zna więcej magii, więc będzie dawała
+w wielu wypadkach inne (dokładniejsze) wyniki.
+.PP
+Jedną z istotnych różnic między tą wersją i wersją z Systemu V, jest to,
+że niniejsza
+wersja traktuje białe znaki jako separatory, więc spacje w łańcuchach
+wzorców muszą być chronione (przez odwrotny ukośnik). Na przykład,
+.br
+>10	string	language impress\ 	(imPRESS data)
+.br
+w istniejącym pliku magicznym musiało by być zmienione na
+.br
+>10	string	language\e impress	(imPRESS data)
+.br
+Dodatkowo, w tej wersji, jeśli łańcuch wzorca zawiera odwrotny ukośnik, to 
+musi być on chroniony. Na przykład
+.br
+0	string		\ebegindata	Andrew Toolkit document
+.br
+w istniejącym pliku magicznym musiało by być zmienione na
+.br
+0	string		\e\ebegindata	Andrew Toolkit document
+.br
+.PP
+Wersja 3.2 SunOS i późniejsze pochodzące z Sun Microsystems zawierają
+polecenie
+.BR file (1),
+wywodzące się z polecenia z System V, lecz z pewnymi rozszerzeniami. Moja
+wersja różni się od Sun-owskiej tylko małymi szczegółami. Zawiera ona
+rozszerzenie operatora `&', używanego jako np.
+.br
+>16	long&0x7fffffff	>0		not stripped
+.SH "KATALOG MAGICZNY"
+Wpisy w pliku liczb magicznych pochodzą z wielu źródeł, głównie z USENET-u
+i zgłoszone przez różnych autorów. 
+Christos Zoulas (adres poniżej) będzie zbierał dodatkowe lub poprawione
+wpisy pliku liczb magicznych. Zebrane wpisy będą okresowo dystrybuowane.
+.PP
+Kolejność wpisów w pliku magicznym jest istotna. Zależnie od używanego
+systemu, kolejność, w której są ułożone, może być nieprawidłowa. Jeśli
+stare polecenie
+.B file
+używa pliku magicznego, warto zachować stary plik magiczny dla porównania
+(zmieniając jego nazwę na
+.IR /usr/share/misc/magic.orig ).
+.SH PRZYKŁADY
+.nf
+$ file file.c file /dev/hda
+file.c:   C program text
+file:     ELF 32-bit LSB executable, Intel 80386, version 1,
+          dynamically linked, not stripped
+/dev/hda: block special
+
+$ file -s /dev/hda{,1,2,3,4,5,6,7,8,9,10}
+/dev/hda:   x86 boot sector
+/dev/hda1:  Linux/i386 ext2 filesystem
+/dev/hda2:  x86 boot sector
+/dev/hda3:  x86 boot sector, extended partition table
+/dev/hda4:  Linux/i386 ext2 filesystem
+/dev/hda5:  Linux/i386 swap file
+/dev/hda6:  Linux/i386 swap file
+/dev/hda7:  Linux/i386 swap file
+/dev/hda8:  Linux/i386 swap file
+/dev/hda9:  empty
+/dev/hda10: empty
+
+$ file -i file.c file /dev/hda
+file.c:      text/x-c
+file:        application/x-executable, dynamically linked (uses shared libs), not stripped
+/dev/hda:    application/x-not-regular-file
+
+.fi
+.SH HISTORIA
+Polecenie 
+.B file
+istniało w każdym systemie \s-1UNIX\s0 od przynajmniej wersji Research
+Version 6 (strona podręcznika man z 16 stycznia 1975).
+Wersja z Systemu V wprowadziła jedną istotną główną zmianę:
+zewnętrzną listę typów liczb magicznych.
+Spowolniło to trochę program, lecz uczyniło go bardziej elastycznym.
+.PP
+Program ten, oparty na wersji z Systemu V, został napisany przez Iana Darwina
+<ian@darwinsys.com> bez zaglądania do innych źródeł.
+.PP
+John Gilmore przerobił mocno ten kod, czyniąc go lepszym niż pierwsza wersja.
+Geoff Collyer znalazł kilka nietrafności i dostarczył trochę wpisów w pliku
+liczb magicznych. Zmiana obsługi operatora ,,&'' przez Roba McMahona,
+cudcv@warwick.ac.uk, w 1989.
+.PP
+Guy Harris, guy@netapp.com, wykonał wiele zmian w okresie od 1993 do dzisiaj.
+.PP
+Podstawowy rozwój i konserwację w okresie od 1990 do dzisiaj prowadzi
+Christos Zoulas (christos@astron.com).
+.PP
+Zmodyfikowany przez Chrisa Lowtha, chris@lowth.com, w 2000:
+Obsługa opcji ,,-i'' powodującej wyprowadzanie łańcuchów typów MIME oraz
+korzystającej z alternatywnego pliku liczb magicznych i wbudowanej logiki.
+.PP
+Zmodyfikowany przez Erica Fischera (enf@pobox.com), w lipcu 2000,
+aby rozpoznawał kody znaków i próbował zidentyfikować język plików nie-ASCII.
+.PP
+Lista osób, które wniosły wkład do katalogu "Magdir" (źródła pliku
+/etc/magic) jest za długa, aby ją ty przytaczać.
+Wiecie kim jesteście; dziękujemy.
+.SH "NOTKA PRAWNA"
+.\" [Nie powinna być tłumaczona]
+Copyright (c) Ian F. Darwin, Toronto, Canada, 1986-1999.
+Na standardowej licencji Berkeley Software Distribution; znajduje się ona
+w pliku LEGAL.NOTICE dystrybyowanych źródeł.
+.PP
+Pliki
+.I tar.h
+oraz
+.I is_tar.c
+zostały napisane przez Johna Gilmore'a a pochodzą z jego ogólnie dostępnego
+programu
+.BR tar ,
+i nie podlegają powyższej licencji.
+.SH BŁĘDY
+Musi istnieć lepszy sposób na zautomatyzowanie konstrukcji pliku liczb
+magicznych ze wszystkiego w Magdir. Jaki to sposób?
+Co więcej, plik magiczny powinien być kompilowany do binarium (powiedzmy,
+.BR ndbm (3)
+lub jeszcze lepiej, do 
+.SM ASCII
+o stałej długości łańcuchów znakowych do użytku w heterogenicznych
+środowiskach sieciowych) w celu szybszego uruchamiania.
+Wtedy program działałby tak szybko, jak program o tej samej nazwie z Wersji 7,
+z elastycznością wersji z Systemu V.
+.PP
+.B file
+używa kilku algorytmów, które przedkładają szybkość nad dokładność, więc
+może zostać zmylony co do zawarotści plików tekstowych.
+.PP
+Obsługa plików tekstowych (przede wszystkim dla języków programowania)
+jest uproszczona, nieefektywna a do aktualizacji wymaga rekompilacji.
+.PP
+Powinnna istnieć klauzula ,,else'', aby obsłużyć kontynuacje linii.
+.PP
+Plik liczb magicznych i słowa kluczowe powinny obsługiwać wyrażenia regularne.
+Używanie przez nie znaku
+.SM "ASCII TAB"
+jako separatora pól jest paskudne i utrudnia edycję plików, ale jest już
+zakorzenione.
+.PP
+Może być zalecanym zezwolenie na występowanie wielkich liter w słowach
+kluczowych, np. polecenia
+.BR troff (1)
+vs makra stron podręcznika man.
+Obsługa wyrażeń regularnych ułatwiłaby to.
+.PP
+Program nie identyfikuje poprawnie \s-2FORTRAN\s0u.
+Powinno być możliwe rozpoznawanie \s-2FORTRAN\s0u przez wyszukanie pewnych
+słów kluczowych, które pojawiają się po wcięciach na początku linii.
+Obsługa wyrażeń regularnych ułatwiłaby to.
+.PP
+Lista słów kluczowych w
+.I ascmagic
+prawdopodobnie przynależy do pliku liczb magicznych.
+Można to zrobić poprzez użycie jakiegoś słowa kluczowego, w rodzaju ,,*''
+jako wartości przesunięcia w pliku.
+.PP
+Inną optymalizacją byłoby sortowanie pliku magicznego w ten sposób, by można
+było przelecieć wszystkie testy pierwszego bajtu, pierwszego słowa,
+pierwszego podwójnego słowa itd., gdy tylko zostanie on załadowany. Narzekania
+na konflikty we wpisach plików magicznych. Ustalenie zasady, że wpisy w pliku
+liczb magicznych są sortowane w oparciu o przesunięcie w badanym pliku, nie
+zaś o pozycję wewnątrz pliku magicznego?
+.PP
+Program powinien umożliwić ocenę, ,,jak dobre'' było zgadnięcie.
+Kończymy na usuwaniu zgadnięć (np. ,,From '' jako pierwsze 5 znaków w pliku),
+ponieważ nie są one tak dobre jak inne zgadnięcia (np. ,,Newsgroups:'' vs
+,,Return-Path:''). Jednak wciąż, jeśli inne nie będą pasować, powinno być
+możliwe użycie pierwszych zgadnięć.
+.PP
+Program ten jest wolniejszy niż polecenia file niektórych dystrybutorów.
+Nowa obsługa kodów wieloznakowych czyni go jeszcze wolniejszym.
+.PP
+Ta strona podręcznika man, a szczególnie ta sekcja, jest zbyt długa.
+.SH DOSTĘPNOŚĆ
+Najnowszą oryginalną wersję programu tego autora można pobrać z anonimowego
+ftp z
+.B ftp.astron.com
+z katalogu
+.I /pub/file/file-X.YY.tar.gz

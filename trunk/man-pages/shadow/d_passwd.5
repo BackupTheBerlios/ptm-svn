@@ -1,0 +1,30 @@
+.\"
+.\" {PTM/WK/1999-09-22}
+.\"
+.TH D_PASSWD 5
+.SH NAZWA
+d_passwd - plik haseł telefonicznych
+.SH OPIS
+Z dostępem do systemu przez linię telefoniczną związane są dwa pliki
+konfiguracyjne: \fI/etc/d_passwd\fR, zawierający hasła i \fI/etc/dialups\fR,
+zawierający linie.
+Każdorazowo, zanim użytkownik łączący się za pośrednictwem modemu otrzyma
+dostęp do systemu, musi podać hasło telefoniczne. Hasła te są niezależne
+od haseł użytkowników i przypisane nie do użytkownika, ani linii terminalowej,
+lecz do powłoki zgłoszeniowej użytkownika.
+Do rozpoczęcia sesji wymagane jest zarówno hasło użytkownika jak
+i telefoniczne. Zauważ jednak, że hasła telefoniczne nie posiadają kontroli
+terminu ważności. Należy, po uzgodnieniu, okresowo zmieniać je ręcznie.
+W pliku \fId_passwd\fR kolejne wiersze definiują hasła dla rozmaitych powłok:
+.br
+.sp 1
+         powłoka:zakodowane_hasło:
+.br
+.sp 1
+Zauważ, że po polu hasła występuje dwukropek. Powłoka powinna być
+określona przez bezwzględną nazwę ścieżkową pliku interpretatora poleceń.
+Do zarządzania hasłami telefonicznymi służy polecenie \fBdpasswd\fR (1).
+.SH ZOBACZ TAKŻE
+.BR dpasswd (1),
+.BR login (1),
+.BR dialups (5).

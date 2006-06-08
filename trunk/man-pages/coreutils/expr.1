@@ -1,0 +1,210 @@
+.\" {PTM/PB/0.1/02-10-1998/"wykonaj wyrażenia"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU sh-utils 2.0 PTM/WK/2000-VI
+.ig
+Transl.note: based on GNU man page expr.1 and sh-utils.info
+
+Copyright (C) 1994, 95, 96 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH EXPR "1" FSF "maj 2000" "Narzędzia powłokowe GNU 2.0"
+.SH NAZWA
+expr \- wykonaj wyrażenia
+.SH SKŁADNIA
+.B expr
+.IR wyrażenie ...
+.br
+.B expr
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.SH OPIS
+Ta strona podręcznika man opisuje polecenie \fBexpr\fP w wersji GNU.
+.PP
+.B expr
+wykonuje obliczenie i zapisuje rezultat na standardowe wyjście. Każdy żeton
+wyrażenia musi być oddzielnym argumentem. Operandy mogą być liczbami lub
+ciągami znaków. Łańcuchów znaków nie cytuje się dla \fBexpr\fP,
+choć możesz być zmuszonym do tego, by ochronić je przed powłoką (znaki
+i łańcuchy o specjalnym znaczeniu dla powłoki, np. spacja).
+.B expr
+rzutuje wszystko znajdujące się po stronie operandowej na integer lub
+łańcuch, zależnie od rodzaju operacji.
+.PP
+Operatory mogą być podawane jako symbole wrostkowe lub kluczowe słowa
+przedrostkowe. Do grupowania można w zwykły sposób korzystać z nawiasów.
+(nawiasy muszą być jednak cytowane, by ochronić je przed rozwinięciem przez
+powłokę).
+.SH OPERACJE
+Operatory (w kolejności rosnącego priorytetu) to:
+.SS Wyrażenia łańcuchowe
+\fBexpr\fP obsługuje dopasowywanie wzorców i inne operatory łańcuchowe.
+Mają one niższy priorytet niż operatory numeryczne czy relacyjne
+(w następnych sekcjach).
+.TP
+.IB łańcuch " : " regex
+Dokonuje porównania wzorców. Argumenty są rzutowane na łańcuchy, a drugi jest
+uważany za (podstawowe, a la GNU `grep') wyrażenie regularne, poprzedzone
+niejawnym `\fB^\fP'. Następnie pierwszy argument jest dopasowywany do tego
+wyrażenia regularnego.
+Jeśli porównanie jest pomyślne a wyrażenie regularne korzysta z `\fB\\(\fP'
+i `\fB\\)\fP', to wyrażenie \fB:\fP zwraca część łańcucha dopasowaną tym
+podwyrażeniem. W przeciwnym zwracana jest liczba dopasowanych znaków.
+
+Jeśli porównanie zawiedzie, operator `:' zwraca łańcuch pusty jeśli
+w wyrażeniu regularnym użyto `\\(' i `\\)' lub zero w przeciwnym
+wypadku.
+
+Tylko pierwsza para nawiasów `\\(' i `\\)' jest istotna dla zwracanej
+wartości. Dodatkowe mają znaczenie tylko przy grupowaniu operatorów
+wyrażenie regularnego.
+
+W wyrażeniu regularnym znaki `\fB\\+\fP',  `\fB\\?\fP' i `\fB\\|\fP' są
+operatorami dopasowującymi odpowiednio jedno lub więcej, zero lub jedno
+wystąpienie lub alternatywy rozłączne. Pochodzące z SunOS i inne implementacje
+\fBexpr\fP traktują je jak zwykłe znaki. POSIX dopuszcza oba zachowania.
+.\" (POSIX allows either behavior.)
+.TP
+.BI match " łańcuch regex"
+Alternatywny sposóba porównywania wzorców. Jest to identyczne z
+`\fIłańcuch\fP \fB:\fP \fIregex\fP'.
+.TP
+.BI substr " łańcuch pozycja długość"
+Zwraca łańcuch będący częścią \fIłańcuch\fPa, zaczynającą się
+na \fIpozycji\fP i o długości najwyżej \fIdługość\fP. Jeśli
+\fIpozycja\fP lub \fIdługość\fP jest niedodatnie lub nienumeryczne, zwracany
+jest łańcuch pusty.
+.TP
+.BI index " łańcuch klasa-znakowa"
+Zwraca pierwszą pozycję w \fIłańcuch\fPu gdzie znaleźć można pierwszy znak
+z \fIklasy-znakowej\fP.  Jeśli nie znaleziono żadnego znaku z
+\fIklasy-znakowej\fP, zwraca 0.
+.TP
+.BI length " łańcuch"
+Zwraca długość \fIłańcuch\fPa.
+.TP
+.BI quote " token"
+Interpretuje \fItoken\fP jako łańcuch, nawet jeśli jest on słowem kluczowym,
+jak \fBmatch\fP lub operatorem jak `\fB/\fP'. Umożliwia to testowanie `\fBexpr
+length quote "$x"\fP' lub `\fBexpr quote "$x" : '.*/\\(.\\)'\fP' i otrzymanie
+prawidłowego wyniku nawet jeśli wartością $X będzie, na przykład, `/'
+czy `index'. Ten operator jest rozszerzeniem GNU. Jest wyłączany, jeśli ustawiona
+jest zmienna środowiska \fBPOSIXLY_CORRECT\fP.
+.PP
+Chcąc, by \fBexpr\fP interpretował słowa kluczowe jako łańcuchy należy
+użyć operatora \fBquote\fP.
+.SS Wyrażenia numeryczne
+\fBexpr\fP obsługuje zwyczajowe operatory numeryczne, w kolejności rosnącego
+priorytetu. Operatory łańcuchowe (poprzednia sekcja) mają niższy priorytet,
+zaś łączniki (connectives) (następna sekcja) wyższy.
+.TP
+.BR \+ ", " \-
+Dodawanie i odejmowanie. Obydwa argumenty są rzutowane na liczby.
+Jeśli to niemożliwe, pojawia się błąd.
+.TP
+.BR * ", " / ", " %
+Mnożenie, dzielenie, reszta z dzielenia. Obydwa argumenty są rzutowane
+na liczby. Jeśli to niemożliwe, pojawia się błąd.
+.SS Relacje
+\fBexpr\fP obsługuje zwyczajowe łączniki i relacje logiczne. Mają one wyższy
+priorytet niż operatory łańcuchowe lub numeryczne, opisane w poprzednich
+sekcjach. Oto ich lista, poczynając od operatorów o najmniejszym priorytecie.
+.TP
+.B |
+Zwraca swój pierwszy argument w wypadku gdy jest niezerowy i niepusty,
+lub drugi w przeciwnym wypadku. Jest to zwykła operacja `or'.
+.TP
+.B &
+Zwraca swój pierwszy argument w wypadku gdy żaden z argumentów nie jest
+zerowy ani pusty. W przeciwnym wypadku zwraca zero.
+.TP
+.BR < ", " <= ", " = ", " == ", " != ", " >= ", " >
+Porównuje argumenty i zwraca 1 jeśli relacja jest prawdziwa lub zero w
+przeciwnym wypadku. (\fB==\fP jest synonimem \fB=\fP.)
+\fBexpr\fP próbuje rzutować obydwa argumenty na liczby i dokonać porównania
+numerycznego; jeśli to zawiedzie, próbuje porównania leksykalnego.
+.PP
+Nawiasy są używane zazwyczaj do grupowania. Słowa kluczowe nie mogą być używane
+jako napisy.
+.SS OPCJE
+Gdy uruchomi się GNU
+.B expr
+z jednym argumentem, rozpoznawane są następujące opcje:
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+pracę.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.SH PRZYKŁADY
+Kilka przykładów, łącznie z cytowaniem metaznaków powłoki:
+
+Dodanie 1 do zmiennej powłokowej, w powłoce zgodnej z powłoką Bourne'a:
+.IR a :
+.IP
+ a=\`expr $a + 1\`
+.PP
+Poniższe polecenie może zostać użyte do wydrukowania niekatalogowej części
+nazwy pliku, przechowywanej w zmiennej
+.IR a
+(część ta nie powinna zawierać `/'):
+.IP
+ expr $a : '.*/\e(^.*\e)' '^|' $a
+.LP
+Zauważ cytowane metaznaki powłoki.
+.PP
+Przykład pokazujący, że `\\+' jest operatorem:
+.IP
+ expr aaa : 'a\\+'
+ => 3
+.PP
+Nieco innych:
+.IP
+ expr abc : 'a\\(.\\)c'
+ => b
+ expr index abcdef cz
+ => 3
+ expr index index a
+ error--> expr: syntax error
+ expr index quote index a
+ => 0
+.LP
+.SH KOD ZAKOŃCZENIA
+.B expr
+zwraca następujący kod zakończenia:
+.TP
+.B 0
+jeśli wyrażenie nie jest ani null, ani 0.
+.TP
+.B 1
+jeśli wyrażenie jest null lub 0,
+.TP
+.B 2
+dla nieprawidłowych wyrażeń.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-sh-utils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR dc (1),
+.BR test (1),
+.BR sh-utils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi powłokowych
+GNU wersji 2.0.

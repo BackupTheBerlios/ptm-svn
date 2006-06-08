@@ -1,0 +1,1638 @@
+.\" {PTM/PB/0.1/02-02-1999/"montuj system plików"}
+.\" Translation 1999 Przemek Borys <pborys@dione.ids.pl>
+.\" Pfuh... to było wielkie... Ale łatwe.
+.\" Aktualizacja: PTM/Robert Luberda, sierpień 2002, utils-linux 2.11n
+.\" $Id: mount.8,v 1.15 2003/01/15 18:37:17 ankry Exp $
+.\"
+.\" Copyright (c) 1996 Andries Brouwer
+.\"
+.\" This page is somewhat derived from a page that was
+.\" (c) 1980, 1989, 1991 The Regents of the University of California
+.\" and had been heavily modified by Rik Faith and myself.
+.\" (Probably no BSD text remains.)
+.\" Fragments of text were written by Werner Almesberger, Remy Card,
+.\" Stephen Tweedie and Eric Youngdale.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" 960705, aeb: version for mount-2.7g
+.\" 970114, aeb: xiafs and ext are dead; romfs is new
+.\" 970623, aeb: -F option
+.\" 970914, reg: -s option
+.\" 981111, K.Garloff: /etc/filesystems
+.\" 990111, aeb: documented /sbin/mount.smbfs
+.\" 990730, Yann Droneaud <lch@multimania.com>: updated page
+.\" 991214, Elrond <Elrond@Wunder-Nett.org>: added some docs on devpts
+.\" 010725, Nikita Danilov <NikitaDanilov@Yahoo.COM>: reiserfs options
+.\" 011124, Karl Eichwalder <ke@gnu.franken.de>: tmpfs options
+.\"
+.\"
+.TH MOUNT 8 "14 września 1997" "Linux 2.0" "Podręcznik programisty linuksowego"
+.SH NAZWA
+mount \- montuj system plików
+.SH SKŁADNIA
+.BI "mount [\-lhV]"
+.LP
+.BI "mount \-a [\-fFnrsvw] [\-t " typ_systemu ]
+.br
+.BI "mount [\-fnrsvw] [\-o " opcje " [,...]] " "urządzenie " | " katalog"
+.br
+.BI "mount [\-fnrsvw] [\-t " typ_systemu "] [\-o " opcje "] " "urządzenie katalog"
+.SH OPIS
+Wszystkie pliki dostępne w systemie UNIX są zorganizowane w jednym wielkim
+drzewie, hierarchii plików, zakorzenionej w
+.BR / .
+Pliki te mogą być położone na wielu urządzeniach. Polecenie
+.B mount
+umożliwia przyłączenie systemu plików znajdującego się na danym urządzeniu
+do wielkiego drzewa plików. Odwrotnie, polecenie
+.BR umount (8)
+powoduje odłączenie go.
+
+Standardowa postać polecenia
+.B mount
+to
+.RS
+.br
+.BI "mount \-t" " typ urządzenie katalog"
+.RE
+Nakazuje jądru, by przyłączyło system plików znaleziony na danym
+.I urządzeniu
+(które jest typu
+.IR typ )
+w zadanym
+.IR katalogu .
+Poprzednia zawartość (jeśli istniała) i właściciel oraz prawa katalogu
+.I katalog
+stają się niewidzialne na czas przyłączenia (zamontowania) nowego systemu
+plików. W tym czasie ścieżka
+.I katalog
+odnosi się do korzenia systemu plików na podanym
+.IR urządzeniu .
+
+Trzy formy wywołania niczego faktycznie nie montują:
+.RS
+.br
+.B "mount \-h"
+.RE
+wypisuje komunikat pomocy,
+.RS
+.br
+.B "mount \-V"
+.RE
+wypisuje wersję, a samo
+.RS
+.BI "mount [-l] [-t" " typ" ]
+.RE
+pokazuje listę wszystkich zamontowanych systemów plików
+(typu
+.IR typ ).
+Opcja \-l ujmuje w zestawieniu również etykiety (ext2, ext3 i XFS).
+Patrz niżej.
+
+.\" Faktycznie od 2.3.99. Początkową składnią było: mount -t bind.
+Od wersji 2.4.0 Linuksa możliwe jest ponowne zamontowanie części systemu
+plików w innym miejscu. Służy do tego wywołanie:
+.RS
+.br
+.B "mount --bind stary_katalog nowy_katalog"
+.RE
+
+System plików
+.I proc
+nie jest związany z żadnym urządzeniem specjalnym i podczas jego montowania
+zamiast nazwy urządzenia można użyć dowolnego słowa kluczowego, np.
+.IR proc .
+(Zwyczajowy wybór
+.I none
+jest mniej udany: komunikat błędu `none busy' od
+.B umount
+może być mylący.)
+
+Większość urządzeń jest wskazywanych przez nazwę pliku (specjalnego
+urządzenia blokowego), jak np.
+.IR /dev/sda1 ,
+lecz istnieją inne możliwości. Na przykład w wypadku montowania NFS,
+.I urządzenie
+może wyglądać tak:
+.IR knuth.cwi.nl:/dir .
+Specjalne urządzenie blokowe można wskazać podając etykietę wolumenu
+lub  UUID (zob. opcje \-L i \-U poniżej).
+
+Plik
+.I /etc/fstab
+(zobacz
+.BR fstab (5)),
+może zawierać wiersze opisujące, jakie urządzenia gdzie są zazwyczaj
+montowane i przy użyciu jakich opcji. Plik ten może być używany na trzy
+sposoby:
+.LP
+(i) Polecenie
+.RS
+.br
+.BI "mount \-a [-t" " typ" ]
+.RE
+(zwykle podawane w skryptach startowych) powoduje zamontowanie wszystkich
+systemów plików (danego typu) wymienionych w
+.IR fstab ,
+poza tymi, których wpisy zawierają słowo kluczowe
+.BR noauto .
+Podanie opcji
+.B \-F
+spowoduje, że mount się rozdzieli na kilka procesów, tak że systemy
+plików będą montowane równocześnie.
+.LP
+(ii) Podczas montowania systemu plików wymienionego w
+.IR fstab ,
+wystarczy podać tylko nazwę urządzenia lub tylko punkt montowania.
+.LP
+(iii) Tradycyjnie tylko superużytkownik może montować systemy plików. Jednak
+jeśli
+.I fstab
+w danym wierszu zawiera opcję
+.BR user ,
+to każdy może zamontować odpowiadający temu wpisowi system plików.
+.LP
+Tak więc, jeśli mamy wiersz
+.RS
+.br
+.B "/dev/cdrom  /cd  iso9660  ro,user,noauto,unhide"
+.RE
+to dowolny użytkownik może zamontować system plików iso9660 umieszczony na
+CD-ROM-ie, posługując się poleceniem
+.RS
+.br
+.B "mount /dev/cdrom"
+.RE
+lub
+.RS
+.br
+.B "mount /cd"
+.RE
+Szczegóły opisuje
+.BR fstab (5).
+Tylko użytkownik, który zamontował system plików może ponownie go odmontować.
+Jeżeli zachodzi potrzeba, by odmontowywać mógł każdy, w odpowiednim wierszu 
+.I fstab
+należy
+zamiast
+.B user
+wpisać
+.BR users .
+Opcja
+.B owner
+przypomina opcję
+.BR user ,
+poza tym, że dany użytkownik musi być właścicielem odpowiedniego pliku
+specjalnego. Jest przydatna np. w przypadku
+.I /dev/fd
+jeśli skrypt zgłoszeniowy (login script) czyni danego użytkownika
+korzystającego z konsoli właścicielem tego urządzenia.
+
+Programy
+.B mount
+i
+.B umount
+opiekują się listą obecnie zamontowanych systemów plików, znajdującą się
+w pliku
+.IR /etc/mtab .
+Jeśli nie podano argumentów dla
+.BR mount ,
+to wypisywana jest ta lista.
+Gdy zamontowany jest system plików
+.I proc
+(powiedzmy, że w
+.IR /proc ),
+pliki
+.I /etc/mtab
+i
+.I /proc/mounts
+mają bardzo podobną zawartość. Pierwszy ma trochę więcej informacji, takich
+jak opcje montowania, lecz niekoniecznie jest aktualny. (zobacz opcję
+.B \-n
+poniżej).
+Możliwe jest zastąpienie
+.I /etc/mtab
+dowiązaniem symbolicznym do
+.IR /proc/mounts ,
+ale w ten sposób tracona jest część danych, a szczególnie mniej wygodna
+będzie praca z urządzeniem loop.
+
+.SH OPCJE
+Pełny zestaw opcji używanych przy wywoływaniu
+.B mount
+jest ustalany przez pobranie opcji dla danego systemu plików z
+.IR fstab ,
+a następnie zastosowanie wszelkich opcji podanych argumentem
+.BR \-o ,
+a na koniec opcji
+.BR \-r " lub " \-w ,
+o ile istnieją.
+
+Opcje dostępne dla polecenia
+.BR mount :
+.TP
+.B \-V
+Wypisuje wersję.
+.TP
+.B \-h
+Wypisuje komunikat pomocy.
+.TP
+.B \-v
+Tryb verbose (gadatliwy).
+.TP
+.B \-p "\fInum\fP"
+Jeżeli montowanie wymaga podania hasła, to jest ono czytane z deskryptora
+pliku
+.IR num
+zamiast z terminala.
+.TP
+.B \-a
+Montuje wszystkie systemy plików (zadanych typów) ujęte w
+.IR fstab .
+.TP
+.B \-F
+(Użyte w połączeniu z
+.BR \-a .)
+Dla każdego urządzenia tworzy nowy proces równoległy mount.
+Powoduje to równoległy przebieg montowania różnych urządzeń lub różnych
+serwerów NFS. Zaletą jest większa szybkość: także przekroczenia czasu
+dla NFS będą wyznaczane równolegle. Wadą jest to, że montowania wykonywane
+są w niezdefiniowanej kolejności. Nie można zatem zastosować tej opcji
+do równoczesnego montowania
+.I /usr
+i
+.IR /usr/spool .
+.TP
+.B \-f
+Powoduje wykonywanie wszystkiego poza faktycznym wywołaniem funkcji systemowej.
+Jeśli nie jest to oczywiste: ,,udaje'' to montowanie systemu plików.
+W połączeniu z flagą
+.B \-v
+przydaje się do ustalenia, co usiłuje zrobić polecenie
+.BR mount .
+Może być też używana do dodawania wpisów dla urządzeń, które zamontowano
+wcześniej z opcją -n.
+.TP
+.B \-l
+Dokłada etykiety ext2, ext3 i XFS do wyjścia wypisywanego przez mount.
+Żeby opcja ta mogła działać, mount musi mieć prawo odczytu urządzania
+dyskowego (np. suid root). Etykietę dla ext2 i ext3 nadaje się za pomocą narzędzia
+.BR e2label (8),
+zaś dla XFS - stosując
+.BR xfs_admin (8).
+.TP
+.B \-n
+Montuje bez zapisywania w
+.IR /etc/mtab .
+Jest to niezbędne na przykład gdy
+.I /etc
+znajduje się na systemie plików tylko dla odczytu.
+.TP
+.B \-s
+Toleruje nieodpowiednie opcje montowania, zamiast kończyć pracę
+niepowodzeniem. Powoduje to ignorowanie opcji montowania, które nie są
+obsługiwane przez dany system plików. Nie wszystkie systemy plików rozpoznają
+tę opcję. Istnieje ona dla wspomożenia linuksowego automountera opartego
+na autofs.
+.TP
+.B \-r
+Montuje system plików w trybie tylko dla odczytu. Synonimem jest
+.BR "\-o ro" .
+.TP
+.B \-w
+Montuje system plików w trybie odczytu i zapisu. Tak jest domyślnie.
+Synonimem jest
+.BR "\-o rw" .
+.TP
+.BI \-L " label"
+Montuje partycję posiadającą podaną etykietę
+.IR label .
+.TP
+.BI \-U " uuid"
+Montuje partycję mającą podany
+.IR uuid .
+Te dwie opcje wymagają istnienia pliku
+.IR /proc/partitions
+(obecnego od wersji 2.1.116 Linuksa).
+.TP
+.BI \-t " typ_systemu_plików"
+Argument występujący po
+.B \-t
+jest używany do wskazania rodzaju systemu plików.
+Obecnie obsługiwane są :
+.IR adfs ,
+.IR affs ,
+.IR autofs ,
+.IR coda ,
+.IR coherent ,
+.IR cramfs ,
+.IR devpts ,
+.IR efs ,
+.IR ext ,
+.IR ext2 ,
+.IR ext3 ,
+.IR hfs ,
+.IR hpfs ,
+.IR iso9660 ,
+.IR jfs ,
+.IR minix ,
+.IR msdos ,
+.IR ncpfs ,
+.IR nfs ,
+.IR ntfs ,
+.IR proc ,
+.IR qnx4 ,
+.IR reiserfs ,
+.IR romfs ,
+.IR smbfs ,
+.IR sysv ,
+.IR tmpfs ,
+.IR udf ,
+.IR ufs ,
+.IR umsdos ,
+.IR vfat ,
+.IR xenix ,
+.IR xfs ,
+.IR xiafs .
+Zauważ, że coherent, sysv i xenix są równoważne i że
+.I xenix
+oraz
+.I coherent
+zostaną kiedyś usunięte \(em należy zamiast nich stosować
+.IR sysv .
+Od jądra wersji 2.1.21 typy
+.I ext
+i
+.I xiafs
+już nie istnieją.
+
+Dla większości typów, jedyne, co robi program
+.BR mount ,
+to po prostu wywołuje funkcję systemową
+.IR mount (2),
+i nie jest tu wymagana żadna szczegółowa wiedza o danym systemie plików.
+Jednakże dla kilku typów (jak np. nfs, smbfs, ncpfs) konieczny jest
+niezaplanowany kod. Kod dla nfs jest wbudowany, ale smbfs i ncpfs mają
+osobny program montujący. Żeby umożliwić jednolite traktowanie wszystkich
+typów, mount wywołany z typem
+.I TYP
+uruchamia program
+.I /sbin/mount.TYP
+(jeśli takowy istnieje).
+Ponieważ rozmaite wersje programu
+.I smbmount
+mają różne konwencje wywołań, być może
+.I /sbin/mount.smb
+będzie musiał być skryptem powłoki, który dobierze właściwe wywołanie.
+
+Typ
+.I iso9660
+jest domyślny. Jeśli nie poda się opcji
+.B \-t
+lub jeśli podany zostanie typ
+.BR auto ,
+to typ systemu plików będzie wyszukiwany w superbloku.
+(Obsługiwane są
+.IR adfs ,
+.IR bfs ,
+.IR cramfs ,
+.IR ext ,
+.IR ext2 ,
+.IR ext3 ,
+.IR hfs ,
+.IR hpfs ,
+.IR iso9660 ,
+.IR jfs ,
+.IR minix ,
+.IR ntfs ,
+.IR qnx4 ,
+.IR reiserfs ,
+.IR romfs ,
+.IR ufs ,
+.IR vxfs ,
+.IR xfs ,
+.IR xiafs )
+Jeśli test ten nie powiedzie się, mount próbuje odczytać plik
+.IR /etc/filesystems ,
+lub jeśli on nie istnieje,
+.IR /proc/filesystems .
+Wypróbowane zostaną wszystkie wymienione tam systemy plików, poza tymi
+które są oznaczone jako "nodev" (np.
+.IR devpts ,
+.I proc
+i
+.IR nfs ).
+
+Zauważ, że
+.B auto
+może być przydatne dla montowanych przez użytkownika dyskietek.
+Utworzenie pliku
+.I /etc/filesystems
+przydaje się do zmiany kolejności rozpoznawania (np. do próbowania vfat
+przed msdos) lub w przypadku stosowania modułu autoloadera.
+Uwaga: rozpoznawanie używa heurystyki (obecność odpowiedniej `magii')
+i może rozpoznać zły rodzaj systemu plików.
+
+Można podać więcej niż jeden typ, w postaci listy rozdzielonej przecinkami.
+Lista typów systemów plików może być poprzedzona słowem
+.B no
+aby określić systemy plików, na których żadna akcja nie powinna być wykonywana.
+(Może to mieć znaczenie z opcją
+.BR \-a .)
+
+Na przykład, polecenie:
+.RS
+.RS
+.B "mount \-a \-t nomsdos,ext"
+.RE
+montuje wszystkie systemy plików poza tymi, które są typu
+.I msdos
+lub
+.IR ext .
+.RE
+.TP
+.B \-o
+Opcje podaje się flagą
+.BR \-o ,
+po której następuje oddzielony przecinkami ciąg opcji.
+Niektóre z tych opcji są użyteczne tylko jeśli pojawiają się w pliku
+.IR /etc/fstab .
+Poniższe opcje dotyczą dowolnego montowanego systemu plików (choć nie każdy
+z systemów plików faktycznie je honoruje, np. opcja
+.B sync
+obecnie wpływa tylko na ext2, ext3 i ufs):
+.RS
+.TP
+.B async
+Wszelkie operacje wejścia/wyjścia dla tego systemu plików powinny być
+wykonywane asynchronicznie.
+.TP
+.B atime
+Przy każdym sięgnięciu do pliku aktualizuje czas dostępu zapisany w i-węźle.
+Tak jest domyślnie.
+.TP
+.B auto
+System plików może być montowany opcją
+.BR \-a .
+.TP
+.B defaults
+Używa opcji domyślnych:
+.BR rw ", " suid ", " dev ", " exec ", " auto ", " nouser " i " async.
+.TP
+.B dev
+Interpretuje specjalne urządzenia blokowe i znakowe na danym systemie plików.
+.TP
+.B exec
+Zezwala na uruchamianie binariów.
+.TP
+.B noatime
+Nie wykonuje aktualizacji czasu dostępu w i-węźle położonym na tym systemie
+plików (np. w celu uzyskania szybszego dostępu do bufora wiadomości, co
+przyspiesza działanie serwerów grup dyskusyjnych).
+.TP
+.B noauto
+Dany system plików może być montowany tylko jawnie (np. opcja
+.B \-a
+nie spowoduje jego zamontowania).
+.TP
+.B nodev
+Nie interpretuje specjalnych urządzeń blokowych ani znakowych na systemie
+plików.
+.TP
+.B noexec
+Nie pozwala na uruchamianie żadnych binariów z tego systemu plików.
+Opcja ta może być użyteczna dla serwera, który ma systemy plików
+zawierające binaria dla architektur innych niż jego własna.
+.TP
+.B nosuid
+Nie pozwala na działanie bitów set-user-id i set-group-id.
+(Wygląda na bezpieczną, ale w rzeczywistości raczej taka nie jest jeśli
+zainstalowano suidperl(1).)
+.TP
+.B nouser
+Zabrania zwykłemu użytkownikowi (tzn. innemu niż root) montowania systemu
+plików. Tak jest domyślnie.
+.TP
+.B remount
+Usiłuje ponownie zamontować już zamontowany system plików. Często używane
+do zmiany flag montowania systemu, szczególnie aby umożliwić zapis
+na systemach tylko dla odczytu. Nie zmienia urządzenia ani punktu montowania.
+.TP
+.B ro
+Montuje system plików w trybie tylko dla odczytu.
+.TP
+.B rw
+Montuje system plików w trybie odczytu i zapisu.
+.TP
+.B suid
+Umożliwia działanie bitom set-user-id i set-group-id.
+.TP
+.B sync
+Wszelkie operacje wejścia/wyjścia dla tego systemu plików powinny być
+wykonywane synchronicznie.
+.TP
+.B user
+Pozwala na zamontowanie tego systemu plików przez zwykłego użytkownika.
+Opcja ta implikuje opcje
+.BR noexec ", " nosuid ", i " nodev
+(chyba że są przesłaniane przez następne opcje, jak w linii
+.BR user,exec,dev,suid ).
+.RE
+.TP
+.B users
+Pozwala każdemu użytkownikowi na zamontowanie i odmontowanie tego systemu plików.
+Opcja ta implikuje opcje
+.BR noexec ", " nosuid ", i " nodev
+(chyba że są przesłaniane przez następne opcje, jak w linii
+.BR user,exec,dev,suid ).
+.TP
+.B encryption
+Określa używany algorymt kodowania. Używane w połączeniu z opcją
+.BR loop .
+.TP
+.B keybits
+Określa rozmiar klucza używanego w algorytmie kodowania. Używane w połączeniu
+z opcjami 
+.BR loop " i " encryption .
+.RE
+
+.SH "OPCJE MONTOWANIA SPECYFICZNE DLA RÓŻNYCH SYSTEMÓW PLIKÓW"
+Następujące opcje stosuje się tylko do określonych systemów plików.
+Uporządkowaliśmy je według systemu plików. Wszystkie występują po fladze
+.BR \-o .
+
+.SH "Opcje montowania dla adfs"
+.TP
+\fBuid=\fP\fIwartość\fP i \fBgid=\fP\fIwartość\fP
+Ustawia właściciela i grupę plików w danym systemie plików
+(domyślnie: uid=gid=0).
+.TP
+\fBownmask=\fP\fIwartość\fP i \fBothmask=\fP\fIwartość\fP
+Ustawia maskę praw dla, odpowiednio, 'właściciela' i 'innych'
+(domyślnie, odpowiednio: 0700 i 0077).
+Zobacz także
+.IR /usr/src/linux/Documentation/filesystems/adfs.txt .
+
+.SH "Opcje montowania dla affs"
+.TP
+\fBuid=\fP\fIwartość\fP i \fBgid=\fP\fIwartość\fP
+Ustawia właściciela i grupę korzenia systemu plików (domyślnie: uid=gid=0), 
+lecz opcje
+.B uid
+lub
+.B gid
+bez podanej wartości pobierają uid i gid bieżącego procesu).
+.TP
+\fBsetuid=\fP\fIwartość\fP i \fBsetgid=\fP\fIwartość\fP
+Ustawia właściciela i grupę wszystkich plików.
+.TP
+.BI mode= wartość
+Ustawia prawa wszystkich plików na
+.IR wartość " & 0777,"
+nie zważając na oryginalne prawa.
+Dodaje prawa przeszukiwania dla katalogów, które mają prawo odczytu.
+Wartość jest podawana ósemkowo.
+.TP
+.B protect
+Nie dopuszcza do zmian w bitach ochrony systemu plików.
+.TP
+.B usemp
+Ustawia uid i gid korzenia systemu plików na uid i gid punktu montowania, aż
+do pierwszego sync lub umount, a potem kasuje tę opcję. Dziwne...
+.TP
+.B verbose
+Wypisuje informację o każdym pomyślnym montowaniu.
+.TP
+.BI prefix= napis
+Przedrostek używany przed nazwą wolumenu, przy podążaniu za dowiązaniem.
+.TP
+.BI volume= napis
+Przedrostek (długości najwyżej 30), używany przed '/' przy podążaniu
+za dowiązaniem symbolicznym.
+.TP
+.BI reserved= wartość
+(Domyślnie: 2.) Liczba nieużytkowanych bloków na początku urządzenia.
+.TP
+.BI root= wartość
+Podaje jawnie lokalizację bloku korzenia (root block).
+.TP
+.BI bs= wartość
+Podaje rozmiar bloku. Dozwolone wartości to 512, 1024, 2048, 4096.
+.TP
+.BR grpquota " / " noquota " / " quota " / " usrquota
+Opcje te są przyjmowane, lecz są ignorowane.
+(Jednakże narzędzia przydziałów dyskowych (quota) mogą reagować na takie
+łańcuchy w
+.IR /etc/fstab .)
+
+.SH "Opcje montowania dla coherent"
+Brak.
+
+.SH "Opcje montowania dla devpts"
+devpts jest pseudosystemem plików, tradycyjnie montowanym w
+.IR /dev/pts .
+W celu uzyskania pseudoterminala, proces otwiera
+.IR /dev/ptmx .
+Jest mu wówczas udostępniany numer pseudoterminala; podporządkowany
+pseudoterminal jest dostępny jako
+.IR /dev/pts/ <numer>.
+.TP
+\fBuid=\fP\fIwartość\fP i \fBgid=\fP\fIwartość\fP
+Ustawia właściciela lub grupę nowotworzonych PTY według zadanych wartości.
+Jeśli nie podano żadnych, to zostaną nadane UID i GID procesu tworzącego.
+Na przykład, jeśli mamy grupę tty o GID=5, to
+.B gid=5
+spowoduje, że nowotworzone PTY będą należeć do grupy tty.
+.TP
+.BI mode= wartość
+Nadaje trybowi nowotworzonych PTY zadaną wartość. Domyślnie jest to 0600.
+Wartość
+.B mode=620
+i 
+.B gid=5
+powoduje, że dla nowoutworzonych PTY będzie domyślnie "mesg y".
+
+.SH "Opcje montowania dla ext"
+Brak.
+Zauważ, że system plików `ext' jest przedawniony. Nie używaj go.
+Od Linuksa wersji 2.1.21 kod źródłowy jądra nie zawiera już extfs.
+
+.SH "Opcje montowania dla ext2"
+System plików `ext2' jest standardowym systemem plików Linuksa. Z powodu
+błędu jądra, może być montowany z dowolnymi opcjami montowania
+(poprawiono w Linuksie 2.0.4).
+.TP
+.BR bsddf " / " minixdf
+Ustala zachowanie dla funkcji systemowej
+.IR statfs .
+Zachowanie
+.B minixdf
+to zwracanie w polu
+.I f_blocks
+całkowitej ilość bloków systemu plików, podczas gdy zachowaniem
+.B bsddf
+(które jest domyślne) jest odejmowanie nadmiarowych bloków używanych przez
+ext2 i niedostępnych dla przechowywania plików. Tak więc
+.RE
+.nf
+
+% mount /k -o minixdf; df /k; umount /k
+Filesystem   1024-blocks  Used Available Capacity Mounted on
+/dev/sda6      2630655   86954  2412169      3%   /k
+% mount /k -o bsddf; df /k; umount /k
+Filesystem   1024-blocks  Used Available Capacity Mounted on
+/dev/sda6      2543714      13  2412169      0%   /k
+
+.fi
+(Zauważ, że ten przykład pokazuje, że można dodać opcje wiersza poleceń do
+opcji podanych w
+.IR /etc/fstab .)
+
+.TP
+.BR check " / " check=normal " / " check=strict
+Ustawia poziom sprawdzania. Gdy ustawiona jest przynajmniej jedna z tych opcji (a
+.B check=normal
+jest ustawiane domyślnie), podczas montowania sprawdzane są i-węzły i bitmapy
+bloków (co na dużym dysku może zabrać pół minuty lub coś koło tego i jest
+raczej nieprzydatne). Przy dokładnym (strict) sprawdzaniu, dealokacja bloków
+sprawdza, czy blok do zwolnienia leży w strefie danych.
+.TP
+.BR check=none " / " nocheck
+Bez sprawdzania. Tak jest szybko. Najnowsze jądra nie mają już opcji
+sprawdzania - kontrola za pomocą
+.BR e2fsck (8).
+ma więcej sensu.
+.TP
+.B debug
+Wypisuje informacje diagnostyczne przy każdym (re)montowaniu.
+.TP
+.BR errors=continue " / " errors=remount-ro " / " errors=panic
+Definiuje zachowanie przy napotkaniu błędu.
+(Albo ignoruje błędy, zaznaczając tylko system plików jako błędny i kontynuując,
+albo ponownie montuje system plików na tylko do odczytu, albo panikuje
+i zatrzymuje system.) Domyślne ustawienie jest wpisane w superbloku systemu
+plików i może być zmienione za pomocą
+.BR tune2fs (8).
+.TP
+.BR grpid " lub " bsdgroups " / " nogrpid " lub " sysvgroups
+Opcje te definiują, jaki identyfikator grupy (gid) otrzyma nowo utworzony
+plik. Gdy ustawiony jest
+.BR grpid ,
+to pobiera gid katalogu, w którym jest utworzony; w przeciwnym wypadku
+(domyślnie) bierze fsgid bieżącego procesu, chyba że katalog ma ustawiony
+bit setgid, wówczas pobiera gid katalogu rodzicielskiego i
+dodatkowo otrzymuje bit setgid, jeśli sam jest katalogiem.
+.TP
+\fBresgid=\fP\fIn\fP i \fBresuid=\fP\fIn\fP
+System plików ext2 rezerwuje pewną ilość wolnego miejsca (domyślnie 5%,
+zobacz
+.BR mke2fs (8)
+i
+.BR tune2fs (8)).
+Opcje te określają, kto może używać zarezerwowanych bloków.
+(Ogólnie: każdy, kto ma podany uid lub należy do podanej grupy.)
+.TP
+.BI sb= n
+Zamiast bloku 1, jako superbloku używa bloku
+.IR n .
+Może to być przydatne, gdy system plików został uszkodzony. Zazwyczaj kopie
+superbloku znajdują się co 8192 bloków: w bloku 1, 8193, 16385, ...
+(Dlatego na dużym systemie plików istnieją setki, lub nawet tysiące kopii
+superbloku. Od wersji 1.08,
+.B mke2fs
+ma opcję \-s (sparse superblock), redukującą liczbę zapasowych superbloków, 
+a od wersji 1.15 jest ona domyślna. Zauważ, że może to oznaczać, że systemy
+plików typu ext2 stworzone przez nowe
+.B mke2fs
+nie mogą być montowane do zapisu pod Linuksem 2.0.*.)
+Liczba bloków podawana jest w jednostkach 1k. Dlatego, aby użyć logicznego
+bloku 32768 na systemie plików z blokami o rozmiarze 4k, należy podać "sb=131072".
+.TP
+.BR grpquota " / " noquota " / " quota " / " usrquota
+Opcje te są przyjmowane, lecz ignorowane.
+.TP
+.BR nouid32
+Wyłącza 32-bitowe UID-y i GID-y w celu zachowania zgodności ze starszymi
+jądrami, które przechowują i oczekują wartości 16-bitowych.
+
+.SH "Opcje montowania dla ext3"
+System plików `ext3'  jest wersją systemu ext2, uzupełnioną o dziennik
+(journal).
+Przyjmuje takie same opcje jak ext2 oraz dodatkowo:
+.\" .TP
+.\" .BR abort
+.\" Mount the file system in abort mode, as if a fatal error has occurred.
+.TP
+.BR journal=update
+Aktualizuje dziennik systemu plików ext3 do obecnego formatu.
+.TP
+.BR journal=inum
+Jeżeli dziennik już istnieje, ta opcja jest ignorowana. W przeciwnym wypadku,
+określa numer i-węzła, który reprezentuje dziennik systemu plików ext3; ext3
+utworzy nowy dziennik, nadpisując starą zawartość pliku, który zajmuję i-węzeł
+o numerze
+.IR inum .
+.TP
+.BR noload
+Podczas montowania nie ładuje dziennika systemu plików ext3.
+.TP
+.BR data=journal " / " data=ordered " / " data=writeback
+Określa tryb zapisywania dziennika dla plików. Dziennik dla metadanych
+zawsze jest tworzony.
+.RS
+.TP
+.B journal
+Wszystkie dane są zapisywane do dziennika zanim zostaną zapisane do głównego
+systemu plików.
+.TP
+.B ordered
+Domyślny tryb. Wszystkie dane są zapisywane bezpośrednio do głównego systemu plików
+zanim ich metadane zostaną zapisane do dziennika.
+.TP
+.B writeback
+Nie jest zachowywany porządek danych - mogą one zostać zapisane
+do głównego systemu plików po zapisaniu metadanych do dziennika.
+Data ordering is not preserved - data may be written into the main
+file system after its metadata has been committed to the journal.
+Chodzą słuchy, że jest to opcja zapewniająca największą wydajność.
+Zachowuje integralność systemu plików, jednakże po krachu systemu
+i odtwarzaniu dziennika w plikach mogą się pojawić stare dane.
+
+.SH "Opcje montowania dla fat"
+(Uwaga:
+.I fat
+nie jest odrębnym rodzajem systemu plików, ale wspólną częścią systemów
+plików
+.IR msdos ,
+.I umsdos
+i
+.IR vfat .)
+.TP
+.BR blocksize=512 " / " blocksize=1024 " / " blocksize=2048
+Ustawia rozmiar bloku (domyślnie 512).
+.TP
+\fBuid=\fP\fIwartość\fP i \fBgid=\fP\fIwartość\fP
+Ustawia właściciela i grupę wszystkich plików (domyślnie: uid i gid bieżącego
+procesu).
+.TP
+.BI umask= wartość
+Ustawia umask (maskę bitową praw, które 
+.B nie
+występują). Domyślnie przyjmuje się wartość umask bieżącego procesu.
+Wartość jest podawana ósemkowo.
+.TP
+.BI check= wartość 
+Można wybrać trzy stopnie:
+.RS
+.TP
+.B r[elaxed]
+Akceptowane i równoważne sobie są zarówno wielkie, jak i małe litery.
+Części długich nazw są obcinane (np.
+.I verylongname.foobar
+staje się
+.IR verylong.foo ),
+początkowe i wtrącone spacje są akceptowane jako część nazwy (nazwa i
+rozszerzenie).
+.TP
+.B n[ormal]
+Podobnie jak "relaxed", lecz wiele znaków specjalnych (jak *, ?, <, spacje,
+itp.) jest odrzucanych. Tak jest domyślnie.
+.TP
+.B s[trict]
+Jak "normal", lecz nazwy nie mogą zawierać długich części i znaków
+specjalnych, które czasem są używane pod Linuksem, lecz nie są akceptowane
+przez MS-DOS (+, =, spacje itp.)
+.RE
+.TP
+.BI codepage= wartość
+Ustawia stronę kodową do konwersji znaków krótkiej nazwy w systemach
+plików FAT i VFAT. Domyślnie stosowana jest strona kodowa 437.
+.TP
+.BR conv=b[inary] " / " conv=t[ext] " / " conv=a[uto]
+System plików
+.I fat
+może dokonywać konwersji CRLF<-->NL (format tekstowy MS-DOS na format tekstowy
+UNIX) w jądrze. Dostępne są następujące tryby konwersji:
+.RS
+.TP
+.B binary
+brak konwersji. Domyślne.
+.TP
+.B text
+Konwersja CRLF<-->NL wykonywana dla wszystkich plików.
+.TP
+.B auto
+Konwersja CRLF<-->NL dla wszystkich plików, które nie mają "ogólnie znanego
+rozszerzenia binarnego". Listę znanych rozszerzeń można znaleźć na początku
+.I fs/fat/misc.c
+(w wersji 2.0, na liście są: exe, com, bin, app, sys, drv, ovl, ovr, obj,
+lib, dll, pif, arc, zip, lha, lzh, zoo, tar, z, arj, tz, taz, tzp, tpz,
+gz, tgz, deb, gif, bmp, tif, gl, jpg, pcx, tfm, vf, gf, pk, pxl, dvi).
+.PP
+Programy, które dokonują obliczonych lseek-ów, nie będą zadowolone z
+konwersji. Niektórzy ludzie utracili dane przez tę translację. Strzeżcie
+się!
+
+Dla systemów zamontowanych w trybie binarnym, dostępne są narzędzia
+konwersji (fromdos/todos).
+.RE
+.TP
+.BI cvf_format= moduł
+Wymusza na sterowniku stosowanie modułu CVF (Compressed Volume File)
+.RI cvf_ moduł
+zamiast automatycznego wykrywania. Jeżeli jądro obsługuje kmod, to opcja
+cvf_format=xxx steruje także ładowaniem na żądanie modułu CVF.
+.TP
+.BI cvf_option= opcja
+Opcja przekazywana do modułu CVF.
+.TP
+.B debug
+Włącza flagę
+.IR debug .
+Wypisana zostanie wersja i lista parametrów systemu plików (te
+dane wypisywane są też jeśli parametry są niespójne).
+.TP
+.BR fat=12 " / " fat=16 " / " fat=32
+Określa fat 12-, 16- lub 32-bitowy. To przesłania procedurę
+automatycznego wykrywania typu FAT. Używaj ostrożnie!
+.TP
+.BI iocharset= wartość
+Zestaw znaków używany do konwersji między znakami 8-bitowymi a 16-bitowymi
+znakami Unikodu. Domyślnym jest iso8859-1. Długie nazwy plików są
+przechowywane na dysku w formacie Unicode.
+.TP
+.B quiet
+Włącza flagę
+.I quiet
+(cicho). Próby chown lub chmod nie zwracają błędów, chociaż się nie udają.
+Używaj ostrożnie!
+.TP
+.B "sys_immutable, showexec, dots, nodots, dotsOK=[yes|no]"
+Różne bezmyślne próby wymuszenia konwencji Uniksa lub DOS-u na systemie
+plików FAT.
+
+.SH "Opcje montowania dla hpfs"
+.TP
+\fBuid=\fP\fIwartość\fP i \fBgid=\fP\fIwartość\fP
+Ustawia właściciela i grupę wszystkich plików (domyślnie: uid i gid bieżącego
+procesu).
+.TP
+.BI umask= wartość
+Ustawia umask (maskę bitową praw, które 
+.B nie
+występują). Domyślnie używany jest umask bieżącego procesu.
+Wartość podawana jest ósemkowo.
+.TP
+.BR case=lower " / " case=asis
+Konwertuje wszystkie nazwy plików na małe litery lub pozostawia bez zmian.
+(Domyślnie:
+.BR case=lower .)
+.TP
+.BR conv=binary " / " conv=text " / " conv=auto
+Dla
+.BR conv=text ,
+usuwa losowe znaki CR (konkretnie wszystkie, po których występuje NL) podczas
+odczytu pliku.
+Dla
+.BR conv=auto ,
+wybiera mniej lub bardziej losowo między
+.BR conv=binary " i " conv=text .
+Dla
+.BR conv=binary ,
+po prostu czyta to, co jest w pliku. Tak jest domyślnie.
+.TP
+.B nocheck
+Nie przerywa montowania gdy zawiodą pewne kontrole spójności.
+
+.SH "Opcje montowania dla iso9660"
+Normalne nazwy plików
+.I iso9660
+pojawiają się w formacie 8.3 (tzn. występują DOS-owe ograniczenia długości
+nazw plików), a w dodatku wszystkie znaki pisane są wielkimi literami.
+Poza tym nie ma pola właściciela, ochrony, liczby dowiązań, zastrzeżeń
+dla urządzeń znakowych/blokowych, itd.
+
+Rozszerzeniem iso9660 jest Rock Ridge, który udostępnia wszystkie te
+uniksopodobne właściwości. Najprościej mówiąc, dla każdego wpisu katalogowego
+istnieją w nim rozszerzenia, które uzupełniają wszystkie informacje.
+Gdy używane jest Rock Ridge, system plików jest nieodróżnialny od normalnego
+uniksowego systemu plików (poza tym, że jest tylko do odczytu, oczywiście).
+.TP
+.B norock
+Wyłącza korzystanie z rozszerzeń Rock Ridge, nawet jeśli są dostępne. Zob.\&
+.BR map .
+.TP
+.B nojoliet
+Wyłącza korzystanie z rozszerzeń Joliet firmy Microsoft, nawet jeśli są
+dostępne. Zob.\&
+.BR map .
+.TP
+.BR check=r[elaxed] " / " check=s[trict]
+Z
+.BR check=relaxed ,
+nazwa pliku przed dokonywaniem podglądu jest najpierw przekształcana na
+małe litery. Prawdopodobnie ma to znaczenie tylko razem z
+.B norock
+i
+.BR map=normal .
+(Domyślnie:
+.BR check=strict .)
+.TP
+\fBuid=\fP\fIwartość\fP i \fBgid=\fP\fIwartość\fP
+Nadaje wszystkim plikom systemu plików wskazany identyfikator użytkownika
+i grupy, być może przesłaniając informacje znalezione w rozszerzeniach
+Rock Ridge.
+(Domyślnie:
+.BR uid=0,gid=0 .)
+.TP
+.BR map=n[ormal] " / " map=o[ff] " / " map=a[corn]
+Dla wolumenów typu innego niż Rock Ridge, normalna translacja nazwy
+odwzorowuje wielkie litery ASCII na małe, porzuca kończące `;1'
+i zamienia `;' na `.'.
+Z
+.B map=off
+nie jest dokonywana konwersja nazw. Zobacz
+.BR norock .
+(Domyślnie:
+.BR map=normal .)
+.B map=acorn
+jest podobne do
+.BR map=normal ,
+ale stosuje także rozszerzenia Acorn, jeśli występują.
+.TP
+.BI mode= wartość
+Dla wolumenów typu innego niż Rock Ridge, nadaje wszystkim plikom
+wskazane prawa. (Domyślnie: prawa dla odczytu dla wszystkich.)
+Od Linuksa 2.1.37 nie trzeba już podawać trybu dziesiętnie. (Tryb ósemkowy jest
+wskazywany przez 0 na początku).
+.TP
+.B unhide
+Pokazuje również pliki ukryte i związane.
+.TP
+.B block=[512|1024|2048]
+Ustawia rozmiar bloku we wskazanym wolumenie.
+(Domyślnie:
+.BR block=1024 .)
+.TP
+.BR conv=a[uto] " / " conv=b[inary] " / " conv=m[text] " / " conv=t[ext]
+(Domyślnie:
+.BR conv=binary .)
+Od Linuksa 1.3.54 opcja ta już nie działa. (A niebinarne ustawienia bywały
+bardzo niebezpieczne, często prowadziły do milczącego niszczenia danych).
+.TP
+.B cruft
+Jeśli starszy bajt długości pliku zawiera inne śmieci, warto ustawić tę opcję
+montowania, aby był ignorowany. Powoduje to, że maksymalny rozmiar pliku
+nie może być większy niż 16MB. Opcja `cruft' jest ustawiana automatycznie
+jeśli cały CDROM ma dziwny rozmiar (ujemny lub większy niż 800 MB). Jest też
+ustawiana, gdy numery sekwencyjne wolumenu są inne niż 0 lub 1.
+.TP
+.B session=x
+Wybiera numer sesji na CD wielosesyjnych. (Od 2.3.4.)
+.TP
+.B sbsector=xxx
+Sesja zaczyna się od sektora xxx. (Od 2.3.4.)
+
+.SH "Opcje montowania dla miniksa"
+Brak.
+
+.SH "Opcje montowania dla msdos"
+Zobacz opcje dla FAT.
+Jeśli system plików
+.I msdos
+wykryje niespójność, zgłasza błąd i ustawia system plików na tylko dla
+odczytu. System plików może być znowu dostępny do zapisu przez ponowne
+zamontowanie.
+
+.SH "Opcje montowania dla ncp"
+Tak jak przy
+.IR nfs ", implementacja " ncp
+oczekuje binarnego argumentu
+.RI ( "struct ncp_mount_data" )
+funkcji systemowej mount. Argument ten jest konstruowany przez
+.BR ncpmount (8),
+a bieżąca wersja
+.B mount
+(2.6h) nic nie wie o ncp.
+
+.SH "Opcje montowania dla nfs"
+Zamiast tekstowych napisów opcji, przetwarzanych przez jądro, system plików
+.I nfs
+oczekuje binarnych argumentów typu
+.IR "struct nfs_mount_data" .
+Program
+.B mount
+sam z siebie przetwarza następujące opcje (postaci `cecha=wartość') i wstawia
+je do wymienionej struktury:
+.BI rsize= n,
+.BI wsize= n,
+.BI timeo= n,
+.BI retrans= n,
+.BI acregmin= n,
+.BI acregmax= n,
+.BI acdirmin= n,
+.BI acdirmax= n,
+.BI actimeo= n,
+.BI retry= n,
+.BI port= n,
+.BI mountport= n,
+.BI mounthost= nazwa,
+.BI mountprog= n,
+.BI mountvers= n,
+.BI nfsprog= n,
+.BI nfsvers= n,
+.BI namlen= n.
+Opcja
+.BI addr= n
+jest akceptowana, lecz ignorowana.
+Rozpoznawane są również następujące opcje logiczne, które mogą być
+poprzedzane słowem
+.BR no :
+.BR bg ,
+.BR fg ,
+.BR soft ,
+.BR hard ,
+.BR intr ,
+.BR posix ,
+.BR cto ,
+.BR ac ,
+.BR tcp ,
+.BR udp ,
+.BR lock .
+Szczegóły można znaleźć w
+.BR nfs (5).
+
+Szczególnie użyteczne opcje obejmują
+.TP
+.B rsize=8192,wsize=8192
+Uczyni to połączenie nfs dużo szybszym niż z domyślnym buforem wielkości 1024.
+(NFSv2 nie działa z większymi wartościami
+.B rsize
+i
+.BR wsize .)
+.TP
+.B hard
+Program sięgający do pliku na zamontowanym systemie plików NFS zawiesi się,
+gdy serwer padnie. Procesu takiego nie da się przerwać ani zabić, chyba że
+podano również
+.BR intr .
+Gdy serwer NFS stanie się znowu aktywny, program będzie kontynuował
+bez przeszkód od miejsca, w którym był. Prawdopodobnie tego właśnie chcesz.
+.TP
+.B soft
+Opcja ta pozwala jądru na kończenie prób po upłynięciu zadanego limitu czasu
+(timeout) jeśli serwer nfs nie odpowiada przez jakiś czas.
+Czas podaje się za pomocą
+.BR timeo=time .
+Opcja ta jest użyteczna, jeśli serwer nfs czasem nie odpowiada lub jest
+w trakcie ponownego uruchamiania w momencie gdy jakiś proces próbuje
+uzyskać leżący na nim plik.
+Zwykle po prostu powoduje mnóstwo kłopotów.
+.TP
+.B nolock
+Nie stosuje blokowania. Nie uruchamia procesu
+.BR lockd (8).
+
+.SH "Opcje montowania dla ntfs"
+.TP
+.BI iocharset= nazwa
+Zestaw znaków stosowany przy zwracaniu nazw plików.
+W przeciwieństwie do VFAT, NTFS eliminuje nazwy zawierające znaki nie dające
+się przekształcić.
+.TP
+.BR utf8
+Do konwersji nazw plików stosuje UTF-8.
+.TP
+.B uni_xlate=[0|1|2]
+Dla 0 (lub `no' albo `false') nie używa specjalnych kodowania nieznanych znaków
+Unikodu.
+Dla 1 (lub `yes' albo `true') lub 2 używa 4-bajtowych sekwencji specjalnych w stylu vfat
+zaczynających się od ":". Liczba 2 oznacza kodowanie little-endian, a 1 - kodowanie
+big-endian z odwróconymi bajtami.
+.TP
+.B posix=[0|1]
+jeśli jest włączone (posix=1), to system plików rozróżnia wielkie i małe
+litery. Nazwy zastępcze 8.3 są przedstawiane jako dowiązania twarde, a nie
+pomijane.
+.TP
+\fBuid=\fP\fIwartość\fP, \fBgid=\fP\fIwartość\fP i \fBumask=\fP\fIwartość\fP
+Ustawia prawa plików dla danego systemu. Domyślnie ich właścicielem jest root
+i nikt inny nie może ich czytać.
+
+.SH "Opcje montowania dla systemu proc"
+.TP
+\fBuid=\fP\fIwartość\fP i \fBgid=\fP\fIwartość\fP
+Opcje te są rozpoznawane, lecz o ile wiem, nie mają żadnego efektu.
+
+.SH "Opcje montowania dla reiserfs"
+Opcje montowania systemu reiserfs są bardziej dokładnie opisane pod adresem
+.IR http://www.namesys.com/mount-options.html .
+.TP
+.BR conv
+Mówi wersji 3.6 oprogramowania reiserfs, aby zamontowała wersję 3.5 systemu plików,
+używając formatu 3.6 dla nowoutworzonych plików. Ten system plików nie będzie już
+zgodny z wersją 3.5 narzędzi reiserfs.
+.TP
+.BR hash=rupasov " / " hash=tea " / " hash=r5 " / " hash=detect
+Wybiera funkcję mieszającą (haszującą) do znajdowania plików w katalogach.
+.RS
+.TP
+.B rupasov
+Funkcja haszująca autorstwa Yury Yu. Rupasova. Jest szybka i zachowuje lokalizację,
+mapując nazwy plików bliskie w porządku leksykograficznym na bliskie sobie wartości
+funkcji. Z powodu wysokiego prawdopodobieństwa kolizji w haszowaniu, ta opcja nie 
+powinna być używana.
+.TP
+.B tea
+Funkcja Davis-Meyera zaimplementowana przez Jeremy'ego Fitzhardinge'a.
+Używa mieszania permutującego bity w nazwie pliku. Wykazuje dużą losowość
+wyników i teoretycznie małe prawdopodobieństwo kolizji.
+Może być używana, jeżeli funkcja r5 powoduje błędy EHASHCOLLISION.
+.TP
+.B r5
+Zmodyfikowana wersja funkcji rupasov. Używana domyślnie i jest najlepszym
+wyborem, jeżeli system plików nie zawiera dużych katalogów i niezwykłych
+nazw plików.
+.TP
+.B detect
+Powoduje, że
+.IR mount
+wykryje, która funkcja mieszająca jest używana, sprawdzając właśnie montowany
+system plików, i zapisze tę informację w superbloku systemu reiserfs.
+Ta opcja jest użyteczna przy pierwszym montowaniu systemu plików o starym formacie.
+.RE
+.TP
+.BR hashed_relocation
+Stroi mechanizm przydzielania bloków. Może powodować w pewnych okolicznościach
+poprawienie wydajności systemu.
+.TP
+.BR no_unhashed_relocation
+Stroi mechanizm przydzielania bloków. Może powodować w pewnych okolicznościach
+poprawienie wydajności systemu.
+.TP
+.BR noborder
+Wyłącza algorytm przydzielania granicznego wymyślony przez Yury'ego Yu. Rupasova.
+Może powodować w pewnych okolicznościach poprawienie wydajności systemu.
+.TP
+.BR nolog
+Wyłącza dziennik. Może w pewnych sytuacjach spowodować nieznaczne podniesienie
+wydajności systemu kosztem utracenia szybkiego odzyskiwania danych po krachu systemu.
+Nawet jeśli ta opcja jest włączona, reiserfs wciąż przeprowadza wszystkie operacje
+związane z dziennikiem, ale go nie zapisuje. Prace przy implementacji opcji
+.IR nolog
+wciąż trwają.
+.TP
+.BR notail
+Domyślnie reiserfs przechowuje małe pliki i `końcówki plików' bezpośrednio
+w swoim drzewie. Jest to zachowanie mylące dla nie których narzędzi 
+użytkowych takich jak
+.BR LILO (8) .
+Ta opcja wyłącza pakowanie plików do drzewa.
+.TP
+.BR replayonly
+Powtarza transakcje zapisane w dzienniku, ale nie montuje systemu plików.
+Głównie używane przez
+.IR reiserfsck .
+.TP
+.BI resize= liczba
+Opcje remontowania, która pozwala na rozszerzenie partycji reiserfs.
+Z tą opcją reiserfs przyjmuje, że na urządzeniu jest 
+.I liczba
+bloków.
+Opcja jest używana z urządzeniami zarządzanymi przez menedżera logicznych
+woluminów (LVM).
+Istniej specjalne narzędzie
+.IR resizer ,
+które można pobrać z
+.IR ftp://ftp.namesys.com/pub/reiserfsprogs .
+
+
+.SH "Opcje montowania dla romfs"
+Brak.
+
+.SH "Opcje montowania dla systemu smb"
+Tak jak
+.IR nfs ", implementacja " smb
+oczekuje binarnego argumentu
+.RI ( "struct smb_mount_data" )
+do funkcji systemowej mount. Argument ten jest konstruowany przez
+.BR smbmount (8)
+a bieżąca wersja
+.B mount
+(2.9w) nie wie nic o smb.
+
+.SH "Opcje montowania dla sysv"
+Brak.
+
+.SH "Mount options for tmpfs"
+Poniższe parametry akceptują przyrostek
+.BR k ,
+.B m
+lub
+.B g
+dla Ki, Mi, Gi (binarne kilo, mega oraz giga) i mogą być zmienione w czasie
+ponownego montowania.
+.TP
+.BI size= nbytes
+Nadpisuje domyślny rozmiar sustemu plików.
+Rozmiar może być podany w bajtach i jest zaokrąglany do stron.
+Domyślną wartością jest połowa rozmiaru pamięci.
+.TP
+.B nr_blocks=
+Ustawia liczbę bloków.
+.TP
+.B nr_inodes=
+Ustawia liczbę węzłów.
+.TP
+.B mode=
+Określa początkowe prawa dostępu głównego katalogu.
+
+.SH "Opcje montowania dla udf"
+.TP
+.B gid=
+Ustawia domyślną grupę.
+.TP
+.B umask=
+Ustawia domyślne umask.
+.TP
+.B uid=
+Ustawia domyślnego użytkownika.
+.TP
+.B unhide
+Pokazuje pliki, które inaczej byłyby ukryte.
+.TP
+.B undelete
+Pokazuje na listach pliku usunięte.
+.TP
+.B strict
+Ustawia ścisłą zgodność (nieużywane).
+.TP
+.B utf8
+(nieużywane).
+.TP
+.B iocharset
+(nieużywane).
+.TP
+.B bs=
+Ustawia rozmiar bloku. (Może nie działać, chyba że 2048.)
+.TP
+.B novrs
+Pomija rozpoznawanie numeru sekwencyjnego wolumenu.
+.\" Skip volume sequence recognition.
+.TP
+.B session=
+Ustawia sesję CD-ROM licząc od 0. Domyślnie: ostatnia sesja.
+.TP
+.B anchor=
+Przesłania położenie standardowego zakotwiczenia (anchor). Domyślnie: 256.
+.TP
+.B volume=
+Przesłania położenie VolumeDesc. (nieużywane)
+.TP
+.B partition=
+Przesłania położenie PartitionDesc. (nieużywane)
+.TP
+.B lastblock=
+Ustawia ostatni blok systemu plików.
+.TP
+.B fileset=
+Przesłania położenie bloku zestawu plików (fileset block). (nieużywane)
+.TP
+.B rootdir=
+Przesłania położenie katalogu głównego). (nieużywane)
+
+.SH "Opcje montowania dla ufs"
+.TP
+.BI ufstype= wartość
+UFS jest systemem plików szeroko wykorzystywanym w różnych systemach
+operacyjnych. Problem stanowią różnice pomiędzy implementacjami.
+Cechy niektórych z nich są nieudokumentowane, tak więc trudno rozpoznać
+automatycznie typ ufs.
+Z tego powodu użytkownik musi określić typ ufs za pomocą opcji montowania.
+Możliwe wartości to:
+.RS
+.TP
+.B old
+Stary format ufs, jest to typ domyślny, tylko do odczytu.
+.TP
+.B 44bsd
+Dla systemów plików utworzonych przez system typu BSD (NetBSD,FreeBSD,OpenBSD).
+.TP
+.B sun
+Dla systemów plików utworzonych przez SunOS lub Solaris na komputerze Sparc.
+.TP
+.B sunx86
+Dla systemów plików utworzonych przez Solaris na x86.
+.TP
+.B nextstep
+Dla systemów plików utworzonych przez NeXTStep (na stacji roboczej NeXT)
+(obecnie tylko do odczytu).
+.TP
+.B nextstep-cd
+Dla CD-ROM-ów NextStep (block_size == 2048), tylko do odczytu.
+.TP
+.B openstep
+Dla systemów plików utworzonych przez OpenStep (obecnie tylko do odczytu).
+.RE
+.TP
+.BI onerror= wartość
+Ustala zachowanie w przypadku błędu:
+.RS
+.TP
+.B panic
+Jeśli napotkano błąd, powoduje panikę jądra.
+.TP
+.B [lock|umount|repair]
+Te opcje montowania teraz nic nie robią: po napotkaniu błędu wypisują tylko
+komunikat na konsoli.
+.RE
+
+.SH "Opcje montowania dla umsdos"
+Zobacz opcje dla msdos.
+Opcja
+.B dotsOK
+jest jawnie ubijana przez
+.IR umsdos .
+
+.SH "Opcje montowania dla vfat"
+Przede wszystkim, rozpoznawane są wszystkie opcje dla
+.IR fat .
+Opcja
+.B dotsOK
+jest jawnie ubijana przez
+.IR vfat .
+Pnadto istnieją
+.TP
+.B uni_xlate
+Tłumaczy nieobsługiwane znaki Unikodu na specjalne sekwencje unikowe.
+To umożliwia  wykonywanie kopii zapasowych i odtwarzanie plików o nazwach,
+utworzonych ze znakami Unikodu. Bez tej opcji, w wypadku braku możliwości
+konwersji używane jest '?'. Znakiem unikowym jest ':', ponieważ na systemie
+vfat jest w innych wypadkach niedozwolony. Sekwencja specjalna, która byłaby
+użyta dla znaku u, gdzie u jest znakiem Unikodu to: ':', (u & 0x3f),
+((u>>6) & 0x3f), (u>>12).
+.TP
+.B posix
+Pozwala, by dwa pliki miały nazwy różniące się tylko wielkością liter.
+.TP
+.B nonumtail
+Zanim zacznie próbować
+.IR nazwa~nr.roz
+najpierw próbuje zrobić krótką nazwę bez numeru kolejnego.
+.TP
+.B utf8
+UTF8 jest systemem plików bezpiecznego 8-bitowego kodowania Unikodu, który
+jest wykorzystywany przez konsolę. Tą opcją można go włączyć dla danego
+systemu plików. Jeśli zostanie ustawione `uni_xlate', UTF8 jest wyłączane.
+
+.SH "Opcje montowania dla xenixa"
+Brak.
+
+.SH "Opcje montowania dla xfs"
+.TP
+.BI biosize= rozmiar
+Ustawia preferowany rozmiar buforowanego wejścia/wyjścia (domyślnie 64K).
+.I rozmiar
+musi być wyrażony jako logarytm (o podstawie 2) pożądanego rozmiaru I/O.
+Poprawnymi wartościami tej opcji są 14 do 16, włącznie
+(tzn. 16K, 32K i 64K bajtów).
+Na komputerach z 4K rozmiarem strony, 13 (8K bajtów) jest również poprawnym
+.IR rozmiarem .
+Preferowany rozmiar buforowanego I/O można też zmieniać dla poszczególnych
+plików, korzystając z funkcji systemowej
+.BR ioctl (2).
+.TP
+.B dmapi " / " xdsm
+Włącza wyróżnione zdarzenia DMAPI (Data Management API).
+.\" event callouts.
+.TP
+.BI logbufs= wartość
+Ustala liczbę buforów pamięciowych dziennika (in-memory log buffers).
+Poprawne są liczby z zakresu 2-8, włącznie.
+Domyślna wartość to 8 buforów dla systemów plików z blokiem o rozmiarze 64K,
+4 bufory dla systemów o bloku 32K, 3 bufory dla systemów o bloku 16K,
+i 2 bufory dla wszystkich innych konfiguracji.
+Zwiększanie liczby buforów może poprawić wydajność przy niektórych
+obciążeniach roboczych kosztem pamięci wykorzystywanej na dodatkowe bufory
+i związane z nimi struktury sterujące.
+.TP
+.BI logbsize= wartość
+Ustawia wielkość każdego z buforów pamięciowych dziennika (in-memory
+log buffers).
+Poprawne wartości to 16384 (16K) i 32768 (32K).
+Domyślna wartość dla komputerów o więcej niż 32MB pamięci to 32768,
+komputery o mniejszej pamięci stosują domyślnie 16384.
+.TP
+\fBlogdev=\fP\fIurządzenie\fP i \fBrtdev=\fP\fIurządzenie\fP
+Używa zewnętrznego dziennika (rejestru metadanych) i/lub urządzenia czasu
+rzeczywistego. System plików XFS ma do trzech części: sekcji danych, sekcji
+dziennika i sekcji czasu rzeczywistego. Sekcja czasu rzeczywistego jest
+opcjonalna, a sekcja dziennika może być osobna od sekcji danych albo może
+być w niej zawarta.
+Bliższe informacje podaje
+.BR xfs (5).
+.TP
+.B noalign
+Alokacja danych nie będzie wyrównywana na granicach jednostki paskowej
+(stripe unit).
+.TP
+.B noatime
+Podczas odczytu pliku nie są aktualizowane znaczniki czasu dostępu.
+.TP
+.B norecovery
+System plików zostanie zamontowany bez uruchamiania odzyskiwania dziennika.
+Jeśli system ten nie był poprawnie odmontowany, to możliwe, że montowany
+w trybie
+.B norecovery
+będzie niespójny.
+Część plików lub katalogów może z tego powodu być niedostępna.
+Systemy plików przy włączeniu trybu
+.B norecovery
+muszą być montowane tylko do odczytu albo montowanie się nie powiedzie.
+.TP
+.B osyncisdsync
+Powoduje, że zapisy do plików otwartych z ustawioną flagą O_SYNC będą się
+zachowywać jakby zamiast niej użyto flagi O_DSYNC. Może to dać lepszą
+wydajność bez naruszenia bezpieczeństwa danych. Jednakże, jeśli działa
+ta opcja, to w przypadku załamania się systemu mogą zostać utracone
+aktualizacje znaczników czasu z O_SYNC.
+.TP
+.BR quota " / " usrquota " / " uqnoenforce
+Włączenie systemu rozliczania udziałów dyskowych (quota) użytkowników
+i wymuszenie (opcjonalnie) limitów.
+.TP
+.BR grpquota " / " gqnoenforce
+Włączenie systemu rozliczania udziałów dyskowych (quota) grup
+i wymuszenie (opcjonalnie) limitów.
+.TP
+\fBsunit=\fP\fIwartość\fP i \fBswidth=\fP\fIwartość\fP
+Stosowane do określenia jednostki i szerokości paska dla urządzenia RAID
+lub wolumenu paskowego.
+.I Wartość
+musi być podana jako liczba 512-bajtowych bloków.
+Jeśli nie podano tej opcji, a system plików został utworzony na wolumenie
+paskowym lub podczas korzystania z mkfs podano szerokość albo jednostkę
+paska dla urządzenia RAID, to funkcja systemowa mount odtworzy tę wartość
+z superbloku.
+Dla systemów plików utworzonych bezpośrednio na urządzeniach RAID, opcji
+tych można użyć do przesłonięcia informacji z superbloku jeśli po stworzeniu
+systemu zmienił się odnośny układ dysku.
+Jeśli podano 
+.BR sunit ,
+to opcja
+.B swidth
+jest wymagana
+i musi być wielokrotnością wartości
+.BR sunit .
+
+.SH "Opcje montowania dla xiafs"
+Brak. Chociaż xiafs nic nie dolega, nie jest on używany zbyt często
+i nie jest rozwijany. Prawdopodobnie nie powinno się go używać.
+Od Linuksa wersji 2.1.21 xiafs nie występuje już w kodzie źródłowym jądra.
+
+.SH "URZĄDZENIE LOOP"
+Kolejnym możliwym typem jest montowanie poprzez urządzenie loop. Na przykład,
+polecenie
+
+.nf
+.B "  mount /tmp/fdimage /mnt -t msdos -o loop=/dev/loop3,blocksize=1024"
+.fi
+
+skonfiguruje urządzenie loop
+.I /dev/loop3
+tak, by odpowiadało plikowi
+.IR /tmp/fdimage ,
+i zamontuje je w
+.IR /mnt .
+Ten typ montowania zna trzy opcje, konkretnie
+.BR loop ", " offset " i " encryption ,
+które są w rzeczywistości opcjami dla
+.BR losetup (8).
+Jeśli nie podano jawnie urządzenia loop
+(lecz tylko opcję `\fB\-o loop\fP'), to
+.B mount
+spróbuje znaleźć jakieś nieużywane urządzenie loop i użyć go.
+Jeśli nie jest się tak niemądrym, by zrobić 
+.I /etc/mtab
+dowiązaniem symbolicznym do
+.IR /proc/mounts ,
+to każde urządzenie loop przydzielone przez
+.B mount
+zostanie zwolnione przez
+.BR umount .
+Można też zwalniać urządzenie loop ręcznie, stosując `losetup -d' -- zobacz
+.BR losetup (8).
+
+.SH PLIKI
+.I /etc/fstab
+tabela systemów plików
+.br
+.I /etc/mtab
+tabela zamontowanych systemów plików
+.br
+.I /etc/mtab~
+plik blokujący
+.br
+.I /etc/mtab.tmp
+plik tymczasowy
+.SH "ZOBACZ TAKŻE"
+.BR mount (2),
+.BR umount (2),
+.BR fstab (5),
+.BR umount (8),
+.BR swapon (8),
+.BR nfs (5),
+.BR xfs (5),
+.BR e2label (8),
+.BR xfs_admin (8),
+.BR mountd (8),
+.BR nfsd (8),
+.BR mke2fs (8),
+.BR tune2fs (8),
+.BR losetup (8)
+.SH BŁĘDY
+Jest możliwe, że uszkodzony system plików spowoduje załamanie systemu.
+.PP
+Niektóre linuksowe systemy plików nie obsługują
+.B "\-o sync"
+(systemy ext2 i ext3 
+.I obsługują
+synchroniczne odświeżania (updates) (a la BSD), gdy zostaną zamontowane
+z opcją
+.BR sync ).
+.PP
+Opcja
+.B "\-o remount"
+może nie być w stanie zmienić parametrów montowania (np. wszystkie parametry
+.IR ext2fs ,
+poza
+.BR sb ,
+dają się zmieniać przy ponownym montowaniu, lecz nie można zmienić
+.B gid
+czy
+.B umask
+dla
+.IR fatfs ).
+.SH HISTORIA
+Polecenie
+.B mount
+pojawiło się w wersji 5 AT&T UNIX.

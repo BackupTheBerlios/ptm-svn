@@ -1,0 +1,68 @@
+.\" {PTM/WK/1999}
+.\" Man page for zsoelim
+.\"
+.\" Copyright (C), 1994, 1995, Graeme W. Wilford. (Wilf.)
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the file COPYING that comes with the
+.\" man_db distribution.
+.\"
+.\" Sat Dec 10 19:33:32 GMT 1994  Wilf. (G.Wilford@ee.surrey.ac.uk) 
+.\" 
+.TH zsoelim 1 "12 lipca 1995" "2.3.10" "Narzędzia przeglądarki manuali"
+.SH NAZWA
+zsoelim \- wypełnij żądania .so w wejściu roff
+.SH SKŁADNIA
+.B zsoelim 
+.RB [ -CVh ]
+.RI [ plik ...]
+.SH OPIS
+.B zsoelim 
+analizuje zawartość \fIplików\fR, podanych jako argumenty, albo, jeśli
+ich nie podano, swoje standardowe wejście, poszukując wierszy o postaci:
+
+.B .so  
+.I plik
+
+Żądania takie są zastępowane zawartością podanego \fIpliku\fR. Jeżeli żądanie
+nie może być spełnione, to 
+.B zsoelim
+szuka
+.I plik.ext
+gdzie
+.I .ext
+może być jednym z 
+.BR .gz ,
+.BR .Z
+lub
+.BR .z .
+W zależności od opcji ustalonych podczas kompilacji mogą być też obsługiwane
+inne typy rozszerzeń. Jeżeli żądanie spełnia plik skompresowany, to plik ten
+jest dekompresowany przy użyciu odpowiedniego programu dekompresującego,
+a jego wynik używany jest do wykonania żądania.
+
+Tradycyjnie programy \fBsoelim\fR używane były do umożliwienia preprocesorom
+roff przetwarzania plików wskazywanych przez żądania. Ta konkretna wersja
+została napisana by obejść problemy stworzone przez obsługę skompresowanych
+stron podręczników man.
+.SH OPCJE
+.TP
+.B \-C
+Flaga ta istnieje dla zgodności z innymi programami \fBsoelim\fR.
+Jej zadaniem jest włączanie przetwarzania żądań .so poprzedzonych czymś
+innym niż białe znaki (spacje, tabulatory, znaki nowej linii).
+Ponieważ takie zachowanie jest już domyślne dla \fBzsoelim\fR, jest ona
+ignorowana.
+.TP
+.B \-h
+Wyświetl informację pomocy i zakończ.
+.TP
+.B \-V
+Wyświetl wersję i informację o autorze.
+.SH ZOBACZ TAKŻE
+.BR nroff (1),
+.BR troff (1),
+.BR groff (1),
+.BR man (1).
+.SH AUTOR
+Wilf. (G.Wilford@ee.surrey.ac.uk)

@@ -1,0 +1,63 @@
+.\" {PTM/WK/1999-09-16}
+.\" Copyright 1991, Julianne Frances Haugh
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of Julianne F. Haugh nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY JULIE HAUGH AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL JULIE HAUGH OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.TH CHPASSWD 8
+.SH NAZWA
+chpasswd - wsadowa aktualizacja pliku haseł
+.SH SKŁADNIA
+.B chpasswd
+.RB [ -e ]
+.SH OPIS
+\fBchpasswd\fR odczytuje ze standardowego wejścia plik zawierający pary:
+nazwa użytkownika i hasło. Odczytaną informacje wykorzystuje do aktualizacji
+grupy istniejących użytkowników.
+Bez przełącznika \fB-e\fR, hasła traktowane są jako podane jawnie.
+Z przełącznikiem \fB-e\fR hasła powinny być dostarczone w postaci zakodowanej
+(encrypted).
+Każdy wiersz ma postać
+.sp 1
+	  \fInazwa_Użytkownika\fR:\fIhasło\fR
+.sp 1
+Dany użytkownik musi istnieć.
+Jeżeli będzie to konieczne, podane hasło zostanie zakodowane a wiek hasła,
+jeśli występuje, zaktualizowany.
+.PP
+Polecenie to przeznaczone jest do użytku w dużych systemach, gdzie aktualizuje
+się wiele kont naraz.
+.SH PRZESTROGI
+.\" Po użyciu \fBchpasswd\fR musi zostać wykonane polecenie \fImkpasswd\fR,
+.\" aktualizujące pliki DBM haseł (DBM password files).
+Plik źródłowy, jeśli zawiera niezakodowane hasła, musi być chroniony.
+.\" Polecenie to może być zaniechane na rzecz polecenia newusers(8).
+.SH ZOBACZ TAKŻE
+.\" mkpasswd(8), passwd(1), useradd(1)
+.BR passwd (1),
+.BR useradd (8),
+.BR newusers (8)
+.SH AUTOR
+Julianne Frances Haugh (jockgrrl@ix.netcom.com)

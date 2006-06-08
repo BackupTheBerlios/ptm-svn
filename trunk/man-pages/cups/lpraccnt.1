@@ -1,0 +1,45 @@
+.\" {PTM/WK/2000-V}
+.ds VE LPRng-3.6.12
+.TH LPRACCNT 1 \*(VE "LPRng"
+.ig
+lpraccnt.1,v 3.39 1998/03/29 18:37:49 papowell Exp
+..
+.SH NAZWA
+lpraccnt \- otrzymaj informację rozliczeniową drukowania
+.SH SKŁADNIA
+.B lpraccnt
+.RB [ \-p
+.IR port ]
+.RB [ \-D
+.IR debuglevel ]
+.SH OPIS
+.PP
+Program
+.B lpraccnt
+jest szablonem programu rozliczania kosztów drukarki.
+Otwiera zadany port TCP, a następnie oczekuje na przesłanie informacji
+rozliczeniowej lub innej.
+Wypisuje tę informację na standardowym wyjściu.
+.SH OPCJE
+.IP "\fB\-p \fIport\fR" 5
+czeka na połączenia na tym porcie (domyślnie 3000).
+.IP "\fB\-D \fIdebuglevel\fR" 5
+ustawia poziom informacji diagnostycznych na wskazaną wartość.
+.SH "ZOBACZ TAKŻE"
+.BR lpd.conf (5),
+.BR lpc (8),
+.BR lpd (8),
+.BR lpr (1),
+.BR lpq (1),
+.BR lprm (1),
+.BR printcap (5),
+.BR lpd.perms (5),
+.BR pr (1).
+.SH "HISTORIA"
+LPRng jest rozszerzonym systemem buforowania wydruku o funkcjonalności podobnej
+do oprogramowania Berkeley LPR. Listą dyskusyjną o LPRng jest lprng@lprng.com;
+subskrypcja przez wysłanie listu do lprng-request@lprng.com ze słowem
+`subscribe` w treści.
+Oprogramowanie to jest dostępne z ftp://ftp.astart.com/pub/LPRng.
+.SH "AUTOR"
+Patrick Powell <papowell@astart.com>.

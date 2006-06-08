@@ -1,0 +1,207 @@
+.\" {PTM/PB/0.1/28-09-1998/"utwórz linki między plikami"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on GNU man page ln.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH LN "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+ln \- tworzy dowiązania między plikami
+.SH SKŁADNIA
+.B ln
+.RI [ opcja ]...
+.IR źródło " [" nazwa_dowiązania ]
+.br
+.B ln
+.RI [ opcja ]...
+.IR źródło ... " katalog"
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo ln
+.RE
+lub
+.RS
+.BR "info ln" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBln\fP w wersji GNU.
+.PP
+\fBln\fP działa podobnie do \fBcp\fP - poza tym iż, \fBcp\fP tworzy
+niezależną kopię pliku zaś \fBln\fP jedynie dowiązanie.
+.PP
+"Dowiązanie twarde" (hard link) jest inną nazwą istniejącego pliku. Dowiązanie
+i oryginalna nazwa są w pełni równoprawne. (Technicznie rzecz biorąc, posiadają
+ten sam i-węzeł, zaś i-węzeł zawiera całą informację o pliku - faktycznie nie
+jest błędem stwierdzenie, iż i-węzeł *jest* plikiem.)
+W ten sposób plik może występować pod wieloma równoważnymi nazwami -
+wskazującymi na te same dane. Usunięcie jednej z tych nazw przez \fBrm\fR nie
+powoduje jeszcze usunięcia pliku. Jest on usuwany dopiero z chwilą usunięcia
+ostatniej nazwy.
+.br
+We wszystkich istniejących implementacjach nie można tworzyć twardych dowiązań
+do katalogów, a dowiązania twarde nie mogą przekraczać granic systemów plików.
+(Ograniczenia te nie są jednak narzucone przez POSIX.)
+.PP
+"Dowiązania symboliczne" (symbolic link, symlink), z drugiej strony, są
+specjalnym typem plików (nie obsługiwanym przez wszystkie jądra;
+w szczególności system V release 3 i starsze nie posiadają dowiązań
+symbolicznych), w którym plik dowiązania faktycznie wskazuje na inny plik
+(przez nazwę). Dla większości operacji (otwarcie, odczyt, zapis i tak dalej)
+otrzymujących jako argument dowiązanie symboliczne jądro automatycznie
+"odwskaźnikowuje" dowiązanie i działa na samym celu dowiązania. Przy
+niektórych (np. usuwanie) działa na samym dowiązaniu, nie zaś na celu przez
+nie wskazywanym.
+.PP
+Jeśli podano tylko jeden argument - nazwę pliku, to \fBln\fP utworzy
+w bieżącym katalogu dowiązanie do niego mające taką samą nazwę
+(oczywiście nie można w ten sposób utworzyć dowiązania do pliku
+w bieżącym katalogu).
+.br
+Jeśli podano dwa argumenty typu plik, to drugi z nich zostanie
+utworzony jako dowiązanie do pierwszego.
+.br
+Jeśli ostatni z argumentów określa istniejący katalog, to w tym katalogu
+zostaną utworzone dowiązania do plików podanych jako poprzednie argumenty.
+(Patrz jednak opis opcji \fB--no-deference\fR). Dowiązania te będą mieć
+takie nazwy, jak pliki źródłowe.
+Podanie więcej niż dwu argumentów, z których ostatni nie jest katalogiem
+jest błędem.
+.br
+Domyślnie \fBln\fP tworzy dowiązania twarde (hard links). Przy tworzeniu
+dowiązań twardych każde \fIźródło\fP (plik, do którego tworzymy nowe
+dowiązanie) musi istnieć.
+Bez opcji \fB-f\fP lub \fB-i\fP polecenie \fBln\fR nie usuwa istniejącego
+pliku.  Do zmiany nazwy istniejących plików służy opcja \fB--backup\fP.
+.SH OPCJE
+.TP
+.BR \-b " [\fImetoda\fR], " \-\-backup [ = \fImetoda\fR]
+Tworzy kopie zapasowe istniejących plików docelowych. Zobacz
+opis opcji \fB-V\fP oraz sekcja `Opcje kopii zapasowych' w podręczniku
+\fBfileutils\fP(1).
+.TP
+.BR \-d ", " \-F ", " \-\-directory
+Pozwala użytkownikowi uprzywilejowanemu (root) na tworzenie dowiązań
+twardych (hardlinks) do katalogów.
+.TP
+.BR \-f ", " \-\-force
+Usuwa istniejące pliki docelowe.
+.TP
+.BR \-i ", " \-\-interactive
+Pyta czy nadpisywać istniejące pliki docelowe.
+.TP
+.BR \-n ", " \-\-no-dereference
+Gdy podany cel jest dowiązaniem symbolicznym do katalogu,
+próbuje zamienić to dowiązanie symboliczne zamiast tworzyć
+plik w katalogu, na który ono wskazuje.
+.br
+Gdy \fIcel\fR jest nazwą rzeczywistego katalogu (a nie
+dowiązania symbolicznego), nie ma żadnych dwuznaczności. Dowiązanie jest
+tworzone w tym katalogu. Jeśli jednak podany cel jest symbolicznym
+dowiązaniem do katalogu, to istnieją dwa sposoby potraktowania żądania
+użytkownika. \fBln\fR może potraktować cel tak, jakby był zwykłym katalogiem
+(na który wskazuje dowiązanie) i utworzyć w nim żądane dowiązanie. Z drugiej
+strony, cel może być postrzegany jako nie-katalog -- dowiązanie
+symboliczne samo w sobie.
+W tym przypadku \fBln\fR musi usunąć lub utworzyć kopię tego dowiązania
+przed utworzeniem nowego dowiązania. Domyślnym sposobem działania jest
+traktowanie celu będącego dowiązaniem symbolicznym do katalogu tak jak
+katalogu. Przy użyciu opcji \fB-n\fR będzie on traktowany jak dowiązanie.
+.TP
+.BR \-s ", " \-\-symbolic
+Tworzy dowiązania symboliczne zamiast dowiązań twardych.
+Ta opcja wypisuje błąd na systemach nie obsługujących dowiązań symbolicznych.
+.TP
+.BI \-S " przyr_kopii\fR, " \-\-suffix= przyr_kopii
+Dodaje przyrostek \fIprzyr_kopii\fP do nazwy każdego pliku kopii zapasowej
+wykonanego przy pomocy \fB\-b\fP. Jeśli opcja ta nie zostanie podana, to użyta
+zostanie wartość zmiennej środowiskowej \fBSIMPLE_BACKUP_SUFFIX\fP. Jeśli
+ona również nie jest określona, to użyty zostanie domyślny znak `~',
+jak w Emacsie.
+.TP
+.BI \-\-target\-directory =katalog
+Określa \fIkatalog\fP docelowy. Zobacz sekcja `Katalog docelowy'
+w \fBfileutils\fP(1).
+.TP
+.BR \-v ", " \-\-verbose
+Przed utworzeniem dowiązania do każdego pliku wypisuje jego nazwę.
+.TP
+.BI \-V " metoda\fR, " -\-version-control= metoda
+Zmienia typ kopii zapasowych wykonywanych przy pomocy \fB\-b\fP. Jeśli opcja
+ta nie zostanie podana, to użyta zostanie wartość zmiennej środowiskowej
+\fBVERSION_CONTROL\fP. Jeśli nie zdefiniowano również \fBVERSION_CONTROL\fP
+to użyta zostanie domyślny typ kopii zapasowej: `existing'.
+
+Opcja ta odpowiada zmiennej `version-control' Emacsa: używane są te same
+wartości dla typu kopii. Rozpoznają także bardziej opisowe synonimy.
+Prawidłowe wartości to (unikalne skróty są dopuszczalne):
+.RS
+.TP
+.BR t ", " numbered
+Zawsze tworzy numerowane kopie zapasowe.
+.TP
+.BR nil ", " existing
+Tworzy numerowane kopie zapasowe plików, które już je mają, zwykłe kopie dla
+reszty.
+.TP
+.BR never ", " simple
+Robi zawsze zwykłe kopie zapasowe (uzyskiwane przez dodanie przyrostka
+wg opcji \fB-S\fP).
+.RE
+.TP
+.BR \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach,
+kończy działanie.
+.TP
+.BR \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.PP
+.SH PRZYKŁADY
+.PP
+    ln -s /jakas/nazwa
+.br
+tworzy dowiązanie ./nazwa wskazujące na /jakas/nazwa
+.PP
+    ln -s /jakas/nazwa mojanazwa
+.br
+tworzy dowiązanie ./mojanazwa wskazujące na /jakas/nazwa
+.PP
+    ln -s a b ..
+.br
+tworzy dowiązania ../a i ../b wskazujące na ./a i ./b
+.fi
+.SH AUTOR
+Napisane przez Mike'a Parkera i Davida MacKenzie.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR cp (1),
+.BR mv (1),
+.BR rm (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

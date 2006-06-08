@@ -1,0 +1,26 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/5-12-1999/"wyświetla wychodzące wiadomości i ich odbiorców"}
+.TH qmail-qread 8
+.SH NAZWA
+qmail-qread \- wyświetl wychodzące wiadomości i ich odbiorców
+.SH SKŁADNIA
+.B qmail-qread
+.SH OPIS
+.B qmail-qread
+skanuje kolejkę wychodzącą pod kątem znalezienia wiadomości.
+Dla każdej wiadomości wypisuje różne informacje w formie zrozumiałej dla 
+człowieka, włączając w to datę dostarczenia wiadomości do kolejki,
+ilość bajtów wiadomości,
+nadawcę wiadomości
+i wszystkich wciąż branych pod uwagę odbiorców.
+
+.B qmail-qread
+musi być uruchomiony jako
+.B root
+albo z identyfikatorem użytkownika
+.B qmails
+i identyfikatorem grupy
+.BR qmail .
+.SH "ZOBACZ TAKŻE"
+qmail-qstat(8),
+qmail-send(8)

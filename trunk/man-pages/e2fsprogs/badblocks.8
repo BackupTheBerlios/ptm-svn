@@ -1,0 +1,184 @@
+.\" -*- nroff -*-
+.\" {PTM/PB/0.1/01-02-1999/"szukaj uszkodzonych bloków na urządzeniu"}
+.\" Last update: Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>, Apr 2002
+.\" 
+.TH BADBLOCKS 8 "Marzec 2002" "e2fsprogs wersja 1.27"
+.SH NAZWA
+badblocks \- poszukiwanie uszkodzonych bloków na urządzeniu
+.SH SKŁADNIA
+.TP 10
+.B badblocks
+[
+.B \-svwnf
+]
+[
+.B \-b
+.I rozmiar-bloku
+]
+[
+.B \-c
+.I bloków_na_raz
+]
+[
+.B \-i
+.I plik_wejściowy
+]
+[
+.B \-o
+.I plik_wynikowy
+]
+[
+.B \-p
+.I liczba_przebiegów
+]
+.I urządzenie
+[
+.I ostatni-blok
+] [
+.I początkowy-blok
+]
+.SH OPIS
+.B badblocks
+służy do wyszukiwania uszkodzonych bloków na urządzeniu (zwykle na partycji
+dyskowej).
+.br
+.I urządzenie
+jest plikiem specjalnym odpowiadającym danemu urządzeniu (np.
+.IR /dev/hdc1 ).
+.I ostatni-blok
+jest ostatnim sprawdzanym blokiem; jeśli nie zostanie podany, domyślnie
+przyjmowany jest ostatni blok na danym urządzeniu.
+.PP
+.B Ważna uwaga:
+Jeżeli wyjście
+.B badblocks
+ma być przekierowane do pragramu
+.B e2fsck
+lub
+.BR mke2fs ,
+to ważnym jest, aby został prawidłowo określony rozmiar bloku,
+gdyż generowane numery bloków mocno zależą od użytego rozmiaru bloku.
+Z tego powodu zdecydowanie zalecane jest, aby użytkownicy
+.B nie
+uruchamiali
+.B badblocks
+bezpośrednio, a raczej posługiwali się opcją
+.B \-c
+programów
+.B e2fsck
+i
+.BR mke2fs .
+.SH OPCJE
+.TP
+.BI \-b " rozmiar-bloku"
+Określa rozmiar bloku w bajtach.
+.TP
+.BI \-c " bloków_na_raz"
+jest to liczba bloków sprawdzanych jednocześnie. Wartością domyślną jest 16.
+Zwiększenie tej liczby zwiększy wydajność
+.BR badblocks ,
+ale również zwiększy zużycie pamięci.
+Ilość pamięci potrzebna
+.B badblocks
+jest w trybie tylko do odczytu proporcjonalna do liczby sprawdzanych
+jednocześnie bloków, w trybie do odczytu i zapisu proporcjonalna do tej liczby
+podwojonej, a w trybie nie niszczącego odczytu i zapisu do tej liczby
+potrojonej. Jeśli wartość parametru określającego liczbę bloków będzie zbyt
+duża, to
+.B badblocks
+zakończy pracę prawie natychmiast z błędem braku pamięci "podczas
+przydzielania buforów" (while allocating buffers). Jeśli będzie ona zbyt mała,
+to może się zdarzyć, że wątpliwe bloki na niepewnym twardym dysku zostaną
+ukryte przez efekty buforowania ścieżek dysku twardego.
+.TP
+.B \-f
+Normalnie, badblocks odmówi wykonania sprawdzenia w trybie odczytu i zapisu
+lub w trybie nie niszczącym danych na zamontowanym urządzeniu, gdyż każdy
+z nich może potencjalnie spowodować awarię systemu. Nawet sprawdzenie nie
+niszczące danych może spowodować uszkodzenie zamontowanego systemu plików.
+Można to zachowanie zmienić za pomocą opcji
+.BR \-f ,
+ale prawie nigdy nie należy jej używać --- jeśli uważasz, że jesteś mądrzejszy
+niż program
+.BR badblocks ,
+prawie na pewno nie powinieneś tego robić. Jedyny przypadek, kiedy można
+bezpiecznie posłużyć się tą opcją, to sytuacja, gdy zawartość pliku /etc/mtab
+jest nieprawidłowa a urządzenie w rzeczywistości nie jest zamontowane.
+.TP
+.BI \-i " plik_wejściowy"
+Odczytuje listę aktualnie istniejących, znanych uszkodzonych bloków. Program
+.B badblocks
+nie wykona sprawdzenia tych bloków, gdyż wiadomo, że są one uszkodzone.
+Jeśli
+.I plik_wejściowy
+zostanie podany jako "-", lista zostanie odczytana ze standardowego wejścia.
+Bloki występujące na tej liście zostaną pominięte na liście
+.I nowych
+uszkodzonych bloków tworzonej na standardowym wyjściu lub w pliku wynikowym.
+Opcja
+.B \-b
+programu
+.BR dumpe2fs (8)
+może służyć do odtworzenia listy bloków aktualnie zaznaczonych jako uszkodzone
+w istniejącym systemie plików, w postaci odpowiedniej dla tej opcji.
+.TP
+.BI -o " plik_wynikowy"
+Zapisuje listę uszkodzonych bloków do podanego pliku. Bez tej opcji,
+.B badblocks
+wypisuje listę na standardowe wyjście. Plik ten ma postać odpowiednią do
+wykorzystania go w opcji
+.B \-l
+programu
+.BR e2fsck (8)
+lub
+.BR mke2fs (8).
+.TP
+.BI \-p " liczba_przebiegów"
+Powtarza skanowanie dysku tak długo, aż w ciągu liczba_przebiegów kolejnych
+skanowań dysku nie zostanie odkryty żaden nowy uszkodzony blok.
+Domyślną wartością jest 0, co oznacza, że
+.B badblocks
+zakończy po pierwszym przebiegu.
+.TP
+.B \-n
+Korzystanie podczas sprawdzenia z nie niszczącego danych trybu odczytu
+i zapisu. Domyślnie przeprowadzane są wyłącznie sprawdzenia nie niszczące
+danych. Opcji tej nie można łączyć z opcją
+.BR \-w ,
+gdyż wykluczają się one wzajemnie.
+.TP
+.B \-s
+Pokazuje postępy przeszukiwania, wypisując numery bloków podczas
+ich sprawdzania.
+.TP
+.B \-v
+Tryb rozwlekły (gadatliwy).
+.TP
+.B \-w
+Korzystanie podczas sprawdzenia z testu zapisywania. Po podaniu tej opcji,
+.B badblocks
+wyszukuje uszkodzone bloki zapisując pewne wzorce (0xaa, 0x55, 0xff, 0x00)
+w każdym bloku urządzenia, odczytując każdy blok i porównując zawartość.
+Opcji tej nie można łączyć z opcją
+.BR \-n ,
+gdyż wykluczają się one wzajemnie.
+.SH OSTRZEŻENIE
+Nigdy nie należy używac opcji
+.B \-w
+na urządzeniu zawierającym istniejący system plików. Ta opcja kasuje dane!
+Jeśli istnieje potrzeba wykonania testu w trybie zapisu na istniejącym
+systemie plików, należy posłużyć się zamiast niej opcją
+.BR \-n .
+Jest to wolniejsze, ale zachowa istniejące dane.
+.SH AUTOR
+.B badblocks
+został napisany przez Remy'ego Carda <Remy.Card@linux.org>. Aktualnym
+konserwatorem jest Theodore Ts'o <tytso@alum.mit.edu>. Niedestrukcyjny test
+odczytu/zapisu zaimplementował David Beattie <dbeattie@softhome.net>.
+.SH DOSTĘPNOŚĆ
+.B badblocks
+jest częścią pakietu e2fsprogs i jest dostępny na stronie
+http://e2fsprogs.sourceforge.net.
+.SH "ZOBACZ TAKŻE"
+.BR e2fsck (8),
+.BR mke2fs (8)

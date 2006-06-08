@@ -1,0 +1,67 @@
+.\" Translation (c) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/10-11-1999/"przegląd dokumentacji qmail"}
+.TH qmail 7
+.SH "NAZWA"
+qmail \- przegląd dokumentacji qmail
+.SH "WPROWADZENIE"
+.B qmail
+jest bezpiecznym, sprawnym, efektywnym, prostym agentem przesyłania poczty.
+
+Użytkownicy, którzy chcą mieć pełną kontrolę nad przychodzącymi wiadomościami
+powinni przeczytać podręcznik
+.BR dot-qmail (5).
+Pomocne w korzystaniu z pliku
+.B .qmail
+komendy to
+.BR qbiff (1),
+.BR qreceipt (1),
+.BR qforward (1),
+.BR bouncesaying (1),
+i
+.BR condredirect (1).
+Inne pożyteczne komendy to
+.BR maildirmake (1),
+.BR maildir2mbox (1),
+i
+.BR maildirwatch (1).
+
+Administrator systemu chcący kontrolować cały system poczty
+.B qmail
+powinien zacząć od przeczytania
+.BR qmail-control (5)
+i
+.BR qmail-start (8).
+Są też trzy narzędzia służące do monitorowania kolejki poczty:
+.BR qmail-qread (8),
+.BR qmail-qstat (8),
+i
+.BR qmail-tcpto (8).
+Nadchodzące połączenia SMTP są obsługiwane przez
+.BR qmail-smtpd (8).
+
+.B qmail
+oferuje dwa interfejsy w postaci komend do wysyłania wiadomości:
+.BR qmail-inject (8)
+i
+.BR mailsubj (1).
+By uzyskać szczegółowe informacje na temat internetowych wiadomości pocztowych
+przejrzyj podręczniki
+.BR addresses (5),
+.BR envelopes (5),
+.BR qmail-header (5),
+i
+.BR forgeries (7).
+
+Dodatkowa dokumentacja zawiera
+.BR qmail-limits (7)
+i
+.BR qmail-pop3d (8).
+
+Dokumentacja ta opisuje wersję
+1.03
+systemu
+.BR qmail .
+Obejrzyj
+.B http://pobox.com/~djb/qmail.html
+by zapoznać się z innymi programami współdziałającymi z 
+.BR qmail .

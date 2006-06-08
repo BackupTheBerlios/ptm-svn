@@ -1,0 +1,97 @@
+.\" {PTM/GSN/0.5/23-02-1999/"skonwertuj znaki tabulacji na spacje"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page expand.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH EXPAND "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+expand \- skonwertuj znaki tabulacji na spacje
+.SH SKŁADNIA
+.TP 8
+.B expand
+.RB [ \- \fItab1\fP[ , \fItab2\fP[ , ...]]]
+.RB [ \-t " \fItab1\fP[" , \fItab2\fP[ , ...]]]
+.RB [ \-i ]
+.br
+.RB [ \-\-tabs= \fItab1\fP[ , \fItab2\fP[ , ...]]]
+.RB [ \-\-initial ]
+.RB [ \-\-help ]
+.br
+.RB [ \-\-version ]
+.RI [ plik ...]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo expand
+.RE
+lub
+.RS
+.BR "info expand" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBexpand\fP w wersji GNU.
+.PP
+.B expand
+wypisuje zawartość każdego podanego pliku, lub standardowego wejścia
+jeśli nie podano żadnej lub podano plik zwany `\-', na standardowe
+wyjście, konwertując znaki tabulacji na odpowiednią liczbę spacji.
+Domyślnie
+.B expand
+przekształca na spacje wszystkie znaki tabulacji.  Zachowuje jednak w
+pliku wynikowym znaki backspace; zmniejszają one licznik kolumn
+w o jeden przy obliczeniach pozycji tabulacji. Domyślne działanie
+jest równoważne opcji \fB\-8\fP (ustawia tabulacje co ósmą kolumnę).
+.SH OPCJE
+.TP
+.BR \- ", " \-t ", " \-\-tabs= \fItab1\fP[ , \fItab2\fP[ , ...]]
+Jeśli podano tylko jedną pozycję tabulacji, ustawia tabulacje co \fItab1\fP
+spacji, zamiast domyślnych ośmiu.  W przeciwnym razie, ustawia tabulacje
+w kolumnach \fItab1\fP, \fItab2\fP, itd. (numerowanych od 0), i zastępuje
+wszystkie tabulacje za ostatnią podaną pozycją pojedynczymi spacjami.
+Jeśli pozycje tabulacji podano opcją
+.B \-t
+lub
+.BR \-\-tabs ,
+mogą być one rozdzielone nie tylko przecinkami, ale i znakami pustymi.
+.TP
+.BR \-i ", " \-\-initial
+Konwertuje na spacje tylko początkowe tabulacje każdej linii. Inaczej mówiąc:
+nie dokonuje konwersji za znakami różnymi od spacji i tabulacji.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR tr (1),
+.BR unexpand (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

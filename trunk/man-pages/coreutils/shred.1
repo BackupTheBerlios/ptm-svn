@@ -1,0 +1,204 @@
+.\" {PTM/WK/2000-I}
+.ig
+Transl.note: based on GNU man page shred.1 and fileutils.info
+
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH SHRED "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+shred \- bezpiecznie usuwa plik, najpierw nadpisując go, by ukryć zawartość
+.SH SKŁADNIA
+.B shred
+.RI [ opcje ]
+.IR plik [...]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo shred
+.RE
+lub
+.RS
+.BR "info shred" .
+.RE
+.PP
+\fBshred\fP nadpisuje urządzenia lub pliki, pomagając uchronić dane przed
+odzyskaniem nawet za pomocą bardzo drogiego sprzętu.
+.PP
+Normalnie gdy usuwamy plik (zobacz \fBrm\fP (1)), dane nie są faktycznie
+niszczone. Niszczony jest wyłącznie indeks wskazujący, gdzie jest
+przechowywany plik, a miejsce jest udostępniane do ponownego wykorzystania.
+Istnieją narzędzia odzyskiwania skasowanych danych usiłujące odtworzyć
+indeks i potrafiące odzyskać plik, jeśli części nie były ponownie użyte.
+.PP
+Na zajętych systemach z prawie pełnymi napędami, miejsce może zostać
+ponownie wykorzystane w ciągu kilku sekund. Nie ma jednak sposobu, by
+się co do tego upewnić. Jeżeli posiadamy istotne dane, chcemy być pewni,
+że odtworzenie nie jest możliwe, w tym celu faktycznie nadpisując plik
+nieistotnymi danymi.
+.PP
+Jednak nawet po takim nadpisaniu, możliwe jest zabranie dysku do
+laboratorium i użycie różnego czułego (i kosztownego) sprzętu do oglądnięcia
+śladów "echa" pierwotnych danych pod danymi, które je nadpisały. Jeżeli dane
+zostały nadpisane tylko jednokrotnie, to nie jest to nawet takie trudne.
+.PP
+Najlepszym sposobem usunięcia czegoś nieodwracalnie jest zniszczenie jego
+nośnika kwasem, stopienie lub podobne czynności. Dla tanich nośników
+wymienialnych, jak dyskietki, jest to metoda zalecana. Jednak dyski twarde
+są drogie i trudne do stopienia, więc narzędzie \fBshred\fP
+[tłum:niszczarka, shred oznacza cięcie na paski]
+próbuje osiągnąć podobny efekt w sposób nieniszczący.
+.PP
+Posługuje się ono wieloma kolejnymi nadpisywaniami, z wzorcami danych
+dobranymi tak, aby zmaksymalizować szkody wyrządzane starym danym.
+Mimo, że działa to także na dyskietkach, to wzorce zaprojektowane są dla
+uzyskania najlepszego efektu na dyskach twardych. Więcej szczegółów
+znaleźć można w kodzie źródłowym oraz wystąpieniu Petera Gutmanna `Secure
+Deletion of Data from Magnetic and Solid-State Memory', z materiałów
+Szóstego Sympozjum Bezpieczeństwa USENIX (San Jose, California, 22-25 lipca
+1996).
+.PP
+\fBZauważ\fP, iż w \fBshred\fP poczyniono pewne bardzo istotne
+założenie: że używany system plików nadpisuje dane w miejscu. Taki jest
+tradycyjny sposób wykonywania tej operacji, ale wiele współczesnych
+projektów systemów plików nie spełnia tego założenia. Wyjątki obejmują:
+.RS 4
+.TP 2
+*
+Systemy plików oparte o rejestrację (log) lub dziennik zmian (journaling),
+jak dostarczane z AIX czy Solarisem.
+.TP 2
+*
+Systemy plików zapisujące nadmiarowe dane i działające nawet jeśli któryś
+z zapisów zawiedzie, tak jak systemy plików bazujące na RAID.
+.TP 2
+*
+Systemy plików tworzące tzw.snapshots ("zdjęcia stanu"),
+jak Network Appliance NFS server.
+.TP 2
+*
+Systemy plików z buforowaniem (cache) w tymczasowych miejscach, jak klienci
+NFS wersji 3.
+.TP 2
+*
+Kompresowane systemy plików.
+.RE
+.PP
+Jeśli nie mamy pewności jak działa nasz system plików, powinniśmy założyć,
+że nie nadpisuje danych w miejscu, co oznacza, że shred nie może w sposób
+godny zaufania działać na zwykłych plikach tego systemu.
+.PP
+Mówiąc ogólnie, pewniej jest niszczyć dane całego urządzenia niż pliku,
+gdyż obchodzi się wówczas problem konstrukcji systemu plików wspomniany
+powyżej. Jednak nawet niszczenie danych z całych urządzeń nie zawsze jest
+całkowicie godne zaufania. Na przykład, większość dysków zaznacza błędne
+sektory w sposób niewidzialny dla aplikacji; jeżeli złe sektory zawierają
+ważne dane, shred nie będzie w stanie ich zniszczyć.
+.PP
+shred nie podejmuje żadnych prób wykrycia lub zgłoszenia takich kłopotów,
+tak jak nie usiłuje niczego robić z kopiami zapasowymi. Jednak, ponieważ
+pewniejsze jest "niszczenie" za jego pomocą całych urządzeń niż plików,
+shred domyślnie nie obcina ani nie usuwa pliku wynikowego. Takie zachowanie
+jest bardziej odpowiednie dla urządzeń, które zwykle nie mogą być obcięte
+(trunctated) ani nie powinny być usuwane.
+.SH OPCJE
+.TP
+.BR -f ", " --force
+W razie potrzeby zmienia prawa dostępu tak, by umożliwić nadpisanie.
+.TP
+.BR -\fIN\fR ", " -n " \fIN\fR, " --iterations= \fIN\fR
+Nadpisuje N razy. Domyślnie shred wykonuje nadpisanie 25 razy. Wystarcza to,
+by każdy ze wszystkich przydatnych wzorców nadpisania został użyty
+przynajmniej jednokrotnie. Możliwe jest zmniejszenie liczby cykli
+nadpisania, by oszczędzić na czasie, lub zwiększenie jej jeśli mamy
+mnóstwo czasu do zmarnowania.
+.TP
+.BR -s " \fIN\fR, " --size= \fIN\fR
+Niszczy N początkowych bajtów pliku. Domyślnie niszczony jest cały plik.
+Po N może wystąpić skrót jednostki (wielokrotności) jak k, M, G). Zobacz
+`Rozmiar bloku' w podręczniku \fBfileutils\fP (1).
+.TP
+.BR -u ", " --remove
+Po zniszczeniu pliku przez nadpisanie obcina go (jeśli to możliwe) i usuwa.
+Jeżeli plik posiada wiele dowiązań to usunięte dostanie tylko dowiązanie
+o podanych nazwach.
+.TP
+.BR -v ", " --verbose
+Pokazuje postępy sterylizacji.
+.TP
+.BR -x ", " --exact
+Nie zaokrągla rozmiarów pliku do następnego pełnego bloku.
+Normalnie shred zaokrągla rozmiar pliku w górę do pełnej wielokrotności
+rozmiaru bloku systemu plikowego, co pozwala na pełne wymazanie ostatniego
+bloku pliku. Opcja ta zakazuje takiego zachowania.
+.TP
+.BR -z ", " --zero
+Dodaje końcowe nadpisanie zerami by ukryć niszczenie.
+Normalnie ostatni przebieg nadpisywania odbywa się przy użyciu danych losowych.
+Jeśli miało by się to rzucać w oczy na dysku (na przykład, dlatego
+że wygląda jak zaszyfrowane dane) czy też po prostu sądzimy, że tak jest
+porządniej, opcja --zero dokłada dodatkowy przebieg nadpisywania ze wszystkimi
+bitami zerowymi. Przebieg ten nie jest wliczany do liczby cykli podanej
+opcją --iterations.
+.TP
+.B \-
+Niszczy standardowe wyjście.
+
+Argument ten traktowany jest jak opcja. Jeżeli
+użyto powszechnej opcji \fB--\fP do wskazania końca opcji wiersza poleceń,
+to \fB-\fP zostanie zinterpretowane jako zwykła nazwa pliku.
+
+Przeznaczeniem tej opcji jest niszczenie usuniętego pliku tymczasowego.
+Na przykład
+.nf
+          i=`tempfile -m 0600`
+          exec 3<>"$i"
+          rm -- "$i"
+          echo "Hello, world" >&3
+          shred - >&3
+          exec 3>-
+.fi
+Zauważ, że wydanie polecenia powłoki \fBshred - >plik\fP nie zniszczy zawartości
+\fIpliku\fP, gdyż obcina ono \fIplik\fP przed wywołaniem samego shred.
+Zamiast tego należy posłużyć się poleceniem \fBshred plik\fP lub (używając
+powłoki zgodnej z powłoką Bourne'a) \fBshred - 1<>plik\fP.
+
+.TP
+.B --help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B --version
+Wyświetla numer wersji programu i kończy działanie.
+.SH AUTOR
+Napisane przez Colina Plumb.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+.\" To jest swobodne oprogramowanie; warunki kopiowania znajdziesz w kodzie
+.\" źródłowym. Nie ma ŻADNEJ gwarancji;
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "ZOBACZ TAKŻE"
+.BR rm (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

@@ -1,0 +1,118 @@
+.\" Translation (c) 1999 Paweł Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/10-11-1999/"przypisuje adresy pocztowe do użytkowników"}
+.TH qmail-users 5
+.SH NAZWA
+qmail-users \- przypisz adresy pocztowe do użytkowników
+.SH PRZEGLĄD
+Plik
+.B /var/qmail/users/assign
+przypisuje adresy do użytkowników. Na przykład,
+
+.EX
+   =big.siefczyk:big:503:78:/home/big:::
+.EE
+
+mówi, że cała poczta dla użytkownika
+.B big.siefczyk
+powinna być dostarczana do użytkownika
+.BR big ,
+z wartościami uid 503 i gid 78,
+podług reguł dostarczania określonych w pliku
+.BR /home/big/.qmail 
+oczywiście.
+
+Przypisania przetworzone przez program
+.B qmail-newu
+będą użyte przez
+.B qmail-lspawn
+by kontrolować dostarczanie poczty przez
+.BR qmail-local .
+Obejrzyj też sobie
+.BR qmail-newu (8).
+Zmiany w pliku
+.B /var/qmail/users/assign
+nie przynioną efektów dopóki program
+.B qmail-newu
+nie zostanie wywołany i nie przetworzy ich.
+.SH STRUKTURA
+.B /var/qmail/users/assign
+jest serią przypisań, jedno na linię.
+
+Kończy się linią zawierającą pojedynczą kropeczkę.
+Linie nie mogą zawierać znaków NUL.
+.SH "PROSTE PRZYPISANIA"
+Przypisaniem prosty jest linia w stylu
+
+.EX
+   =lokalny:użytkownik:uid:gid:katalogdomowy:kreska:dod:
+.EE
+
+Gdzie
+.I lokalny
+to adres;
+.IR użytkownik ,
+.IR uid ,
+i
+.I gid
+to nazwa konta, UID i GID
+użytkownika zwanego
+.IR lokalny ;
+a wiadomości do tego
+and messages to
+.I lokalnego
+właśnie będą kontrolowane przez jego plik
+.IR katalogdomowy\fB/.qmail\fIkreskadod .
+
+Jeśli wystąpi więcej przypisań dla tego samego
+.I lokalnego
+adresu,
+.B qmail-lspawn
+użyje sobie pierwszego (a resztę mówiąc brzydko oleje - przyp. tł.).
+
+.I lokalny
+jest interpretowany bez względu na wielkość liter.
+.SH "PRZYPISANIA OGÓLNE"
+Przypisaniem ogólnym (meta-przypisaniem) jest linia w stylu
+
+.EX
+   +lok:użytkownik:uid:gid:katalogdomowy:kreska:przed:
+.EE
+
+Przypisanie to odnosi się do każdego adresu rozpoczynającego się na
+.IR lok ,
+włączając samo
+.I lok .
+Oznacza to samo co
+
+.EX
+   =lokdod:użytkownik:uid:gid:katalogdomowy:kreska:przeddod:
+.EE
+
+dla każdego możliwego ciągu wstawionego w miejsce
+.IR dod .
+Bardziej precyzyjne przypisania ogólne przesłaniają mniej specyficzne
+przypisania, i a przypisanie proste przesłania jakiekolwiek przypisanie
+ogólne.
+Na przykład:
+
+.EX
+   +:alias:7790:2108:/var/qmail/alias:-::
+   +big-:big:507:100:/home/big:-::
+   =big:big:507:100:/home/big:::
+.EE
+
+Adres
+.B big
+jest obsługiwany przez linię trzecią;
+adres
+.B big-direct
+przez drugą;
+adresy
+.B kupanaprzykład
+czy
+.B wstaw-se-co-chcesz
+przez linię pierwszą.
+.SH "ZOBACZ TAKŻE
+qmail-pw2u(8),
+qmail-newu(8),
+qmail-lspawn(8)

@@ -1,0 +1,136 @@
+.\" {PTM/PB/0.1/02-04-1999/"odmontuj system plików"}
+.\" Translation update: Robert Luberda <robert@debian.org>, Oct 2004, util-linux 2.12
+.\" $Id: umount.8,v 1.4 2004/10/10 15:39:41 robert Exp $
+.\"
+.\" Copyright (c) 1996 Andries Brouwer
+.\" This page is somewhat derived from a page that was
+.\" (c) 1980, 1989, 1991 The Regents of the University of California
+.\" and had been heavily modified by Rik Faith and myself.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.TH UMOUNT 8 "26 lipca 1997" "Linux 2.0" "Podręcznik programisty linuksowego"
+.SH NAZWA
+umount \- odmontuj systemy plików
+.SH SKŁADNIA
+.BI "umount [\-hV]"
+.LP
+.BI "umount -a [\-dflnrv] [\-t " typvfs "] [\-O " opcje ]
+.br
+.BI "umount [\-dflnrv] " "katalog " | " urządzenie " [...]
+.SH OPIS
+Polecenie
+.B umount
+odłącza wymienione systemy plików z hierarchii plików. System plików jest określany
+przez podanie katalogu, w którym został zamontowany.
+Podanie urządzenia, na którym system plików istnieje, może również działać,
+jednakże jest przestarzałe, głównie dlatego, że zawiedzie, gdy urządzenie
+jest zamontowane w więcej niż jednym katalogu.
+
+Proszę zauważyć, że system plików nie może być odmontowany, gdy jest `busy' (zajęty) -
+na przykład, gdy są na nim otwarte pliki, gdy jakiś proces ma tam swój
+katalog roboczy albo gdy w użytku jest znajdujący się na nim plik wymiany.
+Przeszkadzającym procesem może być nawet sam \fBumount\fP - otwiera on libc,
+zaś libc z kolei może otwierać na przykład pliki ustawień locale.
+Leniwe odmontowywanie (`lazy umount')  rozwiązuje ten problem.
+
+Polecenie
+.B umount
+przyjmuje następujące opcje:
+.TP
+.B \-V
+Wydrukuj wersję i zakończ.
+.TP
+.B \-h
+Wydrukuj informację o użyciu i zakończ.
+.TP
+.B \-v
+Tryb verbose (gadatliwy).
+.TP
+.B \-n
+Odmontuj bez zapisywania w
+.IR /etc/mtab .
+.TP
+.B \-r
+Jeśli odmontowanie się nie powiedzie, spróbuj zamontować ponownie w trybie
+read-only.
+.TP
+.B \-d
+Jeżeli odmontowane urządzenie było urządzeniem pętli zwrotnej (`loop device'),
+to je zwalnia.
+.TP
+.B \-a
+Odmontuj wszystkie systemy plików opisane w
+.IR /etc/mtab .
+(W
+.B umount
+wersji 2.7 i późniejszych nie jest odłączany system plików
+.IR proc ).
+.TP
+.BI \-t " typvfs"
+Wskaż, że akcje powinny być dokonywane tylko na systemach plików określonego
+typu. Można podać więcej niż jeden typ, używając listy oddzielanej
+przecinkami. Lista systemów plików może być poprzedzona słowem
+.BR no ,
+aby wskazać, że akcja wymienionych systemów plików nie dotyczy.
+.TP
+.BI \-O " opcje"
+Określa, że akcje powinny być wykonane tylko na systemach plików
+z odpowiednimi opcjami wymienionymi w
+.IR /etc/fstab .
+ Można podać więcej niż jedną opcję, używając listy oddzielanej
+przecinkami. Lista opcji może być poprzedzona słowem
+.BR no ,
+aby podać opcje, dla których nie powinna być podejmowana żadna akcja.
+.TP
+.B \-f
+Wymuś odmontowanie (w przypadku nieosiągalnego systemu NFS).
+(Wymaga jądra 2.1.116 lub późniejszego).
+.TP
+.B \-l
+Leniwe odmontowanie (`lazy umount'). Od razu odłącza system plików od hierarchii systemu plików
+i czyści wszystkie referencje do tego systemu plików, gdy tylko przestanie
+być zajęty (`busy').
+(Wymaga jądra 2.4.11 lub późniejszego).
+
+.SH "URZĄDZENIE PĘTLI ZWROTNEJ - LOOP DEVICE"
+Polecenie
+.B umount
+może zwolnić związane z montowaniem urządzenie pętli zwrotnej.
+Dzieje się tak, gdy napotkana zostanie opcja `loop=...' w pliku
+.IR /etc/mtab ,
+lub gdy podano opcję \-d.
+Pozostałe urządzenia loop mogą być zwolnione przez `losetup -d', zobacz
+.BR losetup (8).
+
+.SH PLIKI
+.I /etc/mtab
+tabela zamontowanych systemów plików
+
+.SH "ZOBACZ TAKŻE"
+.BR umount (2),
+.BR mount (8),
+.BR losetup (8).
+
+.SH HISTORIA
+Polecenie
+.B umount
+pojawiło się w wersji 6 AT&T UNIX.

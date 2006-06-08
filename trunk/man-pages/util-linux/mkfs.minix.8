@@ -1,0 +1,100 @@
+.\" {PTM/WK/1999-XII}
+.\" Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be freely distributed.
+.\" " for emacs hilit19 mode
+.TH MKFS 8 "2 lipca 1996" "Util-linux 2.6" "Podręcznik Administratora Linuksa"
+.SH NAZWA
+mkfs \- twórz linuksowy system plików MINIX
+.SH SKŁADNIA
+.B mkfs
+.RB [ \-c | \-l
+.IR filename ]
+.RB [ \-n \fInamelength\fP]
+.RB [ \-i
+.IR inodecount ]
+.RB [ \-v ]
+.I urządzenie
+.RI [ size-in-blocks ]
+.SH OPIS
+.B mkfs
+tworzy linuksowy system plików MINIX na zadanym urządzeniu (zwykle partycji
+dysku).
+
+.I urządzenie
+występuje zwykle w następującej postaci:
+
+.nf
+.RS
+/dev/hda[1-8] (1-szy dysk IDE)
+/dev/hdb[1-8] (2-gi dysk IDE)
+/dev/sda[1-8] (1-szy dysk SCSI)
+/dev/sdb[1-8] (2-gi dysk SCSI)
+.RE
+.fi
+
+Parametr
+.I size-in-blocks
+jest pożądanym rozmiarem systemu plików, wyrażonym jako liczba bloków.
+Informacja ta może być określona przy pomocy programów
+.BR fdisk (8)
+lub
+.BR cfdisk (8)
+Jeśli pominięto rozmiar, to zostanie on określony automatycznie. Dozwolone są
+wyłącznie liczby bloków większe od 10 i mniejsze od 65536.
+.SH OPCJE
+.TP
+.B \-c
+Przed utworzeniem systemu plików sprawdź błędne bloki (bad blocks) urządzenia.
+Jeżeli zostaną znalezione jakieś błędne bloki, to wyświetlana jest ich ilość.
+.TP
+.BI \-n namelength
+Określa maksymalną długość nazw plików. Pomiędzy 
+.B \-n
+a
+.I namelength
+nie może być odstępu. Obecnie dozwolone są wyłącznie wartości 14 i  30.
+.B Domyślną wartością jest 30.
+.TP
+.BI \-i " inodecount"
+Określa liczbę i-węzłów (inodes) systemu plików.
+.TP
+.BI \-l " filename"
+Odczytaj listę błędnych bloków z pliku o nazwie
+.IR filename .
+Plik zawiera po jednym numerze błędnego bloku w każdym wierszu. Wyświetlana
+jest ilość odczytanych błędnych bloków.
+.TP
+.B \-v
+Twórz system plików Minix wersji 2.
+.SH "KODY ZAKOŃCZENIA"
+.B mkfs.minix
+zwraca jeden z poniższych kodów zakończenia:
+.IP 0
+Bez błędów
+.IP 8
+Błąd działania
+.IP 16
+Błąd użycia (składni)
+.SH "ZOBACZ TAKŻE"
+.BR fsck (8),
+.BR mkefs (8),
+.BR efsck (8),
+.BR reboot (8).
+.\" .SH AUTORZY
+.\" Linus Torvalds (torvalds@cs.helsinki.fi).
+.\" .br
+.\" Error code values by Rik Faith (faith@cs.unc.edu)
+.\" .br
+.\" Inode request feature by Scott Heavner (sdh@po.cwru.edu)
+.\" .br
+.\" Support for the file system valid flag by Dr. Wettstein
+.\" (greg%wind.uucp@plains.nodak.edu)
+.\" .br
+.\" Check to prevent mkfs of mounted filesystem and boot sector clearing
+.\" by Daniel Quinlan (quinlan@yggdrasil.com)
+.\" .br
+.\" Minix v2 support by Andreas Schwab
+.\" (schwab@issan.informatik.uni-dortmund.de), updated by Nicolai
+.\" Langfeldt (janl@math.uio.no)
+.\" .br
+.\" Portability patch by Russell King.

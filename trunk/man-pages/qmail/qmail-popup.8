@@ -1,0 +1,66 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/14-06-1999/"odczytuje nazwę użytkownika POP i jego hasło"}
+.TH qmail-popup 8
+.SH NAZWA
+qmail-popup \- odczytaj nazwę użytkownika POP i jego hasło
+.SH SKŁADNIA
+.B qmail-popup
+.I nazwa_hosta
+.I podprogram
+.SH OPIS
+.B qmail-popup
+czyta z sieci nazwę użytkownika POP i jego hasło.
+Następnie uruchamia
+.IR podprogram .
+
+.B qmail-popup
+jest najczęściej wywoływany z
+.B inetd
+jako
+
+.EX
+   qmail-popup ZMIEŃTO checkpassword qmail-pop3d Maildir
+.EE
+
+gdzie
+ZMIEŃTO
+zastępuje w pełni kwalifikowaną nazwą domeny lokalnej maszyny.
+
+.B qmail-popup
+oczekuje deskryptora 0 do odczytu z sieci
+i deskryptora 1 do zapisu do sieci.
+Czyta nazwę użytkownika i hasło z deskryptora 0
+w stylu POP lub APOP.
+Wywołuje
+.IR podprogram ,
+z tymi samymi deskryptorami 0 i 1;
+deskryptor 2 zapisujący do sieci;
+a deskryptor 3 czytający: nazwę użytkownika, 0 bajtów, hasło, znów 0 bajtów,
+znacznik czasu APOP pobrany z
+.IR nazwy_hosta ,
+i ostatnie 0 bajtów.
+.B qmail-popup
+czeka następnie na
+.I podprogram
+aż ten zakończy pracę.
+Wyświetla wiadomość o błędzie jeśli
+.I podprogram
+się popsuje lub zwróci niezerowy kod wyjścia.
+
+.B qmail-popup
+powinien być używany tylko wewnątrz
+bezpiecznej, zaufanej sieci.
+W przeciwnym wypadku jakiś niedobry podsłuchiwacz może ukraść hasła.
+Nawet jeśli używasz protokołu APOP,
+to jakiś nawiedzony haker może przechwytywać twe połączenia
+i siać spustoszenie.
+
+.B qmail-popup
+znosi 20-minutowy czas bezczynności.
+
+.B qmail-popup
+bazuje na programie współtworzonym przez Russa Nelsona.
+.SH "ZOBACZ TAKŻE"
+maildir(5),
+qmail-local(8),
+qmail-pop3d(8)

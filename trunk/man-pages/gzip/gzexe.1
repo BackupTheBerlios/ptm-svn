@@ -1,0 +1,44 @@
+.\" {PTM/PB/0.1/09-05-1999/"kompresuj pliki wykonywalne"}
+.TH GZEXE 1
+.SH NAZWA
+gzexe \- kompresuj pliki wykonywalne
+.SH SKŁADNIA
+.B gzexe
+[ nazwa ...  ]
+.SH OPIS
+Narzędzie
+.I  gzexe
+umożliwia kompresowanie plików wykonywalnych, a następnie ich automatyczną
+dekompresję po uruchomieniu archiwum (oczywiście z utratą prędkości
+wywołania). Na przykład, jeśli wywołasz ``gzexe /bin/cat'', to utworzone
+zostaną następujące pliki:
+.nf
+.br
+    -r-xr-xr-x  1 root  bin   9644 Feb 11 11:16 /bin/cat
+    -r-xr-xr-x  1 bin   bin  24576 Nov 23 13:21 /bin/cat~
+.fi
+/bin/cat~ jest plikiem oryginalnym, a /bin/cat jest samorozpakowującym się
+plikiem wykonywalnym. Jeśli jesteś pewien, że wersja skompresowana działa
+właściwie, możesz usunąć /bin/cat~.
+.PP
+Narzędzie to jest najbardziej przydatne na systemach z małymi dyskami.
+.SH OPCJE
+.TP
+.B \-d
+dekompresuje podane pliki wykonywalne.
+.SH "ZOBACZ TAKŻE"
+gzip(1), znew(1), zmore(1), zcmp(1), zforce(1)
+.SH NIEDOSKONAŁOŚCI
+Plik skompresowany jest skryptem powłoki. Może to powodować pewne dziury
+bezpieczeństwa. Praktycznie, skompresowany plik wykonywalny zależy od
+ustawienia zmiennej PATH, w której może znaleźć
+.I gzip
+i niektóre inne narzęzia
+.I (tail, chmod, ln, sleep).
+.SH "BŁĘDY"
+.I gzexe 
+próbuje odtworzyć na archiwum atrybuty originalnych plików, lecz czasem
+będziesz musiał je poprawić ręcznie, przy użyciu
+.I chmod
+lub
+.I chown.

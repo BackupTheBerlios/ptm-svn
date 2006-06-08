@@ -1,0 +1,151 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl>
+.\" Copyright 1998 Andries E. Brouwer (aeb@cwi.nl)
+.\"
+.\" May be distributed under the GNU General Public License
+.\" Rewritten for 2.1.117, aeb, 981010.
+.\"
+.TH MKSWAP 8 "25 marca 1999" "Linux 2.2.4" "Podręcznik programisty linuksowego"
+.SH NAZWA
+mkswap \- skonfiguruj linuksowy obszar wymiany
+.SH SKŁADNIA
+.BI "mkswap [\-c] [\-v" N "] [\-f] [\-p " PSZ "] "urządzenie  " [" rozmiar "]"
+.SH OPIS
+.B mkswap
+konfiguruje linuksowy obszar wymiany na urządzeniu lub w pliku.
+
+(Po utworzeniu obszaru wymiany musisz użyć polecenia
+.B swapon
+by go aktywować. Zwykle obszary wymiany są wymieniane w
+.IR /etc/fstab ,
+więc mogą być włączane do użytku podczas startu systemu poleceniem
+.B swapon -a
+w skrypcie startowym.)
+
+Argument
+.I urządzenie
+zwykle jest partycją dyskową (coś w rodzaju
+.I /dev/hda4
+lub
+.IR /dev/sdb7 )
+lecz może być również plikiem.
+Jądro Linuksa nie zważa na identyfikatory partycji, lecz wiele skryptów
+instalacyjnych zakłada, że partycje typu 82 (szesnastkowo -- LINUX_SWAP) są
+partycjami wymiany. (Uwaga: Solaris również używa tego typu. Uważaj by nie
+zabić swoich partycji solarisowych.)
+
+Parametr
+.I rozmiar
+jest niepotrzebny, lecz zachowany dla zgodności wstecznej. (Określa on
+potrzebny rozmiar obszaru wymiany w 1024 blokach.
+.B mkswap
+w przypadku pominięcia tego parametru używa całej partycji lub całego pliku.
+Podawanie tego parametru jest niemądre -- literówka może zniszczyć dysk.)
+
+Parametr
+.I PSZ
+określa rozmiar używanej strony. Podawanie go jest prawie zawsze
+niepotrzebne (nawet niemądre), lecz niektóre stare wersje libc kłamią o
+rozmiarze strony, więc 
+.B mkswap
+może się pomylić. Symptomem jest to, że kolejne
+.B swapon
+nie powodzą się, gdyż nie znajdują sygnatury wymiany. Typowymi wartościami
+.I PSZ
+są 4096 lub 8192.
+
+Linux zna przynajmniej dwa rodzaje obszarów wymiany: stary i nowy. Ostatnie
+10 bajtów pierwszej strony obszaru wymiany służą do rozróżnienia: stary ma w
+sygnaturze `SWAP_SPACE', nowy `SWAPSPACE2'.
+
+W starym rodzaju dalszym ciągiem pierwszej strony była mapa bitowa, z jednym
+bitem na każdą używalną stronę obszaru wymiany. Ponieważ pierwsza strona
+przechowuje mapę bitową, pierwszy bit jest zerowy. Ponadto ostatnie 10
+bajtów przechowuje sygnaturę. Jeśli więc rozmiar strony wynosi S, to obszar
+wymiany starego rodzaju może opisać najwyżej 8*(S-10)-1 stron przydatnych do
+wymiany.
+Przy S=4096 (jak w  i386), użytecznym obszarem jest najwyżej 133890048
+bajtów (prawie 128 MiB), a reszta jest marnowana. Na alfie i sparc64 o
+S=8192, użytecznym obszarem jest najwyżej 535560992 bajtów (prawie 512 MiB).
+
+Stara konfiguracja marnuje większość tej strony mapy bitowej, gdyż bity
+zerowe określają uszkodzone lub bloki poza końcem obszaru wymiany,
+choć do określenia rozmiaru obszaru wymiany wystarcza prosta liczba
+całkowita, a uszkodzone bloki można umieścić na liście. Nikt nie chce używać
+obszaru wymiany z setkami uszkodzonych bloków. (Nie chciałbym używać obszaru
+nawet z 1 uszkodzonym blokiem.)
+W nowym rodzaju obszaru wymiany zrobiono właśnie to. Maksymalny rozmiar
+obszaru wymiany zależy od architektury. Wynosi on 2GiB na i386, PPC, m68k,
+ARM, 1GiB na sparku, 512MiB na mipsie i 128GIB na alfie oraz 3TiB na
+sparc64.
+
+Zauważ, że przed 2.1.117 jądro alokowało jeden bajt na każdą stronę, a obecnie
+alokuje dwa bajty,  więc wzięcie obszaru wymiany 2GiB może wymagać 2MiB
+pamięci jądrowej.
+
+Obecnie Linux zezwala na 8 obszarów wymiany. Używane obszary można zobaczyć
+w pliku
+.I /proc/swaps
+(od 2.1.25).
+
+.B mkswap
+odmawia utworzenia obszarów mniejszych niż 10 stron.
+
+Jeśli nie wiesz jakiego rozmiaru strony używa twoja maszyna, możesz to
+sprawdzić poleceniem `cat /proc/cpuinfo' (lub nie możesz -- zawartość tego
+pliku zależy od architektury i wersji jądra).
+
+Aby skonfigurować plik wymiany należy utworzyć ten plik przed
+zainicjalizowaniem go poleceniem
+.B mkswap ,
+np. używając polecenia w rodzaju
+
+.nf
+.RS
+# dd if=/dev/zero of=swapfile bs=1024 count=65536
+.RE
+.fi
+
+Zauważ, że plik wymiany nie może zawierać dziur (więc używanie do jego
+utworzenia
+.BR cp (1)
+jest niedopuszczalne).
+
+.SH OPCJE
+.TP
+.B \-c
+Sprawdzenie urządzenia (jeśli jest blokowe) w poszukiwaniu uszkodzonych bloków
+przed utworzeniem obszaru wymiany. Jeśli jakieś zostaną znalezione, ich
+liczba zostaje wydrukowana.
+.TP
+.B \-f
+Wymuszenie działania nawet jeśli polecenie jest głupie. Umożliwia to
+tworzenie obszaru wymiany większego niż plik lub partycja, na których on się
+znajduje. 
+Na SPARC wymuszenie tworzenia obszaru wymiany.
+Bez tej opcji
+.B mkswap
+odmówi tworzenia wymiany v0 na urządzeniu z prawidłowym superblokiem SPARC,
+gdyż oznacza to że ktoś ma zamiar wymazać tablicę partycji.
+.TP
+.BI "\-p " PSZ
+Określenie rozmiaru używanej strony.
+.TP
+.B \-v0
+Utworzenie obszaru wymiany starego rodzaju.
+.TP
+.B \-v1
+Utworzenie obszaru wymiany nowego rodzaju.
+
+.LP
+Jeśli opcja \-v nie jest podana,
+.B mkswap
+domyślnie użyje nowego rodzaju, lecz jeśli bieżące jądro jest starsze niż
+2.1.117 (i również jeśli PAGE_SIZE jest mniejsze niż 2048), użyj starszego
+rodzaju.
+Nagłówek nowego rodzaju nie dotyka pierwszego bloku, więc może być
+preferowany w przypadku gdy masz tam LILO lub etykietę dysku.
+Jeśli musisz używać zarówno jądra 2.0 jak i 2.2, użyj \-v0.
+
+.SH "ZOBACZ TAKŻE"
+.BR fdisk (8),
+.BR swapon (8)

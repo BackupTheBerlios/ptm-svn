@@ -1,0 +1,83 @@
+.\" {PTM/GSN/0.5/23-02-1999/"oblicz sumę kontrolną i policz bajty w pliku"}
+.\" poszerzenie i aktualizacja do GNU textutils 2.0 PTM/WK/2000-IV
+.ig
+Transl.note: based on GNU man page cksum.1 and textutils.info
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH CKSUM "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+cksum \- oblicz sumę kontrolną i policz bajty w pliku
+.SH SKŁADNIA
+.B cksum
+.RB [ \-\-help ]
+.RB [ \-\-version ]
+.RI [ plik ...]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo cksum
+.RE
+lub
+.RS
+.BR "info cksum" .
+.RE
+.PP
+Ta strona podręcznika opisuje polecenie \fBcksum\fP w wersji GNU.
+.PP
+.B cksum
+oblicza sumę kontrolną CRC dla każdego podanego pliku, bądź dla
+standardowego wejścia jeśli nie podano żadnego lub gdy podano plik
+zwany '\-'.  Wypisuje on CRC dla każdego pliku razem z liczbą bajtów
+w pliku, oraz nazwą pliku, chyba że nie zostały podane żadne argumenty.
+.PP
+.B cksum
+używany jest przeważnie do upewnienia się, że pliki przeniesione za
+pomocą niepewnych środków (takich jak newsy), nie zostały zepsute,
+a to porównując wynik
+.B cksum
+dla otrzymanych plików z wynikiem
+.B cksum
+dla plików oryginalnych (zwykle podanym w pakiecie dystrybucyjnym).
+Algorytm CRC określony jest przez standard POSIX.2. Nie jest on zgodny
+z programami 
+.B sum
+z BSD i System V; jest bardziej niezawodny.
+.TP
+.B "\-\-help"
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, po czym kończy
+pracę.
+.TP
+.B "\-\-version"
+Wyświetla numer wersji programu i kończy pracę.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz. ang., do <bug-textutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR wc (1),
+.BR sum (1),
+.BR md5sum (1),
+.BR textutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi tekstowych
+GNU wersji 2.0.

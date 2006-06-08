@@ -1,0 +1,155 @@
+.\" {PTM/AB/0.1/21-12-1998/"touch - zmiana czasu pliku"}
+.\" translated by Adam Byrtek <alpha@irc.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.\" ------------
+.\" Copyright Andries Brouwer, Ragnar Hojland Espinosa and A. Wik, 1998.
+.\"
+.\" This file may be copied under the conditions described
+.\" in the LDP GENERAL PUBLIC LICENSE, Version 1, September 1998
+.\" that should have been distributed together with this file.
+.\"
+.\" ------------
+.TH TOUCH "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+touch \- zmiana czasu pliku
+.SH SKŁADNIA
+.B touch
+.RI [ opcja ]...
+.IR plik ...
+.PP
+Przestarzała wersja:
+.br
+.B touch
+.RB [ -acm ]
+.RI [ brzydki_czas ]
+.IR plik ...
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo touch
+.RE
+lub
+.RS
+.BR "info touch" .
+.RE
+.PP
+\fBtouch\fP zmienia czas dostępu i/lub modyfikacji podanych
+\fIplików\fP. Czas jest zmieniamy na aktualny czas, chyba że podano opcję \-r,
+w tym przypadku jest on zmieniany na odpowiedni czas pochodzący od pliku
+\fIplik_odn\fP, lub podano opcję -t, w tym przypadku jest on zmieniany na
+podany \fIczas\fP. Oba czasy są zmieniane, jeśli żadna z opcji \-a i \-m
+nie jest podana lub gdy podane są obie. Gdy podano jedynie opcję \-a
+zmieniany jest czas ostatniego dostępu, a gdy podano jedynie \-m zmieniany
+jest czas ostatniej modyfikacji. Jeśli plik nie istnieje, jest tworzony (jako
+pusty plik z uprawnieniami 0666 zmodyfikowanymi przez umask), chyba że podano
+opcję \-c.
+.SH OPCJE POSIX
+.TP
+.B \-a
+Zmiana tylko czasu ostatniego dostępu do \fIpliku\fP.
+.TP
+.B \-c
+Jeśli \fIplik\fP nie istnieje nie zostanie utworzony.
+.TP
+.B \-m
+Zmiana czasu ostatniej modyfikacji \fIpliku\fP.
+.TP
+.BI "\-r " plik_odn
+Użycie odpowiedniego czasu pochodzącego od pliku \fIplik_odn\fP jako nowego
+czasu.
+.TP
+.BI "\-t " czas
+Użycie podanego \fIczasu\fP zamiast aktualnego czasu. Argumentem jest liczba
+dziesiętna w postaci
+.br
+.nf
+    [[SS]RR]MMDDggmm[.ss]
+.br
+.fi
+znacząca to co zwykle.
+Jeśli nie podano wartości ss, uznaje się że wynosi ona 0. Może ona być z
+zakresu 0-61, aby możliwe było odnoszenie się do sekund przestępnych. Czas
+jest uznawany za czas dla strefy czasowej podanej przez zmienną środowiskową
+\fBTZ\fP. Jeśli czas poprzedza 1 stycznia 1970, uznawany jest za błędny.
+.SH SZCZEGÓŁY POSIX
+Druga forma wywołanie ma tę wadę, że nie jest pewne czy argument
+\fIbrzydki_czas\fP jest czasem czy jednym z plików, którego czas należy
+zmienić. Przyjmuje się, że jest on czasem gdy nie podano opcji -r lub -t,
+istnieją co najmniej dwa argumenty i pierwszy argument jest ośmio- lub
+dziesięcio-cyfrową dziesiętną liczbą całkowitą.
+.br
+Format \fIbrzydkiego_czasu\fP to MMDDggmm[RR], gdzie RR z zakresu 69-99
+oznacza rok z zakresu 1969-1999, a nie podany RR oznacza aktualny rok.
+Ta postać jest przestarzała.
+.SH SZCZEGÓŁY GNU
+Jeśli pierwszy argument \fIplik\fP może być poprawnym argumentem opcji \-t
+i nie podano czasu za pomocą opcji \-d, \-r czy \-t i nie podano
+argumentu \-\-, to jest on interpretowany jako czas dla pozostałych
+plików a nie nazwa pliku.
+.PP
+Podczas zmiany obu czasów, dostępu i modyfikacji, na czas aktualny
+\fBtouch\fP może zmienić znaczniki czasu plików, których użytkownik
+uruchamiający program nie jest właścicielem, ale ma prawo do zapisu. W innym
+przypadku użytkownik musi być właścicielem.
+.SH OPCJE GNU
+.TP
+.BR \-a ", " \-\-time=atime ", " \-\-time=access ", " \-\-time=use
+Zmiana jedynie czasu ostatniego dostępu.
+.TP
+.BR \-c ", " \-\-no\-create
+Nieistniejące pliki nie będą tworzone.
+.TP
+.BI \-d " czas\fR, " \-\-date= czas
+Użycie argumentu \fIczas\fP zamiast aktualnego czasu. Może on zawierać nazwy
+miesięcy, strefy czasowe, `am' i `pm', itd. Zobacz `Formaty wprowadzania
+daty' w \fBfileutils\fP(1).
+.TP
+.B "\-f"
+Ignorowane, zachowane dla kompatybilności z wersją BSD \fBtouch\fP.
+.TP
+.BR \-m ", " \-\-time=mtime ", " \-\-time=modify
+Zmiana jedynie czasu modyfikacji.
+.TP
+.BI "\-r " plik_odn\fR, " \-\-reference= \fIplik_odn
+Użycie czasów pochodzących od pliku \fIplik_odn\fP zamiast aktualnego czasu.
+.TP
+.BI "\-t " czasdzies
+Tutaj \fIczasdzies\fP ma format [[SS]RR]MMDDggmm[.ss]. Użycie argumentu
+(opcjonalnego stulecia i roku, miesiąca, dnia, godziny, minut, opcjonalnych
+sekund) zamiast aktualnego czasu. Jeśli rok podano przy pomocy dwu cyfr, to
+za SS przyjmowane jest 20 dla lat od 0 do 68, zaś 19 dla lat od 69 do 99.
+Jeżeli nie podano cyfr roku, to przyjmowany jest bieżący.
+.SH STANDARDOWE OPCJE GNU
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy działanie.
+.TP
+.B "\-\-"
+Zakończenie listy opcji.
+.SH UWAGI
+Zauważ, że trzy formaty daty/czasu: rozpoznawane przez opcje \fB-d\fP
+i \fB-t\fP oraz format przestarzałego argumentu czasu \fIbrzydki_czas\fP,
+są od siebie różne.
+.SH ŚRODOWISKO
+Zmienna \fBTZ\fP jest używana przy interpretacji podanych czasów. Zmienne
+\fBLANG\fP, \fBLC_ALL\fP, \fBLC_CTYPE\fP i \fBLC_MESSAGES\fP mają znaczenie
+takie jak zwykle.
+.SH PRZYKŁAD UŻYCIA
+Komenda `\fItouch foo\fP' utworzy plik \fIfoo\fP, jeśli jeszcze nie istnieje,
+i zmieni jego czas ostatniej modyfikacji na aktualny czas. Jest to często
+używane do sterowania działaniami \fBmake\fP.
+.SH ZGŁASZANIE BŁĘDÓW
+Błędy proszę zgłaszać, w jęz. ang., do <bug-fileutils@gnu.org>.
+.SH ZOBACZ TAKŻE
+.BR install (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Sprawdzono aktualność dokumentacji z werją 4.01 narzędzi plikowych GNU.
+Niniejsza dokumentacja jest obszerniejsza od oryginalnej, dołączanej
+do pakietu.

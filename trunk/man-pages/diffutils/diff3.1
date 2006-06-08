@@ -1,0 +1,234 @@
+.\" PTM/WK/2000-I
+.TH DIFF3 1 "1 października 1994" "Narzędzia różnicowe GNU" "Narzędzia GNU"
+.SH NAZWA
+diff3 \- znajdź różnice między trzema plikami
+.SH SKŁADNIA
+.B diff3
+.RI [ opcje ]
+.I mój starszy twój
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo diff3
+.RE
+lub
+.RS
+.BR "info diff3" .
+.RE
+.PP
+Polecenie
+.B diff3
+porównuje trzy pliki i podaje opisy różnic pomiędzy nimi.
+
+Plikami porównywanymi są argumenty nazwane tu
+.IR mój ,
+.IR starszy
+i
+.IR twój .
+Co najwyżej jedną z tych trzech nazw może być
+.BR \- ,
+mówiąca
+.B diff3
+by zamiast tego pliku czytał standardowe wejście.
+.SH OPCJE
+Poniżej podano podsumowanie wszystkich opcji akceptowanych przez GNU
+.BR diff3 .
+Można łączyć kilka opcji jednoliterowych (chyba że pobierają argument)
+w pojedynczy argument wiersza poleceń.
+.TP
+.B \-a
+.br
+.ns
+.TP
+.B \-\-text
+Traktuje wszystkie pliki jak tekstowe i porównuje je linia po linii,
+nawet jeśli nie wyglądają na tekstowe.
+.TP
+.B \-A
+.br
+.ns
+.TP
+.B \-\-show\-all
+Nanosi wszystkie zmiany powstałe między
+.I starszy
+a
+.I twój
+do pliku
+.IR mój ,
+ujmując wynikłe konflikty pomiędzy linie zawierające ciągi nawiasów ostrych
+(\fB\>\fP, \fB\<\fP).
+.ig
+.TP
+.B \-B
+Stare zachowanie się opcji \fB\-A\fR.  Pokazuje linie bez konfliktu.
+.\" Shows non-conflicts.
+..
+.TP
+.B \-e
+.br
+.ns
+.TP
+.B \-\-ed
+Tworzy skrypt programu
+.IR ed ,
+który nanosi zmiany pomiędzy
+.I starszy
+a
+.I twój
+do pliku
+.IR mój .
+.TP
+.B \-E
+.br
+.ns
+.TP
+.B \-\-show\-overlap
+Jak
+.BR \-e ,
+ale dodatkowo obejmuje nakładające się zmiany parami linii nawiasów ostrych.
+Z opcją
+.BR \-E ,
+nakładająca się zmiana wygląda tak:
+.sp
+.nf
+<<<<<<< \fImój\fP
+linie z \fImój\fP
+=======
+linie z \fItwój\fP
+>>>>>>> \fItwój\fP
+.fi
+.TP
+.B \-3
+.br
+.ns
+.TP
+.B \-\-easy\-only
+Jak
+.BR \-e ,
+z wyjątkiem tego, że wypisuje tylko zmiany nienakładające się.
+.TP
+.B \-i
+Na końcu skryptu
+.I ed
+generuje polecenia
+.B w
+i
+.BR q ,
+by był zgodny z System V.  Opcja ta musi być użyta z jedną z opcji
+.BR \-AeExX3 ,
+a nie może być łączona z
+.BR \-m .
+.TP
+.B \-T
+.br
+.ns
+.TP
+.B \-\-initial\-tab
+Zamiast dwu spacji przed tekstem linii normalnego formatu wypisuje
+tabulację.
+Powoduje, że wyrównanie tabulacji w linii wygląda normalnie.
+.TP
+.BI "\-L " etykieta
+.br
+.ns
+.TP
+.BI \-\-label= etykieta
+W liniach nawiasów ostrych wypisywanych przez opcje
+.BR \-A ,
+.B \-E
+i
+.BR \-X
+używa etykiety
+.IR etykieta
+w miejscu nazwy pliku.
+Opcję tę można podać do trzech razy, po jednym dla każdego pliku wejściowego.
+Domyślne etykiety są nazwami plików wejściowych.  Zatem
+.B "diff3 \-L X \-L Y \-L Z \-m A B C"
+działa jak
+.BR "diff3 \-m A B C" ,
+z wyjątkiem tego, że wynik wygląda jakby pochodził z plików o nazwach
+.BR X ,
+.B Y
+i
+.B Z
+a nie z plików nazywających się
+.BR A ,
+.B B
+i
+.BR C .
+.TP
+.B \-m
+.br
+.ns
+.TP
+.B \-\-merge
+Za pośrednictwem skryptu edycyjnego wprowadza zmiany do pierwszego pliku
+i wysyła wynik na standardowe wyjście.  W przeciwieństwie do przesyłania
+potokiem wyjścia z
+.B diff3
+do
+.IR ed ,
+działa nawet z plikami binarnymi i niekompletnymi liniami.
+Jeśli nie podano żadnej z opcji skryptu edycyjnego, to przyjmowana jest
+.BR \-A .
+.TP
+.B \-x
+.br
+.ns
+.TP
+.B \-\-overlap\-only
+Jak
+.BR \-e ,
+ale wypisuje tylko zmiany nakładające się.
+.TP
+.B \-X
+Jak
+.BR \-E ,
+ale wypisuje tylko zmiany, które się nakładają.  Inaczej mówiąc, jak
+.BR \-x ,
+tylko obejmuje zmiany w nawiasy ostre, jak w
+.BR \-E .
+
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+pracę.
+.TP
+.B \-v
+.br
+.ns
+.TP
+.B \-\-version
+Wyświetla numer wersji programu i kończy pracę.
+.SH KOPIOWANIE
+Plik ten powstał na podstawie podręcznika info pakietu diffutils.
+
+Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+.SH ZOBACZ TAKŻE
+.BR cmp (1),
+.BR comm (1),
+.BR diff (1),
+.BR ed (1),
+.BR patch (1),
+.BR sdiff (1).
+.SH DIAGNOSTYKA
+Kod zakończenia 0 oznacza pomyślnie ukończoną pracę
+.BR diff3 ,
+1 napotkanie konfliktów, a 2 kłopoty.
+

@@ -1,0 +1,20 @@
+.\" {PTM/WK/1999-XII}
+.Id $Id: atrun.8,v 1.1 1999/12/03 12:40:34 wojtek2 Exp $
+.TH ATRUN 8 "listopad 1996" local "Podręcznik Programisty Linuksa"
+.SH NAZWA
+atrun \- uruchamia zadania kolejkowane do późniejszego wykonania
+.SH SKŁADNIA
+.B atrun
+.RB [ -l
+.IR load_avg ]
+.RB [ -d ]
+.SH OPIS
+.B atrun
+uruchamia zadania ustawiane w kolejce przez
+.BR at(1) .
+Jest to skrypt powłoki zawierający wywołanie
+.B ${exec_prefix}/sbin/atd
+z opcją
+.IR -s ,
+dostarczony z uwagi na zapewnienie wstecznej zgodności
+ze starszymi instalacjami.

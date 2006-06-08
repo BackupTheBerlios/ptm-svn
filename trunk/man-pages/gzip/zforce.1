@@ -1,0 +1,22 @@
+.\" {PTM/LK/0.1/27-09-1998/"zforce - przywracanie rozszerzeń plikom gzip"}
+.\" Tłumaczenie: 27-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH ZFORCE 1
+.SH NAZWA
+zforce \- przywróć rozszerzenie '.gz' plikom skompresowanym przez gzip
+.SH SKŁADNIA
+.B zforce
+[ nazwa ...  ]
+.SH OPIS
+.I  zforce
+dodaje rozszerzenie .gz do wszystkich plików skompresowanych przez program
+.IR "gzip" ","
+aby 
+.I gzip
+nie kompresował ich ponownie.
+Jest to użyteczne w wypadku, gdy nazwy plików zostały obcięte po transferze. W
+systemach z ograniczeniem długości nazwy pliku do 14 znaków obcinana jest
+bazowa część nazwy tak, aby zmieściło się rozszerzenie .gz . Na przykład,
+nazwa 12345678901234 jest zmieniana na 12345678901.gz. Nazwy takie, jak
+foo.tgz są pozostawiane bez zmian.
+.SH "ZOBACZ TAKŻE"
+gzip(1), znew(1), zmore(1), zgrep(1), zdiff(1), gzexe(1)

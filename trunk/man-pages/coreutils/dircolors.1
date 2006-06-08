@@ -1,0 +1,108 @@
+.\" {PTM/AB/0.1/21-12-1998/"dircolors - konfiguracja kolorów dla `ls'"}
+.\" translated by Adam Byrtek <alpha@irc.pl>
+.\" poszerzenie i aktualizacja do GNU fileutils 4.01 PTM/WK/2000-I
+.ig
+Transl.note: based on man page by Andries Brouwer, Ragnar Hojland Espinosa
+and A. Wik, 1998 (LDP GPL), GNU manual dircolors.1 and fileutils.info.
+FSF notice for GNU fileutils 4.01 docs follows:
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH DIRCOLORS "1" FSF "grudzień 1999" "Narzędzia plikowe GNU 4.0l"
+.SH NAZWA
+dircolors \- konfiguracja kolorów dla `ls'
+.SH SKŁADNIA
+.B dircolors
+.RB [ opcje ]...
+.RB [ plik ]
+.SH OPIS
+Dokumentacja niniejsza nie jest już utrzymywana i może być niedokładna
+lub niekompletna.  Autorytatywnym źródłem jest obecnie dokumentacja
+Texinfo.  Dostęp do niej uzyskasz wpisując w wierszu poleceń:
+.RS
+.B pinfo dircolors
+.RE
+lub
+.RS
+.BR "info dircolors" .
+.RE
+.PP
+\fBdircolors\fP wysyła sekwencję komend powłoki definiujących kolory dla
+\fBls\fP (oraz \fBdir\fP itd.). Typowe wykorzystanie:
+.PP
+.RS
+eval `dircolors [opcje]... [plik]`
+.RE
+.PP
+Jeśli podano \fIplik\fP, \fBdircolors\fP odczytuje go aby ustalić, jakiego
+koloru użyć dla konkretnego typu pliku czy rozszerzenia. W przeciwnym
+wypadku używana jest domyślna, wkompilowana baza danych. Aby uzyskać
+informacje o formacie tych plików, należy
+uruchomić `dircolors \-\-print\-database'.
+.PP
+Wyjściem programu jest komenda powłoki ustawiająca zmienną środowiskową
+\fBLS_COLORS\fP. Można wybrać składnię dla odpowiedniej powłoki z linii
+poleceń, albo \fBdircolors\fP sam ją odgadnie na podstawie zawartości
+zmiennej środowiskowej \fBSHELL\fP.
+.PP
+Po wykonaniu tego polecenia, `ls \-\-color' (którego aliasem może być ls)
+wyświetli pliki w odpowiednich kolorach.
+.SH OPCJE
+.TP
+.BR \-b ", " \-\-sh ", " \-\-bourne\-shell
+Wysłanie na wyjście komend powłoki Bourne'a. Jest to domyślne zachowanie
+jeśli zmienna środowiskowa \fBSHELL\fP jest ustawiona i nie kończy się
+znakami \fIcsh\fP czy \fItcsh\fP.
+.TP
+.BR \-c ", " \-\-csh ", " \-\-c\-shell
+Wysłanie na wyjście komend powłoki C. Jest to domyślne zachowanie jeśli
+\fBSHELL\fP kończy się znakami \fIcsh\fP czy \fItcsh\fP.
+.TP
+.BR \-p ", " \-\-print\-database
+Wyświetlenie domyślnej (wkompilowanej) bazy danych konfiguracji kolorów.
+Wynik stanowi poprawny plik konfiguracyjny i dość dobrze opisuje dostępne
+możliwości.
+.TP
+.B \-\-help
+Wyświetla informację o stosowaniu programu i dostępnych opcjach, kończy
+działanie.
+.TP
+.B \-\-version 
+Wyświetla numer wersji programu i kończy działanie.
+.SH ŚRODOWISKO
+Zmienne \fBSHELL\fP oraz \fBTERM\fP są używane w celu odnalezienia
+odpowiedniego formatu komend powłoki. Zmienne \fBLANG\fP, \fBLC_ALL\fP,
+\fBLC_CTYPE\fP oraz \fBLC_MESSAGES\fP mają znaczenie takie jak zwykle.
+Zmienna \fBLS_COLORS\fP jest używana w celu przekazania informacji do
+\fBls\fP.
+.SH ZGODNOŚĆ Z
+Kolorowe wyjście dla \fBls\fP jest rozszerzeniem GNU.
+.SH AUTOR
+Napisane przez H.Petera Anvin.
+.SH "ZGŁASZANIE BŁĘDÓW"
+Błędy proszę zgłaszać, w jęz.ang., do <bug-fileutils@gnu.org>.
+.SH COPYRIGHT
+Copyright \(co 1999 Free Software Foundation, Inc.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH ZOBACZ TAKŻE
+.BR ls (1),
+.BR fileutils (1).
+.SH OD TŁUMACZA
+Zaktualizowano i poszerzono wg dokumentacji Texinfo dla narzędzi plikowych
+GNU wersji 4.01.

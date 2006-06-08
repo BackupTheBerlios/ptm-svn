@@ -1,0 +1,44 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/14-06-1999/"przygotowuje morercpthosts dla qmail-smtpd"}
+.TH qmail-newmrh 8
+.SH NAZWA
+qmail-newmrh \- przygotuj morercpthosts dla qmail-smtpd
+.SH SKŁADNIA
+.B qmail-newmrh
+.SH OPIS
+.B qmail-newmrh
+czyta instrukcje z 
+.B /var/qmail/control/morercpthosts
+i zapisuje je do
+.B /var/qmail/control/morercpthosts.cdb
+w formacie binarnym odpowiednim 
+dla szybkiego dostępu przez
+.BR qmail-smtpd .
+
+Jeśli jest jakiś kłopot z plikiem
+.BR control/morercpthosts ,
+.B qmail-newmrh
+wyjaśnia ten błąd i zostawia plik
+.B control/morercpthosts.cdb
+w spokoju.
+
+.B qmail-newmrh
+dba o to by
+.B control/morercpthosts.cdb
+był odświeżany automatycznie,
+więc
+.B qmail-smtpd
+nigdy nie musi czekać aż
+.B qmail-newmrh
+skończy swą pracę.
+Jednakże,
+.B qmail-newmrh
+nie podejmuje próby ochrony przeciw sytuacji, gdy
+dwa niezależne procesy odświeżają zawartość
+.BR control/morercpthosts.cdb .
+
+Format binarny
+.B control/morercpthosts.cdb
+nadaje się do przenoszenia pomiędzy maszynami.
+.SH "ZOBACZ TAKŻE"
+qmail-smtpd(8)

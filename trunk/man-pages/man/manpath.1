@@ -1,0 +1,130 @@
+.\" {PTM/WK/1999-XII}
+.\" Translation update: Robert Luberda <robert@debian.org>, May 2003, man-db 2.4.1
+.\" $Id: manpath.1,v 1.3 2003/05/29 10:59:27 robert Exp $
+.\"
+.\" Man page for manpath
+.\"
+.\" Copyright (C), 1995, Graeme W. Wilford. (Wilf.)
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the COPYING file that comes with the
+.\" man-db distribution.
+.\"
+.\" Sun Jan 22 22:15:17 GMT 1995 Wilf. (G.Wilford@ee.surrey.ac.uk)
+.\"
+.TH manpath 1 "7 września 2001" "2.4.1" "Narzędzia przeglądarki stron man"
+.SH NAZWA
+manpath \- określa ścieżkę przeszukiwania dla stron podręcznika man
+.SH SKŁADNIA
+.B manpath
+.B manpath
+.RB [\| \-qgdc \|]
+.RB [\| \-m
+.IR system \|[\|,.\|.\|.\|]\|]
+.SH OPIS
+Jeżeli ustawiona jest zmienna
+.RB $ MANPATH ,
+to
+.B manpath
+po prostu wyświetli jej zawartość i wyśle ostrzeżenie.
+Jeśli nie, to
+.B manpath
+określi odpowiednią hierarchię ścieżek poszukiwania stron podręcznika man
+i wyświetli wyniki.
+
+Ścieżka poszukiwań, w postaci listy rozdzielonych dwukropkami katalogów,
+określana jest przy pomocy informacji pozyskanej z pliku konfiguracyjnego
+man-db -
+.RI ( "/etc/man_db.config" )
+oraz środowiska użytkowników.
+.SH OPCJE
+.TP
+.B \-q, \-\-quiet
+Nie wysyła ostrzeżeń.
+.TP
+.B \-d, \-\-debug
+Tworzy informację diagnostyczną (debug).
+.TP
+.B \-c, \-\-catpath
+Tworzy ścieżkę catpath [do stron w postaci catman] zamiast manpath.
+Po ustaleniu ścieżki manpath, każdy jej element zamieniany jest na jego
+odpowiednik catpath.
+.TP
+.B \-g, \-\-global
+Twórz ścieżkę manpath składającą się ze wszystkich ścieżek wymienionych
+jako 'globalne' w pliku konfiguracyjnym man-db.
+.\"
+.\" Due to the rather silly limit of 6 args per request in some `native'
+.\" *roff compilers, we have do the following to get the two-line
+.\" hanging tag on one line. .PP to begin a new paragraph, then the
+.\" tag, then .RS (start relative indent), the text, finally .RE
+.\" (end relative indent).
+.\"
+.PP
+.B \-m
+.I system\c
+.RB \|[\|,.\|.\|.\|]\| ,
+.BI \-\-systems= system\c
+\|[\|,.\|.\|.\|]
+.RS
+Jeśli ten system ma dostęp do hierarchii stron man innego systemu
+operacyjnego, to można wykorzystać tę opcję do włączenia tych hierarchii
+do wyniku działania
+.BR manpath .
+W celu włączenia hierarchii stron podręcznika man z systemu NewOS użyj opcji
+.B \-m
+.BR NewOS .
+
+Podany
+.I system
+może być kombinacją oddzielonych przecinkami nazw systemów operacyjnych.
+Jeżeli chcemy włączyć hierarchie stron man macierzystego systemu
+operacyjnego, to musimy użyć
+.B man
+jako nazwy systemu w łańcuchu argumentów.
+Niniejsza opcja unieważnia ewentualne użycie zmiennej środowiska
+.RB $ SYSTEM .
+.RE
+.TP
+.B \-h, \-\-help
+Wyświetla informację pomocy i kończy pracę.
+.TP
+.B \-V, \-\-version
+Wyświetla informację o wersji i autorze.
+.SH ŚRODOWISKO
+.TP
+.B MANPATH
+Jeżeli ustawiona jest zmienna
+.RB $ MANPATH ,
+to
+.B manpath
+wyświetli jej wartość zamiast określenia jej na bieżąco.
+Jeżeli zmienna
+.RB $ MANPATH
+zaczyna się od dwukropka, to wartość tej zmiennej jest dodawana do listy
+pozyskanej z plików konfiguracyjnych.
+Jeżeli dwukropek umieszczono na końcu wartości tej zmiennej, to ta
+pozyskana lista ścieżek jest dodawana na koniec zmiennej.
+Jeżeli wartość tej zmiennej zawiera podwójny dwukropek
+.RB ( :: ),
+to pozyskana lista ścieżek jest wstawiana do  środka wartości zmiennej, pomiędzy
+dwukropki.
+.TP
+.B SYSTEM
+Jeżeli ustawiona jest zmienna
+.RB $ SYSTEM ,
+to ma to taki sam skutek, jak przekazanie jej wartości jako argumentu opcji
+.BR \-m .
+.SH PLIKI
+.TP \w'/etc/man_db.config'u+2n
+.I /etc/man_db.config
+Systemowy plik konfiguracyjny.
+.SH "ZOBACZ TAKŻE"
+.BR apropos (1),
+.BR whatis (1),
+.BR man (1).
+.SH AUTOR
+.nf
+Wilf. (G.Wilford@ee.surrey.ac.uk).
+Fabrizio Polacco (fpolacco@debian.org).
+.fi

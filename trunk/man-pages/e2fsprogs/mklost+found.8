@@ -1,0 +1,35 @@
+.\" {PTM/WK/1999-XII}
+.\" -*- nroff -*-
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH MKLOST+FOUND 8 "styczeń 1999" "E2fsprogs version 1.14"
+.SH NAZWA
+mklost+found \- twórz katalog lost+found na zamontowanym linuksowym systemie
+plików ext2fs (second extended filesystem)
+.SH SKŁADNIA
+.B mklost+found
+.SH OPIS
+.B mklost+found
+służy do tworzenia katalogu lost+found w bieżącym katalogu roboczym 
+na linuksowym systemie plików typu second extended (ext2fs).
+.br
+.B mklost+found
+wstępnie alokuje bloki dyskowe dla stworzonego katalogu, by był zdatny do
+użytkowania przez
+.B e2fsck
+.SH OPCJE
+Nie ma żadnych.
+.SH AUTOR
+.B mklost+found
+zostało napisane przez Remy'ego Carda <card@masi.ibp.fr>, rozwijającego
+i opiekującego się systemem plików ext2.
+.SH BŁĘDY
+Nie ma żadnych :-)
+.SH DOSTĘPNOŚĆ
+.B mklost+found
+jest częścią pakietu e2fsprogs i jest dostępne poprzez anonimowe ftp
+z tsx-11.mit.edu w /pub/linux/packages/ext2fs.
+.SH ZOBACZ TAKŻE
+.BR e2fsck (8),
+.BR mke2fs (8)

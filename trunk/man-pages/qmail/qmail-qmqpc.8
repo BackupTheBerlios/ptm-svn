@@ -1,0 +1,31 @@
+.\" Translation (C) 1999 Pawel Wilk <siefca@pl.qmail.org>
+.\" {PTM/PW/0.1/14-06-1999/"kolejkuje wiadomość pocztową poprzez QMQP"}
+.TH qmail-qmqpc 8
+.SH NAZWA
+qmail-qmqpc \- kolejkuj wiadomość pocztową poprzez QMQP
+.SH SKŁADNIA
+.B qmail-qmqpc
+.SH OPIS
+.B qmail-qmqpc
+oferuje taki sam interfejs jak
+.BR qmail-queue ,
+ale przekazuje wiadomość do serwera QMQP
+zamiast ją lokalnie przechowywać.
+
+W instalacji
+.B mini-qmail
+program
+.B qmail-queue
+jest zamieniany przez link symboliczny do
+.BR qmail-qmqpc .
+.SH "PLIKI KONTROLNE"
+.TP 5
+.I qmqpservers
+Adresy IP serwerów  QMQP, jeden adres na linię.
+.B qmail-qmqpc
+będzie próbować każdego z adresów, do momentu ustanowienia połączenia
+QMQP albo przejścia całej kolejki adresów.
+.SH "ZOBACZ TAKŻE"
+qmail-control(5),
+qmail-queue(8),
+qmail-qmqpd(8)
