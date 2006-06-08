@@ -1,0 +1,83 @@
+Wszelkie prace nad tłumaczeniami stron man są dokonywane w repozytorium SVN.
+
+Ten tekst to krótkie wprowadzenie do obsługi tego narzędzia. Postaram się tu
+przybliżyć podstawy niezbędne dla partycypacji w naszym projekcie.
+
+Przede wszystkim należy założyć konto w serwisie http://developer.berlios.de.
+Następnie należy udać się z loginem do jednego z administratorów SVN. Obecnie
+są nimi Łukasz Damentko (rane@gentoo.org) i Damian Szeluga
+(damjanek@gentoo.pl). Należy podać im swój login i poczekać na bycie
+zatwierdzonym jako członek projektu. Potem należy poczekać 6 godzin aż skrypty
+SVN serwisu Berlios zaakceptują nowo dodanego człowieka jako członka projektu.
+
+Później można przystąpić do etapu pracy właściwej:
+
+Po pierwsze, trzeba pobrać zawartość repozytorium SVN na dysk:
+
+$ svn checkout svn+ssh://<login>@svn.berlios.de/svnroot/repos/ptm/
+(Oczywiście Należy zastąpić <login> nazwą swojego konta na Berlios)
+
+Pobierze się katalog ptm/ identyczny z tym, który można pozwiedzać na stronie
+http://svn.berlios.de/viewcvs/ptm/
+
+Następnie można utworzyć sobie katalog domowy, służący do bieżącej pracy w SVN.
+
+$ cd ptm/trunk/users/
+$ svn mkdir <login>
+$ svn commit -m "tworze sobie katalog"
+
+Katalog domowy zostanie dodany do repozytorium.
+
+Następnie pożyczamy sobie jakiś dowolny plik leżący w katalogu man-pages, nad
+którym zamierzamy pracować i kopiujemy go do nowo utworzonego katalogu
+domowego:
+
+$ cp <costam> .
+$ svn add <costam>
+$ svn commit -m "plik, ktory bede tlumaczyl"
+
+Następnie można przystąpić do edycji. Po dokonaniu zmian można zapisać plik w
+edytorze, a następnie dodać zmiany do repozytorium:
+
+$ svn commit -m "przetlumaczylem kolejne 20%"
+
+Po zakończeniu tłumaczenia można przerzucić gotowy plik w odpowiednie
+"oficjalne" miejsce i tam zatwierdzić za pomocą svn commit pisząc o tym, że
+jest to już gotowa wersja.
+
+To koniec krótkiego wprowadzanie do pracy w SVN. Więcej można znaleźć w
+oficjalnej dokumentacji narzędzia, której to dokumentacji lekturę serdecznie
+polecamy.
+
+Teraz kilka końcowych uwag dotyczących SVN:
+
+Katalogi w nim się znajdujące to:
+
+html/      - przetłumaczone strony man w formacie HTML
+man-pages/ - najbardziej oficjalna część repo - strony man, którymi zarządzamy
+users/     - robocze katalogi użytkowników
+www/       - strony www projektu - wstęp wzbroniony bez specjalnych przepustek i upoważnień
+
+Kilka uwag regulaminowych:
+
+Przede wszystkim: jeśli ktoś coś popsuje to sam będzie to naprawiał. :)
+Po drugie, psucie katalogów innych użytkowników (users/*) będzie karane
+obcięciem kończyn. Po trzecie, stronę www zmieniają admini projektu, mieszanie
+tam to najlepszy sposób na pozbycie się kilku kończyn.
+
+Pytania i sugestie dotyczące tego tekstu można przesyłać do autora - Łukasz Damentko - na
+adres rane@gentoo.org
+
+Życzę miłej pracy. :)
+
+
+
+
+
+
+
+
+
+
+
+
