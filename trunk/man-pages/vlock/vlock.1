@@ -1,0 +1,41 @@
+.TH VLOCK 1 "16 Maja 1996" "Podrêcznik U¿ytkownika Linuksa"
+.SH NAZWA
+vlock \- program do blokowania wirtualnej konsoli
+.SH SKADNIA
+.B vlock
+.PP
+.B vlock [ -a,--all ] [ -c,--current ] [ -h,--help ] [ -v,--version ]
+.SH OPIS
+.B vlock
+jest programem s³u¿±cym do blokowania jednej lub wielu sesji w konsoli Linuksa. Jest szczególnie przydatny na linuksowych komputerach, do któych konsoli ma dostêp wielu uytkowników. U¿ytkownik mo¿e zablokowaæ swoj±(e) sesje, pozwalaj±c innym u¿ytkownikom systemu na normalne u¿ytkowanie innych wirtualnych konsol. Je¶li zaistnieje potrzeba, mo¿na zablokowaæ ca³± konsolê i moliwo¶æ prze³±czania siê pomiêdzy wirtualnymi terminalami.
+.PP
+Domy¶lnie, tylko bie¿±ca VC (virtual console - wirtualna konsola) jest blokowana. Z opcjami \fB-a,--all\fR wszystkie VC s± blokowane. Zablokowane VC nie mog± zostaæ otwarte bez u¿ycia has³a u¿ytkownika lub roota.  Has³o roota zawsze bêdzie mog³o odblokowaæ jedn± lub wiele sesji. Co wa¿ne dla paranoikó³, vlock dostarczy niesamowitych wrae¿eñ wszystkim maniakom, którzy bêd± próbowali odgadn±æ has³o - tak wiêc nieautoryzowany dostêp do sesji jest wysoce nieprawdopodobny.
+.PP
+Proszê zauwayæ, ¿e mo¿liwe jest ca³kowite odciêcie siê od konsoli przy u¿yciu opcji \fB-a,--all\fR je¿eli has³o zostanie zapomniane! Je¶li nie jeste¶ w stanie zalogowaæ sie zdalnie przez terminal szeregowy lub sieæ to twardy reset jest jedyn± metod± odblokowania sesji.
+.PP
+\fBvlock\fR dzia³a g³ównie na sesjê konsoli. Istnieje tak¿e moliwo¶æ blokowania sesji niekonsolowych, jednak nie zosta³a ona dobrze przetestowana.
+.SH OPCJE
+.B -a,--all
+.IP
+Zamknij wszystkie sesje konsoli i wy³±cz moliwo¶æ prze³±czania siê pomiêdzy VC.
+.PP
+.B -c,--current
+.IP
+Zamknij bie¿±c± sesjê (domy¶lne).
+.PP
+.B -h,--help
+.IP
+Wypisz krótki komunikat pomocy.
+.PP
+.B -v,--version
+.IP
+Wypisz numer wersji \fBvlock\fR.
+.PP
+.SH AUTOR
+Michael K. Johnson <johnsonm@redhat.com>
+.SH T£UMACZENIE
+Pawe³ Sêdrowski <sedros@gmail.pl>
+.br
+Projekt T³umaczenia Manuali
+.br
+http://ptm.berlios.de
