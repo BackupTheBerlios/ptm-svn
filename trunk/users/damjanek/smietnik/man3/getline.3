@@ -1,0 +1,146 @@
+.\" Copyright (c) 2001 John Levon <moz@compsoc.man.ac.uk>
+.\" Based in part on GNU libc documentation
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\"
+.\" Tłumaczenie wersji man-pages 1.50 - czerwiec 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH GETLINE 3 2001-10-07 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getline, getdelim \- wprowadzanie łańcuchów rozgraniczonych
+.SH SKŁADNIA
+.nf
+.B #define _GNU_SOURCE
+.B #include <stdio.h>
+.sp
+.BI "ssize_t getline(char **" lineptr ", size_t *" n ", FILE *" stream );
+.nl
+.BI "ssize_t getdelim(char **" lineptr ", size_t *" n ", int " delim ", FILE *" stream );
+.SH OPIS
+.B getline()
+odczytuje całą linię, przechowując adres bufora zawierającego tekst w
+.IR "*lineptr".
+Bufor jest zakończony znakiem NUL i zawiera znak nowej linii, jeśli go
+napotkano.
+
+.\" FIXME: what happens if *lineptr is NULL but *n isn't zero ?
+.\" Answer: *n is ignored and a new buffer is allocated
+Gdy
+.IR "*lineptr"
+jest równe
+.BR "NULL",
+funkcja
+.BR getline()
+przydziela bufor dla umieszczenia w nim zawartości linii, który to bufor musi
+zostać zwolniony przez program użytkownika.
+Alternatywnie, przed wywołaniem
+.BR "getline()",
+.IR "*lineptr"
+może zawierać wskaźnik do bufora przydzielonego za pomocą
+.B malloc()
+o rozmiarze
+.I *n
+bajtów. Gdy rozmiar bufora nie jest wystarczający do umieszczenia w nim
+odczytanej linii,
+.B getline()
+rozszerzy bufor do odpowiedniego rozmiaru za pomocą
+.BR "realloc()",
+modyfikując
+.I "*lineptr"
+i
+.IR "*n" ,
+jeśli będzie to potrzebne. W każdym razie, po pomyślnym wywołaniu
+.I "*lineptr"
+i
+.I "*n"
+będą zaktualizowane tak, aby odzwierciedlić, odpowiednio,  adres i rozmiar
+bufora.
+
+.BR getdelim()
+działa jak
+.BR "getline()",
+z tym wyjątkiem, że jako argument
+.I delimiter
+można podać ogranicznik linii inny niż znak nowej linii.
+Podobnie jak dla
+.BR "getline()",
+znak ogranicznika nie jest dodawany, gdy nie występował w danych wejściowych
+przed osiągnięciem końca pliku.
+
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu,
+.B "getline()"
+i
+.B "getdelim()"
+zwracają liczbę odczytanych znaków, łącznie ze znakiem ogranicznika, ale nie
+włączając kończącego znaku NUL. Wartość ta może służyć to wychwycenia znaków
+NUL zawartych w odczytanaj linii.
+
+Obie funkcje zwracają \-1, gdy nie uda się odczytać linii (włączając w to
+próbę czytania na końcu pliku).
+
+.SH BŁĘDY
+.TP
+.B EINVAL
+Błędne wartości parametrów
+.RI ( n
+lub
+.I lineptr
+równe NULL, lub nieprawidłowy
+.I stream ).
+
+.SH PRZYKŁAD
+.nf
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE * fp;
+	char * line = NULL;
+	size_t len = 0;
+	ssize_t read;
+	fp = fopen("/etc/motd", "r");
+	if (fp == NULL)
+		exit(EXIT_FAILURE);
+	while ((read = getline(&line, &len, fp)) != -1) {
+		printf("Odczytano linię o długości %zu :\en", read);
+		printf("%s", line);
+	}
+	if (line)
+		free(line);
+	return EXIT_SUCCESS;
+}
+.fi
+.SH "ZGODNE Z"
+Zarówno getline(), jak i getdelim() są rozszerzeniami GNU.
+Są one dostępne od libc 4.6.27.
+
+.SH "ZOBACZ TAKŻE"
+.BR read (2),
+.BR fopen (3),
+.BR fread (3),
+.BR gets (3),
+.BR fgets (3),
+.BR scanf (3)

@@ -1,0 +1,456 @@
+.\" {PTM/PR/0.3/24-02-2000/"konsolowe narzędzie zarządzania pakietami Debiana"}
+.\" Translation 1999-2000 by Piotr Roszatycki
+.\" Translation update: Robert Luberda <robert@debian.org>, Oct 2003, dpkg 1.10.16
+.\" $Id: dselect.8,v 1.5 2003/10/17 13:51:59 robert Exp $
+.\"
+.TH DSELECT 8 "lipiec 2001" "Projekt Debiana" "Debian"
+.SH NAZWA
+dselect \- konsolowe narzędzie zarządzania pakietami Debiana
+.SH SKŁADNIA
+.B dselect
+[\-\-admindir <katalog>] [\-\-help] [\-\-version] [\-\-licence | \-\-license]
+[\-\-expert] [\-\-debug | \-D <plik>] [\fI<akcja>\fP]
+[\-\-colour | \-\-color screenpart:[foreground],[background][:attr[+attr+..]]]
+.SH OPIS
+.B dselect
+jest jednym z podstawowych narzędzi użytkownika do zarządzania
+pakietami Debiana.
+Z głównego menu programu \fBdselect\fP, administrator systemu może:
+ \- zaktualizować listę dostępnych pakietów,
+ \- wyświetlić stan zainstalowanych i dostępnych wersji pakietów,
+ \- wybierać pakiety i zarządzać zależnościami,
+ \- zainstalować nowe pakiety lub zaktualizować pakiety do nowszych wersji.
+.PP
+.B dselect
+jest nakładką na polecenie \fBdpkg(8)\fP, niskopoziomowe narzędzie
+zarządzania pakietami Debiana. Jego podstawową zaletą jest menadżer pełnoekranowego
+wyboru pakietów z możliwością znajdowania zależności między nimi i rozwiązywania
+konfliktów. Program uruchomiony z prawami administratora daje możliwość instalowania,
+aktualizowania oraz usuwania pakietów. Można skonfigurować różnorodne metody dostępu,
+za pomocą których można ściągnąć z repozytorium pakietów zarówno informacje o dostępnych
+wersjach pakietów, jak i same pakiety do zainstalowania. W zależności od metody dostępu
+repozytoria te mogą się znajdować na publicznych serwerach-archiwach w Internecie,
+lokalnych serwerach z archiwami lub na CD-ROM-ach.
+Zalecaną metodą dostępu jest metoda \fIapt\fP, dostarczana przez pakiet \fBapt\fP.
+.PP
+Zazwyczaj
+.B dselect
+jest uruchamiany bez żadnych parametrów. Wtedy wyświetlane jest interaktywne
+menu z listą akcji. Jeżeli akcja zostanie podana jako argument wywołania programu,
+to ta akcja jest od razu wykonywana.
+Ponadto jest dostępnych kilka parametrów wywołania, które modyfikują zachowanie
+\fBdselecta\fP albo wyświetlają dodatkowe informacje o programie.
+.SH OPCJE
+Wszystkie opcje mogą być podane zarówno w linii poleceń, jak i w pliku
+konfiguracyjnym \fI/etc/dpkg/dselect.cfg\fP programu \fBdselect\fP.
+Każda linia tego pliku jest albo opcją (dokładnie taką samą jak
+opcja linii poleceń, ale bez początkowych myślników), albo komentarzem
+(jeżeli zaczyna się od \fB#\fR).
+.br
+.TP
+.B --admindir <katalog>
+Zmienia katalog zawierający pliki `status' ,`available' i inne
+potrzebne programowi \fBdpkg\fP. Domyślnym katalogiem jest
+\fI/var/lib/dpkg\fP i zazwyczaj nie powinno być potrzeby zmieniania go na inny.
+.TP
+.B --debug <plik> | -D<plik>
+Włącza opcję debuggera. Informacje debuggera są wysyłane do \fI<pliku>\fP.
+.TP
+.B --expert
+Włącza tryb doświadczonego użytkownika i na przykład nie wyświetla
+męczących informacji z pomocą.
+.TP
+.B --colour | --color screenpart:[foreground],[background][:attr[+attr+..]]
+Ustawia kolory ekranu. Działa tylko pod warunkiem że terminal obsługuje kolory.
+Ta opcja może zostać użyta wiele razy (i najlepiej jej używać w
+\fIdselect.cfg\fP). Każde użycie zmienia kolor (i opcjonalnie inne atrybuty)
+jakiejś części ekranu.
+Części ekranu są następujące (od góry do dołu):
+.RS
+.TP
+.B title
+Tytuł ekranu.
+.TP
+.B listhead
+Linia nagłówka nad listą pakietów.
+.TP
+.B list
+Przewijana lista pakietów (i również niektóre teksty pomocy).
+.TP
+.B listsel
+Podświetlony element z listy.
+.TP
+.B pkgstate
+W liście pakietów - tekst oznaczający obecny stan każdego pakietu.
+.TP
+.B pkgstatesel
+W liście pakietów - tekst oznaczający obecny stan podświetlonego pakietu.
+.TP
+.B infohead
+Linia nagłówka, w której wyświetlony jest stan obecnie zaznaczonego pakietu.
+.TP
+.B infodesc
+Krótki opis pakietu.
+.TP
+.B info
+Używane do wyświetlania informacji o pakiecie takich jak jego opis.
+.TP
+.B infofoot
+Ostatnia linia ekranu z wyborem pakietów.
+.TP
+.B query
+Używane do wyświetlania linii zapytań.
+.TP
+.B helpscreen
+Kolor ekranów pomocy.
+.RE
+.P
+Po części ekranu następuje dwukropek i specyfikacja koloru. Można określić
+kolor czcionek, kolor tła albo oba te kolory, unieważniając domyślne wartości
+kolorów. Należy używać standardowych nazw kolorów z biblioteki curses.
+.P
+Opcjonalnie, po specyfikacji kolorów można dodać jeszcze jeden dwukropek,
+a po nim opis atrybutów. Jest to lista zawierająca jeden lub więcej atrybutów
+oddzielonych znakami plusa ("+"). Dostępne atrybuty (nie wszystkie
+działają na wszystkich terminalach) to: normal (normalny), standout (wyróżniony),
+underline (podkreślony), reverse (odwrócony), blink (migający), bright (jasny),
+dim (ciemny), bold (pogrubiony).
+.TP
+.B --help
+Wyświetla krótką informację o pomocy i pomyślnie kończy działanie.
+.TP
+.B --licence | --license
+Wyświetla informację o licencji i prawach autorskich programu i pomyślnie
+kończy działanie.
+.TP
+.B --version
+Wyświetla informację o wersji i pomyślnie kończy działanie.
+.SH UŻYTKOWANIE
+.B dselect
+uruchomiony w trybie interakcyjnym wyświetla menu z następującymi
+akcjami:
+.SS access (dostęp)
+Wybiera metodę dostępu używaną do znalezienia repozytorium pakietów.
+.sp
+Domyślnie istnieje kilka metod, takich jak \fIfloppy\fP (dyskietka),
+\fIharddisk\fP (dysk twardy) lub \fIcdrom\fP (CD-ROM), ale inne pakiety
+mogą dostarczyć dodatkowych metod, na przykład metody \fIapt\fP dostarcza
+pakiet \fBapt\fP, a \fImulti_cd\fP - pakiet \fBdpkg-multicd\fP.
+.sp
+Zalecane jest używanie metody \fIapt\fP.
+.SS update (aktualizacja)
+Aktualizuje bazę dostępnych pakietów.
+.sp
+Ściąga listę dostępnych wersji pakietów z repozytorium pakietów,
+skonfigurowanego za pomocą wybranej metody dostępu, i aktualizuje
+bazę pakietów programu dpkg .Listy pakietów są zwyczajowo zawarte
+w repozytorium w plikach nazwanych \fBPackages\fP lub \fBPackages.gz\fP.
+Pliki te mogą zostać wygenerowane przez opiekunów repozytoriów
+za pomocą programu \fBdpkg-scanpackages(8)\fP.
+.sp
+Szczegóły aktualizacji zależą od implementacji metody dostępu.
+Zazwyczaj ten proces jest bardzo prosty i nie wymaga interakcji
+z użytkownikiem.
+.sp
+.SS select (wybór)
+Wyświetla informacje o wyborze pakietów i zależnościach oraz zarządza nimi.
+.sp
+Jest to główna funkcja programu \fBdselect\fP. W ekranie wyboru pakietów
+użytkownik może przeglądać listę dostępnych i zainstalowanych pakietów.
+Jeżeli program działa z uprawnieniami administratora, możliwe jest interaktywne
+zmienianie stanu pakietów. \fBdselect\fP śledzi wpływ tych zmian na
+pakiety zależne.
+.\" FIXME change packages selection state. \fBdselect\fP tracks the implications
+.\"of these changes to other depending or conflicting packages.
+.sp
+Jeśli zostanie wykryty konflikt lub niespełniona zależność, wyświetlany
+jest ekran rozwiązywania zależności pokazujący listę pakietów, powodujących
+konflikt lub niespełnioną zależność, i dla każdego wyświetlonego pakietu - przyczynę,
+dla której jest on wyświetlony. Użytkownik może zastosować się do sugestii
+zaproponowanych przez \fBdselect\fP, unieważnić je lub wycofać się ze zmian,
+włączając w to pakiety, które spowodowały niespełnione zależności lub konflikty.
+.sp
+Używanie ekrany do zarządania interaktywnym wyborem pakietów jest
+szczegółowo wyjąśnione poniżej.
+.sp
+.SS install (instalacja)
+Instaluje wybrane pakiety.
+.sp
+Za pomocą skonfigurowanej metody dostępu zostaną z odpowiednich repozytoriów
+pobrane pakiety do zainstalowania lub zaktualizowania za pomocą programu \fBdpkg\fP.
+Zależnie od implementacji tej metody dostępu, pakiety mogą zostać pobrane
+wcześniej - przed instalacją - lub wtedy, gdy będą potrzebne.
+Niektóre metody dostępu również usuwają pakiety zaznaczone do usunięcia.
+.sp
+Jeżeli podczas instalacji wystąpi błąd, poleca się uruchomienie akcji install
+jeszcze raz. W większości przypadków, problemy same znikną lub zostaną rozwiązane.
+Jeśli problem pozostaje lub przeprowadzona instalacja była nieprawidłowa,
+prosimy o zbadanie przyczyn problemu i okoliczności jego wystąpienia i o wysłanie
+reportu o błędzie do systemu śledzenia błędów Debiana. Instrukcje, jak to zrobić,
+można znaleźć pod adresem http://bugs.debian.org/ albo w dokumentacji programów
+\fBbug(1)\fP lub \fBreportbug(1)\fP, jeżeli są zainstalowane.
+.sp
+Szczegóły dotyczące akcji instalacji zależą od implementacji metody dostępu.
+Podczas instalacji, konfiguracji czy usuwania pakietów może być potrzebna
+interakcja z użytkownikiem. Zależy to od skryptów opiekuna pakietu.
+Niektóre pakiety używają biblioteki \fBdebconf(7)\fP, co pozwala na bardziej
+elastyczną lub nawet w pełni automatyczną instalację pakietu.
+.sp
+.SS config (konfigurowanie)
+Konfiguruje wszystkie pakiety poprzednio zainstalowane, ale nie
+do końca skonfigurowane.
+.sp
+.SS remove (usuwanie)
+Usuwa lub czyści te zainstalowane pakiety, które są zaznaczone do usunięcia.
+.sp
+.SS quit (wyjście)
+Wyjście z \fBdselect\fP.
+.sp
+Wychodzi z programu z zerowym kodem błędu (pomyślnie).
+.sp
+.SH Zarządzanie wyborem pakietów
+.sp
+.SS Wstęp
+.sp
+.B dselect
+odkrywa przed administratorem niektóre złożoności wiążące się z zarządzaniem
+dużym zbiorem pakietów z wieloma zależnościami między nimi. Dla użytkownika, który nie
+jest zaznajomiony z koncepcjami Debianowego systemu zarządzania pakietami, może to
+być bardzo przytłaczające. Chociaż celem programu \fBdselect\fP jest ułatwienie
+zarządzania i administrowania pakietami, jest on tylko instrumentem służącym do tego
+.\" FIXME: oryg.: instrumental in doing so and can not be assumed to be a sufficient
+.\" substitute for administrator skill and understanding.
+i nie może w wystarczającym stopniu zastąpić umiejętności i wiedzy administratora.
+Użytkownik powinien być zaznajomiony z koncepcjami leżącymi u podstaw systemu
+pakietów Debiana. W razie jakichkolwiek wątpliwości, należy je sprawdzić w podręczniku
+.\" FIXME: nie po polsku: sprawdzić wątpliwości!!!
+\fBdpkg(8)\fP oraz w podręczniku "Debian policy manual".
+.sp
+Jeżeli \fBdselect\fP nie był uruchomiony w trybie eksperta (expert)
+lub trybie pilnym (immediate), to po wybraniu akcji z menu, wyświetlany jest
+ekran pomocy.
+Użytkownik \fIpowinien\fP dokładnie przeczytać wszystkie informacje zawarte
+w ekranach pomocy, kiedy się pojawiają. Ekrany pomocy mogą zostać wyświetlone
+w dowolnym momencie przez wybranie klawisza \fB'?'\fP.
+.sp
+.SS Układ ekranu
+.sp
+Ekran wyboru pakietów domyślnie podzieliony jest na górną i dolną połowę.
+W górnej połowie wyświetlona jest lista pakietów. Za pomocą paska wyboru można
+wybrać pojedynczy pakiet lub grupę pakietów,
+.\" FIXME if applicable
+przez zaznaczenie nagłówka grupy pakietów.
+W dolnej połowie ekranu pokazane są szczegółowe informacje na temat pakietu
+obecnie wybranego w górnej połowie ekranu.
+Typ tych informacji może być różny.
+.sp
+Naciśnięcie klawisza \fB'I'\fP przełącza pomiędzy pełnoekranowym widokiem pakietów,
+powiększonym widokiem szczegółowych informacji o pakiecie albo dzieli ekran na połowę.
+.sp
+.SS Widok szczegółowych informacji o pakiecie
+.sp
+W widoku szczegółowych informacji o pakiecie domyślnie wyświetlony jest rozszerzony
+opis pakietu obecnie wybranego w liście pakietów.
+Typ tych informacji może być zmieniony za pomocą klawisza \fB'i'\fP. Możliwe wybory są
+następujące:
+ - poszerzony opis
+ - informacja o zainstalowanej wersji pakietu
+ - informacja o dostępnej wersji pakietu
+.sp
+Ekran rozwiązywania zależności daje także możliwość podejrzenia
+określonych niespełnionych zależności bądź konfliktów związanych
+z pakietem, tj. tych zależności, które spowodowały wylistowanie tego
+pakietu.
+.sh
+.SS Lista stanów pakietów
+.sp
+W głównym ekranie wyboru pakietów wyświetlona jest lista wszystkich
+pakietów znanych systemowi zarządzania pakietami Debiana. Są to zarówno
+pakiety zainstalowane w systemie, jak i pakiety zawarte w bazie dostępnych
+pakietów.
+.sp
+Dla każdego pakietu pokazane są: jego stan, priorytet, sekcja, numer wersji
+zainstalowanej i numer wersji dostępnej, nazwa pakietu oraz krótki
+opis - wszystko w jednej linii.
+Naciskając klawisz \fB'V'\fP, można włączać i wyłączać wyświetlanie
+informacji o numerze zainstalowanej i dostępnej wersji pakietu.
+Naciśnięcie klawisz \fB'v'\fP powoduje przełączanie pomiędzy wyświetlaniem
+rozwlekłego i skróconego opisu stanu pakietu. Skrócony opis stanu jest
+wyświetlany domyślnie.
+.sp
+Na skrócony opis stanu pakietu składają się cztery części:
+flaga błędu, która normalnie powinna być czysta,
+obecny stan zainstalowania pakietu, poprzedni stan wyboru
+pakietu oraz obecny stan wyboru pakietu.
+Dwie pierwsze części są związane z obecnym stanem pakietu,
+kolejne dwie - związane z wyborami dokonanymi przez użytkownika.
+.sp
+Oznaczenia używane w skróconym opisie stanu pakietu są następujące:
+ Flaga błędu:
+  \fIpusty\fP   bez błędu;
+  \fBR\fP       poważny błąd, pakiet wymaga reinstalacji;
+ Stan instalacji:
+  \fIpusty\fP   nie zainstalowany;
+  \fB*\fP       w pełni zainstalowany i skonfigurowany;
+  \fB-\fP       nie zainstalowany, ale mogły pozostać pliki konfiguracyjne;
+  \fBU\fP       rozpakowany, ale jeszcze nie skonfigurowany;
+  \fBC\fP       w połowie skonfigurowany (wystąpił błąd);
+  \fBI\fP       w połowie zainstalowany (wystąpił błąd).
+ Obecne i żądane wybory:
+  \fB*\fP       zaznaczony do zainstalowania lub zaktualizowania;
+  \fB-\fP       zaznaczony do usunięcia z pozostawieniem plików konfig.;
+  \fB=\fP       wstrzymany: pakiet nie będzie przetwarzany;
+  \fB_\fP       zaznaczony do usuniecia i wyczyszczenia plików konfig.;
+  \fBn\fP       pakiet jest nowy i jeszcze nie był znaczony.
+.sp
+.SS Przesuwanie kursora i ekranu
+.sp
+Ekran wyboru pakietów oraz ekran rozwiązywania zależności
+można przesuwać używając poleceń przypisanych do następujących
+klawiszy:
+.br
+  \fBp, Up, k\fP           przesunięcie paska kursora w górę
+  \fBn, Down, j\fP         przesunięcie paska kursora w dół
+  \fBP, Pgup, Backspace\fP przesunięcie listy 1 stronę w górę
+  \fBN, Pgdn, Space\fP     przesunięcie listy 1 stronę w dół
+  \fB^p\fP                 przesunięcie listy 1 linię w górę
+  \fB^n\fP                 przesunięcie listy 1 linię w dół
+  \fBt, Home\fP            skok na początek listy
+  \fBe, End\fP             skok na koniec listy
+  \fBu\fP                  przesunięcie informacji 1 stronę w górę
+  \fBd\fP                  przesunięcie informacji 1 stronę w dół
+  \fB^u\fP                 przesunięcie informacji 1 linię w górę
+  \fB^d\fP                 przesunięcie informacji 1 linię w dół
+  \fBB, Left-arrow\fP      przesunięcie ekranu o 1/3 ekranu w lewo
+  \fBF, Right-arrow\fP     przesunięcie ekranu o 1/3 ekranu w prawo
+  \fB^b\fP                 przesunięcie ekranu o 1 znak w lewo
+  \fB^f\fP                 przesunięcie ekranu o 1 znak w prawo
+.sp
+.SS Wyszukiwanie i sortowanie
+.sp
+Listę pakietów można przeszukiwać po nazwie pakietu. Można to
+zrobić, przyciskając \fB'/'\fP i wpisując tekst wyszukiwania, który
+jest interpretowany jako wyrażenie regularne
+.BR regex (7).
+Dodanie \fB'/d'\fP do łańcucha wyszukiwania, spowoduje przeszukiwanie również
+opisów. Dodanie \fB'/i'\fP spowoduje ignorowanie wielkości znaków podczas wyszukiwania.
+Można łączyć te sufiksy, na przykład tak: \fB'/id'\fP.
+Powtórne wyszukiwanie następuje przez wielokrotne naciskanie klawiszy \fB'n'\fP
+lub \fB'\\'\fP, aż do znalezienia poszukiwanego pakietu.
+Po osiągnięciu końca listy, poszukiwanie jest kontynuowane od początku listy.
+.sp
+Porządek sortowania listy można zmieniać przez wielokrotne naciskanie
+klawiszy \fB'o'\fP i \fB'O'\fP.
+Można wybrać jeden z dziewięciu następujących porządków sortowania:
+ alfabetyczny      dostępny            stan	
+ priorytet+sekcja  dostępny+priorytet  stan+priorytet
+ sekcja+priorytet  dostępny+sekcja     stan+sekcja
+.br
+Tam gdzie nie jest to powyżej wyraźnie powiedziane, porządek alfabetyczny
+jest używany jako klucz podwyszukiwania.
+.\"FIXME: the final subordering sort key.
+.sp
+.SS Zmienianie wyboru pakietów
+.sp
+Żądany stan wyboru indywidualnych pakietów można zmienić
+za pomocą następujących poleceń:
+  \fB+, Insert\fP    instalacja lub aktualizacja
+  \fB=, H\fP         wstrzymanie pakietu w obecnym stanie i wersji
+  \fB:, G\fP         zaprzestanie wstrzymania: aktualizacja pakietu lub pozostawienie go jako niezainstalowanego
+  \fB-, Delete\fP    usunięcie, ale z zostawieniem plików konfiguracyjnych
+  \fB_\fP            usunięcie z wyczyszczeniem plików konfiguracyjnych
+.sp
+Kiedy w wyniku zmian powstają jedna lub więcej niespełnionych zależności
+lub konflikty, \fBdselect\fP wyświetla użytkownikowi ekran rozwiązywania
+zależności. Będzie on objaśniony nieco później.
+.sp
+Powyższe polecenia można zastosować również do grup pakietów - przez
+ustawienie paska kursora na nagłówku grupy. Sposób grupowania pakietów
+zależy od ustawień sortowania listy pakietów.
+.sp
+Należy zachować należytą ostrożność, zmieniając duże grupy pakietów,
+ponieważ może to oznaczać natychmiastowe utworzenie dużej liczby
+niespełnionych zależności i konfliktów, bardzo trudnej do rozwiązania.
+W praktyce tylko operacje wstrzymania i zaprzestania wstrzymania
+są użyteczne w odniesieniu do grup pakietów.
+.sp
+.SS Rozwiązywanie zależności i konfliktów
+.sp
+Kiedy w wyniku zmian powstają jedna lub więcej niespełnionych zależności
+lub konflikty, \fBdselect\fP wyświetla użytkownikowi ekran rozwiązywania
+zależności. Najpierw, jednakże, wyświetlany jest ekran pomocy.
+.sp
+W górnej połowie ekranu rozwiązywania zależności wyświetlone są wszystkie te pakiety,
+które w wyniku zastosowania żądanych przez użytkownika zmian miałyby
+niespełnione zależności albo konflikty, oraz wszystkie te pakiety, których
+instalacja spełniłaby któreś z tych zależności lub których usunięcie rozwiązałoby
+konflikty.
+W dolnej połowie wyświetlone są te zależności lub konflikty, które spowodowały,
+że obecnie wybrany pakiet został umieszczony na liście.
+.sp
+Wyświetlając początkową podlistę pakietów, \fBdselect\fP mógł ustawić
+już pewne żądane wybory niektórych spośród wylistowanych pakietów,
+w celu rozwiązania zależności i konfliktów, które były przyczyną wyświetlenia
+ekranu rozwiązywania zależności. Zazwyczaj najlepszym wyjściem jest
+zastosowanie się do sugestii zrobionych przez \fBdselect\fP.
+.sp
+Możliwe jest przywrócenie stanu wyborów wylistowanych pakietów
+do poprzednich ustawień, zanim zostały stworzone nierozwiązane
+zależności lub konflikty - przez naciśnięcie klawisza \fB'R'\fP.
+Naciskając klawisz \fB'D'\fP, spowodujemy odznaczenie automatycznych
+propozycji i jest przy tym zachowywana zmiana,
+która spowodowała wyświetlenie ekranu rozwiązywania zależności.
+W końcu, po naciśnięciu klawisza \fB'U'\fP wybory są ponownie ustawiane
+na sugerowane wartości.
+.sp
+.SS Ustanawianie żądanych wyborów pakietów
+.sp
+Po naciśnięciu klawisza \fBenter\fP, obecnie wyświetlony zbiór
+wyborów zostaje zaakceptowany. Jeżeli \fBdselect\fP nie wykryje
+niespełnionych zależności powstałych w wyniku zaakceptowania żądanych
+wyborów, to zostaną one ustawione.
+Jednakże, jeżeli będą nierozwiązane zależności, to \fBdselect\fP
+ponownie wyświetli ekran rozwiązywania zależności.
+.sp
+Aby zmienić zbiór wyborów, który powoduj powstanie nierozwiązanych
+zależności i zmusić \fBdselect\fP do zaakceptowania go, należy
+nacisnąć klawisz \fB'Q'\fP. Spowoduje to bezwarunkowe ustawienie
+wyborów podanych przez użytkownika. Ogólnie, nie należy tego robić.
+.\"FIXME: unless you've read the fine print.
+.sp
+Aby uzyskać przeciwny efekt - wycofanie się ze wszystkich zmian
+i powrócenie do poprzedniej listy wyborów, należy nacisnąć klawisze
+\fB'X'\fP lub \fBescape\fP. Przez powtarzające się przyciskanie tych klawiszy
+można wycofać się ze wszystkich potencjalnie szkodliwych zmian w wyborze pakietów
+aż do ostatniego dobrego ustawienia.
+.sp
+.SH BŁĘDY
+Dla nowych użytkowników,
+.B dselect
+może być trudny do opanowania.
+Podobno zmusza do płaczu nawet wytrawnych współtwórców jądra Linuksa.
+.sp
+Dokumentacja jest wybrakowana.
+.sp
+Brak opcji "pomoc" w głównym menu.
+.sp
+Nie można ograniczyć listy dostępnych pakietów.
+.sp
+Wbudowane metody dostępu nie są zgodne z obecnymi standardami jakości.
+Należy używać metody apt, która nie tylko nie jest zepsuta, ale
+także jest o wiele bardziej elastyczna
+.\" FIXME flexibility
+niż metody wbudowane.
+.SH ZOBACZ TAKŻE
+.BR dpkg (8),
+.BR apt-get (8),
+.BR sources.list (5),
+.BR deb (5),
+"Debian policy manual".
+.SH AUTOR
+.B dselect
+napisał Ian Jackson (ijackson@gnu.ai.mit.edu). Pełną listę współtwórców
+można uzyskać wykonując `dselect --license'.
+.br
+Podręcznik napisali Juho Vuori <javuori@cc.helsinki.fi>, Josip Rodin
+i Joost kooij.

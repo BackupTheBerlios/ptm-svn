@@ -1,0 +1,248 @@
+.\" {PTM/PR/0.1/28-07-1999/"narzędzie oBsługi pakietów Debiana (.deb)"}
+.\" $Id: dpkg-deb.1,v 1.4 2002/08/06 13:27:46 robert Exp $
+.\" Translation 1999 by Piotr Roszatycki
+.\" Last update: Robert Luberda <robert@debian.org>, Aug 2002, dpkg 1.10.4
+.TH DPKG\-DEB 1 "1 lipca 1996" "Projekt Debiana" "użytki dpkg"
+.SH NAZWA
+dpkg\-deb \- narzędzie obsługi plików archiwum Debiana (.deb)
+.SH SKŁADNIA
+.B dpkg-deb
+.BR -b | --build
+.IR katalog " [" archiwum | katalog ]
+.br
+.B dpkg-deb
+.BR -I | --info
+.IR archiwum " [" nazwa\-pliku\-kontrolnego " ..]"
+.br
+.B dpkg-deb
+.BR -f | --field
+.IR archiwum " [" nazwa\-pola\-kontrolnego " ...]"
+.br
+.B dpkg-deb
+.BR -c | --contents
+.I archiwum
+.br
+.B dpkg-deb
+.BR -x | --extract | -X | --vextract
+.I archiwum katalog
+.br
+.B dpkg-deb --fsys-tarfile
+.I archiwum
+.br
+.B dpkg-deb --control
+.I archiwum katalog
+.SH OPIS
+.B dpkg-deb
+tworzy, rozpakowuje i podaje informacje o plikach archiwum (czyli pakietach)
+Debiana.
+
+Do instalowania i usuwania pakietów z systemu służy polecenie
+.BR dpkg .
+
+Ponadto można skorzystać z
+.B dpkg\-deb
+wywołując
+.B dpkg
+z odpowiednią opcją, która zostanie przekazana do
+.BR dpkg\-deb ".  " dpkg
+uruchomi
+.B dpkg\-deb
+i wykona żądaną operację.
+.SH OPCJE DZIAŁANIA
+.TP
+.BR --build ", " -b
+Tworzy archiwum Debiana z plików zawartych w
+.IR katalogu ".  " katalog
+musi zawierać podkatalog o nazwie
+.BR DEBIAN ,
+w którym zawarte są pliki kontrolne, takie jak np. control. Ten katalog
+.I nie
+pojawi się w archiwum binarnym pakietu, tylko zostanie umieszczony
+jako informacje kontrolne pakietu, które opisują właściwości pakietu.
+
+Można podać poziom kompresji, używając opcji
+.BR \-z# .
+dpkg-deb przekaże tę opcję programowi gzip.
+
+Jeśli pominięto opcję
+.BR \-\-nocheck ", " dpkg\-deb
+odczyta plik
+.B DEBIAN/control
+i sprawdzi, czy nie występują w nim błędy składniowe lub inne problemy,
+a następnie wyświetli nazwę pakietu, który jest tworzony.
+.B dpkg\-deb
+ponadto sprawdzi prawa skryptów instalacyjnych i innych plików znajdujących
+się w katalogu
+.BR DEBIAN .
+
+Jeśli podana została nazwa
+.I archiwum
+to
+.B dpkg\-deb
+zapisze pakiet tą nazwą.
+
+Jeżeli taki pakiet już istnieje, zostanie on nadpisany.
+
+Jeśli drugim argumentem jest 
+.IR katalog ,
+to
+.B dpkg\-deb
+zapisze pakiet pod nazwą
+.IB katalog / pakiet _ wersja _ arch .deb\fR,
+lub
+.IB katalog / pakiet _ wersja .deb\fR,
+jeśli nie zostało określone pole
+.B Architecture
+w pliku kontrolnym. Gdy podany jest
+.IR katalog ,
+to nie może zostać użyta opcja
+.BR \-\-no\-check ,
+ponieważ 
+.B dpkg\-deb
+musi odczytać plik kontrolny, aby rozpoznać nazwę i wersję pakietu.
+.TP
+.BR \-\-info ", " -I
+Dostarcza informacji o pakiecie.
+
+Gdy nie podano żadnej
+.IR nazwy\-pliku\-kontrolnego ,
+wyświetlana jest informacja o zawartości pakietu oraz zestawienie
+wykorzystanych plików kontrolnych.
+
+W razie podania
+.IR nazwy\-pliku\-kontrolnego ,
+.B dpkg\-deb
+wyświetli zawartość tego pliku. Jeśli ten plik nie istnieje, wyświetlony
+zostanie komunikat błędu na stderr i program zakończy się z kodem błędu 2.
+.TP
+.BR \-\-field ", " -f
+Wyświetla zawartość pliku kontrolnego o nazwie control.
+
+Jeśli nie podano żadnej
+.BR nazwy\-pola\-kontrolnego ,
+to wyświetlana jest zawartość całego pliku control.
+
+Jeśli podano
+.BR nazwę\-pola\-kontrolnego ,
+to
+.B dpkg\-deb
+wyświetli jej zawartość. Gdy podano więcej niż jedną
+.BR nazwę\-pola\-kontrolnego ,
+to 
+.B dpkg\-deb
+wyświetli pola wraz z nazwą (oraz dwukropkiem i spacją)
+w takiej kolejności, w jakiej są one w pliku kontrolnym.
+
+Dla nieodnalezionych pól kontrolnych nie wyświetlane są komunikaty błędów.
+.TP
+.BR --contents ", " -c
+Wyświetla zawartość archiwum. Wydruk jest podany w postaci, jaką
+generuje polecenie
+.BR tar .
+.TP
+.BR --extract ", " -x ", " \-\-vextract ", " -X
+Rozpakowuje zawartość archiwum do podanego
+.IR katalogu .
+
+.BR \-\-vextract " (" -X ")"
+wyświetla nazwy plików, które są rozpakowywane, zaś
+.BR \-\-extract " (" -x ")"
+rozpakowuje pliki bez podawania żadnych komunikatów, prócz komunikatów błędów.
+
+Proszę zauważyć, że rozpakowanie pakietu w katalogu głównym
+.I nie
+jest odpowiednikiem zainstalowania pakietu! Do tego celu służy
+wyłącznie polecenie
+.BR dpkg .
+
+Jeśli wskazany
+.I katalog
+nie istnieje, zostanie utworzony.
+.TP
+.BR --fsys-tarfile
+Rozpakowuje pliki z archiwum i wysyła je na standardowe wyjście w postaci
+formatu polecenia
+.BR tar .
+Gdy ta operacja zostanie połączona z 
+.BR tar 'em,
+możliwe jest rozpakowanie tylko wybranych plików z archiwum.
+.TP
+.BR --control ", " -e
+Rozpakowuje pliki kontrolne pakietu do podanego 
+.IR katalogu .
+
+Jeśli
+.IR katalog
+nie został określony, pliki są rozpakowywane do podkatalogu
+.B DEBIAN
+w katalogu bieżącym.
+
+W razie potrzeby, katalog docelowy będzie utworzony.
+.TP
+.BR --help ", " -h
+Wyświetla informacje o sposobie użycia
+.BR dpkg\-deb ,
+podając zestawienie jego opcji.
+.TP
+.BR --version
+Wyświetla informacje o numerze wersji
+.BR dpkg\-deb .
+.TP
+.BR --licence
+Wyświetla informacje o licencji
+.B dpkg\-deb 
+oraz braku jego gwarancji. (Obsługiwany jest także amerykański sposób
+pisowni
+.BR \-\-license .)
+.SH INNE OPCJE
+.TP
+.BR --new
+Upewnia się, że 
+.B dpkg\-deb
+utworzy ,,nowy'' format archiwum. Ta opcja jest domyślna.
+.TP
+.BR --old
+Wymusza utworzenie przez
+.B dpkg\-deb
+,,starego'' formatu archiwum. Ten format jest słabo obsługiwany przez
+narzędzia spoza dystrybucji Debiana i obecnie jest przestarzały. Ta opcja
+jest użyteczna jedynie w przypadku korzystania z wersji dpkg wcześniejszej
+niż 0.93.76 (wrzesień 1995), która była opublikowana jedynie dla i386 a.out.
+.TP
+.BR --nocheck
+Powoduje, że polecenie
+.B "dpkg\-deb \-\-build" 
+nie będzie sprawdzać zawartości archiwum. W ten sposób można utworzyć
+niepoprawny pakiet, jeśli zajdzie taka potrzeba.
+.TP
+.BR --debug ", " -D
+Włącza opcję debuggera. Nie jest to zbyt interesujące.
+.SH BŁĘDY
+.B dpkg-deb -I 
+.IB package1 .deb
+.IB package2 .deb
+działa niepoprawnie.
+
+Brak sprawdzania autentyczności plików
+.BR .deb .
+Tak naprawdę, to nawet nie jest sprawdzana suma kontrolna archiwum.
+
+Nie należy używać
+.B dpkg\-deb
+do instalowania oprogramowania! Do tego celu należy skorzystać z
+.BR dpkg ,
+który zainstaluje poprawnie pliki i uruchomi potrzebne skrypty
+instalacyjne.
+.SH ZOBACZ TAKŻE
+.BR deb (5),
+.BR deb-control (5),
+.BR dpkg (8),
+.BR dselect (8).
+.SH AUTOR
+.B dpkg\-deb
+i ten podręcznik napisał Ian Jackson ((C)1995-1996),
+udostępnione na Ogólnej Licencji Publicznej GNU; BRAK JAKIEJKOLWIEK GWARANCJI.
+Szczegóły zobacz w
+.B /usr/share/doc/dpkg/copyright
+oraz
+.BR /usr/share/common-licences/GPL .

@@ -1,0 +1,494 @@
+@node Formaty wprowadzania daty
+@chapter Formaty wprowadzania daty
+
+@cindex formaty wprowadzania daty
+@findex getdate
+
+Najpierw cytat:
+
+@quotation
+Nasze jednostki pomiaru czasu, od sekund po miesiące, są tak skomplikowane,
+asymetryczne i nie powiązane, że czynią logiczne pamięciowe obliczenia czasu
+niemal niemożliwymi.  Doprawdy, gdyby jakiś okrutny bóg zamyślił oddać nasze
+umysły w niewolę czasu, by uniemożliwić nam wyrwanie się spod panowania
+oczadziałej rutyny i przykrych niespodzianek, chyba nie mógłby zrobić
+tego lepiej niż dając nam obecny system.  Jest on jak zestaw
+trapezoidalnych klocków, bez żadnych pionowych czy poziomych powierzchni,
+jak język, w którym najprostsza myśl wymaga kwiecistych konstrukcji,
+zbędnych składowych i rozwlekłych wypowiedzi.  W przeciwieństwie do bardziej
+udanych wzorców języka czy nauki, umożliwiających nam śmiałe zmierzenie się
+lub przynajmniej stawienie czoła doświadczeniu, nasz system obliczeń czasu
+po cichu i stale wspiera tegoż czasu terror.
+
+@dots{}  To tak, jakby architekci musieli mierzyć długość w stopach,
+szerokość w metrach, a wysokość w łokciach.  Jakby proste instrukcje obsługi
+wymagały znajomości pięciu różnych języków.  Nic dziwnego, że często
+spoglądamy we własną nieodległą przeszłość czy przyszłość, ubiegły wtorek
+czy niedzielę za tydzień, z uczuciem bezradnego zakłopotania.
+@dots{}
+
+--- Robert Grudin, @cite{Time and the Art of Living}.
+@end quotation
+
+Ta sekcja opisuje tekstowe postaci daty akceptowane przez programy GNU.
+Są to łańcuchy znakowe, które użytkownik może podać jako
+argumenty różnych programów. Nie opisano tu interfejsu C (poprzez funkcję
+@code{getdate}).
+
+@cindex początek czasu, dla Uniksa
+@cindex epoka, dla Uniksa
+Mimo, że opisywana składnia daty umożliwia przedstawienie dowolnej daty
+od roku zerowego naszej ery, to liczby całkowite komputera nie są wystarczająco
+duże dla takich (względnie) długich okresów czasu. Najwcześniejszą datą jaka
+jest dozwolona semantycznie w systemach uniksowych jest północ 1 stycznia 1970
+czasu uniwersalnego (UTC).
+
+@menu
+* Ogólna składnia daty::                Powszechne reguły.
+* Zapis daty kalendarzowej::            19 Dec 1994.
+* Zapis czasu (godziny)::               9:20pm.
+* Strefa czasowa::                      EST, DST, BST, UTC, ...
+* Dzień tygodnia::                      Monday i inne.
+* Elementy względne w łańcuchach daty:: next tuesday, 2 years ago.
+* Czyste liczby w łańcuchach daty::     19931219, 1440.
+* Autorzy getdate::                     Bellovin, Salz, Berets, et al.
+@end menu
+
+
+@node Ogólna składnia daty
+@section Ogólna składnia daty
+
+@cindex ogólna składnia daty
+
+@cindex elementy w łańcuchach daty
+@dfn{Data} jest łańcuchem znakowym (może być pusty) zawierającym wiele
+elementów rozdzielonych białymi znakami. Biały znak może być pominięty jeśli
+nie spowoduje to niejednoznaczności. Pusty łańcuch oznacza początek
+dzisiejszego dnia (tj.północ). Kolejność elementów jest nieistotna. Łańcuch
+daty może zawierać elementy różnych rodzajów:
+
+@itemize @bullet
+@item datę kalendarzową
+@item czas dnia (godzinę)
+@item strefę czasową
+@item dzień tygodnia
+@item elementy względne
+@item czyste liczby.
+@end itemize
+
+@noindent Poniżej opisujemy po kolei każdy z tych typów elementów.
+
+@cindex liczby, słownie
+@cindex liczebniki
+@findex first @r{w łańcuchach daty}
+@findex next @r{w łańcuchach daty}
+@findex last @r{w łańcuchach daty}
+W większości kontekstów kilka liczb może być zapisanych słownie. Najbardziej
+przydaje się to do określania elementów dnia tygodnia lub elementów względnych
+(patrz poniżej). Oto lista: @samp{first} (pierwszy) dla 1, @samp{next}
+(następny) dla 2, @samp{third} (trzeci) dla 3, @samp{fourth} (czwarty) dla 4,
+@samp{fifth} dla 5, @samp{sixth} dla 6, @samp{seventh} dla 7,
+@samp{eighth} dla 8, @samp{ninth} dla 9, @samp{tenth} dla 10,
+@samp{eleventh} dla 11 i @samp{twelfth} dla 12.  Również, @samp{last} (ostatni)
+oznaczający dokładnie -1.
+
+@cindex miesiące, słownie
+Kiedy w ten sposób zapisywany jest miesiąc, wciąż traktowany jest tak, jakby
+został zapisany liczbowo, zamiast potraktowania w sposób ``w pełni zgodny
+z wymową''; zmienia to dozwolone łańcuchy.
+
+@cindex wielkość liter, ignorowana w datach
+@cindex comentarze, w datach
+Wielkość liter w datach jest całkowicie ignorowana. Pomiędzy nawiasami
+okrągłymi można umieszczać komentarze, póki zawarte nawiasy są poprawnie
+zagnieżdżone. Myślniki, po których nie występują cyfry są obecnie ignorowane.
+Początkowe zera w liczbach są ignorowane.
+
+
+@node Zapis daty kalendarzowej
+@section Zapis daty kalendarzowej
+
+@cindex zapis daty kalendarzowej
+
+@dfn{Zapis daty kalendarzowej} określa dzień roku. Podawany jest rozmaicie,
+w zależności od tego, czy miesiąc określono liczbowo czy słownie. Wszystkie
+te łańcuchy określają tę samą datę kalendarzową:
+
+@example
+1970-09-24     # ISO 8601.
+70-9-24        # przyjmuje 19xx dla 69 do 99,
+               # 20xx dla 00 do 68.
+70-09-24       # początkowe zera są ignorowane.
+9/24/72        # powszechny zapis amerykański.
+24 September 1972
+24 Sept 72     # wrzesień (September) ma specjalny skrót.
+24 Sep 72      # zawsze dozwolone trzyliterowe skróty.
+Sep 24, 1972
+24-sep-72
+24sep72
+@end example
+
+Można też pominąć rok. W takim przypadku, używany jest ostatnio określony rok,
+lub rok bieżący, jeśli nie określono żadnego. Na przykład:
+
+@example
+9/24
+sep 24
+@end example
+
+A oto reguły...
+
+@cindex ISO 8601, format daty
+@cindex format daty, ISO 8601
+@cindex data, format wg ISO 8601
+Dla miesięcy podanych liczbowo dozwolony jest format liczbowy ISO 8601 postaci
+@samp{@var{rok}-@var{miesiąc}-@var{dzień}}, gdzie @var{rok} jest dowolną
+liczbą całkowitą, @var{miesiąc} jest liczbą od 01 do 12, zaś @var{dzień}
+jest liczbą od 01 do 31.  Jeśli liczba jest mniejsza niż dziesięć to musi być
+zapisana z zerem początkowym.  Jeżeli @var{rok} jest wynosi 68 lub mniej, to
+dodawane jest do niego 2000; w przeciwnym razie, jeśli @var{rok} jest
+mniejszy od 100, to jest do niego dodawane 1900.  Akceptowana jest
+konstrukcja postaci @samp{@var{miesiąc}/@var{dzień}/@var{rok}}, popularna
+w Stanach Zjednoczonych.  Również @samp{@var{miesiąc}/@var{dzień}},
+z pominięciem roku.
+
+@cindex nazwy miesięcy w łańcuchach daty
+@cindex skróty dla nazw miesięcy
+Miesiące słownie mogą być zapisane w pełnej formie: @samp{January} (styczeń),
+@samp{February} (luty), @samp{March} (marzec), @samp{April} (kwiecień),
+@samp{May} (maj), @samp{June} (czerwiec), @samp{July} (lipiec),
+@samp{August} (sierpień), @samp{September} (wrzesień), @samp{October}
+(październik), @samp{November} (listopad) lub @samp{December} (grudzień).
+Słowne określenia miesięcy mogą być skracane do pierwszych trzech liter,
+z możliwym dodaniem kropki kończącej skrót. Dozwolony jest również zapis
+@samp{Sept} zamiast @samp{September}.
+
+Przy słownym zapisie miesięcy data kalendarzowa może być podana na jeden
+z poniższych sposobów:
+
+@example
+@var{dzień} @var{miesiąc} @var{rok}
+@var{dzień} @var{miesiąc}
+@var{miesiąc} @var{dzień} @var{rok}
+@var{dzień}-@var{miesiąc}-@var{rok}
+@end example
+
+Albo, pomijając rok:
+
+@example
+@var{miesiąc} @var{dzień}
+@end example
+
+
+@node Zapis czasu (godziny)
+@section Zapis czasu (godziny)
+
+@cindex zapis czasu (godziny)
+
+@dfn{Zapis czasu} w łańcuchach daty określa czas (godzinę) zadanego dnia.
+Oto kilka przykładów, oznaczających tę samą godzinę:
+
+@example
+20:02:0
+20:02
+8:02pm
+20:02-0500      # w strefie EST (Eastern US Standard Time)
+@end example
+
+Ogólniej, czas może zostać podany jako
+@samp{@var{godzina}:@var{minuta}:@var{sekunda}}, gdzie
+@var{godzina} jest liczbą od 0 do 23, @var{minuta} liczbą od 0 do 59, zaś
+@var{sekunda} liczbą od 0 do 59.  Człon @samp{:@var{sekunda}} można pominąć,
+jest on wówczas przyjmowany jako zero.
+
+@findex am @r{w łańcuchach dat}
+@findex pm @r{w łańcuchach dat}
+@findex midnight @r{w łańcuchach dat}
+@findex noon @r{w łańcuchach dat}
+Jeśli po określeniu czasu występuje @samp{am} lub @samp{pm} (lub @samp{a.m.}
+czy @samp{p.m.}), to @var{godzina} ograniczona jest do zakresu od 1 do 12 a
+@samp{:minuta} może być pominięta (przyjmowana za zero). @samp{am} wskazuje
+na pierwszą połowę dnia, @samp{pm} na drugą połowę. W tej notacji, godzina
+12 poprzedza godzinę 1: północ jest zapisywana jako @samp{12am}, zaś
+południe jako @samp{12pm}.
+
+@cindex korekta z uwagi na strefę czasową
+@cindex minuty, korekta strefy czasowej o
+Po zapisie czasu może również wystąpić określenie korekty z uwagi
+na strefę czasową. Jest ono wyrażane jako @samp{@var{z}@var{gg}@var{mm}},
+gdzie @var{z} jest znakiem @samp{+} lub @samp{-}, @var{gg}
+jest liczbą godzin różnicy dla strefy, a @var{mm} liczbą minut.  Podanie
+w ten sposób strefy czasowej wymusza interpretację podanego czasu względem
+czasu uniwersalnego (UTC - Coordinated Universal Time), unieważniając
+wcześniejsze określenia strefy czasowej czy lokalnej strefy czasowej. Część
+opisująca @var{minuty} w określeniu czasu nie może być pomijana, jeśli
+używana jest korekta z uwagi na strefę czasową. Jest to jedyny sposób
+określania korekty strefy czasowej o ułamkowe części godziny.
+
+Można podać korektę @samp{am}/@samp{pm} albo korektę z uwagi na strefę
+czasową, ale nie obie jednocześnie.
+
+@node Strefa czasowa
+@section Strefa czasowa
+
+@cindex strefa czasowa
+
+Element typu @dfn{strefa czasowa} określa międzynarodową strefę czasową,
+wskazywaną przez niewielki zestaw liter. Są one obsługiwane w celu
+zachowania wstecznej zgodności. Ich używanie nie jest jednakże zalecane,
+gdyż praktycznie są one dwuznaczne: na przykład, skrót @samp{EST} posiada
+inne znaczenie w Australii, a inne w Stanach Zjednoczonych. Zawarte w nim
+kropki są ignorowane.  Wojskowe miana stref czasowych używają pojedynczych
+liter.  Obecnie jako pozycje typu strefa czasowa mogą być przedstawiane
+wyłącznie strefy o przesunięciu o całkowitą liczbę godzin.  W poprzedniej
+sekcji znajdziesz opis precyzyjniejszego sterowania korektą z uwagi na
+strefę czasową.
+
+Poniżej podano wiele stref czasowych (z wyłączeniem stref ``czasów
+letnich''), uporządkowanych według przesunięcia w czasie (parametr
+@var{godzina} strefy).
+
+@table @asis
+@item -1200
+@samp{Y} wojskowo.
+@item -1100
+@samp{X} wojskowo.
+@item -1000
+@samp{W} wojskowo.
+@item -0900
+@samp{V} wojskowo.
+@item -0800
+@samp{PST} dla amerykańskiej strefy Pacific Standard, zaś
+@samp{U} wojskowo.
+@item -0700
+@samp{MST} dla amerykańskiej strefy Mountain Standard, zaś
+@samp{T} wojskowo.
+@item -0600
+@samp{CST} dla amerykańskiej strefy Central Standard, zaś
+@samp{S} wojskowo.
+@item -0500
+@samp{EST} dla amerykańskiej strefy Eastern Standard, zaś
+@samp{R} wojskowo.
+@item -0400
+@samp{AST} dla amerykańskiej strefy Atlantic Standard, zaś
+@samp{Q} wojskowo.
+@item -0300
+@samp{P} wojskowo.
+@item -0200
+@samp{O} wojskowo.
+@item -0100
+@samp{N} wojskowo.
+@item +0000
+@cindex czas średni Greenwich
+@cindex czas uniwersalny
+@samp{GMT} dla średniego czasu Greenwich (Greenwich Mean),
+@samp{UT} dla czasu uniwersalnego,
+@samp{UTC} dla Coordinated Universal,
+@samp{WET} dla czasu zachodnioeuropejskiego (Western European), zaś
+@samp{Z} dla ISO 8601 i zapisu wojskowego.
+@item +0100
+@samp{A} wojskowo,
+@samp{CET} dla czasu środkowoeuropejskiego (Central European),
+@samp{MET} dla Midden Europesche Tijd (holenderski), zaś
+@samp{MEZ} dla Mittel-Europ@"aische Zeit (Niemcy).
+@item +0200
+@samp{B} wojskowo, zaś
+@samp{EET} dla wschodnioeuropejskiego (Eastern European).
+@item +0300
+@samp{C} wojskowo.
+@item +0400
+@samp{D} wojskowo.
+@item +0500
+@samp{E} wojskowo.
+@item +0600
+@samp{F} wojskowo.
+@item +0700
+@samp{G} wojskowo.
+@item +0800
+@samp{H} wojskowo.
+@item +0900
+@samp{I} wojskowo, zaś
+@samp{JST} dla strefy japońskiej (Japan Standard).
+@item +1000
+@samp{GST} dla amerykańskiej strefy Guam (Guam Standard), zaś
+@samp{K} wojskowo.
+@item +1100
+@samp{L} wojskowo.
+@item +1200
+@samp{M} wojskowo, zaś
+@samp{NZST} dla strefy nowozelandzkiej (New Zealand Standard).
+@end table
+
+@cindex czas letni
+@cindex daylight-saving time
+Istnieje wiele stref czasowych wynikających z oszczędzania światła dziennego
+(``czas letni'', strefy DST - daylight-saving time). Również umieszczając
+po określeniu strefy zwykłej łańcuch @samp{DTS} jako odrębne słowo (tj.
+oddzielone białymi znakami), można podać odpowiednią strefę czasową
+oszczędzania energii.
+
+@table @asis
+@item -0700
+@samp{PDT} dla amerykańskiej strefy Pacific Daylight.
+@item -0600
+@samp{MDT} dla amerykańskiej strefy dla Mountain Daylight.
+@item -0500
+@samp{CDT} dla amerykańskiej strefy Central Daylight.
+@item -0400
+@samp{EDT} dla amerykańskiej strefy Eastern Daylight.
+@item -0300
+@samp{ADT} dla amerykańskiej strefy Atlantic Daylight.
+@item +0100
+@samp{BST} dla brytyjskiego czasu letniego (British Summer) oraz
+@samp{WEST} dla zachodnioeuropejskiego czasu letniego (Western European
+Summer).
+@item +0200
+@samp{CEST} dla środkowoeuropejskiego czasu letniego (Central European Summer),
+@samp{MEST} dla Midden Europesche S. Tijd (holenderski) oraz
+@samp{MESZ} dla Mittel-Europ@"aische Sommerzeit (Niemcy).
+@item +1300
+@samp{NZDT} dla nowozelandzkiego czasu New Zealand Daylight.
+@end table
+
+
+@node Dzień tygodnia
+@section Dzień tygodnia
+
+@cindex dzień tygodnia
+
+Bezpośrednie powołanie się na dzień tygodnia będzie występować po dacie
+(tylko jeśli to konieczne) w celu określenia takiego dnia tygodnia
+w przyszłości.
+
+Dni tygodnia mogą być pisane w postaci pełnej: @samp{Sunday} (niedziela),
+@samp{Monday} (poniedziałek), @samp{Tuesday} (wtorek), @samp{Wednesday}
+(środa), @samp{Thursday} (czwartek), @samp{Friday} (piątek) lub
+@samp{Saturday} (sobota).  Można je skracać do pierwszych trzech liter,
+opcjonalnie zakończonych kropką.  Dozwolone są także specjalne skróty
+@samp{Tues} dla wtorku (Tuesday), @samp{Wednes} dla środy (Wednesday) oraz
+@samp{Thur} lub @samp{Thurs} dla czwartku (Thursday).
+
+@findex next @var{dzień}
+@findex last @var{dzień}
+Dzień tygodnia może być poprzedzony liczbą, by wyrazić przesunięcie w czasie
+o daną liczbę tygodni. Najlepiej używany jest w wyrażeniach takich jak
+@samp{third monday} (trzeci poniedziałek). W tym kontekście dopuszczalne są
+również @samp{last @var{dzień}} lub @samp{next @var{dzień}}; przesuwają
+one o tydzień wstecz lub w przód w stosunku do dnia reprezentowanego przez
+@var{dzień}.
+
+Przecinek następujący po określeniu dnia tygodnia jest jest ignorowany.
+
+
+@node Elementy względne w łańcuchach daty
+@section Elementy względne w łańcuchach daty
+
+@cindex elementy względne w łańcuchach daty
+@cindex przesunięcia w datach
+
+@dfn{Elementy względne} wskazują na datę przesunięta względem danej (lub
+daty bieżącej, jeśli nie podano innej) w przód i wstecz. Efekty elementów
+względnych sumują się. Oto kilka przykładów:
+
+@example
+1 year        # 1 rok
+1 year ago    # 1 rok temu
+3 years       # 3 lata
+2 days        # 2 dni
+@end example
+
+@findex year @r{w łańcuchach dat}
+@findex month @r{w łańcuchach dat}
+@findex fortnight @r{w łańcuchach dat}
+@findex week @r{w łańcuchach dat}
+@findex day @r{w łańcuchach dat}
+@findex hour @r{w łańcuchach dat}
+@findex minute @r{w łańcuchach dat}
+Jednostkę przemieszczenia w czasie można wybrać przy pomocy łańcucha
+@samp{year} lub @samp{month} dla przesunięcia odpowiednio o całe lata
+lub miesiące. Są to jednostki dość rozmyte, gdyż lata i miesiące nie
+mają jednakowej długości. Precyzyjniejszymi jednostkami są @samp{fortnight},
+czyli okres 14 dni, @samp{week} (tydzień) mający 7 dni, @samp{day} (dzień) mający
+24 godziny, @samp{hour} (godzina) o 60 minutach, @samp{minute} (minuta)
+lub @samp{min} o 60 sekundach i @samp{second} (sekunda) lub @samp{sec}
+o długości jednej sekundy. Przyrostek @samp{s}, oznaczający w języku angielskim
+liczbę mnogą, dołączony do tych jednostek jest akceptowany i ignorowany.
+
+@findex ago @r{w łańcuchach dat}
+Jednostka czasu może zostać poprzedzona mnożnikiem, podanym jako liczba (może
+być ze znakiem). Liczby bez znaku traktowane są jako liczby dodatnie
+ze znakiem. Brak liczby oznacza mnożnik 1. Następujące po elemencie względnym
+słowo @samp{ago} (..temu) jest równoważne poprzedzeniu jednostki dodatkowym
+mnożnikiem o wartości @math{-1}.
+
+@findex day @r{w łańcuchach dat}
+@findex tomorrow @r{w łańcuchach dat}
+@findex yesterday @r{w łańcuchach dat}
+Łańcuch znaków @samp{tommorow} (jutro) ma wartość jednego dnia w przyszłości
+(równoważne @samp{day}), łańcuch @samp{yesterday} (wczoraj) ma wartość jednego
+dnia w przeszłości (równoważny @samp{day ago}, dzień temu).
+
+@findex now @r{w łańcuchach dat}
+@findex today @r{w łańcuchach dat}
+@findex this @r{w łańcuchach dat}
+Łańcuchy @samp{now} (teraz) lub @samp{today} (dziś) są jednostkami względnymi
+odpowiadającymi zerowemu przesunięciu w czasie; biorą się one z tego, że
+przesunięcie w czasie o wartości zerowej reprezentuje bieżący czas, jeśli
+nie zostanie to zmienione przez poprzedzające elementy. Łańcuchów określających
+bieżący czas można użyć do uwydatnienia innych elementów, jak
+w @samp{12:00 today} (12:00 dziś).  Łańcuch @samp{this} (ten) ma również
+znaczenie przesunięcia w czasie o zerowej wartości, ale używany jest raczej
+w łańcuchach daty jak @samp{this thursday} (ten czwartek).
+
+Gdy element względny powoduje, że data wynikowa przekracza granicę między
+DST (np. czasem letnim, @pxref{Strefa czasowa}) a czasem
+zwykłym (nie-DST), lub odwrotnie, godzina jest korygowana stosownie do czasu
+lokalnego.
+
+
+@node Czyste liczby w łańcuchach daty
+@section Czyste liczby w łańcuchach daty
+
+@cindex czyste liczby w łańcuchach daty
+
+Dokładna interpretacja czystej liczby dziesiętnej zależy od kontekstu
+w łańcuchu znakowym określającym datę.
+
+Jeżeli liczba dziesiętna ma postać @var{rrrr}@var{mm}@var{dd} i nie pojawia się przed nią żaden
+inny element daty kalendarzowej (@pxref{Zapis daty kalendarzowej}), to
+@var{rrrr} odczytywane jest jako rok, @var{mm} jako numer miesiąca,
+a @var{dd} jako dzień miesiąca opisywanej daty.
+
+Jeżeli liczba dziesiętna ma postać @var{gg}@var{mm} i w łańcuchu daty nie
+pojawia się przed nią żaden inny element określający czas, to @var{gg} jest
+odczytywane jako godzina a @var{mm} jako minuty godziny opisywanego czasu dnia.
+@var{mm} może być też pominięte.
+
+Jeśli po lewej stronie liczby pojawia się zarówno data kalendarzowa jak
+i czas, ale nie ma elementu względnego, to liczba unieważnia wcześniej
+określony rok.
+
+
+@node  Autorzy getdate
+@section Autorzy @code{getdate}
+
+@cindex autorzy @code{getdate}
+
+@cindex Bellovin, Steven M.
+@cindex Salz, Rich
+@cindex Berets, Jim
+@cindex MacKenzie, David
+@cindex Meyering, Jim
+@code{getdate} zostało pierwotnie zaimplementowane przez Stevena M. Bellovin
+(@email{smb@@research.att.com}) podczas pobytu w Chapel Hillwhile na
+University of North Carolina.  Kod został później nieco zmodyfikowany przez
+kilku ludzi na Usenecie, a następnie gruntownie zmieniony przez Richa $alz
+(@email{rsalz@@bbn.com}) i Jima Berets (@email{jberets@@bbn.com}) w sierpniu
+1990.  Rozmaite wersje dla systemu GNU zrobił David MacKenzie, Jim Meyering
+i inni.
+
+@cindex Pinard, F.
+@cindex Berry, K.
+Rozdział ten został pierwotnie utworzony przez Fran@,{c}ois Pinard
+(@email{pinard@@iro.umontreal.ca}) z kodu źródłowego @file{getdate.y},
+a następnie poprawiony przez K. Berry (@email{kb@@cs.umb.edu}).

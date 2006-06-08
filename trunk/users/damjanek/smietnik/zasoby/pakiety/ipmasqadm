@@ -1,0 +1,9 @@
+# Lista polskich stron man dla pakietu
+# ipmasqadm
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+ipmasqadm.8		/man8/ipmasqadm.8
+#
+# koniec listy

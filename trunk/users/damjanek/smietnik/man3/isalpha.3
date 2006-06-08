@@ -1,0 +1,159 @@
+.\" 1999 PTM Przemek Borys
+.\" Aktualizacja do man-pages 1.47 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\"
+.\" Modified Sat Jul 24 19:10:00 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Aug 21 17:51:50 1994 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sat Sep  2 21:52:01 1995 by Jim Van Zandt <jrv@vanzandt.mv.com>
+.\" Modified Mon May 27 22:55:26 1996 by Martin Schulze (joey@linux.de)
+.\" --------
+.TH ISALPHA 3 1995-09-02 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+isalnum, isalpha, isascii, isblank, iscntrl, isdigit, isgraph, islower, 
+isprint, ispunct, isspace, isupper, isxdigit \- funkcje klasyfikacji znaku
+.SH SKŁADNIA
+.nf
+.B #include <ctype.h>
+.sp
+.BI "int isalnum(int " "c" );
+.nl
+.BI "int isalpha(int " "c" );
+.nl
+.BI "int isascii(int " "c" );
+.nl
+.BI "int isblank(int " "c" );
+.nl
+.BI "int iscntrl(int " "c" );
+.nl
+.BI "int isdigit(int " "c" );
+.nl
+.BI "int isgraph(int " "c" );
+.nl
+.BI "int islower(int " "c" );
+.nl
+.BI "int isprint(int " "c" );
+.nl
+.BI "int ispunct(int " "c" );
+.nl
+.BI "int isspace(int " "c" );
+.nl
+.BI "int isupper(int " "c" );
+.nl
+.BI "int isxdigit(int " "c" );
+.fi
+.SH OPIS
+Funkcje te sprawdzają czy
+.IR c ,
+które jest zmienną typu 
+.BR "unsigned char" ,
+lub wartością
+.BR EOF ,
+należy do określonej klasy znaków, zdeterminowanej przez bieżące locale.
+.TP 
+.B "isalnum()"
+sprawdza czy znak jest alfanumeryczny; jest to równoważne
+.BI "(isalpha(" c ") || isdigit(" c "))" \fR.
+.TP
+.B "isalpha()"
+sprawdza czy znak jest alfabetyczny; w standardowych locale \fB"C"\fP jest
+to równoważne
+.BI "(isupper(" c ") || islower(" c "))" \fR.
+W niektórych ustawieniach locale do klasy tej mogą należeć dodatkowe znaki,
+dla których
+.B  isalpha()
+jest prawdziwe -- litery, które nie są ani wielkie, ani małe.
+.TP
+.B "isascii()"
+sprawdza czy \fIc\fP jest 7-bitową zmienną
+.IR "unsigned char" ,
+która należy do zbioru znaków ASCII.
+Funkcja ta jest rozszerzeniem BSD i SVID.
+.TP
+.B "isblank()"
+sprawdza czy znak jest pusty, czyli czy jest to spacja lub tabulacja. Jest
+to rozszerzenie GNU.
+.TP
+.B "iscntrl()"
+sprawdza czy znak jest znakiem sterującym.
+.TP
+.B "isdigit()"
+sprawdza czy jest to cyfra (0 do 9).
+.TP
+.B "isgraph()"
+sprawdza czy jest to jakikolwiek drukowalny znak poza spacją.
+.TP
+.B "islower()"
+sprawdza czy znak jest małą literą.
+.TP
+.B "isprint()"
+sprawdza czy znak jest drukowalny (łącznie ze spacją).
+.TP
+.B "ispunct()"
+sprawdza czy znak jest drukowalny i nie jest spacją lub znakiem
+alfanumerycznym.
+.TP
+.B "isspace()"
+sprawdza czy znak jest białym znakiem. W ustawieniach locale
+.B """C"""
+i
+.B """POSIX"""
+są to spacja, nowa strona (form-feed),
+.RB ( '\ef' ),
+nowa linia,
+.RB ( '\en' ),
+powrót karetki
+.RB ( '\er' ),
+tabulacja pozioma,
+.RB ( '\et' )
+i tabulacja pionowa,
+.RB ( '\ev' ).
+.TP
+.B "isupper()"
+sprawdza czy znak jest wielką literą.
+.TP
+.B "isxdigit()"
+sprawdza czy znak jest cyfrą szesnastkową, czyli czy jest jednym z
+.nl
+.BR "0 1 2 3 4 5 6 7 8 9 0 a b c d e f A B C D E F" .
+.SH "WARTOŚĆ ZWRACANA"
+Zwracana jest wartość niezerowa, jeśli znak
+.I c
+należy do sprawdzanej klasy, a zero jeśli nie należy.
+.SH "ZGODNE Z"
+ANSI - C, BSD 4.3.
+\fBisascii()\fP jest rozszerzeniem BSD i SVID.
+\fBisblank()\fP jest rozszerzeniem GNU.
+.SH "UWAGI"
+Szczegóły tego, które znaki należą do której klasy, zależą od bieżących
+ustawień regionalnych (locale). Np.
+.B isupper()
+nie rozpozna A - umlaut jako wielkiej litery w domyślnym ustawieniu locale
+.BR """C""" .
+.SH "ZOBACZ TAKŻE"
+.BR tolower (3),
+.BR toupper (3),
+.BR setlocale (3),
+.BR ascii (7),
+.BR locale (7)

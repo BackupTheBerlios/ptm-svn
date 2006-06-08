@@ -1,0 +1,55 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 17:06:03 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Translation (c) 1998 Wiktor Joseph Lukasik <wiktorlu@technologist.com>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Mar 2002,
+.\"              manpages 1.48
+.\"
+.TH GROUP 5 1992-12-29 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+group \- plik grup użytkowników
+.SH OPIS
+\fB/etc/group\fP jest plikiem w formacie ASCII, definiującym grupy, do
+których należą użytkownicy. Każdy wpis zajmuje jedną linię następującej
+postaci:
+.sp
+.RS
+nazwa_grupy:hasło:GID:lista_użytkowników
+.RE
+.sp
+Oto opisy poszczególnych pól:
+.IP nazwa_grupy
+nazwa grupy, do której należą użytkownicy.
+.IP password
+(zaszyfrowane) hasło dostępu do grupy. Jeżeli to pole jest puste, hasło
+nie jest wymagane. 
+.IP GID
+numeryczny identyfikator grupy.
+.IP lista_użytkowników
+rozdzielone przecinkami nazwy wszystkich użytkowników, należących do grupy.
+.SH PLIKI
+/etc/group
+.SH "ZOBACZ TAKŻE"
+.BR login (1),
+.BR newgrp (1),
+.BR passwd (5)

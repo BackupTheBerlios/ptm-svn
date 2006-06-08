@@ -1,0 +1,19 @@
+# Lista polskich stron man dla pakietu
+# gzip
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+gunzip.1	man1/gunzip.1
+gzexe.1		man1/gzexe.1
+gzip.1		man1/gzip.1
+zcat.1		man1/zcat.1
+zcmp.1		man1/zcmp.1
+zdiff.1		man1/zdiff.1
+zforce.1	man1/zforce.1
+zgrep.1		man1/zgrep.1
+zless.1		man1/zless.1
+zmore.1		man1/zmore.1
+znew.1		man1/znew.1
+#
+# koniec listy

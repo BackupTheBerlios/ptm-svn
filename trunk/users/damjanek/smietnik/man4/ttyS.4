@@ -1,0 +1,58 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Sat Jul 24 17:03:24 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.\" Tłumaczenie na język polski: Paweł Olszewski <alder@amg.net.pl>
+.\" {PTM/PO/0.1/02-06-1998/"linie szeregowe terminali"}
+.\" Ostatnia aktualizacja:
+.\"       A. Krzysztofowicz <ankry@mif.pg.gda.pl> - sierpień 2002
+.\" Aktualność: man-pages 1.53
+.\"
+.TH TTYS 4 1992-12-19 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+ttyS \- linie terminali szeregowych
+.SH OPIS
+\fBttyS[0-3]\fP są urządzeniami znakowymi linii terminali szeregowych.
+.LP
+Tworzy się je zazwyczaj poleceniami:
+.RS
+.sp
+mknod -m 660 /dev/ttyS0 c 4 64 # adres bazowy 0x3f8
+.br
+mknod -m 660 /dev/ttyS1 c 4 65 # adres bazowy 0x2f8
+.br
+mknod -m 660 /dev/ttyS2 c 4 66 # adres bazowy 0x3e8
+.br
+mknod -m 660 /dev/ttyS3 c 4 67 # adres bazowy 0x2e8
+.br
+chown root:tty /dev/ttyS[0-3]
+.sp
+.RE
+.SH PLIKI
+/dev/ttyS[0-3]
+.SH "ZOBACZ TAKŻE"
+.BR mknod (1),
+.BR chown (1),
+.BR getty (1),
+.BR tty (4),
+.BR setserial (8)

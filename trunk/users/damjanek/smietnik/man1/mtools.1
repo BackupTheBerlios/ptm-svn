@@ -1,0 +1,547 @@
+.\" {PTM/WK/0.1 /16-07-1999/"dostęp do plików DOSu w Uniksie"}
+.TH mtools 1 "16 lipca 1999" MTOOLS MTOOLS
+.SH NAZWA
+mtools - narzędzia dostępu do dysków DOS w Uniksie
+.PP
+.SH WSTĘP
+\fBMtools\fP jest zbiorem narzędzi, udostępnianych jako public domain,
+pozwalających systemom unixowym na operowanie plikami DOSowymi: odczyt,
+zapis i przemieszczanie plików położonych na DOSowym systemie plików
+(zwykle dyskietce). Gdy jest to uzasadnione, każdy z programów usiłuje
+emulować odpowiednie polecenie DOSu. Nie są jednak emulowane zbędne
+ograniczenia i osobliwości DOSu. Na przykład, możliwe jest przesuwanie
+podkatalogów z jednego podkatalogu do innego.
+.PP
+Mtools wystarczają do zapewnienia dostępu do systemów plikowych
+DOSu. Na przykład, polecenia takie jak \fBmdir a:\fP działają na napędzie
+\fBa:\fP bez uprzedniego montowania (dołączania) czy inicjalizacji
+(zakładając, że na twojej maszynie działa domyślny plik
+\fI/etc/mtools.conf\fR.
+Przy pomocy mtools można zmieniać dyskietki bez potrzeby ich dołączania
+i odłączania.
+.PP
+.SH SKĄD WZIĄĆ MTOOLS
+Mtools można znaleźć w następujących miejscach (i ich mirrorach):
+.nf
+.ft 3
+.in +0.3i
+http://mtools.linux.lu/mtools-3.9.9.tar.gz
+ftp://www.tux.org/pub/knaff/mtools/mtools-3.9.9.tar.gz
+ftp://ibiblio.unc.edu/pub/Linux/utils/disk-management/mtools-3.9.9.tar.gz
+.fi
+.in -0.3i
+.ft R
+.lp
+ 
+.PP
+Przed zgłoszeniem błędu upewnij się, że nie został już poprawiony w łatkach
+alfa, które można znaleźć na:
+.nf
+.ft 3
+.in +0.3i
+http://mtools.linux.lu/
+ftp://www.tux.org/pub/knaff/mtools
+.fi
+.in -0.3i
+.ft R
+.lp
+ 
+.PP
+Łaty mają nazwy mtools-\fIwersja\fR\-\fIddmm\fR\-.taz, gdzie \fIwersja\fR
+oznacza wersję podstawową, \fIdd\fR dzień, zaś \fImm\fR miesiąc.
+Z powodu braku miejsca zwykle pozostawiam jedynie najnowszą łatę.
+.PP
+Na `mtools @ tux.org' istnieje lista dyskusyjna. Proszę przesyłać
+wszystkie zgłoszenia błędów na tę listę. Można zapisać się na listę
+wysyłając wiadomość z treścią 'subscribe mtools @ tux.org' do
+`majordomo @ tux.org'. (Uwaga: proszę usunąć odstępy przed i po znaku
+"@". Pozostawiłem je dla oszukania spambotów).
+Zawiadomienia o nowych wersjach \fBmtools\fR, oprócz przesyłania na
+ogłoszeniowe grupy Linuksa, będą również wysyłane na tę listę.
+Archiwum listy prowadzone jest na
+.br
+http://www.tux.org/hypermail/mtools/latest
+.PP
+.SH WSPÓLNE CECHY WSZYSTKICH POLECEŃ MTOOLS
+.BR " "
+.SS Opcje i nazwy plików
+Nazwy plików MS-DOS składają się z litery napędu, po której następuje
+dwukropek, podkatalog i nazwa pliku. Tylko nazwa pliku jest obowiązkowa,
+litera napędu i podkatalog są opcjonalne. Nazwy plików bez litery napędu
+odnoszą się do plików unixowych. Nazwy podkatalogów mogą używać zarówno
+separatora \fB\\\fR jak i \fB\\\fR.
+Użycie separatora \fB\\\fR lub znaków uogólniających wymaga otoczenia nazw
+znakami cytowania (apostrofami, cudzysłowami) dla ochrony przed ich
+interpretacją przez powłokę. Jednakże znaki uogólniające w nazwach plików
+unixowych nie powinny być cytowane, gdyż \fBchcemy\fR by powłoka je rozwinęła.
+.PP
+Procedury "wyszukiwania wzorców" wyrażeń regularnych stosują się do reguł
+uniksowych. Na przykład, \fB*\fR oznacza wszystkie pliki DOSowe (zamiast
+\fB*.*\fR). Bity określające atrybuty pliku (archiwalny, ukryty,
+tylko-do-odczytu, systemowy) podczas wyszukiwania wzorca są ignorowane.
+.PP
+Wszystkie opcje używają znaku \fB-\fR (minus) jako pierwszego znaku, nie zaś
+\fB/\fR (ukośnika), jak mógłbyś się spodziewać w DOSie.
+.PP
+Większość poleceń mtools pozwala na użycie wielu nazw plików jako
+parametrów, co nie jest zgodne z konwencjami DOSu, ale jest przyjaźniejsze
+dla użytkownika.
+.PP
+Większość poleceń mtools posiada opcje informujące je, jak obsługiwać
+kolizje nazw plików. Więcej szczegółów znajdziesz w sekcji \fBKolizje
+nazw\fP. Wszystkie polecenia akceptują opcję \fB\-V\fP wyświetlającą wersję,
+a większość również opcję \fB\-v\fR przełączającą tryb wyświetlania
+szczegółów (verbose). Patrz sekcja \fBPolecenia\fP, gdzie umieszczono
+szczegółowy opis opcji charakterystycznych dla poszczególnych poleceń.
+.SS Litery napędów
+Znaczenie liter napędów zależy od konfiguracji sprzętowej. Przy większości
+konfiguracji jednak, napęd A jest pierwszym napędem dyskietek, napęd B drugim
+napędem dyskietek (jeśli jest dostępny), napęd J jest napędem Jaz (jeśli
+dostępny), zaś napęd Z - napędem typu Zip (jeśli dostępny). W systemach,
+gdzie nazwa urządzenia pochodzi od identyfikatora SCSI, napęd Jaz
+przyjmowany jest za 4 obiekt SCSI, zaś Zip za SCSI 5 (domyślne ustawienia
+fabryczne). W Linuksie, w przypadku obu tych napędów, przyjmuje się, że jest
+to drugi napęd szyny SCSI (/dev/sdb). Ustawienia domyślne mogą być
+zmienione przez zmianę pliku konfiguracyjnego (patrz opis konfiguracji
+w \fBmtools\fP(5)).
+.SS Bieżący katalog roboczy
+Do ustawienia urządzenia i bieżącego katalogu (odnoszącego się do systemu
+plikowego MS-DOSu) używa się polecenia \fBmcd\fP. Jednak. w przeciwieństwie
+do DOSu, istnieje tylko jeden katalog roboczy dla wszystkich napędów,
+nie zaś po jednym na napęd.
+.SS Długie nazwy plików VFAT
+.\" VFAT-style\ long\ file\ names
+Niniejsza wersja mtools obsługuje długie nazwy plików stosowane w VFAT.
+Jeśli unixowa nazwa pliku jest zbyt długa, by zmieścić się w krótkiej
+nazwie DOSu, zachowywana jest jako długa nazwa VFAT i tworzona jest
+towarzysząca jej krótka nazwa. Tę krótką nazwę widzisz sprawdzając dysk
+DOSem w wersji wcześniejszej niż 7.0.
+Poniższe zestawienie pokazuje kilka przykładów krótkich nazw:
+.PP
+   Długa nazwa   Nazwa MS_DOS   Powód zmiany nazwy
+   -----------   ------------   -----------------------
+   ToJestTest    TOJEST~1       zbyt długa nazwa pliku
+   alain.knaff   ALAIN~1.KNA    za długie rozszerzenie
+   prn.txt       PRN~1.TXT      PRN jest nazwą urządzenia
+   \.abc          ABC~1          pusta nazwa pliku
+   hot+cold      HOT_CO~1       niedozwolony znak
+.PP
+Jak widać, w celu uzyskania krótkiej nazwy zastosowano następujące
+przekształcenia:
+.TP
+* \ \ 
+Niedozwolone znaki są zastąpione podkreśleniem. Znakami zabronionymi są:
+\fR;+=[]',\e"*\e<>/?:|\fR.
+.TP
+* \ \ 
+Usunięte są dodatkowe kropki, które nie mogą być zinterpretowane jako
+główny separator nazwy/rozszerzenia. 
+.TP
+* \ \ 
+Tworzony jest licznik dla przyrostka \fB~\fR\fIn\fR,
+.TP
+* \ \ 
+Nazwa skracana jest tak, by spełnić ograniczenie 8+3.
+.PP
+Początkowa, unixowa nazwa pliku (długa lub krótka) zwana jest również nazwą
+\fIpierwotną\fR lub \fIgłówną\fR (primary), zaś pochodząca od niej
+nazwa krótka zwana jest \fIwtórną\fR lub \fIdodatkową\fR (secondary).
+.PP
+Przykład:
+.br
+    \fBmcopy /etc/motd a:DlugaNazwa\fR
+.br 
+Mtools utworzą wpis w VFAT dla `DlugaNazwa' i użyją `DLUGANAZ' jako
+nazwy krótkiej. `DlugaNazwa' jest tutaj nazwą główną, zaś
+`DLUGANAZ' nazwą dodatkową.
+.br
+    \fBmcopy /etc/motd a:motd\fR
+.br
+`motd' spełnia ograniczenia stawiane nazwom pliku DOS. Mtools nie musi
+tworzyć z niej innej nazwy. Nazwą pierwotną jest `motd', a nie ma nazwy
+wtórnej.
+.PP
+W skrócie: nazwą główną jest długa nazwa, jeśli taka istnieje, lub krótka
+nazwa, jeśli nie ma długiej nazwy.
+.PP
+Mimo, iż VFAT jest dużo elastyczniejszy niż FAT, nawet w nim nadal istnieją
+niedopuszczalne nazwy plików. Pozostały jeszcze niektóre niedozwolone znaki
+(\e"*\\<>/?:|), zaś nazwy urządzeń w dalszym ciągu są zarezerwowane.
+.PP
+   Nazwa unixowa   Długa nazwa   Powód zmiany
+   -------------   -----------   -------------------------
+   prn             prn-1         PRN jest nazwą urządzenia
+   ab:c            ab_c-1        niedozwolony znak
+.PP
+Jak widać, w przypadku niedozwolonej długiej nazwy, wykonywane są
+następujące przekształcenia:
+.TP
+* \ \ 
+Niedozwolone znaki zastępowane są podkreśleniami,
+.TP
+* \ \ 
+Tworzony jest licznik dla przyrostka \fB~\fR\fIn\fR,
+.SS Kolizje nazw
+Podczas zapisu pliku na dysk, jego długa lub krótka nazwa może kolidować
+z nazwą istniejącego pliku lub katalogu. Może się to zdarzyć dla każdego
+z poleceń tworzących nowy katalog lub wpis w katalogu, takiemu jak
+.BR mcopy ", " mmd ", " mren ", " mmove ", " mwrite " i " mread .
+W przypadku kolizji nazw polecenia mtools pytają o sposób postępowania.
+Oferują kilka możliwości:
+.TP
+.B overwrite
+Nadpisuje istniejący plik. Nie jest możliwe nadpisanie katalogu plikiem.
+.TP
+.B rename
+Zmienia nazwę nowo tworzonego pliku. Mtools pytają o nową nazwę pliku.
+.TP
+.B autorename
+Zmienia nazwę nowo tworzonego pliku. Mtools wybierają same nazwę, bez
+pytania.
+.TP
+.B skip 
+Pomiń ten plik, zajmij się następnym (jeśli jest).
+.PP
+By wybrać jedną z powyższych akcji, po zachęcie ze strony polecenia,
+wpisz jej pierwszą literę. Jeśli użyjesz małej litery, to akcja będzie
+się odnosić wyłącznie do tego pliku; użycie dużej litery spowoduje
+zastosowanie danej akcji do wszystkich plików bez dalszych pytań.
+.PP
+Możesz również wybrać akcje (dla wszystkich plików) w linii poleceń, przy
+wywołaniu mtools:
+.TP
+.B \-o
+Domyślnie nadpisuje nazwy pierwotne.
+.TP
+.B \-O
+Domyślnie nadpisuje nazwy wtórne.
+.TP
+.B \-r
+Domyślnie zmienia nazwę pierwotną.
+.TP
+.B \-R
+Domyślnie zmienia nazwę wtórną.
+.TP
+.B \-a
+Domyślnie automatycznie zmienia nazwę pierwotną.
+.TP
+.B \-A
+Domyślnie automatycznie zmienia nazwę wtórną.
+.TP
+.B \-s
+Domyślnie przeskocz nazwę pierwotną.
+.TP
+.B \-S
+Domyślnie przeskocz nazwę wtórną.
+.TP
+.B \-m
+Pytaj użytkownika, co zrobić z nazwą pierwotną.
+.TP
+.B \-M
+Pytaj użytkownika, co zrobić z nazwą wtórną.
+.PP
+Zauważ, że w linii poleceń przełączniki małe/duże odróżniają polecenia
+dla nazwy pierwotnej/wtórnej, podczas gdy przy wyborze interakcyjnym
+małe/duże różnicują zakres: tym-razem/zawsze.
+.PP
+Nazwa pierwotna jest nazwą wyświetlaną w Windows 95 lub Windows NT, 
+tj. nazwą długą, jeśli takowa istnieje, w przeciwnym razie krótką.
+Nazwa wtórna jest nazwą "ukrytą", tj. nazwą krótką jeśli istnieje długa.
+.PP
+Przy domyślnym sposobie działania mtools użytkownik jest proszony o reakcję
+w przypadku kolizji nazw pierwotnych, zaś nazwy wtórne zmieniane
+są automatycznie.
+.PP
+Jeśli kolizja nazw zdarzy się w katalogu Unixa, mtools pytają tylko czy
+nadpisać plik, czy go pominąć.
+.SS Rozróżnianie dużych i małych liter w systemie VFAT
+System plików VFAT potrafi zapamiętać wielkość znaków (małe/duże litery)
+w nazwach plików. W tym samym katalogu nie mogą jednak istnieć pliki
+o nazwach różniących się jedynie wielkością liter. Jeśli, na przykład
+zapisałeś plik o nazwie DlugaNazwaPliku w systemie plikowym VFAT, mdir
+pokaże go jako DlugaNazwaPliku, nie zaś jako DlugaNazwapliku. Jednak
+polecenie odmówi dopisania pliku DlugaNazwapliku do tego samego
+katalogu, gdyż wielkość liter jest ignorowana przy sprawdzaniu kolizji.
+.PP
+System VFAT umożliwia przechowywanie wielkości liter nazwy pliku w bajcie
+atrybutu, jeśli wszystkie litery tej nazwy są duże (bądź małe) oraz
+wszystkie litery rozszerzenia też są duże (lub odpowiednio, małe).
+Mtools używają tej informacji do wyświetlania nazw plików oraz tworzenia
+nazw unixowych przy kopiowaniu (\fBmcopy\fP) do katalogu Unixa. Może to dawać
+nieoczekiwane efekty w odniesieniu do plików zapisanych przy użyciu
+DOS w wersji wcześniejszej niż 7.0: nazwy takich plików będą w całości
+zamienione na duże litery. Zachowanie to różni się od poprzedniej wersji
+mtools, która tworzyła nazwy plików unixowych złożone z małych liter.
+.PP
+.SS Formatowanie o dużej gęstości
+.\"high\ capacity\ formats
+Mtools obsługują wiele sposobów formatowania, pozwalających na
+przechowywanie na dyskietce większej niż zwykle ilości danych. W związku
+z różnymi możliwościami systemów operacyjnych, formaty te nie są
+obsługiwane we wszystkich systemach. Mtools rozpoznają te formaty tam,
+gdzie są one obsługiwane.
+.\" Mtools recognizes these formats transparently where supported.
+.PP
+W celu sformatowania takich dyskietek powinieneś użyć narzędzia odpowiedniego
+do systemu operacyjnego. Dla Linuksa, odpowiednie narzędzia obsługi
+dyskietek można znaleźć w pakiecie \fIfdutils\fR w następujących miejscach:
+.TP 
+ftp://www.tux.org/pub/knaff/fdutils/.
+.TP
+ftp://sunsite.unc.edu/pub/Linux/utils/disk-management/fdutils-*
+.PP
+Dalszych szczegółów szukaj w dokumentacji dołączonej do tego pakietu.
+Użyj \fIsuperformat\fR by sformatować dyskietkę w dowolnym z formatów
+oprócz XDF, oraz \fIxdfcopy\fR do formatowania XDF.
+.SS Więcej sektorów
+Najstarszą metodą umieszczenia większej ilości danych na dyskietce jest
+użycie większej liczy sektorów i cylindrów. Mimo, że standardowy format używa
+80 cylindrów i 18 sektorów (na 3,5" dyskietkach dużej gęstości), to możliwe
+jest użycie do 83 cylindrów (na większości napędów) i do 21 sektorów. Metoda
+ta pozwala na zapisanie do 1743K na dyskietce 3,5"HD. Dyskietki o 21
+sektorach są jednak dwukrotnie wolniejsze od standardowych dyskietek
+o 18 sektorach, gdyż sektory są upakowane tak blisko siebie, że zachodzi
+potrzeba ich przeplotu. Problem ten nie istnieje przy formatach o 20
+sektorach.
+.PP
+Formaty te są obsługiwane przez liczne shareware'owe DOSowe programy
+narzędziowe takie jak \fIfdformat\fP czy \fIvgacopy\fP. W swej nieskończonej
+arogancji Bill Gate$ wierzył, że to on to wynalazł i nazwał je
+\fIdyskami DMF\fP lub \fIWindows formatted disks\fR. W rzeczywistości,
+rozwiązanie to istniało już od lat! Mtools obsługują te formaty w Linuksie,
+SunOs oraz DELL Unix PC.
+.SS Większe sektory
+Użycie większych sektorów umożliwia przekroczenie pojemności możliwej do
+uzyskania przy standardowych sektorach 512-bajtowych. Powodem jest nagłówek
+sektora. Nagłówek sektora ma taki sam rozmiar, niezależnie od liczby bajtów
+danych w sektorze. Możemy zatem zaoszczędzić nieco miejsca używając
+\fImniejszej liczby\fR większych sektorów. Na przykład, 1 sektor
+4-kilobajtowy zabiera tylko jedno miejsce na nagłówek, podczas gdy 8
+sektorów po 512 bajtów ma 8 nagłówków, przy tej samej ilości danych
+użytkowych.
+Metoda ta umożliwia przechowanie do 1992K na dyskietkach 3,5HD.
+.PP
+Mtools obsługują te formaty tylko w Linuksie.
+.SS 2m
+Format 2m został pierwotnie wynaleziony przez Ciriaco Garcia de Celis.
+On również używa większych niż zwykle sektorów, by pomieścić więcej danych
+na dyskietce. Posługuje się jednak standardowym formatem (18 sektorów po 512
+bajtów każdy) na pierwszym cylindrze, by ułatwić obsługę tych dyskietek
+w DOSie. Faktycznie, metoda ta pozwala na użycie sektora startowego 
+(bootsector) o standardowym rozmiarze, zawierającego opis, jak powinna być
+odczytana reszta dyskietki.
+.PP
+Wadą tego rozwiązania jest to, że pierwszy cylinder może pomieścić mniej
+danych niż pozostałe. Niestety, DOS potrafi obsługiwać wyłącznie dyskietki
+o tej samej ilości danych na każdej ścieżce. A zatem 2m ukrywa fakt, iż
+pierwsza ścieżka zawiera mniej danych przez użycie \fIshadow FAT\fR. (Zwykle
+DOS przechowuje FAT w dwu identycznych kopiach, dla dodatkowego
+bezpieczeństwa. XDF przechowuje tylko jedną kopię, a mówi DOSowi, że
+przechowuje dwie. W ten sposób oszczędzane jest miejsce, jakie byłoby zajęte
+przez drugą kopię FAT). Oznacza to również, że \fBnie powinieneś nigdy
+używać dyskietek 2m do zapisywania czegokolwiek innego niż system plików
+DOS\fR.
+.PP
+Mtools obsługuje ten format tylko w Linuksie.
+.SS XDF
+XDF jest formatem dużej gęstości używanym przez OS/2. Umożliwia
+przechowywanie na dyskietce do 1840K. Jest to mniej niż najlepsze formaty
+2m, ale jego główną zaletą jest szybkość: 600 milisekund na ścieżkę. Jest to
+szybciej niż dla formatu 21-sektorowego i prawie tak szybko jak dla
+standardowego formatu o 18 sektorach. Chcąc zapewnić dostęp do tych
+dyskietek, upewnij się, że mtools zostały skompilowane z obsługą XDF i ustaw
+zmienną \fIuse_xdf\fR dla napędu w pliku konfiguracyjnym. Szczegóły 
+znajdziesz w sekcjach \fBKompilowanie mtools\fR i \fBRóżne zmienne\fR.
+Szybki dostęp XDF osiągalny jest przy jądrze Linuksa nowszym niż 1.1.34.
+.PP
+Mtools obsługuje ten format tylko w Linuksie.
+.PP
+\fBOstrzeżenie / Uwaga dystrybutorzy\fR: 
+mtools skompilowane pod jądrem Linuksa nowszym niż 1.3.34 nie będzie działać
+przy starszym jądrze. Skompilowane jednak na starszym jądrze działa
+nadal na nowszym, z wyjątkiem tego, że dostęp XDF jest wolniejszy. Zaleca
+się, by autorzy dystrybucji dołączali binaria mtools skompilowane wyłącznie
+pod jądrze starszym niż 1.3.34, aż do ukazania się 2.0. Po ukazaniu się 2.0
+mogą (i powinny) być rozpowszechniane binaria mtools kompilowane pod
+nowszymi jądrami. Binaria mtools kompilowane pod jądrami starszymi niż
+1.3.24 nie będą działać przy żadnym z jąder 2.1 lub późniejszym.
+.SS Kody zakończenia (Exit codes)
+Wszystkie polecenia mtools zwracają 0 w przypadku powodzenia, 1 przy
+kompletnym niepowodzeniu lub 2 przy częściowym. Wszystkie polecenia mtools
+przed pracą dokonują pewnych sprawdzeń poprawności, by upewnić się, że dysk
+jest rzeczywiście dyskiem MS-DOS (a nie, powiedzmy, dyskiem systemu ext2
+czy minix). Kontrole te mogą odrzucić dyski częściowo uszkodzone, które mimo
+to mogą być czytelne. Możesz uniknąć tych kontroli przez ustawienie zmiennej
+środowiska \fBMTOOLS_SKIP_CHECK\fR lub odpowiedniej zmiennej pliku
+konfiguracyjnego (patrz sekcja \fBZmienne globalne\fR w \fBmtools\fR(5)).
+.SH BŁĘDY
+Niefortunnym efektem ubocznym odgadywania poprawnego urządzenia (przy
+obsługiwaniu wielu pojemności dyskietek) jest sporadyczny komunikat
+o błędzie ze sterownika urządzenia. Może być on spokojnie zignorowany.
+.\" These can be safely ignored.  
+.PP
+Kod sprawdzający formatowanie zatyka się na dyskietkach 1.72M formatowanych
+przy użyciu \fBmformat\fR z mtools wersji wcześniejszych niż 2.0.7.
+Ustaw zmienną środowiska \fBMTOOLS_FAT_COMPATIBILITY\fR (lub odpowiednią
+zmienną pliku konfiguracyjnego, patrz \fBZmienne globalne\fR w
+\fBmtools\fR(5)), by pominąć sprawdzanie fat.
+.SH KONWERSJA DOKUMENTACJI
+Oryginalne strony podręcznika zostały utworzone automatycznie z dokumentacji
+Texinfo pakietu mtools [tłum.: polska wersja została sformatowana ręcznie].
+Proces ten jednak jest tylko przybliżony i niektóre
+elementy, jak odnośniki czy indeksy są w nim tracone. W rzeczywistości
+elementy te nie posiadają właściwych odpowiedników w formacje stron man.
+Ponadto nie cała informacja została przełożona na wersję podręcznika
+systemowego (stron man).
+[tłum.:pominięto, jak w oryginale, sekcję
+dotyczącą kompilacji mtools i przenoszenia na różne platformy.]
+Dlatego usilnie zalecamy użycie oryginalnej
+dokumentacji Texinfo. Na końcu niniejszej strony znajdziesz instrukcje jak
+przeglądać dokumentację Texinfo.
+.TP
+*  
+Drukowalną postać dokumentacji texinfo możesz otrzymać uruchamiając poniższe
+polecenia:
+.RS
+.RS
+.br
+.B ./configure; make dvi; dvips mtools.dvi
+.RE
+.RE
+.TP
+* 
+Aby utworzyć wersję html, uruchom:
+.RS
+.RS
+.br
+.B ./configure; make html
+.RE
+Już utworzone wersje html możesz znaleźć na:
+.br
+   http://mtools.linux.lu
+.br
+a także na:
+.br
+   http://www.tux.org/pub/knaff/mtools
+.RE
+.RE
+.TP
+* 
+Aby utworzyć kopię info (przeglądalną w trybie info Emacsa), uruchom:
+.RS
+.RS
+.br 
+.B ./configure; make info
+.RE
+.RE
+.PP
+Dokumentacja Texinfo wygląda najlepiej wydrukowana lub w postaci html.
+W wersji info niektóre przykłady są naprawdę trudne w czytaniu z powodu
+używanych w info konwencji cytowania.
+.SH PATRZ TAKŻE
+.BR mtools (5),
+zawierające opis konfiguracji oraz:
+.TP 3
+.B floppyd
+demon zdalnego dostępu do dyskietek; uruchamiany w oknie X-servera
+.TP 3
+.B floppyd_installtest
+narzędzie sprawdzające obecność `floppyd'
+.TP 3
+.B mattrib
+zmień atrybuty plików MS-DOS
+.TP 3
+.B mbadblocks
+testuje dyskietki, oznacza błędne bloki w FAT
+.TP 3
+.B mcat
+zrzuć obraz dyskietki. Jak `cat'. Przydatne tylko, jeśli używa się
+`floppyd'.
+.TP 3
+.B mcd
+zmień katalog MS-DOS
+.TP 3
+.B mcopy
+kopiuj pliki pomiędzy DOSem a Unixem
+.TP 3
+.B mdel
+skasuj plik MS-DOS
+.TP 3
+.B mdeltree
+usuń katalog MS-DOS z podkatalogami
+.TP 3
+.B mdir
+wyświetl katalog MS-DOS
+.TP 3
+.B mdu
+wyświetl ilość miejsca zajmowanego przez katalog DOS
+.TP 3
+.B mformat
+dodaj system plików DOS do niskopoziomowo sformatowanej dyskietki
+.TP 3
+.B minfo
+pokaż informację o systemie plików MS-DOS
+.TP 3
+.B mlabel
+nadaj etykietę dysku MS-DOS
+.TP 3
+.B mkmanifest
+twórz skrypt powłoki do odtworzenia unixowych nazw plików
+.TP 3
+.B mmd
+utwórz podkatalog MS-DOS
+.TP 3
+.B mmount
+zamontuj (dołącz) dysk DOS
+.TP 3
+.B mpartition
+utwórz partycję MS-DOS
+.TP 3
+.B mrd
+usuń katalog DOS
+.TP 3
+.B mmove
+przesuń lub zmień nazwę pliku/katalogu MS-DOS
+.TP 3
+.B mren
+zmień nazwę istniejącego pliku MS-DOS
+.TP 3
+.B mshowfat
+pokaż FAT dla danych plików
+.TP 3
+.B mtoolstest
+sprawdź i wyświetl konfigurację mtools
+.TP 3
+.B mtype
+wyświetl zawartość pliku MS-DOS
+.TP 3
+.B mzip
+zmień zabezpieczenie, wysuń dysk napędu Zip/Jaz
+.TP 3
+.B xcopy
+skrypt do rekurencyjnego kopiowania katalogu DOS do innego katalogu
+.RE
+.SH KOPIOWANIE
+Niniejsza, polska wersja dokumentacji stanowi tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. Może być rozpowszechniana,
+modyfikowana i tłumaczona na poniższych warunkach:
+
+Mtools Copyright (C) 1992-1998 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one, and provided that the privacy
+of any reader of the resulting derived work is respected. In particular
+is it strictly forbidden to make this documentation available on a World
+Wide Web server which deals cookies. However, keeping access statistics
+is allowed.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.

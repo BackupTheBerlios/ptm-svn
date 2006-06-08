@@ -1,0 +1,360 @@
+.\" Copyright (c) 1994, 1995 Jacques Gelinas (jacques@solucorp.qc.ca)
+.\" Copyright (c) 1995 Bjorn Ekwall (bj0rn@blox.se)
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory /linux
+.\" $Id: depmod.1,v 1.5 2000/09/30 17:08:37 wojtek2 Exp $
+.\"
+.\" {PTM/MM/0.1/18-11-1998/"depmod.1, modprobe.1 - automatyczna obsługa modułów"}
+.TH DEPMOD 1 "March 17, 1996" Linux "Linux Module Support"
+.SH NAZWA
+depmod, modprobe \- programy do "automatycznej" obsługi modułów
+.SH SKŁADNIA
+.B depmod
+[ \-a ]
+.br
+.B depmod
+[ \-a wersja ]
+.br
+.B depmod
+moduł1.o moduł2.o ...
+.PP
+.B modprobe
+moduł.o [symbol=wartość ...]
+.br
+.B modprobe
+\-t tag wzorzec
+.br
+.B modprobe
+\-a \-t tag wzorzec
+.br
+.B modprobe
+\-l [ \-t tag ] wzorzec
+.br
+.B modprobe
+\-r moduł
+.br
+.B modprobe
+\-c
+.br
+.SH OPIS
+Narzędzia te mają pomóc użytkownikom w posługiwaniu się modułami
+Linuksa.
+.PP
+.B Depmod
+tworzy plik podobny do "Makefile" z zależnościami, bazujący na symbolach,
+które znalazł w zbiorze modułów podanych w linii komend (lub w standardowym
+miejscu).
+Plik zależności może być potem użyty przez
+.B modprobe 
+, aby automatycznie  załadować odpowiednie moduły.
+.PP
+.B Modprobe
+jest używany aby załadować zbiór modułów, pojedynczy moduł, zbiór
+zależnych od siebie modułów lub wszystkie moduły oznaczone określonym
+tagiem.
+.PP
+.B Modprobe
+ładuje automatycznie wszystkie moduły zależne od siebie w zbiorze modułów,
+jak zostało to opisane w pliku zależności modules.dep.
+Jeśli załadowanie jednego z tych modułów się nie powiedzie, cały zbiór
+modułów zostanie usunięty automatycznie z jądra (przez rmmod).
+.PP
+.B Modprobe
+może ładować moduły na dwa różne sposoby. Jeden to taki, że modprobe spróbuje
+załadować moduł z podanej listy lub zdefiniowany przez  
+.B wzorzec (pattern).
+Zatrzymuje się jeśli uda mu się załadować jeden z modułów.
+Ten tryb może być użyty np. do automatycznego załadowania modułu z driverem
+dla naszej karty sieciowej, wybranego z listy.
+Inny sposób użycia modprobe, to załadowanie wszystkich modułów z listy.
+Ta opcja może być użyta do załadowania wszystkich modułów w trakcie
+uruchamiania systemu.
+.PP
+Podając opcję
+.B -r,
+modprobe automatycznie usunie zbiór modułów, podobnie jak by to zostało wykonane przez
+.B rmmod -r
+.
+.PP
+Opcja -l podana z opcją -t wypisze wszystkie dostępne moduły
+określonego typu.
+Polecenie
+.B mount
+mogło by np. wykorzystać komendę
+
+	modprobe -l -t fs
+
+aby otrzymać listę wszystkich dostępnych systemów plików w postaci modułów,
+aby następnie załadować odpowiedni.
+Polecenie, mount mogłoby się wtedy stać bardziej elastyczne...
+(ale tym zajmuje się kerneld bez potrzeby zmian w poleceniu mount).
+.PP
+Opcja -c wyświetla całą konfigurację (ustawienia standardowe + plik
+konfiguracyjny).
+.PP
+Najczęstsze użycie
+.B depmod
+to wstawienie polecenia "/sbin/depmod -a" w jednym z plików startowych w
+/etc/rc.d, aby odpowiednie powiązania modułów były dostępne zaraz po
+uruchomieniu się systemu.
+.br
+Istnieje także możliwość utworzenia pliku zależności zaraz po skompilowaniu
+nowego jądra. Po wykonaniu "depmod -a 1.3.99" jeśli wcześniej skompilowałeś
+jądro 1.3.99 i jego moduły po raz pierwszy, używając wciąż jądra 1.3.98,
+plik zostanie utworzony w odpowiednim miejscu.
+.br
+Zauważ, że mimo wszystko, zależności wygenerowane mogą nie być poprawne.
+.PP
+Opcja
+.B -d
+uruchomi depmod w trybie debugowania. Wyświetla wszystkie polecenia, które
+wydaje.
+.Pp
+Opcja
+.B -e
+podaje listę wszystkich nierozwiązanych symboli dla każdego modułu,
+Normalnie depmod wyświetli jedynie listę modułów, które nie może załadować.
+.Pp
+Opcja
+.B -v
+wyświetla listę wszystkich modułów którymi się zajmuje.
+.Pp
+Moduły mogą być położone w innym miejscu systemu plików, ale zawsze będzie
+istniała potrzeba aby to zmienić, szczególnie dla ludzi zajmujących się
+rozwijaniem modułów.
+Oczekuje się, że pojawią się oficjalne standardy zdefiniowane przez FSSTND.
+Do tego czasu możesz używać równie dobrze struktury katalogów tu
+zaproponowanej.
+.SH KONFIGURACJA
+Zachowanie się
+.B depmod
+i
+.B modprobe
+może być dostosowane przez (opcjonalny) plik konfiguracyjny
+.B /etc/conf.modules
+.PP
+Plik ten składa się ze zbioru linii.
+.br
+Wszystkie puste linie i linie zaczynające się od znaku '#', zostaną
+zignorowane.
+.br
+Linie mogą być kontynuowane poprzez zakończenie ich znakami '\\'.
+.br
+Pozostałe linie powinny być dostosowane do jednego z podanych poniżej
+formatów:
+
+  keep
+  parameter=wartość
+  options module symbol=wartość ...
+  alias moduł prawdziwa_nazwa
+  pre-install moduł polecenie ...
+  install moduł polecenie ...
+  post-install moduł polecenie ...
+  pre-remove moduł polecenie ...
+  remove moduł polecenie ...
+  post-remove moduł polecenie ...
+
+Wszystkie wartości w liniach "parameter"  będą uruchamiane poprzez powłokę,
+co oznacza, że dozwolone są wszystkie triki powłokowe, jak znaki specjalne "*", "?"
+i komendy podawane w odwróconych apostrofach:
+
+  path[misc]=/lib/modules/1.1.5?
+  path[net]=/lib/modules/`uname -r`
+
+Parametry mogą być powtarzane wiele razy.
+.PP
+Poniżej podane są dozwolone parametry:
+.TP
+keep
+Jeśli to słowo zostanie znalezione w lini
+.B przed
+jakąkolwiek inną linią, która zawiera opis
+.B ścieżek (path)
+, standardowy zbiór ścieżek zostanie zachowany, a następne zostaną dodane do niego.
+W przeciwnym wypadku standardowe ścieżki zostaną
+.B usunięte
+przez sciezki podane w pliku konfiguracyjnym.
+.TP
+depfile=DEPFILE_PATH
+Jest to ścieżka do pliku zawierającego plik zależności, który zostanie
+utworzony przez
+.B depmod
+, a używany przez
+.B modprobe.
+.TP
+path=SOME_PATH
+Parametr
+.B path
+podaje katalog w którym powinny być szukane moduły.
+.TP
+path[tag]=SOME_PATH
+Parametr path może mieć dodatkowy, opcjonalny tag.
+W ten sposób możemy trochę dokładniej opisać znacznie modułów w tym
+katalogu, pozwala nam to na zautomatyzowanie operacji wykonywanych przez
+.B modprobe.
+Tag jest dodawany do słowa "path" i zawarty jest w nawiasach kwadratowych.
+Jeśli przy 'path" nie ma podanego taga, standardowo dołączany jest tag
+"misc".
+.br
+Jednym z bardziej użytecznych tagów jest tag
+.B boot,
+którym możemy oznaczyć wszystkie moduły które mają być załadowane podczas
+startu systemu.
+.PP
+Jeśli brakuje pliku '/etc/conf.modules',
+lub jeśli żaden z parametrów nie został użyty,
+następujące ustawienia standardowe są zakładane:
+.PP
+  depfile=/lib/modules/`uname -r`/modules.dep
+  path[boot]=/lib/modules
+
+  path[fs]=/lib/modules/`uname -r`
+  path[misc]=/lib/modules/`uname -r`
+  path[net]=/lib/modules/`uname -r`
+  path[scsi]=/lib/modules/`uname -r`
+  path[cdrom]=/lib/modules/`uname -r`
+  path[ipv4]=/lib/modules/`uname -r`
+  path[ipv6]=/lib/modules/`uname -r`
+  path[sound]=/lib/modules/`uname -r`
+
+  path[fs]=/lib/modules/default
+  path[misc]=/lib/modules/default
+  path[net]=/lib/modules/default
+  path[scsi]=/lib/modules/default
+  path[cdrom]=/lib/modules/default
+  path[ipv4]=/lib/modules/default
+  path[ipv6]=/lib/modules/default
+  path[sound]=/lib/modules/default
+
+  path[fs]=/lib/modules
+  path[misc]=/lib/modules
+  path[net]=/lib/modules
+  path[scsi]=/lib/modules
+  path[cdrom]=/lib/modules
+  path[ipv4]=/lib/modules
+  path[ipv6]=/lib/modules
+  path[sound]=/lib/modules
+.PP
+Wszystkie linie opcji ("option" lines) podają standardowe opcje które są
+wymagane przez moduł, np.:
+
+  modprobe de620 bnc=1
+
+Opcje te mogą być zmienione przez podanie tych opcji do programu
+.B modprobe
+z lini komend.
+.br
+
+Możliwe jest użycie lini opcji także dla aliasu modułu równie dobrze jak i
+dla jego prawdziwej nazwy.
+Przykład użytecznego użycia poniżej:
+
+  alias dummy0 dummy
+  options dummy0 -o dummy0
+
+.PP
+Linie zaczynające się od słowa "alias" mogą być użyte dla podania aliasów
+dla pewnych modułów.
+Linia w /etc/conf.modules która wygląda jak poniżej:
+
+  alias iso9660 isofs
+
+sprawia że można wpisać
+.B "modprobe iso9660"
+mimo iż tak naprawdę nie ma takiego modułu.
+.br
+Zauważ że linia:
+
+  alias nazwa_modułu off
+
+sprawi, że modprobe zignoruje żądania załadownia tego modułu.
+Jest to zazwyczaj używane w połączeniu z
+.B kerneld.
+.TP
+Komendy
+Linie konfigurujące
+  pre-install moduł polecenie ...
+  install moduł polecenie ...
+  post-install moduł polecenie ...
+  pre-remove moduł polecenie ...
+  remove moduł polecenie ...
+  post-remove moduł polecenie ...
+.br
+mogą być użyte kiedy chcemy aby pewne specyficzne polecenia zostały wykonane 
+kiedy moduł jest ładowany lub usuwany.
+Cały tekst podany za nazwą modułu będzie zinterpretowany jak komenda do
+wykonania.
+.br
+Zauważ, że komendy pre- i post-remove \fBnie\fR będą wykonywane jeśli moduł
+jest usuwany automatycznie przez kerneld!
+Zamiast zastanawiać się, jak to obejść, poczekaj, aż zostanie wprowadzona obsługa 
+uporczywych modułom.
+
+.SH STRATEGIA
+Istnieje pomysł aby
+.B modprobe
+najpierw sprawdził katalog zawierający moduły skompilowane dla bieżącej wersji
+jądra. Jeśli nie zostanie tam znaleziony,
+.B modprobe
+sprawdzi inne katalogi.
+.PP
+Kiedy zainstalujesz nowego Linuksa, moduły powinny być przesunięte do
+katalogu nazwanego od numeru jądra które instalujemy.
+Następnie powinieneś zrobić link z tego katalogu do katalogu "default".
+.PP
+Za każdym razem kiedy kompilujesz nowe jądro, polecenie
+.B "make modules_install"
+stworzy nowy katalog, ale nie zmieni katalogu default.
+.PP
+Kiedy otrzymasz moduł nie związany z konkretnym jądrem powinieneś go umieścić
+w katalogu nie zależnym od wersji jądra w katalogu /lib/modules.
+.PP
+Takie jest standardowe zachowanie, które jednakże może być zmienione poprzez
+odpowiednie wpisy do /etc/conf.modules.
+.SH PRZYKŁADY
+.TP
+modprobe -t net
+Załaduj jeden z modułów, który znajduje się w katalogu oznaczonym "net".
+Każdy moduł jest wyprubowywany aż do momentu kiedy któryś z nich zostanie
+załadowany (standardowo: /lib/modules/net).
+.TP
+modprobe -a -t boot
+Wszystkie moduły, które znajdują się w katalogu oznaczony przez "boot" będą
+załadowane (standardowo: /lib/modules/boot).
+.TP
+modprobe slip.o
+Polecenie to spowoduje próbę załadowania modułu slhc.o o ile nie został
+uprzednio załadowany, ponieważ moduł slip potrzebuje wcześniejszego
+załadowania modułu slhc.o.
+Ta zależność będzie opisana w pliku "modules.dep", który został wygenerowany
+automatycznie przez
+.B depmod
+.TP
+modprobe -r slip.o
+usunie slip.o, a także automatycznie slhc.o, chyba że jest on używany przez
+jakiś inny moduł (np. ppp.o).
+.SH PLIKI
+.nf
+/etc/conf.modules, (and /etc/modules.conf)
+/lib/modules/*/modules.dep,
+/lib/modules/*
+.fi
+.SH ZOBACZ TAKŻE
+lsmod(1),
+kerneld(8),
+ksyms(1),
+modules(2),
+.SH NIEZBĘDNE NARZĘDZIA
+insmod(1),
+nm(1)
+rmmod(1),
+.SH NOTES
+Wzorzec podany programowi modprobe często jest escapowany, aby
+mieć pewność, że jest interpretowany we właściwy sposób.
+
+.SH AUTOR
+Jacques Gelinas (jack@solucorp.qc.ca)
+.br
+Bjorn Ekwall (bj0rn@blox.se)
+.SH BŁĘDY
+Naah...

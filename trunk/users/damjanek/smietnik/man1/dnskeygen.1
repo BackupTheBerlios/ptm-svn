@@ -1,0 +1,136 @@
+.\" Copyright (c) 1996,1999 by Internet Software Consortium
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND INTERNET SOFTWARE CONSORTIUM DISCLAIMS
+.\" ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+.\" OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL INTERNET SOFTWARE
+.\" CONSORTIUM BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+.\" DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+.\" PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+.\" ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+.\" SOFTWARE.
+.\"
+.\" Translation by Paweł Wilk <siewca@dione.ids.pl>
+.\" {PTM/PW/0.1/10-02-2000/"generowanie publicznych, prywatnych, i współdzielonych poufnych kluczy dla DNS Security"}
+.\"
+.\" $Id: dnskeygen.1,v 1.4 2005/10/16 22:33:28 robert Exp $
+.\"
+.Dd 2 grudnia  1998
+.Dt DNSKEYGEN 1
+.Os BSD 4
+.Sh NAZWA
+.Nm dnskeygen 
+.Nd generowanie publicznych, prywatnych i współdzielonych poufnych kluczy dla DNS Security
+.Sh SKŁADNIA
+.Nm dnskeygen
+.Oo
+.Fl Op Cm DHR
+.Ar rozmiar
+.Oc
+.Op Fl F
+.Op Fl Cm zhu
+.Op Fl Cm a
+.Op Fl Cm c
+.Op Fl Cm p Ar num
+.Op Fl Cm s Ar num
+.Fl n Ar nazwa
+.Sh OPIS
+.Ic Dnskeygen
+(DNS Key Generator) jest narzędziem do generowania i zarządzania kluczami dla DNS Security
+wewnątrz DNS (Domain Name System).
+.Nm Dnskeygen
+potrafi wygenerować publiczne i prywatne klucze do autentykacji
+danych strefy i współdzielone klucze prywatne używane przy
+podpisach Żądanie/Transakcja.
+.Bl -tag -width Fl
+.It Fl D
+Dnskeygen wygeneruje klucz
+.Ic DSA/DSS .
+.Ar Rozmiar
+musi być jednym z [512, 576, 640, 704, 768, 832, 896, 960, 1024].
+.It Fl H
+Dnskeygen wygeneruje klucz
+.Ic HMAC-MD5 .
+.Ar Rozmiar
+musi zawierać się pomiędzy 128 a 504.
+.It Fl R
+Dnskeygen wygeneruje klucz
+.Ic RSA .
+.Ar Rozmiar
+musi zawierać się pomiędzy 512 a 4096.
+.It Fl F
+.Ic (tylko RSA)
+Używa dużego wykładnika przy generowaniu kluczy.
+.It Fl z Fl h Fl u
+Flagi te definiują odpowiedni typ generowanego klucza: klucz Strefy (ważności DNS),
+klucz Hosta (host lub usługa) lub klucz Użytkownika (np. e-mail).
+.El
+.Pp
+Każdy klucz może być tylko jednym z powyższych.
+.Bl -tag -width Fl
+.It Fl a 
+Wskazuje, że klucz
+.Ic NIE MOŻE
+być użyty do autentykacji.
+.It Fl c 
+Wskazuje, że klucz
+.Ic NIE MOŻE
+być użyty do szyfrowania.
+.It Fl p Ar num
+Ustawia pole protokołu klucza do wartości
+.Ar num
+; domyślna wartość to
+.Ic 3
+(DNSSEC) jeśli podano
+.Fl z
+lub
+.Fl h ,
+a
+.Ic 2
+(EMAIL) w przeciwnym wypadku.  Inne akceptowalne wartości to
+.Ic 1
+(TLS),
+.Ic 4
+(IPSEC) i
+.Ic 255
+(KAŻDY).
+.It Fl s Ar num
+Ustawia pole siły klucza do wartości
+.Ar num ;
+domyślna wartość to
+.Sy 0 .
+.It Fl n Ar nazwa
+Ustawia nazwę klucza na podaną
+.Ar nazwę .
+.El
+.Ss SZCZEGÓŁY
+.Ic Dnskeygen
+przechowuje każdy klucz w dwóch plikach:
+.Pa K<nazwa>+<alg>+<footprint>.private
+i 
+.Pa K<nazwa>+<alg>+<footprint>.key
+Plik 
+.Pa K<nazwa>+<alg>+<footprint>.private
+zawiera klucz prywatny w formacie przenośnym.  Plik
+.Pa K<nazwa>+<alg>+<footprint>.key
+zawiera klucz publiczny w formacie strefy DNS:
+.Pp
+.D1 Ar <nazwa> IN KEY <flagi> <algorytm> <protokół> <wykładnik|moduły>
+.Pp
+.Sh ŚRODOWISKO
+Nie są używane żadne zmienne środowiskowe.
+.Sh ZOBACZ TAKŻE
+.Em RFC 2065
+dotyczące bezpiecznego DNS i
+Szkic Internetowy
+.Em TSIG .
+.Sh AUTOR
+Olafur Gudmundsson (ogud@tis.com).
+.Sh PODZIĘKOWANIA
+Podstawowa matematyka kryptograficzna jest zrobiona przy pomocy DNSSAFE i/lub bibliotek Foundation
+Toolkit.
+.Sh USTERKI
+Dotychczas nieznane.

@@ -1,0 +1,25 @@
+.\" {PTM/WK/0.1/15-07-1999/"przesuń lub zmień nazwę pliku/katalogu MSDOS"}
+.TH mmove 1 "15 lipca 1999" mtools-3.9.6
+.SH NAZWA
+mmove - przesuń lub zmień nazwę pliku/katalogu MSDOS
+.SH SKŁADNIA
+.BR mmove " [ -voOsSrRA ]
+.I plikźródłowy plikdocelowy
+.br
+.BR mmove " [ -voOsSrRA ]
+.IR plikźródłowy " [" plikiźródłowe "...] " katalogdocelowy
+.SH OPIS
+Polecenie \fBmmove\fR służy do przesuwania lub zmiany nazwy plików lub
+katalogów systemu MS-DOS. W przeciwieństwie do polecenia \fBMOVE\fR DOSu,
+\fBmmove\fR może przesuwać katalogi. Pliki i katalogi mogą być przesuwane
+tylko w obrębie tego samego systemu plików. Dane nie mogą być przesuwane
+pomiędzy DOSem a Unixem. Pominięcie litery napędu pliku czy katalogu
+docelowego spowoduje przyjęcie tego samego napędu. Przy braku litery napędu
+we wszystkich parametrach przyjmowany jest domyślny napęd A:.
+.SH UWAGI
+Niniejsza, polska wersja dokumentacji, powstała jako tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. W stosunku do automatycznie generowanej
+z Textinfo dokumentacji oryginalnej dokonano przesunięcia sekcji opisującej
+konwersję dokumentacji do \fBmtools\fR(1). Tam też znajdziesz notę prawną
+dotyczącą rozpowszechniania, modyfikacji i tłumaczenia dokumentacji pakietu
+mtools

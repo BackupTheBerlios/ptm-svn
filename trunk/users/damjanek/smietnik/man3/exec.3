@@ -1,0 +1,206 @@
+.\" {PTM/AB/0.1/19-12-1998/"execl, execlp, execle, execv, execvp - wykonanie pliku"}
+.\" tłumaczenie Adam Byrtek <abyrtek@priv.onet.pl>
+.\" Aktualizacja do man-pages 1.45 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright (c) 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)exec.3	6.4 (Berkeley) 4/19/91
+.\"
+.\" Converted for Linux, Mon Nov 29 11:12:48 1993, faith@cs.unc.edu
+.\" Updated more for Linux, Tue Jul 15 11:54:18 1997, pacman@cqc.com
+.\" ------------
+.TH EXEC 3 "1993-11-29" "BSD" "Podręcznik programisty Linuksa"
+.SH NAZWA
+execl, execlp, execle, execv, execvp \- uruchomienie pliku
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.B extern char **environ;
+.sp
+.BI "int execl(const char *" path ", const char *" arg ", ...);"
+.br
+.BI "int execlp(const char *" file ", const char *" arg ", ...);"
+.br
+.BI "int execle(const char *" path ", const char *" arg
+.BI ", ..., char * const " envp "[]);"
+.br
+.BI "int execv(const char *" path ", char *const " argv "[]);"
+.br
+.BI "int execvp(const char *" file ", char *const " argv "[]);"
+.SH OPIS
+Rodzina funkcji
+.B exec
+zastępuje w pamięci obraz aktualnego procesu obrazem nowego procesu. Funkcje
+opisane na tej stronie man są tylko nakładkami dla funkcji
+.BR execve (2).
+(Dodatkowych informacji na temat
+nadpisywania aktualnego procesu szukaj na stronie man tej funkcji.)
+.PP
+Pierwszym argumentem tych funkcji jest ścieżka do pliku, który ma być
+uruchomiony.
+.PP
+Kolejne wyrażenia
+.I "const char *arg"
+w funkcjach
+.BR execl ,
+.BR execlp ,
+i
+.B execle
+można traktować jako
+.IR arg0 ,
+.IR arg1 ,
+\&...,
+.IR argn .
+Razem opisują one listę jednego lub więcej wskaźników do zakończonych znakiem
+NUL łańcuchów, reprezentujących listę argumentów udostępnoianych wykonywanemu
+programowi. Pierwszy argument, zgodnie z konwencją, powinien wskazywać na
+nazwę pliku powiązaną z wykonywanym plikiem. Lista argumentów
+.I musi
+być zakończona wskaźnikiem
+.BR NULL .
+.PP
+Funkcje
+.B execv
+oraz
+.B execvp
+udostępniają tablicę wskaźników do zakończonych znakami NUL łańcuchów,
+które reprezentują listę argumentów dostępnych dla wykonywanego programu.
+Pierwszy argument, zgodnie z konwencją, powinien wskazywać na nazwę pliku
+powiązaną z wykonywanym plikiem. Tablica wskaźników
+.I musi
+być zakończona wskaźnikiem
+.BR NULL .
+.PP
+Funkcja
+.B execle
+dodatkowo określa środowisko wykonywanego procesu poprzez dodanie po wskaźniku
+.BR NULL ,
+kończącym listę argumentów w liście parametrów lub po tablicy argv dodatkowego
+argumentu. Tym dodatkowym argumentem jest tablica wskaźników do zakończonych
+znakami NUL łańcuchów, która to tablica
+.I musi
+być zakończona wskaźnikiem
+.BR NULL .
+Pozostałe funkcje pobierają środowisko dla nowego procesu z zewnętrznej
+zmiennej
+.I environ
+aktualnego procesu.
+.PP
+Niektóre z tych funkcji mają specyficzną semantykę.
+.PP
+Funkcje
+.B execlp
+oraz
+.B execvp
+wykonują zadania powłoki szukając pliku wykonywalnego, jeśli nazwa pliku nie
+zawiera znaku ukośnika (/). Ścieżka przeszukiwania to ścieżka podana
+w zmiennej środowiskowej
+.BR PATH .
+Jeśli zmienna ta nie istnieje, przyjmowana jest domyślna ścieżka
+``:/bin:/usr/bin''.
+Dodatkowo pewne błędy traktowane są odmiennie.
+.PP
+Jeśli dostęp do pliku został zabroniony (wywołanie
+.B execve
+zwróciło
+.BR EACCES ),
+funkcje te będą przeszukiwać resztę ścieżki. Jeśli jednak nie odnajdą innego
+pliku, powrócą i zmienią wartość zmiennej globalnej
+.I errno
+na
+.BR EACCES .
+.PP
+Jeśli nagłówek nie zostanie rozpoznany (wywołanie
+.B execve
+zwróci
+.BR ENOEXEC ),
+funkcje te spróbują uruchomić powłokę ze ścieżką do pliku jako pierwszym
+argumentem. (Jeśli i ta próba się nie powiedzie, przeszukiwanie jest
+zakończone.)
+.SH "WARTOŚĆ ZWRACANA"
+Jeśli dowolna z funkcji
+.B exec
+powróci, oznacza to że nastąpił błąd. Zwracana jest wartość \-1 i ustawiana
+jest zmienna globalna
+.I errno
+aby wskazać błąd.
+.SH PLIKI
+.I /bin/sh
+.SH BŁĘDY
+Każda z tych funkcji może zakończyć się niepowodzeniem i ustawić jako wartość
+.I errno
+dowolny błąd określony dla funkcji bibliotecznej
+.BR execve (2).
+.SH "ZOBACZ TAKŻE"
+.BR sh (1),
+.BR execve (2),
+.BR fork (2),
+.BR environ (5),
+.BR ptrace (2)
+.SH KOMPATYBILNOŚĆ
+W niektórych systemach domyślna ścieżka (używana, gdy środowisko nie zawiera
+zmiennej \fBPATH\fR) zawiera aktualny katalog na samym końcu listy, po
+.I /bin
+oraz
+.IR /usr/bin ,
+aby zapobiec koniom trojańskim. Linux korzysta tu z tradycyjnej domyślnej
+ścieżki z aktualnym katalogiem na początku.
+.PP
+Zachowanie
+.B execlp
+oraz
+.B execvp
+w przypadku wystąpienia błędów podczas uruchamiania pliku jest przyjęte
+jako tradycyjne, ale nie jest udokumentowane przez standard POSIX. BSD (a być
+może także inne systemy) po napotkaniu błędu ETXTBSY czeka przez chwilę
+i próbuje ponownie. Linux traktuje to jako błąd i powraca natychmiast.
+.PP
+Tradycyjnie, funkcje
+.B execlp
+oraz
+.B execvp
+ignorowały wszystkie błędy oprócz podanych powyżej,
+.B ENOMEM
+i
+.BR E2BIG ,
+po których powracały. Obecnie powracają jeśli wystąpi dowolny błąd inny od
+opisanych powyżej.
+.SH "ZGODNE Z"
+Funkcje
+.BR execl ,
+.BR execv ,
+.BR execle ,
+.B execlp
+oraz
+.B execvp
+są zgodne ze standardem
+IEEE Std1003.1-88 (`POSIX.1'').

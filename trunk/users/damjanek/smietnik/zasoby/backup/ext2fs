@@ -1,0 +1,19 @@
+# Lista polskich stron man dla pakietu
+# ext2fs
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+badblocks.8	man8/badblocks.8
+chattr.1	man1/chattr.1
+debugfs.8	man8/debugfs.8
+dumpe2fs.8	man8/dumpe2fs.8
+e2fsck.8	man8/e2fsck.8
+e2label.8	man8/e2label.8
+fsck.8		man8/fsck.8
+lsattr.1	man1/lsattr.1
+mke2fs.8	man8/mke2fs.8
+mklost+found.8	man8/mklost+found.8
+tune2fs.8	man8/tune2fs.8
+#
+# koniec listy

@@ -1,0 +1,77 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl>
+.\"             -*-Nroff-*-
+.\"
+.TH W 1 "8 Dec 1993 " " " "Linux User's Manual"
+.SH NAZWA
+w \- Pokaż kto jest zalogowany i co robi
+.SH SKŁADNIA
+.B w \-
+.RB [ husfV ]
+.RI [ użytkownik ]
+.SH OPIS
+.B "w "
+wyświetla informacje u użytkownikach, zajmujących obecnie maszynę, oraz o
+ich procesach. Nagłówek pokazuje odpowiednio, czas bieżący, czas pracy
+systemu, liczbę zalogowanych użytkowników i obciążenie systemu w poprzedniej
+minucie, w 5 i 15 minutach.
+.sp
+Dla każdego użytkownika wyświetlane są następujące wpisy:
+nazwa zgłoszeniowa, nazwa tty, zdalny host, czas zgłoszenia, czas
+bezczynności, JCPU, PCPU i linia poleceń ich obecnego procesu.
+.sp
+Czas JCPU jest czasem zużytym przez wszystkie procesy podwieszone do tty.
+Nie uwzględnia poprzednich zadań z tła, lecz uwzględnia obecnie działające
+zadania tła.
+.sp
+Czas PCPU jest czasem, zużywanym przez proces bieżący, nazwany w polu
+"what".
+
+.PP
+.SH "OPCJE LINII POLECEŃ"
+.TP 0.5i
+.B "\-h "
+Nie drukuj nagłówka.
+.TP 0.5i
+.B "\-u "
+Ingnoruje nazwę użytkownika podczas wyszukiwania obecnych czasów procesu i
+cpu. Aby to zademonstrować, zrób "su", a następnie "w" i "w -u".
+.TP 0.5i
+.B "\-s "
+Uzyj krótkiego formatu.
+Nie drukuj czasu zgłoszenia, JCPU i PCPU.
+.TP 0.5i
+.B "\-f "
+Przełączaj drukowanie pola
+.B from
+(zdalnego hosta). Domyślnie, pole
+.B from
+nie jest drukowane, choć administrator systemu może wkompilować inną wartość
+domyślną.
+.TP 0.5i
+.B "\-V "
+Wyświetl informację o wersji
+.TP 0.5i
+.B "użytkownik "
+Pokaż informację jedynie o podanym użytkowniku.
+
+.SH PLIKI
+.ta
+.IR /etc/utmp " informacja o tym, kto jest obecnie zalogowany"
+.IR /proc " informacja procesów"
+.fi
+
+.SH "ZOBACZ TKŻE"
+.BR free (1),
+.BR ps (1),
+.BR top (1),
+.BR uptime (1),
+.BR utmp (5),
+.BR who (1)
+
+.SH AUTORZY
+.B w
+został w całości przepisany przez Charlesa Blake, w oparciu o wersję
+Larry'ego Greenfielda <greenfie@gauss.rutgers.edu> i Michaela K. Johnsona
+<johnsonm@redhat.com>.
+
+Raporty o błędach ślij do <procps-bugs@redhat.com>

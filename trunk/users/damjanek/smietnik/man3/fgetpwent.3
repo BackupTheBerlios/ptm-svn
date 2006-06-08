@@ -1,0 +1,91 @@
+.\" {PTM/AB/0.1/20-12-1998/"fgetpwent - pobranie wpisu z pliku haseł"}
+.\" translated by Adam Byrtek <abyrtek@priv.onet.pl>
+.\" aktualizacja do wersji man-pages 1.45 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\"
+.\" Modified Sat Jul 24 19:37:37 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Mon May 27 22:40:48 1996 by Martin Schulze (joey@linux.de)
+.\"
+.\" ------------
+.TH FGETPWENT 3 1996-05-17 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fgetpwent \- pobranie wpisu z pliku haseł
+.SH SKŁADNIA
+.nf
+.B #include <pwd.h>
+.B #include <stdio.h>
+.B #include <sys/types.h>
+.sp
+.BI "struct passwd *fgetpwent(FILE *" stream );
+.fi
+.SH OPIS
+Funkcja \fBfgetpwent()\fP zwraca wskaźnik do struktury zawierającej
+podzieloną na pola linię z pliku \fIstream\fP. Po pierwszym wywołaniu zwraca
+pierwszą pozycję, później zwraca kolejne. Plik \fIstream\fP musi mieć taki
+sam format, jak \fI/etc/passwd\fP.
+.PP
+Struktura \fIpasswd\fP jest następująco zdefiniowana w pliku \fI<pwd.h>\fP:
+.sp
+.RS
+.nf
+.ta 8n 16n 32n
+struct passwd {
+        char    *pw_name;		/* nazwa użytkownika */
+        char    *pw_passwd;		/* hasło użytkownika */
+        uid_t   pw_uid;			/* identyfikator użytkownika */
+        gid_t   pw_gid;			/* identyfikator grupy */
+        char    *pw_gecos;      	/* rzeczywista nazwa */
+        char    *pw_dir;  		/* katalog domowy */
+        char    *pw_shell;      	/* powłoka */
+};
+.ta
+.fi
+.RE
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBfgetpwent()\fP zwraca strukturę passwd, lub NULL jeśli nie ma
+więcej pozycji lub wystąpił błąd.
+.SH BŁĘDY
+.TP
+.B ENOMEM
+Brak pamięci do alokacji struktury passwd.
+.SH PLIKI
+.TP
+.I /etc/passwd
+baza danych o hasłach
+.SH "ZGODNE Z"
+SVID 3
+.SH "ZOBACZ TAKŻE"
+.BR getpwnam (3),
+.BR getpwuid (3),
+.BR getpwent (3),
+.BR setpwent (3),
+.BR endpwent (3),
+.BR getpw (3),
+.BR putpwent (3),
+.BR passwd (5)

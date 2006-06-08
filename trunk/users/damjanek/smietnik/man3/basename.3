@@ -1,0 +1,139 @@
+.\" Tłumaczenie wersji man-pages 1.39 - wrzesień 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" Zaktualizowane do man-pages 1.44 w grudniu 2001
+.\" 
+.\" (c) 2000 by Michael Kerrisk (michael.kerrisk@gmx.net)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein. 
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Created, 14 Dec 2000 by Michael Kerrisk
+.\"
+.TH DIRNAME 3  2000-12-14 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+dirname, basename \- wydzielenie składników nazwy ścieżki dostępu
+.SH SKŁADNIA
+.nf
+.B #include <libgen.h>
+.sp
+.BI "char *dirname(char *" path );
+.nl
+.BI "char *basename(char *" path );
+.fi
+.SH OPIS
+Funkcje
+.B dirname
+i
+.B basename
+rozbijają zakończony znakiem null łańcuch nazwy ścieżki dostępu na składowe:
+katalog i nazwę pliku.
+W typowym przypadku
+.B dirname
+zwraca łańcuch aż do ostatniego znaku '/', ale z jego wyłączeniem, a
+.B basename
+zwraca składową następującą po ostatnim '/'.
+Końcowe znaki '/' nie są uważane za część nazwy ścieżki dostępu.
+.PP
+Jeśli 
+.I path
+nie zawiera ukośnika,
+.B dirname
+zwraca łańcuch ".", podczas gdy
+.B basename
+zwraca kopię
+.IR path .
+Jeśli 
+.I path
+jest łańcuchem "/", wówczas zarówno
+.B dirname
+jak i 
+.B basename
+zwracają łańcuch "/".
+Jeśli 
+.I path
+jest wskaźnikiem NULL lub wskazuje na pusty łańcuch znaków, to zarówno
+.B dirname
+jak i
+.B basename
+zwracają łańcuch ".".
+.PP
+Połączenie łańcucha zwróconego przez
+.BR dirname ,
+"/" i łańcucha zwróconego przez
+.B basename
+daje pełną nazwę ścieżki dostępu.
+.PP
+Zarówno
+.B dirname
+jak i
+.B basename
+mogą modyfikować zawartość
+.IR path , 
+więc jeżeli chce się zachować łańcuch ścieżki dostępu,
+to należy przekazywać do tych funkcji jego kopię. Ponadto
+.B dirname
+i
+.B basename
+mogą zwracać wskaźniki do pamięci przydzielonej statycznie, która może
+być nadpisana następnymi wywołaniami.
+.PP
+Poniższa lista przykładów (wzięta z SUSv2) pokazuje łańcuchy znaków
+zwracane przez
+.B dirname
+i
+.B basename
+dla różnych ścieżek:
+.sp
+.nf
+.B 
+ścieżka  	dirname		basename
+"/usr/lib"	"/usr"		"lib"
+"/usr/"		"/"  		"usr"
+"usr"		"."  		"usr"
+"/"  		"/"  		"/"
+"."  		"."  		"."
+".."  		"."  		".."
+.fi
+.SH PRZYKŁAD
+.nf
+char *dirc, *basec, *bname, *dname;
+char *path = "/etc/passwd";
+
+dirc = strdup(path);
+basec = strdup(path);
+dname = dirname(dirc);
+bname = basename(basec);
+printf("dirname=%s, basename=%s\\n", dname, bname);
+free(dirc);
+free(basec);
+.fi
+.SH "WARTOŚĆ ZWRACANA"
+Zarówno
+.B dirname
+jak i
+.B basename
+zwracają wskaźniki do zakończonych znakiem null łańcuchów znaków.
+.SH BŁĘDY
+W wersjach glibc aż do 2.2.1 włącznie,
+.B dirname
+nieprawidłowo obsługuje nazwy ścieżek dostępu z końcowymi znakami '/',
+i generuje naruszenie segmentacji, gdy poda się NULL jako argument.
+.SH "ZGODNE Z"
+SUSv2
+.SH "ZOBACZ TAKŻE"
+.BR dirname (1),
+.BR basename (1),

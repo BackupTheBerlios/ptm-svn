@@ -1,0 +1,73 @@
+.\" Tłumaczenie wersji man-pages 1.39 - wrzesień 2001 PTM
+.\" Aktualizacja do man-pages 1.47 - styczeń 2002
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright 2001 Andries Brouwer <aeb@cwi.nl>.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" --------
+.TH ROUND 3  2001-05-31 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+round, roundf, roundl \- zaokrąglenie do najbliższej liczby całkowitej
+z omijaniem zera
+.SH SKŁADNIA
+.nf
+.B #include <math.h>
+.sp
+.BI "double round(double " x );
+.br
+.BI "float roundf(float " x );
+.br
+.BI "long double roundl(long double " x );
+.fi
+.SH OPIS
+Funkcje te zaokrąglają \fIx\fP do najbliższej liczby całkowitej, ale
+w okolicy zera omijają zero (niezależnie od aktualnego kierunku zaokrąglania)
+zaokrąglając, jak rint(), do najbliższej liczby nieparzystej.
+.SH "WARTOŚĆ ZWRACANA"
+Wartość całkowita będąca wynikiem zaokrąglenia. Jeśli \fIx\fP jest całkowite
+lub nieskończone, zwracana jest wartość \fIx\fP.
+.SH BŁĘDY
+Nie mogą wystąpić żadne błędy oprócz EDOM i ERANGE.
+Jeśli \fIx\fP wynosi NaN, to zwracana jest wartość NaN i
+.I errno
+może być ustawione na EDOM.
+.SH UWAGI
+POSIX 1003.1-2001 zawiera tekst dotyczący przepełnienia (które może spowodować
+ustawienie
+.I errno
+na ERANGE lub spowodować wyjątek).
+W praktyce wynik nie może spowodować przepełnienia na żadnej współczesnej
+maszynie, więc obsługa tego błędu jest po prostu bezsensowna.
+(Dokładniej, przepełnienie może wystąpić tylko gdy wartość maksymalna
+wykładnika jest mniejsza niż liczba bitów mantysy.
+Według standardu IEEE-754 dla 32 i 64-bitowych liczb zmiennoprzecinkowych
+wartość maksymalna wykładnika wynosi 128 (odp. 1024), a liczba bitów mantysy
+wynosi 24 (odp. 53).)
+.SH "ZGODNE Z"
+C99.
+.SH "ZOBACZ TAKŻE"
+.BR ceil (3),
+.BR floor (3),
+.BR lround (3),
+.BR nearbyint (3),
+.BR rint (3),
+.BR trunc (3)

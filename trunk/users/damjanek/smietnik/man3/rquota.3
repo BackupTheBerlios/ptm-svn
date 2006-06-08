@@ -1,0 +1,37 @@
+.\"@(#)rquota.3;
+.\" Translation (c) 1999 Pawel Wilk <siewca@dione.ids.pl>
+.\" {PTM/PW/0.1/16-06-1999/"implementuj kwoty na odległych maszynach"}
+.TH RQUOTA 3
+.SH NAZWA
+rquota \- implementuj kwoty na odległych maszynach
+.SH PROTOKÓŁ
+.B /usr/include/rpcsvc/rquota.x
+.SH OPIS
+.IX "rquota()" "" "\fLrquota()\fP \(em implement quotas on remote machines"
+.LP
+Protokół
+.B rquota(\|)
+pobiera informacje dotyczące kwot (udziałów dyskowych) na odległych maszynach.
+
+Bywa on używany w połączeniu z
+.SM NFS\s0,
+odkąd
+.SM NFS
+samodzielnie nie wspiera kwot.
+.SH PROGRAMOWANIE
+.LP
+.B #include <rpcsvc/rquota.h>
+.LP
+Poniższe procedury
+.SM XDR
+są dostępne w 
+.BR librpcsvc :
+.nf
+.B xdr_getquota_arg
+.B xdr_getquota_rslt
+.B xdr_rquota
+.fi
+.SH "ZOBACZ TAKŻE"
+.BR quota (1),
+.BR quotactl (2)
+

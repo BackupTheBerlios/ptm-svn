@@ -1,0 +1,106 @@
+.\" @(#)getrpcent.3n	2.2 88/08/02 4.0 RPCSRC; from 1.11 88/03/14 SMI
+.\"
+.\" Tłumaczenie wersji man-pages 1.50 - czerwiec 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH GETRPCENT 3 1987-12-14 
+.SH NAZWA
+getrpcent, getrpcbyname, getrpcbynumber \- odcztanie wpisu dotyczącego RPC
+.SH SKŁADNIA
+.nf
+.ft B
+#include <netdb.h>
+.LP
+.ft B
+struct rpcent *getrpcent()
+.LP
+.ft B
+struct rpcent *getrpcbyname(name)
+char *name;
+.LP
+.ft B
+struct rpcent *getrpcbynumber(number)
+int number;
+.LP
+.ft B
+setrpcent (stayopen)
+int stayopen;
+.LP
+.ft B
+endrpcent ()
+.fi
+.SH OPIS
+.LP
+Funkcje
+.BR getrpcent() ,
+.B getrpcbyname()
+i
+.B getrpcbynumber()
+zwracają wskaźnik do obiektu o podanej niżej strukturze, zawierającego pola
+otrzymane w wyniku rozłożenia linii bazy danych programów RPC
+.BR /etc/rpc .
+.RS
+.LP
+.nf
+.ft B
+struct	rpcent {
+	char	*r_name;	/* nazwa serwera dla programu RPC */
+	char	**r_aliases;	/* lista aliasów */
+	long	r_number;	/* numer programu RPC */
+};
+.ft R
+.fi
+.RE
+.LP
+Polami tej struktury są:
+.RS
+.PD 0
+.TP 20
+.B r_name
+Nazwa serwera dla danego programu RPC.
+.TP 20
+.B r_aliases
+Zakończona zerem lista alternatywnych nazw tego programu RPC.
+.TP  20
+.B r_number
+Numer programu RPC dla danej usługi.
+.PD
+.RE
+.LP
+.B getrpcent()
+odczytuje następną linię pliku, otwierając go, jeśli jest to potrzebne.
+.LP
+.B setrpcent()
+otwiera i przewija plik. Jeśli flaga
+.I stayopen
+ma wartość niezerową, to plik sieciowej bazy danych nie będzie zamykany po
+każdym wywołaniu
+.B getrpcent()
+(ani bezpośrednim, ani pośrednim - poprzez wywołanie jednej z pozostałych 
+funkcji \*(lqgetrpc\*(rq ).
+.LP
+.B endrpcent
+zamyka plik.
+.LP
+.B getrpcbyname()
+i
+.B getrpcbynumber()
+przeszukują sekwencyjnie plik, zaczynając od jego początku, aż do napotkania
+pasującej nazwy lub numeru programu RPC, albo do napotkania końca pliku.
+.SH PLIKI
+.PD 0
+.TP 20
+.B /etc/rpc
+.PD
+.SH "ZOBACZ TAKŻE"
+.BR rpc (5),
+.BR rpcinfo (8),
+.BR ypserv (8)
+.SH DIAGNOSTYKA
+.LP
+W przypadku błędu lub napotkania końca pliku, zwracany jest wskaźnik
+.SM NULL\fR.
+.SH BŁĘDY
+.LP
+Wszystkie informacje są umieszczane w statycznym obszarze pamięci, zatem
+muszą zostać skopiowane, jeśli mają być zachowane.

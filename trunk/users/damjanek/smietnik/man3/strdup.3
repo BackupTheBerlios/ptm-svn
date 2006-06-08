@@ -1,0 +1,84 @@
+.\" Tłumaczenie wersji man-pages 1.47 - styczeń 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sun Jul 25 10:41:34 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Wed Oct 17 01:12:26 2001 by John Levon <moz@compsoc.man.ac.uk>
+.\" --------
+.TH STRDUP 3 1993-04-12 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+strdup, strndup, strdupa, strndupa \- powielenie łańcucha
+.SH SKŁADNIA
+.nf
+.B #include <string.h>
+.sp
+.BI "char *strdup(const char *" s );
+.sp
+.B #define _GNU_SOURCE
+.br
+.B #include <string.h>
+.sp
+.BI "char *strndup(const char *" s ", size_t " n );
+.br
+.BI "char *strdupa(const char *" s );
+.br
+.BI "char *strndupa(const char *" s ", size_t " n );
+.sp
+.fi
+.SH OPIS
+Funkcja \fBstrdup()\fP zwraca wskaźnik do nowego łańcucha, który stanowi
+kopię łańcucha \fIs\fP. Pamięć dla nowego łańcucha jest przydzielana za
+pomocą \fBmalloc\fP(3) i może być zwolniona za pomocą \fBfree\fP(3).
+
+Funkcja \fBstrndup()\fP jest podobna, lecz kopiuje co najwyżej \fIn\fP
+znaków. Jeśli \fIs\fP jest dłuższe niż \fIn\fP, kopiowane jest tylko \fIn\fP
+znaków i dodawany jest kończący znak NUL.
+
+\fBstrdupa\fP i \fBstrndupa\fP są podobne, ale korzystają z \fBalloca(3)\fP
+do przydzielania pamięci na bufor. Są one dostępne wyłącznie, gdy używany jest
+pakiet GNU GCC, i dotyczą ich te same ograniczenia, które opisano
+w \fBalloca(3)\fP.
+
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBstrdup()\fP zwraca wskaźnik do skopiowanego łańcucha lub NULL,
+gdy nie jest dostępna dostateczna ilość pamięci.
+.SH BŁĘDY
+.TP
+.B ENOMEM
+Nie można przydzielić dostatecznej ilości pamięci potrzebnej dla kopii
+łańcucha.
+.SH "ZGODNE Z"
+.\" 4.3BSD-Reno, not (first) BSD 4.3.
+SVID 3, BSD 4.3.
+\fBstrndup()\fP, \fBstrdupa()\fP i \fBstrndupa()\fP są rozszerzeniami GNU.
+.SH "ZOBACZ TAKŻE"
+.BR alloca (3),
+.BR calloc (3),
+.BR free (3),
+.BR malloc (3),
+.BR realloc (3)

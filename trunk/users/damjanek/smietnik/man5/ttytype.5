@@ -1,0 +1,71 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 17:17:50 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Thu Oct 19 21:25:21 MET 1995 by Martin Schulze <joey@infodrom.north.de>
+.\" Modified Mon Oct 21 17:47:19 EDT 1996 by Eric S. Raymond
+.\" <esr@thyrsus.com>xk
+.\" 
+.\" Polish translation nov.1996 piotr.pogorzelski@ippt.gov.pl
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Mar 2002,
+.\"              manpages 1.48
+.\" 
+.TH TTYTYPE 5 1993-07-24 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+ttytype \- przypisanie typów terminali urządzeniom terminalowym
+.SH OPIS
+Plik
+.B /etc/ttytype
+kojarzy nazwy typów terminali opisane w termcap/terminfo z liniami urządzeń
+terminalowych. Każda z linii tego pliku zawiera typ terminala oraz prefix
+nazwy terminala (nazwy urządzenia z pominięciem
+.IR /dev/ ),
+rozdzielone białymi znakami.
+
+Skojarzenie to jest wykorzystywane przez program
+.BR tset (1)
+do nadawanie zmiennej środowiskowej TERM poprawnej wartości (domyślnego typu
+terminala dla urządzenia terminalowego użytkownika).
+
+Udogodnienie to zaprojektowano dla tradycyjnego środowiska wielodostępnego
+składającego się z terminali znakowych podłączonych do minikomputera
+z systemem Unix. Jest ono rzadko używane we współczesnych stacjach roboczych
+i osobistych komputerach uniksowych.
+.SH PRZYKŁAD
+Zwykle plik
+.I /etc/ttytype
+zawiera:
+.RS
+.sp
+con80x25 tty1
+.br
+vt320 ttys0
+.sp
+.RE
+.SH PLIKI
+.TP
+.I /etc/ttytype
+plik definiujący terminale przyłączone do systemu.
+.SH "ZOBACZ TAKŻE"
+.BR getty (1),
+.BR termcap (5),
+.BR terminfo (5)

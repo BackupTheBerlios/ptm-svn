@@ -1,0 +1,99 @@
+.\" Translation (c) 1999 Pawel Wilk <siewca@dione.ids.pl>
+.\" {PTM/PW/0.1/16-06-1999/"wydziel znamię z ciągu"}
+.\" Aktualizacja do man-pages 1.47 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright (C) 1996 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Rewritten old page, 960210, aeb@cwi.nl
+.\" Updated, added strtok_r. 2000-02-13 Nicolás Lichtmaier <nick@debian.org>
+.\" --------
+.TH STRTOK 3 2000-02-13 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+strtok, strtok_r \- wydzielanie słów z łańcuchów
+.SH SKŁADNIA
+.nf
+.B #include <string.h>
+.sp
+.BI "char *strtok(char *" s ", const char *" delim );
+.sp
+.BI "char *strtok_r(char *" s ", const char *" delim ", char **" ptrptr );
+.fi
+.SH OPIS
+`Słowo' jest to niepusty ciąg znaków, które nie występują w łańcuchu
+\fIdelim\fP, poprzedzony znakiem \e0 lub znakiem występującym w \fIdelim\fP.
+.PP
+Funkcja \fBstrtok()\fP służy do rozkładania ciągu znaków \fIs\fP na słowa.
+Pierwsze odwołanie do \fBstrtok()\fP powinno posiadać \fIs\fP jako pierwszy
+argument. Następne wywołania powinny mieć jako pierwszy argument NULL.
+Każde wywołanie zwraca wskaźnik do następnego słowa lub NULL, gdy nie ma już
+więcej słów.
+.PP
+Jeśli słowo kończy się separatorem (delim), to ten kończący znak jest
+nadpisywany przez \e0 i zapamiętywany jest wskaźnik do następnego znaku
+dla następnego wywołania \fBstrtok\fP.
+Ciąg separatorów \fIdelim\fP może być inny dla każdego wywołania.
+.PP
+Funkcja
+.B strtok_r()
+działa tak samo, jak
+.BR strtok() ,
+ale zamiast korzystać ze statycznego bufora, korzysta ze wskaźnika do
+przydzielonego przez użytkownika wskaźnika char*. Wskaźnik ten, parametr
+.IR ptrptr ,
+nie może zostać zmieniony podczas rozkładania jednego łańcucha.
+.SH "USTERKI"
+Nigdy nie należy używać tej funkcji. Jeśli jest to jednak konieczne,
+należy zauważyć, że:
+.PP
+.RS
+Funkcje te modyfikują swój pierwszy argument.
+.PP
+Tożsamość znaku separatora jest tracona.
+.PP
+Funkcje ta nie mogą być stosowana z ciągami stałymi.
+.PP
+Funkcja
+.BR strtok ()
+korzysta ze statycznego bufora, więc nie jest przystosowana do
+wielowątkowości. Jeśli ma to znaczenie, należy używać
+.BR strtok_r ().
+.RE
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBstrtok()\fP zwraca wskaźnik do następnego słowa lub
+NULL, jeśli nie ma już więcej słów.
+.SH "ZGODNE Z"
+.TP
+strtok()
+SVID 3, POSIX, BSD 4.3, ISO 9899
+.TP
+strtok_r()
+POSIX.1c
+.SH "ZOBACZ TAKŻE"
+.BR index (3),
+.BR memchr (3),
+.BR rindex (3),
+.BR strchr (3),
+.BR strpbrk (3),
+.BR strsep (3),
+.BR strspn (3),
+.BR strstr (3)

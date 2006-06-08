@@ -1,0 +1,66 @@
+.\" {PTM/AB/0.1/12-12-1998/"bsearch - binarne przeszukiwanie posortowanej tablicy"}
+.\" tłumaczenie Adam Byrtek <abyrtek@priv.onet.pl>
+.\" Aktualizacja do man-pages 1.48 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Mon Mar 29 22:41:16 1993, David Metcalfe
+.\" Modified Sat Jul 24 21:35:16 1993, Rik Faith (faith@cs.unc.edu)
+.\" ------------
+.TH BSEARCH 3 1993-03-29 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+bsearch \- binarne przeszukiwanie posortowanej tablicy
+.SH SKŁADNIA
+.nf
+.B #include <stdlib.h>
+.sp
+.BI "void *bsearch(const void *" key ", const void *" base ", size_t " nmemb ,
+.RS
+.BI "size_t " size ", int (*" compar ")(const void *, const void *));"
+.RE
+.fi
+.SH OPIS
+Funkcja \fBbsearch()\fP przeszukuje tablicę obiektów \fInmemb\fP, której
+pierwszy element jest wskazywany przez \fIbase\fP, w poszukiwaniu elementu
+pasującego do obiektu wskazywanego przez \fIkey\fP. Rozmiar każdego z
+elementów tablicy określony jest przez \fIsize\fP.
+.PP
+Zawartość tablicy powinna być posortowana w kolejności rosnącej zgodnie z
+funkcją porównawczą wskazywaną przez \fIcompar\fP. Funkcja \fIcompar\fP
+powinna posiadać dwa argumenty: wskaźnik do obiektu \fIkey\fP oraz do
+elementu tablicy, i powinna zwracać wartość integer mniejszą, równą lub
+większą niż zero jeśli obiekt \fIkey\fP okazał się, odpowiednio, mniejszy,
+równy lub większy niż element tablicy.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBbsearch()\fP zwraca wskaźnik do pasującego elementu tablicy, lub
+NULL jeśli nie znaleziono takiego elementu. Jeśli istnieje więcej takich
+elementów, to nie jest określone, na który element będzie wskazywać zwrócony
+wskaźnik.
+.SH "ZGODNE Z"
+SVID 3, BSD 4.3, ISO 9899 (C99)
+.SH "ZOBACZ TAKŻE"
+.BR qsort (3)

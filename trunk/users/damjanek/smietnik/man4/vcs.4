@@ -1,0 +1,117 @@
+.\" Copyright (c) 1995 James R. Van Zandt <jrv@vanzandt.mv.com>
+.\" Sat Feb 18 09:11:07 EST 1995
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified, Sun Feb 26 15:08:05 1995, faith@cs.unc.edu
+.\"
+.\" Tłumaczenie na język polski: Paweł Olszewski <alder@amg.net.pl>
+.\" {PTM/PO/0.2/02-06-1998/"pamięć konsoli wirtualnej"}
+.\" Aktualność: man-pages 1.54
+.\"
+.TH VCS 4 1995-02-19 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+vcs, vcsa \- pamięć konsoli wirtualnej
+.SH OPIS
+\fB/dev/vcs0\fP jest urządzeniem znakowym o numerze głównym 7 i
+numerze pobocznym 0, najczęściej z prawami dostępu 0644 i
+właścicielem root.tty. Odnosi się ono do pamięci obecnie widocznego
+terminala wirtualnej konsoli.
+.LP
+\fB/dev/vcs[1-63]\fP to urządzenia znakowe terminali wirtualnych
+konsoli, mają numery główne 7 i numery poboczne op 1 do 63,
+najczęściej z prawami dostępu 0644 i będące własnością root.tty.
+\fB/dev/vcsa[0-63]\fP są tym samym, ale zawierają atrybuty,
+oraz poprzedzone są czterema bajtami, zwracającymi rozmiary ekranu i
+pozycję kursora: \fIlines\fP, \fIcolumns\fP, \fIx\fP, \fIy\fP.
+(\fIx\fP = \fIy\fP = 0 w lewym górnym rogu ekranu.)
+.PP
+Zastępują one funkcje
+.I ioctl
+zrzucające zawartość ekranu z \fBconsole\fP(4), więc administrator systemu
+może kontrolować uprawnienia przy użyciu praw dostępu do plików.
+.PP
+Urządzenia dla pierwszych ośmiu konsoli wirtualnych można stworzyć
+poleceniami:
+.nf
+	for x in 0 1 2 3 4 5 6 7 8; do 
+		mknod -m 644 /dev/vcs$x c 7 $x;
+		mknod -m 644 /dev/vcsa$x c 7 $[$x+128];
+	done
+	chown root:tty /dev/vcs*
+.fi
+
+Nie są wspierane żadne odwołania
+.IR ioctl ().
+.SH PRZYKŁADY
+Można zrobić "zrzut" z ekranu vt3, przełączając się na vt1 i pisząc
+\fIcat /dev/vcs3 >foo\fP. Trzeba zauważyć, że wynik nie zawiera znaków końca
+wiersza, więc może być konieczne jakieś przetwarzanie, np.
+\fIfold -w 81 /dev/vcs3 | lpr\fP lub (straszne)
+\fIsetterm -dump 3 -file /proc/self/fd/1\fP.
+.LP
+Urządzenie \fI/dev/vcsa0\fP jest wykorzystywane przy wsparciu dla alfabetu
+Braille'a.
+
+Poniższy program wyświetla aktualne atrybuty znaków i ekranu w miejscu
+kursora na drugiej wirtualnej konsoli, a następnie zmienia tam kolor
+tła.
+.nf
+	#include <unistd.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <fcntl.h>
+
+	void main()
+	{	int fd;
+		char *device = "/dev/vcsa2";
+		struct {unsigned char lines, cols, x, y;} scrn;
+		char ch, attrib;
+
+		fd = open(device, O_RDWR);
+		if (fd < 0) {
+			perror(device);
+			exit(1);
+		}
+		(void)read(fd, &scrn, 4);
+		(void)lseek(fd, 4 + 2*(scrn.y*scrn.cols + scrn.x), 0);
+		(void)read(fd, &ch, 1);
+		(void)read(fd, &attrib, 1);
+		printf("ch='%c' attrib=0x%02x\\n", ch, attrib);
+		attrib ^= 0x10;
+		(void)lseek(fd, -1, 1);
+		(void)write(fd, &attrib, 1);
+	}
+.fi
+
+.SH PLIKI
+/dev/vcs[0-63]
+.br
+/dev/vcsa[0-63]
+.SH AUTOR
+Andries Brouwer <aeb@cwi.nl>
+.SH HISTORIA
+Wprowadzone wraz z wersją 1.1.92 jądra Linuksa.
+.SH "ZOBACZ TAKŻE"
+.BR console (4),
+.BR tty (4),
+.BR ttys (4),
+.BR selection (1)

@@ -1,0 +1,10 @@
+# Lista polskich stron man dla pakietu
+# bc w wersji 1.06
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+bc.1	man1/bc.1
+dc.1	man1/dc.1
+#
+# koniec listy

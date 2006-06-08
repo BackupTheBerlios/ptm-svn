@@ -1,0 +1,57 @@
+.TH tapeout 1 "14 listopada 2001" "Wersja 0.95.3"
+.SH NAZWA
+tapeout \- nagrywa plik z obrazem spectrumowej taśmy na kasetę
+.SH SKŁADNIA
+.B tapeout
+.I częstotliwość_próbkowania
+.I plik_taśmy
+.RI [ blok_startowy
+.RI [ plik_wynikowy ]]
+.SH OPIS
+Ten program pozwala skopiować plik taśmy (
+.I .tap 
+lub 
+.I .tzx
+) na kasetę magnetofonową przy użyciu
+karty dźwiękowej.
+.PP
+Trzeba połączyć wyjście z karty dźwiękowej (
+.B line out
+) z gniazdem (
+.B mic
+) w magnetofonie, włączyć nagrywanie
+i uruchomić ten program.
+.SH LINIA KOMEND
+.TP
+.B częstotliwość_próbkowania
+Częstotliwość próbkowania dla wyjścia.  Im wyższa tym lepsza jakość.
+Powinna być przynajmniej 16000.
+.TP
+.B plik_taśmy
+Nazwa pliku do zinterpretowania i odegrania przez kartę dźwiękową.
+Plik taki powinien mieć rozszerzenie 
+.I .tap
+albo 
+.I .tzx
+.TP
+.B blok_startowy
+Wskazuje odkąd odgrywać plik z taśmą.  Domyślnie jest 0.
+.TP
+.B plik_wynikowy
+Jeśli podany, program zapisuje w tym pliku zamiast używać karty dźwiękowej.
+.SH ZOBACZ TAKŻE
+xspect (1), vgaspect (1)
+.PP
+http://www.inf.bme.hu/~mszeredi/spectemu/spectemu.html
+.SH BŁĘDY
+Wiele parametrów jest niezmienialnych (np. pauza pomiędzy blokami na taśmie).
+.PP
+Nieinteraktywny (z wyjątkiem Ctrl\-c).
+.SH AUTOR
+Miklos Szeredi (EMAIL: mszeredi@inf.bme.hu)
+.SH PRAWA AUTORSKIE
+Copyright (C) 1998 Miklos Szeredi
+.SH LICENCJA
+GPL
+.SH TŁUMACZENIE
+Witold Filipczyk <juandon@poczta.onet.pl>

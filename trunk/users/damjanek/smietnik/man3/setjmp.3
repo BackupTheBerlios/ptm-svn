@@ -1,0 +1,69 @@
+.\" 1999 PTM Przemek Borys
+.\" Aktualizacja do man-pages 1.48 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Written by Michael Haardt, Fri Nov 25 14:51:42 MET 1994
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modifications, Sun Feb 26 14:39:45 1995, faith@cs.unc.edu
+.\" Modifications, Sun Feb 26 14:39:45 1995, faith@cs.unc.edu
+.\" --------
+.TH SETJMP 3 1997-03-02 "" "Funkcje biblioteczne"
+.SH NAZWA
+setjmp \- zachowanie kontekstu stosu dla nielokalnego goto
+.SH SKŁADNIA
+.ad l
+.B #include <setjmp.h>
+.sp
+.nf
+.BI "int setjmp(jmp_buf " env );
+.BI "int sigsetjmp(sigjmp_buf " env ", int " savesigs );
+.fi
+.ad b
+.SH OPIS
+\fBsetjmp\fP i \fBlongjmp()\fP są przydatne w obsłudze błędów i przerwań
+napotykanych w niskopoziomowych procedurach programu. \fBsetjmp()\fP zachowuje
+kontekst/środowisko stosu w \fIenv\fP dla późniejszego użycia przez
+\fBlongjmp()\fP. Kontekst stosu będzie unieważniony, gdy funkcja wołająca
+\fBsetjmp()\fP się zakończy.
+.P
+\fBsigsetjmp()\fP jest podobne do \fBsetjmp()\fP. Gdy \fIsavesigs\fP jest
+niezerowe, zestaw blokowanych sygnałów jest zachowywany w \fIenv\fP 
+i zostanie odtworzony przez późniejsze wykonanie \fBsiglongjmp()\fP z tym
+samym \fIenv\fP.
+.SH "WARTOŚĆ ZWRACANA"
+\fBsetjmp()\fP i \fBsigsetjmp()\fP zwracają 0 po bezpośrednim zakończeniu,
+a wartość niezerową po powrocie za pomocą funkcji \fBlongjmp()\fP
+z wykorzystaniem zachowanego kontekstu .
+.SH "ZGODNE Z"
+POSIX, ISO 9899 (C99)
+.SH UWAGI
+POSIX nie określa, czy  \fBsetjmp\fP ma zachowywać kontekst sygnałowy.
+(W SYSV nie zachowuje. W BSD4.3 zachowuje, ale istnieje funkcja \fB_setjmp\fP,
+która nie zachowuje.)
+Jeśli istnieje potrzeba zachowania maski sygnałów, to należy użyć
+\fBsigsetjmp\fP.
+.P
+\fBsetjmp()\fP i fBsigsetjmp\fP powodują, że programy są trudne do zrozumienia
+i pielęgnowania. Jeśli jest to możliwe, należy używać innych rozwiązań.
+.SH "ZOBACZ TAKŻE"
+.BR longjmp (3),
+.BR siglongjmp (3)

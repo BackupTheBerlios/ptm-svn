@@ -1,0 +1,117 @@
+.\" {PTM/WK/2000-III}
+.\" Last update: Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>, Apr 2002
+.\"              quota 3.04
+.\"
+.TH REPQUOTA 8
+.UC 4
+.SH NAZWA
+repquota \- podsumowanie kwot dyskowych dla systemu plików
+.SH SKŁADNIA
+.B /usr/sbin/repquota
+[
+.B \-vsug
+] [
+.B \-t
+|
+.B \-n
+] [
+.B \-F
+.I nazwa-formatu
+]
+.IR system-plików .\|.\|.
+.LP
+.B /usr/sbin/repquota
+[
+.B \-avtsug
+] [
+.B \-t
+|
+.B \-n
+] [
+.B \-F
+.I nazwa-formatu
+]
+.SH OPIS
+.IX  "repquota command"  ""  "\fLrepquota\fP \(em summarize quotas"
+.IX  "user quotas"  "repquota command"  ""  "\fLrepquota\fP \(em summarize quotas"
+.IX  "disk quotas"  "repquota command"  ""  "\fLrepquota\fP \(em summarize quotas"
+.IX  "quotas"  "repquota command"  ""  "\fLrepquota\fP \(em summarize quotas"
+.IX  "filesystem"  "repquota command"  ""  "\fLrepquota\fP \(em summarize quotas"
+.IX  "summarize filesystem quotas repquota"  ""  "summarize filesystem quotas \(em \fLrepquota\fP"
+.IX  "report filesystem quotas repquota"  ""  "report filesystem quotas \(em \fLrepquota\fP"
+.IX  display "filesystem quotas \(em \fLrepquota\fP"
+.LP
+.B repquota
+wypisuje raport z podsumowaniem zużycia miejsca na dysku i kwoty dyskowe
+dla zadanych systemów plików. Dla każdego użytkownika wypisywana jest aktualna
+liczba plików i ilość miejsca (w kilobajtach), jak również ewentualne kwoty
+utworzone przy pomocy
+.BR edquota (8).
+.SH OPCJE
+.TP
+.B \-a
+Pokazanie raportu ze wszystkich systemów plików wymienionych w
+.B /etc/mtab
+jako do odczytu i zapisu (read-write), oraz kwoty na nich.
+.TP
+.B \-v
+Pokazanie wszystkich kwot, nawet jeśli nie ma zużycia zasobów. Bardziej
+"gadatliwy" sposób wypisywania informacji z pliku kwot.
+.TP
+.B \-t
+Skracanie nazw użytkowników i grup dłuższych niż 9 znaków. Wynik jest bardziej
+czytelny niż normalny, gdy takie nazwy występują.
+.TP
+.B \-n
+Nie zamienianie identyfikatorów użytkowników i grup na nazwy. Może to znacznie
+przyspieszyć wypisywanie informacji.
+.TP
+.B \-s
+Próba podawania zużytego miejsca, zużytych i-węzłów i ograniczeń w jednostkach
+bardziej odpowiednich niż domyślne.
+.TP
+.B \-F \f2nazwa-formatu\f1
+Podawanie kwot według podanego formatu (tzn. nie jest wykonywana autodetekcja
+formatu). Dozwolone są następujące nazwy formatów:
+.B vfsold
+(wersja 1 kwot),
+.B vfsv0
+(wersja 2 kwot),
+.B rpc
+(kwoty na NFS),
+.B xfs
+(kwoty na systemie plików XFS)
+.TP
+.B \-g
+Pokazanie kwot grup.
+.TP
+.B \-u
+Pokazanie kwot użytkowników. Jest to zachowanie domyślne.
+.LP
+Tylko superużytkownik może przeglądać nie swoje kwoty.
+.SH PLIKI
+.PD 0
+.TP 20
+.BR aquota.user " i " aquota.group
+pliki kwot dyskowych umieszczone w głównym katalogu systemu plików (wersja 2
+kwot, systemy plików inne niż XFS)
+.TP 20
+.BR quota.user " i " quota.group
+pliki kwot dyskowych umieszczone w głównym katalogu systemu plików (wersja 1
+kwot, systemy plików inne niż XFS)
+.TP
+.B /etc/mtab
+domyślne systemy plików
+.TP
+.B /etc/passwd
+domyślny zbiór użytkowników
+.TP
+.B /etc/group
+domyślny zbiór grup
+.PD
+.SH "ZOBACZ TAKŻE"
+.BR quota (1),
+.BR quotactl (2),
+.BR edquota (8),
+.BR quotacheck (8),
+.BR quotaon (8)

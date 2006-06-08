@@ -1,0 +1,391 @@
+.\" {PTM/LK/0.1/23-01-1999/"program archiwizujący tar"}
+.\" Tłumaczenie: 23-01-1999 Łukasz Kowalczyk <lukow@tempac.okwf.fuw.edu.pl>
+.\" Aktualizacja: 10-04-2002 Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"               strona Debiana z tar_1.13.25-2.diff
+.\"
+.\" @(#)tar.1 1.11.1 93/19/22 PJV;
+.TH TAR 1 "22 września 1993"
+.SH NAZWA
+tar \- Wersja GNU programu archiwizującego tar
+.SH SKŁADNIA
+.B tar
+[
+.B \-
+]
+.B A --catenate --concatenate \||\| c --create \||\| d --diff --compare \||\| r --append \||\| t --list \||\| u --update \||\| x -extract --get
+[
+.B --atime-preserve
+]
+[
+.B -b, --block-size N
+]
+[
+.B -B, --read-full-blocks
+]
+[
+.B -C, --directory KATALOG
+]
+[
+.B --checkpoint	
+]
+[
+.B -f, --file [HOSTNAME:]F
+]
+[
+.B --force-local	
+]
+[
+.B -F, --info-script F --new-volume-script F
+]
+[
+.B -G, --incremental
+]
+[
+.B -g, --listed-incremental F
+]
+[
+.B -h, --dereference
+]
+[
+.B -i, --ignore-zeros
+]
+[
+.B -j, --bzip2
+]
+[
+.B --ignore-failed-read
+]
+[
+.B -k, --keep-old-files
+]
+[
+.B -K, --starting-file F
+]
+[
+.B -l, --one-file-system
+]
+[
+.B -L, --tape-length N
+]
+[
+.B -m, --modification-time
+]
+[
+.B -M, --multi-volume
+]
+[
+.B -N, --after-date DATA, --newer DATA
+]
+[
+.B -o, --old-archive, --portability
+]
+[
+.B -O, --to-stdout
+]
+[
+.B -p, --same-permissions, --preserve-permissions
+]
+[
+.B -P, --absolute-names
+]
+[
+.B --preserve	
+]
+[
+.B -R, --record-number
+]
+[
+.B --remove-files
+]
+[
+.B -s, --same-order, --preserve-order
+]
+[
+.B --same-owner
+]
+[
+.B --numeric-owner
+]
+[
+.B -S, --sparse
+]
+[
+.B -T, --files-from F
+]
+[
+.B --null	
+]
+[
+.B --totals	
+]
+[
+.B -v, --verbose
+]
+[
+.B -V, --label NAZWA
+]
+[
+.B --version	
+]
+[
+.B -w, --interactive, --confirmation
+]
+[
+.B -W, --verify	
+]
+[
+.B --exclude PLIK
+]
+[
+.B -X, --exclude-from PLIK
+]
+[
+.B -Z, --compress, --uncompress
+]
+[
+.B -z, --gzip, --ungzip	
+]
+[
+.B --use-compress-program PROG
+]
+[
+.B --block-compress
+]
+[
+.B --rsh-command POLECENIE
+]
+[
+.B -[0-7][lmh]	
+]
+.TP
+.I plik1 [ plik2, ... plikN ]
+.TP
+.I katalog1 [ katalog2, ... katalogN ]
+.SH OPIS
+.LP
+Ta strona opisuje wersję GNU programu
+.BR tar ,
+służącego do zapisywania i ekstrakcji plików z archiwum nazywanego
+.IR tarfile .
+Archiwum
+.I tarfile
+może zostać utworzone w napędzie taśmy, chociaż często tworzy się je w
+postaci zwykłego pliku.
+Pierwszym argumentem programu
+.B tar
+musi być jedna z opcji:
+.BR Acdrtux ,
+po której następują opcjonalne funkcje.
+Końcowymi argumentami programu
+.B tar
+są nazwy plików lub katalogów, które powinny zostać zarchiwizowane. Użycie
+nazwy katalogu oznacza, że znajdujące się w nim podkatalogi również powinny
+zostać zarchiwizowane.
+.SH "PRZYKŁADY"
+.TP
+.B tar -xvvf plik.tar
+rozpakowuje plik.tar
+.TP
+.B tar -xvvzf plik.tar.gz [lub plik.tgz]
+rozpakowuje archiwum tar, dekompresując je uprzednio z użyciem gzip
+.TP
+.B tar -cvvf plik.tar.gz katalog/
+archiwizuje zawartość katalogu ,,katalog'' w pliku archiwum ,,plik.tar.gz''
+.SH "FUNKCJE"
+.TP
+.B Jedna z następujących opcji zawsze musi zostać użyta:
+.TP
+.B -A, --catenate, --concatenate
+dołączenie istniejących plików .tar do archiwum
+.TP
+.B -c, --create	
+utworzenie nowego archiwum
+.TP
+.B -d, --diff, --compare
+znalezienie różnic między archiwum, a systemem plików
+.TP
+.B --delete		
+usunięcie plików z archiwum (opcji nie można użyć na taśmach magnetycznych!)
+.TP
+.B -r, --append		
+dołączenie plików do archiwum na jego końcu
+.TP
+.B -t, --list		
+wypisanie zawartości archiwum
+.TP
+.B -u, --update		
+dołączenie tylko tych plików, które są nowsze niż egzemplarze w archiwum
+.TP
+.B -x, --extract, --get		
+ekstrakcja plików z archiwum
+.SH "INNE OPCJE"
+.TP
+.B --atime-preserve	
+pozostawienie oryginalnego czasu ostatniego dostępu do dearchiwizowanych
+plików
+.TP
+.B -b, --block-size N	
+rozmiar bloku ma być równy Nx512 bajtów (domyślnie N=20)
+.TP
+.B -B, --read-full-blocks	
+zmienia rozmiar bloku podczas czytania archiwum (do używania z nazwanymi
+potokami 4.2BSD)
+.TP
+.B -C, --directory KATALOG
+zmienia katalog na KATALOG
+.TP
+.B --checkpoint		
+wypisuje nazwy katalogów w miarę czytania archiwum
+.TP
+.B -f, --file [NAZWAHOSTA:]F
+używa podanego pliku z archiwum lub urządzenia F (domyślnie "-", co oznacza
+standardowe wejście/standardowe wyjście)
+.TP
+.B --force-local
+plik z archiwum jest lokalny nawet, jeżeli w jego nazwie występuje dwukropek
+.TP
+.B -F, --info-script F --new-volume-script F
+na końcu każdej taśmy uruchamia podany skrypt (implikuje funkcjonalność
+opcji \-M)
+.TP
+.B -G, --incremental	
+tworzy/wypisuje zawartość/dearchiwizuje archiwum przyrostowe w starym formacie
+GNU
+.TP
+.B -g, --listed-incremental F
+tworzy/wypisuje zawartość/dearchiwizuje archiwum przyrostowe w nowym formacie
+GNU
+.TP
+.B -h, --dereference	
+nie archiwizuje dowiązań symbolicznych; archiwizuje pliki, na które one
+wskazują
+.TP
+.B -i, --ignore-zeros	
+ignoruje bloki zawierające same zera (normalnie taki blok w archiwum oznacza
+koniec pliku)
+.TP
+.B -j, --bzip2
+kompresja/dekompresja archiwum programem bzip2
+.TP
+.B --ignore-failed-read	
+zakazuje kończenia działania programu z niezerowym kodem wyjścia po napotkaniu
+plików, które nie dają się odczytać
+.TP
+.B -k, --keep-old-files	
+ochrona istniejących plików; nie będą nadpisywane plikami z archiwum
+.TP
+.B -K, --starting-file F	
+zaczyna ekstrakcję z archiwum od pliku F
+.TP
+.B -l, --one-file-system	
+archiwizuje pliki tylko z bieżącego systemu plików
+.TP
+.B -L, --tape-length N	
+zmiana taśmy po zapisaniu N*1024 bajtów
+.TP
+.B -m, --modification-time	
+nie dearchiwizuje czasu modyfikacji plików
+.TP
+.B -M, --multi-volume	
+tworzy/wypisuje zawartość/dearchiwizuje archiwum wieloczęściowe
+.TP
+.B -N, --after-date DATA, --newer DATA
+archiwizuje wyłącznie pliki nowsze, niż DATA
+.TP
+.B -o, --old-archive, --portability	
+zapisuje archiwum w formacie V7, nie ANSI
+.TP
+.B -O, --to-stdout		
+dearchiwizuje pliki na standardowe wyjście
+.TP
+.B -p, --same-permissions, --preserve-permissions
+dearchiwizuje wszystkie informacje o prawach dostępu
+.TP
+.B -P, --absolute-paths	
+nie usuwa z nazw plików początkowych znaków ,,/''
+.TP
+.B --preserve		
+takie samo działanie, jak opcje \-p \-s
+.TP
+.B -R, --record-number	
+wypisywanie numeru rekordu wewnątrz archiwum przy każdym komunikacie
+.TP
+.B --remove-files		
+usuwa pliki po dodaniu ich do archiwum
+.TP
+.B -s, --same-order, --preserve-order	
+lista nazw plików do dearchiwizacji jest sortowana, by pasować do archiwum
+.TP
+.B --same-owner		
+zachowanie nazwy właściciela pliku zgodnie z zachowaną w archiwum
+ .TP
+.B --numeric-owner
+posługiwanie się numerami użytkowników i grup, zamiast ich nazw
+.TP
+.B -S, --sparse		
+efektywna obsługa plików rozrzedzonych (z ,,dziurami'')
+.TP
+.B -T, --files-from F	
+nazwy plików do archiwizacji lub dearchiwizacji są pobierane z pliku F
+.TP
+.B --null			
+opcja -T odczytuje nazwy plików zakończone znakiem '\\0', opcja -C wówczas nie
+działa
+.TP
+.B --totals		
+wypisuje ogólną liczbę bajtów zapisanych przy --create
+.TP
+.B -v, --verbose		
+wypisywanie nazw wszystkich plików
+.TP
+.B -V, --label NAZWA
+utworzenie archiwum o nazwie woluminu NAZWA
+.TP
+.B --version		
+wypisanie numeru wersji programu
+.B tar
+.TP
+.B -w, --interactive, --confirmation	
+pytanie o zgodę na każdą operację
+.TP
+.B -W, --verify		
+weryfikacja archiwum po jego utworzeniu
+.TP
+.B --exclude PLIK
+wyłączenie z archiwizacji pliku PLIK
+.TP
+.B -X, --exclude-from PLIK
+wyłączenie z archiwizacji plików o nazwach wymienionych w pliku PLIK
+.TP
+.B -Z, --compress, --uncompress      	
+kompresja/dekompresja archimum programem compress
+.TP
+.B -z, --gzip, --ungzip		
+kompresja/dekompresja archiwum programem gzip
+.TP
+.B --use-compress-program PROG
+kompresja/dekompresja archiwum programem PROG (który musi akceptować opcję -d
+oznaczającą dekompresję)
+.TP
+.B --block-compress	
+dzielenie skompresowanego archiwum dla taśm
+.TP
+.B --rsh-command POLECENIE
+używanie zamiast ,,rsh'' do połączeń zdalnych polecenia POLECENIE. Opcja ta
+ma na celu umożliwienie dostępu do zdalnych urządzeń tym, którzy korzystają
+z czegoś innego niż standardowe ,,rsh'' (np. ,,rsh'' kerberosa).
+.TP
+.B -[0-7][lmh]		
+określenie napędu i gęstości
+.SH BŁĘDY
+.LP
+Ludzie z GNU, w zasadzie, nie cierpią stron podręcznika man i tworzą zamiast
+nich dokumenty info.
+Zarządzający projektem tar należy do tej kategorii. Ta strona podręcznika
+man nie jest ani pełna, ani aktualna, a pochodzi z pakietu tar dystrybucji
+Linuksa Debian. Jej stworzenie miało na celu zmniejszenie w systemie
+zarządzania błędami ilości zgłoszeń sygnalizujących brak strony podręcznika.
+
+Jeśli chce się zrozumieć program tar, to należy uruchomić info i poczytać
+tamtejsze strony dotyczące tego programu, ewentualnie skorzystać z trybu info
+w emacsie.

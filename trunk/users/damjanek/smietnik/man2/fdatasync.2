@@ -1,0 +1,88 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (C) 1996 Andries Brouwer (aeb@cwi.nl)
+.\" Copyright (C) 1996 Markus Kuhn.
+.\"
+.\" [This version merged from two independently written pages - aeb]
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" 1996-04-12  Andries Brouwer <aeb@cwi.nl>
+.\" 1996-04-13  Markus Kuhn <mskuhn@cip.informatik.uni-erlangen.de>
+.\" Translaton (c) 1998 Przemek Borys <pborys@dione.ids.pl>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\"
+.TH FDATASYNC 2 1996-04-13 "Linux 1.3.86" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fdatasync \- synchronizuje rdzeniowe zawartości plików z zawartością na dysku.
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.B #ifdef _POSIX_SYNCHRONIZED_IO
+.sp
+.BI "int fdatasync(int " fd );
+.sp
+.B #endif
+.SH OPIS
+.B fdatasync
+wypróżnia wszystkie bufory pliku na dysk (zanim nastąpi powrót z tej
+funcji systemowej). Robi to co 
+.B fsync
+lecz nie musi odnawiać metadanych takich jak czas dostępu.
+
+Aplikacje, które dostają się do baz danych, lub plików z logami często
+dopisują niewielką ilość danych (np. linijkę do pliku z logiem), a następnie
+natychmiast wywołują
+.BR fsync ,
+aby zapewnić fizyczny zapis danych na dysk. Niestety,
+.B fsync
+zawsze inicjuje dwie operacje: jedną dla nowo zapisanych danych i drugą w
+celu odnowienia czasu modyfikacji zapisanego w i-węźle. Jesli czas modyfikacji
+nie jest częścią pojęcia transakcji, można użyć
+.BR fdatasync ,
+aby zapobiec niepotrzebnym zapisom i-węzłów.
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracane jest zero. Po błędzie zwracane jest \-1
+i odpowiednio ustawiane
+.IR errno .
+.SH BŁĘDY
+.TP
+.B EBADF
+.I fd
+nie jest prawidłowym deskryptorem pliku otwartego do zapisu.
+.TP
+.BR EROFS ", " EINVAL
+.I fd
+jest skojarzony z plikiem specjalnym, który nie wspiera synchronizacji.
+.TP
+.B EIO
+Nastąpił błąd podczas synchronizacji.
+.SH USTERKI
+Obecnie (Linux 2.2)
+.B fdatasync
+jest równoważne
+.BR fsync .
+.SH "ZGODNE Z"
+POSIX1b (wcześniej POSIX.4)
+.SH "ZOBACZ TAKŻE"
+.BR fsync (2),
+B.O. Gallmeister, POSIX.4, O'Reilly, str. 220-223 i 343.

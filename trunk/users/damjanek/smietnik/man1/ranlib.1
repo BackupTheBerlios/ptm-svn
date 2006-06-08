@@ -1,0 +1,85 @@
+.\" 1999 PTM Przemek Borys
+.\" Copyright (c) 1991 Free Software Foundation
+.\" See section COPYING for conditions for redistribution
+.TH ranlib 1 "5 Październik 1991" "wsparcie cygnusa" "Narzędzia developerskie GNU"
+.de BP
+.sp
+.ti \-.2i
+\(**
+..
+
+.SH NAZWA
+ranlib \- generuj indeks dla archiwum.
+
+.SH SKŁADNIA
+.hy 0
+.na
+.B ranlib \c
+.RB "[\|" \-v | \-V "\|]"
+.I archiwum\c
+\&
+.ad b
+.hy 1
+.SH OPIS
+.B ranlib
+generuje indeks do zawartości archiwum i zachowuje go w archiwum. Indeks
+wymienia każdy symbol, zdefiniowany przez członków archiwum, którzy są
+relokowalnymi plikami obiektowymi.
+.PP
+Możesz użyć
+.RB ` "nm \-s" '
+lub
+.RB ` "nm \-\-print-armap" '
+w celu wylistowania tego indeksu.
+.PP
+Archiwum z takim indeksem szybciej się linkuje i zezwala procedurom z
+biblioteki na wzajemne wywoływanie się, bez uwagi na to, w jakiej są
+kolejności.
+.PP
+Program GNU
+.B ranlib
+jest inną postacią GNU
+.BR ar ;
+uruchomienie
+.B ranlib
+jest zupełnie równoważne
+.RB ` "ar \-s" '.
+
+.SH OPCJE
+.TP
+.B \-v
+Wydrukuj numer wersji
+.B ranlib
+i zakończ.
+
+.SH "ZOBACZ TAKŻE"
+Wpis
+.RB "`\|" binutils "\|'"
+w
+.B
+info\c
+\&; 
+.I
+The GNU Binary Utilities\c
+\&, Roland H. Pesch (Październik 1991); 
+.BR ar "(" 1 "),"
+.BR nm "(" 1 ")."
+
+
+.SH KOPIOWANIE
+Copyright (c) 1991 Free Software Foundation, Inc.
+.PP
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be included in
+translations approved by the Free Software Foundation instead of in
+the original English.

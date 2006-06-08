@@ -1,0 +1,10 @@
+# Lista polskich stron man dla pakietu
+# file
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+file.1	man1/file.1
+magic.4	man4/magic.4
+#
+# koniec listy

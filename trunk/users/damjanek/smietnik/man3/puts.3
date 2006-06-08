@@ -1,0 +1,120 @@
+.\" 1999 PTM Przemek Borys
+.\" Aktualizacja do man-pages 1.47 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Sat Jul 24 18:42:59 1993 by Rik Faith (faith@cs.unc.edu)
+.\" --------
+.TH PUTS 3 1993-04-04 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fputc, fputs, putc, putchar, puts \- wyprowadzanie znaków i łańcuchów
+.SH SKŁADNIA
+.nf
+.B #include <stdio.h>
+.sp
+.BI "int fputc(int " c ", FILE *" stream );
+.nl
+.BI "int fputs(const char *" "s" ", FILE *" "stream" );
+.nl
+.BI "int putc(int " c ", FILE *" stream );
+.nl
+.BI "int putchar(int " c );
+.nl
+.BI "int puts(const char *" "s" );
+.SH OPIS
+.B fputc()
+zapisuje znak
+.IR c ,
+rzutowany na
+.BR "unsigned char" ,
+do strumienia
+.IR stream .
+.PP
+.B fputs()
+zapisuje łańcuch
+.I s
+do strumienia
+.IR stream ,
+pomijając kończące
+.BR '\e0' .
+.PP
+.B putc()
+jest równoważne
+.B fputc()
+poza tym, że może być zaimplementowane jako makro, które przetwarza wyrażenie
+.I stream
+więcej niż raz.
+.PP
+.BI "putchar(" c );
+jest równoważny
+.BI "putc(" c , stdout ).
+.PP
+.BR puts() 
+zapisuje łańcuch
+.I s
+oraz kończący znak nowej linii do
+.IR stdout .
+.PP
+Wywołania opisanych tu funkcji dla danego strumienia wyjściowego można
+mieszać pomiędzy sobą, jak też można je mieszać z wywołaniami innych funkcji
+wyjściowych z biblioteki
+.IR stdio ,
+dla tego samego strumienia wyjściowego.
+.PP
+Informacje o nieblokujących odpowiednikach znajdują się w
+.BR unlocked_stdio (3).
+.SH "WARTOŚĆ ZWRACANA"
+.BR fputc() , " putc() " i " putchar()"
+zwracają znak, zapisany jako
+.BR "unsigned char" ,
+rzutowany na
+.B int
+lub
+.B EOF
+w przypadku błędu.
+.PP
+.BR puts() " i " fputs()
+zwracają liczbę nieujemną w przypadku pomyślnego zakończenia, a
+.B EOF
+w przypadku błędu.
+.PP
+.SH "ZGODNE Z"
+ANSI - C, POSIX.1
+.SH "BŁĘDY"
+Nie radzi się łączyć wywołań funkcji wyjściowych z biblioteki
+.B stdio
+z niskopoziomowymi wywołaniami
+.B write() 
+dla tego
+samego deskryptora pliku stowarzyszonego z tym samym strumieniem wyjściowym.
+Wyniki takich działań są niezdefiniowane i bardzo prawdopodobne, że będą się
+różnić od oczekiwanych.
+.SH "ZOBACZ TAKŻE"
+.BR write (2),
+.BR ferror (3),
+.BR fopen (3),
+.BR fseek (3),
+.BR fwrite (3),
+.BR gets (3),
+.BR scanf (3),
+.BR unlocked_stdio (3)

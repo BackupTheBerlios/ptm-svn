@@ -1,0 +1,232 @@
+.\" {PTM/AB/0.1/13-03-1999/"fopen, fdopen, freopen - funkcje otwarcia strumienia"}
+.\" translated by Adam Byrtek <alpha@irc.pl>
+.\" Aktualizacja do man-pages 1.50 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright (c) 1990, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Chris Torek and the American National Standards Committee X3,
+.\" on Information Processing Systems.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)fopen.3	6.8 (Berkeley) 6/29/91
+.\"
+.\" Converted for Linux, Mon Nov 29 15:22:01 1993, faith@cs.unc.edu
+.\" Modified, aeb, 960421, 970806
+.\" Modified, joey, aeb, 2002-01-03
+.\"
+.\" ------------
+.TH FOPEN 3 2002-01-03 "BSD" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fopen, fdopen, freopen \- funkcje otwarcia strumienia
+.SH SKŁADNIA
+.B #include <stdio.h>
+.sp
+.BI "FILE *fopen(const char *" path ", const char *" mode );
+.br
+.BI "FILE *fdopen(int " fildes ", const char *" mode );
+.br
+.BI "FILE *freopen(const char *" path ", const char *" mode ", FILE *" stream );
+.SH OPIS
+Funkcja
+.B fopen
+otwiera plik, którego nazwę wskazuje
+.I path
+i wiąże z nim strumień.
+.PP
+Argument
+.I mode
+wskazuje na łańcuch rozpoczynający się jednym z poniższych
+ciągów (mogą po nich występować dodatkowe znaki):
+.TP
+.B r
+Otwarcie pliku tekstowego do odczytu. Strumień wskazuje początek pliku.
+.TP
+.B r+
+Otwarcie pliku do odczytu i zapisu. Strumień wskazuje początek pliku.
+.TP
+.B w
+Usunięcie zawartości pliku lub utworzenie nowego pliku tekstowego do zapisu.
+Strumień wskazuje początek pliku.
+.TP
+.B w+
+Otwarcie do odczytu i zapisu. Jeśli plik nie istnieje, zostaje utworzony,
+w przeciwnym wypadku jego zawartość zostaje usunięta. Strumień wskazuje
+początek pliku.
+.TP
+.B a
+Otwarcie do dopisywania (zapisu na końcu pliku). Jeśli plik nie istnieje,
+zostaje utworzony. Strumień wskazuje na koniec pliku.
+.TP
+.B a+
+Otwarcie do odczytu i dopisywania (zapisu na końcu pliku). Jeśli plik nie
+istnieje, zostaje utworzony. Strumień wskazuje na koniec pliku.
+.PP
+Łańcuch
+.I mode
+może także zawierać literę ``b'' zarówno jak ostatni znak jak też jako znak
+umeszczony pomiędzy znakami dowolnego dwuznakowego łańcucha opisanego powyżej.
+Służy to wyłącznie zgodności z ANSI X3.159-1989 (``ANSI C'') i nie powoduje
+żadnego efektu, ``b'' jest ignorowane we wszystkich systemach zgodnych z
+POSIX, włączając Linuksa. 
+(Inne systemy mogą różnie traktować pliki tekstowe i pliki binarne.
+Dodanie ``b'' może być dobrym pomysłem, jeśli wykonywane są operacje I/O dla
+pliku binarnego a przewidywane jest przeniesienie programu do środowisk
+nieuniksowych.)
+.PP
+Wszystkie pliki będą tworzone z uprawnieniami
+.BR S_IRUSR \&| S_IWUSR \&|  S_IRGRP \&|  S_IWGRP \&| S_IROTH \&| S_IWOTH
+(0666), zmodyfikowanymi przez wartość umask procesu (patrz
+.BR umask (2)).
+.PP
+Odczyt i zapis może występować w strumieniu do zapisu/odczytu w dowolnej
+kolejności. Należy zauważyć, że ANSI C wymaga interwencji funkcji ustalającej
+pozycję pliku pomiędzy zapisem i odczytem, chyba że operacja odczytu napotka
+koniec pliku. 
+(Jeśli ten warunek nie jest spełniony, operacja odczytu może
+zwrócić wynik innego zapisu niż ostatni.)
+Tak więc dobrą zasadą (i czasami konieczną pod Linuksem) jest wstawianie
+funkcji
+.B fseek
+lub
+.B fgetpos
+pomiędzy operacjami zapisu i odczytu na takim strumieniu.
+Ta operacja może być pozornym rozkazem pustym, no-op, (tak jak
+w \fIfseek(..., 0L, SEEK_CUR\fR) wywoływanym w celu wykorzystania ubocznych
+skutków synchronizujących.
+.PP
+Otwarcie pliku w trybie dopisywania (\fBa\fR jako pierwszy znak
+.IR mode )
+powoduje, że wszystkie późniejsze operacje zapisu do tego strumienia wystąpią
+na końcu pliku, tak jakby były poprzedzone wywołaniem
+.RS
+fseek(stream,0,SEEK_END);
+.RE
+.PP
+Funkcja
+.B fdopen
+wiąże strumień z istniejącym deskryptorem pliku,
+\fIfildes\fP. Łańcuch \fImode\fP strumienia (jeden z "r", "r+", "w", "w+",
+"a", "a+") musi być zgodny z trybem otwarcia deskryptora pliku.
+Pozycja nowego strumienia jest taka sama, jak pozycja deskryptora
+.IR fildes ,
+a znaczniki błędu i końca pliku są wyłączane. Tryby "w" oraz "w+" nie powodują
+usunięcia zawartości pliku. Deskryptor pliku nie jest powielany i zozstanie
+zamknięty w chwili zamknięcia strumienia utworzonego za pomocą
+.BR fdopen .
+Rezultat wywołania funkcji
+.B fdopen
+dla obiektu pamięci dzielonej jest niezdefiniowany.
+.PP
+Funkcja
+.B freopen
+otwiera plik, którego nazwa jest zawarta w łańcuchu wskazywanym przez
+.I path
+i wiąże z nim strumień wskazywany przez
+.IR stream .
+Pierwotny strumień jest zamykany (jeśli istnieje). Argument
+.I mode
+ma takie samo znaczenie jak w przypadku funkcji
+.BR fopen .
+Głównym zastosowaniem funkcji
+.B freopen
+jest zamiana pliku związanego ze standardowym strumieniem tekstowym
+.IR "" ( stderr ", " stdin " lub " stdout ).
+.SH "WARTOŚĆ ZWRACANA"
+Jeśli funkcja
+.BR fopen ,
+.B fdopen
+czy
+.B freopen
+zakończy się pomyślnie, zwraca wskaźnik do struktury
+.BR FILE .
+W przeciwnym wypadku zwraca
+.B NULL
+a zmiennej globalnej
+.I errno
+nadawana jest wartość określającą rodzaj błędu.
+.SH BŁĘDY
+.TP
+.B EINVAL
+Argument
+.I mode
+podany dla
+.BR fopen ,
+.BR fdopen ,
+lub
+.B freopen
+jest nieprawidłowy.
+.PP
+Funkcje
+.BR fopen ,
+.B fdopen
+i
+.B freopen
+mogą także zakończyć się niepowodzeniem i ustawić wartość
+.I errno
+na dowolny błąd wymieniony w opisie funkcji
+.BR malloc (3).
+.PP
+Funkcja
+.B fopen
+może także zakończyć się niepowodzeniem i ustawić wartość
+.I errno
+na dowolny błąd wymieniony w opisie funkcji
+.BR open (2).
+.PP
+Funkcja
+.B fdopen
+może także zakończyć się niepowodzeniem i ustawić wartość
+.I errno
+na dowolny błąd wymieniony w opisie funkcji
+.BR open (2).
+.PP
+Funkcja
+.B freopen
+może także zakończyć się niepowodzeniem i ustawić wartość
+.I errno
+na dowolny błąd wymieniony w opisie funkcji
+.BR open (2),
+.BR fclose (3)
+i
+.BR fflush (3).
+.SH "ZGODNE Z"
+Funkcje
+.B fopen
+oraz 
+.B freopen
+są zgodne z ANSI X3.159-1989 (``ANSI C''). Funkcja
+.B fdopen
+jest zgodna z IEEE Std1003.1-1988 (``POSIX.1'').
+.SH "ZOBACZ TAKŻE"
+.BR open (2),
+.BR fclose (3),
+.BR fileno (3)

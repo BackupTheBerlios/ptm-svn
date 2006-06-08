@@ -1,0 +1,85 @@
+.\" {PTM/AB/0.1/13-12-1998/"clock - wyznaczanie czasu procesora"}
+.\" tłumaczenie Adam Byrtek (abyrtek@priv.onet.pl)
+.\" Aktualizacja do man-pages 1.53 - A. Krzysztofowicz (ankry@mif.pg.gda.pl)
+.\" ------------
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Sat Jul 24 21:27:01 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 14 Jun 2002, Michael Kerrisk <mtk16@ext.canterbury.ac.nz>
+.\" 	Added notes on differences from other Unices with respect to
+.\"	waited-for children.
+.\" ------------
+.TH CLOCK 3 2002-06-14 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+clock \- wyznaczanie czasu procesora
+.SH SKŁADNIA
+.nf
+.B #include <time.h>
+.sp
+.B clock_t clock(void);
+.fi
+.SH OPIS
+Funkcja
+.B clock()
+zwraca przybliżoną ilość czasu procesora wykorzystanego przez program.
+.SH "WARTOŚĆ ZWRACANA"
+Zwracana wartość to ilość czasu CPU wykorzystanego do tej pory w formacie
+.BR clock_t .
+Aby otrzymać czas w sekundach, należy podzielić go przez
+.BR CLOCKS_PER_SEC .
+Jeśli informacja o wykorzystanym czasie procesora jest niedostępna lub
+wartość tego czasu nie może zostać przedstawiona, zwracana jest wartość
+(clock_t)-1.
+.SH "ZGODNE Z"
+ANSI C
+POSIX wymaga, aby CLOCKS_PER_SEC było równe 1000000, niezależnie
+od rzeczywistej rozdzielczości.
+.SH UWAGI
+Standard C dopuszcza nieokreśloną wartość na początku programu. Aby zapewnić
+maksymalną przenośność, należy odjąć od wyniku funkcji wartość zwróconą przez
+.B clock()
+na początku programu.
+.PP
+Należy zauważyć, że zegar może się przekręcić. W systemach 32-bitowych, gdzie
+CLOCKS_PER_SEC wynosi 1000000, funkcja ta będzie zwracać tę samą wartość co
+około 72 minuty.
+.PP
+W niektórych innych implementacjach wartość zwracana przez
+.BR clock ()
+zawiera również czasy procesów potomnych, których kod zakończenia został
+odczytany za pomocą
+.BR wait ()
+(lub innego programu typu "wait").
+Linux nie dołącza do wartości zwracanej
+.BR clock ()
+czasów procesów potomnych, na których zakończenie oczekiwano.
+.\" I have seen this behaviour on Irix 6.3, and the OSF/1, HP/UX, and
+.\" Solaris manual pages say that clock() also does this on those systems.
+.\" POSIX 1003.1-2001 doesn't explicitly allow this, nor is there an
+.\" explicit prohibition. -- MTK
+Funkcja \fBtimes()\fP, zwracająca (osobne) informacje o procesie
+macierzystym i o jego potomkach, może być bardziej pożądana.
+.PP
+.SH "ZOBACZ TAKŻE"
+.BR getrusage (2),
+.BR times (2)

@@ -1,0 +1,21 @@
+.\" $ Id: kernelversion.1 1.1 Fri, 05 Jan 2001 12:45:19 +1100 kaos $
+.\"
+.\" $Id: kernelversion.1,v 1.2 2001/11/13 13:43:01 ankry Exp $
+.\"
+.TH KERNELVERSION 1 "Debian GNU/Linux" "DEBIAN"
+.SH NAZWA
+kernelversion \- program zwracający główną wersją jądra
+.SH SKŁADNIA
+.B kernelversion
+.SH OPIS
+.B kernelversion
+jest małym programem dla Linuksa Debian/GNU zwracającym główną wersję jądra.
+Wersja ta jest wykorzystywana przrz pakiet modutils do określania katalogów
+modułów kernela. Przykład wykorzystania znajdziesz w
+.BR /etc/modules.conf .
+.SH OPCJE
+.B kernelversion
+po prostu ignoruje wszelkie przekazane argumenty.
+.SH AUTOR
+Tę stronę podrącznika man napisał Wichert Akkerman <wakkerma@debian.org>
+dla systemu Debian GNU/Linux.

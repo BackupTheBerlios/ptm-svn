@@ -1,0 +1,305 @@
+.\" Tłumaczenie wersji z modutils-2.4.10 - październik 2001 PTM
+.\" częściowo oparte na depmod.1 z PTM autorstwa Marcina Mazurka
+.\" Andrzej Krzysztofowicz <ankry@green.mif.pg.gda.pl>
+.\"
+.\" Copyright (c) 1994, 1995 Jacques Gelinas (jacques@solucorp.qc.ca)
+.\" Copyright (c) 1995, 1999 Bjorn Ekwall (bj0rn@blox.se)
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the base distribution directory
+.\" $Id: modprobe.8 1.6 Wed, 15 Aug 2001 22:44:20 +1000 kaos $
+.TH MODPROBE 8 "15 sierpnia 2001" Linux "Wsparcie dla modułów"
+.SH NAZWA
+modprobe \- wysokopoziomowa obsługa modułów
+.SH SKŁADNIA
+.hy 0
+.B modprobe
+[ \-adnqv ] [ \-C\ konfiguracja ] moduł [ symbol=wartość ... ]
+.br
+.B modprobe
+[ \-adnqv ] [ \-C\ konfiguracja ] [ \-t\ typ ] wzorzec
+.br
+.B modprobe
+\-l [ \-C\ konfiguracja ] [ \-t\ typ ] wzorzec
+.br
+.B modprobe
+\-c [ \-C\ konfiguracja ]
+.br
+.B modprobe
+\-r [ \-dnv ] [ \-C\ konfiguracja ] [ moduł ...]
+.br
+.B modprobe
+-V
+.SH OPCJE
+.TP
+.I "\-a, \-\-all"
+Ładuje
+.B all
+wszystkie moduły pasujące do wzorca, zamiast zatrzymać się po pierwszym
+pomyślnym załadowaniu.
+.TP
+.I "\-c, \-\-showconfig"
+Pokazuje akrualnie używaną konfigurację.
+.TP
+.I "\-d, \-\-debug"
+Pokazuje informacje o wewnęrznej reprezentacji stosu modułów.
+.TP
+.I "\-k, \-\-autoclean"
+Ustawia 'autoczyszczenie' dla załadowanych modułów. Używane przez jądro
+podczas wywoływania 
+.B modprobe
+aby zapewnić brakujące właściwości (dostępne jako moduły).
+Opcja
+.I \-k
+włącza też
+.IR \-q .
+Opcje te są automatycznie przekazywane do insmoda.
+.TP
+.I "\-l, \-\-list"
+Wypisuje pasujące moduły.
+.TP
+.I "\-n, \-\-show"
+Pokazuje, co by się działo, nie podejmując żadnej akcji.
+.TP
+.I "\-q, \-\-quiet"
+Nie narzeka na niepomyślną instalację modułu przez insmoda. Kontymuuje jak
+zwykle, lecz po cichu, umożliwiając modprobe testowanie innych możliwości.
+Opcja ta jest automatycznie przekazywana do insmoda.
+.TP
+.I "\-r, \-\-remove"
+Usuwa moduł (stos modułów) lub wykonuj autoczyszczenie, w zależności od tego,
+czy podano jakieś moduły w linii poleceń, czy nie.
+.TP
+.I "\-s, \-\-syslog"
+Wyprowadza wszystko do syslog zamiast na standardową diagnostykę.
+Opcja ta jest automatycznie przekazywana do insmoda.
+.TP
+.I "\-t, \-\-type\ typmodułu"
+Bierze pod uwagę jedynie moduły danego typu. modprobe będzie szukać jadynie
+takich modułów, których katalog w ścieżce zawiera "/\fItypmodułu\fR/".
+.I typmodułu
+może zawierać więcej niż jedną nazwę katalogu, np.
+.I "\-t\ drivers/net"
+wypisze moduły z xxx/drivers/net/ i jego podkatalogów.
+.TP
+.I "\-v, \-\-verbose"
+Wupisuje wszystkie uruchamiane polecenia.
+.TP
+.I "\-V, \-\-version"
+Wypisuje wersję modprobe.
+.TP
+.I "\-C, \-\-config plikkonf"
+Korzysta z pliku
+.I plikkonf
+zamiast z (opcjonalnego)
+.B /etc/modules.conf
+dla określenia konfiguracji.
+Do wybrania (i narzucenia) innego pliku konfiguracyjnego niż
+domyślny /etc/modules.conf (lub (przestarzały) /etc/conf.modules) można
+również użyć zmiennej środowiska
+.BR MODULECONF .
+.TP
+.B Uwaga:
+Zawy modułów nie mogą zawierać ścieżek (bez '/') ani kończących nazwę '.o'.
+Na przykład, slip jest dla
+.I modprobe
+poprawną nazwą, a /lib/modules/2.2.19/net/slip i slip.o są niepoprawne.
+Dotyczy to linii poleceń i całego pliku konfiguracyjnego.
+.SH OPIS
+Programy narzędziowe
+.B modprobe
+i
+.B depmod
+służą do zarządzania zmodularyzowanym jądrem Linuksa przez
+zwykłych użytkowników, administratorów i twórców dystrybucji.
+.PP
+.B modprobe
+w celu automatycznego ładowania właściwych, spośród zbioru modułów
+dostępnych w predefiniowanych drzewach katalogów, korzysta z pliku podobnego
+do "Makefile", tworzonego przez
+.BR depmod .
+.B modprobe
+jest używany do załadowania: pojedynczego modułu, zbioru powiązanych modułów,
+lub wszystkich modułów oznaczonych podanym znacznikiem.
+.PP
+.B modprobe
+automatycznie załaduje wszystkie moduły podstawowe, wymagane przez zbiór
+modułów, zgodnie z opisem w pliku powiązań modules.dep.
+Jeśli ładowanie jednego z tych modułów się nie powiedzie, cały zbiór modułów
+załadowanych w bieżącej sesji zostanie automatycznie rozładowany.
+.PP
+.B modprobe
+może ładować moduły na dwa różne sposoby. Jeden to taki, że modprobe
+spróbuje załadować moduł z podanej listy (zdefiniowany przez
+.I wzorzec
+).
+.B modprobe
+zatrzyma się jeśli uda mu się załadować jeden z modułów.
+W ten sposób można automatycznie ładować sterownik karty Ethernet jako jeden
+z listy. 
+.br
+Inny sposób użycia
+.B modprobe
+to załadowanie
+.B wszystkich
+modułów z listy.
+Zobzcz
+.B PRZYKŁADY
+poniżej.
+.PP
+Gdy poda się opcję
+.B \-r,
+modprobe automatycznie usunie zbiór modułów, podobnie jak by to zostało
+wykonane przez
+.BR "rmmod \-r" .
+Należy zauważyć, że wydanie polecenia
+.B "modprobe \-r"
+spowoduje wyczyszczenie nieużywanych, automatycznie załadowanych modułów
+a także wykonanie poleceń pre- i post-remove z pliku konfiguracyjnego
+/etc/modules.conf.
+.PP
+Jeżeli opcja
+.I \-l
+zostanie połączona z opcją
+.IR \-t ,
+wypisana zostanie lista wszystkich dostępnych modułów określonego typu.
+.PP
+Opcja
+.I \-c
+wypisuje całą bieżącą konfigurację (ustawienia domyślne + plik
+konfiguracyjny).
+.SH KONFIGURACJA
+Zachowanie się
+.B depmod
+i
+.B modprobe
+może być dostosowane przez (opcjonalny) plik konfiguracyjny
+.BR /etc/conf.modules .
+.br
+Po bardziej szczegółowy opis możliwej zawartości tego pliku, jak i
+konfigurację domyślną używaną przez
+.B depmod
+i
+.B modprobe,
+zajrzyj do
+.I modules.conf(5).
+.PP
+Należy zwrócić uwagę, że polecenia pre- i post-remove \fBnie\fR będą
+wykonywane jeśli moduł jest usuwany automatycznie przez kerneld!
+Zamiast zastanawiać się, jak to obejść, należy poczekać, aż zostanie
+wprowadzona obsługa trwałego przechowywania danych dla modułów.
+.br
+Jeśli funkcjonalność pre- i post-install jest potrzebna, należy wyłączyć
+automatyczne usuwanie modułów przez kerneld i zamiast tego wpisać linię
+podobną do poniższej w crontab (ma to również zastosowanie w systemach
+korzystających z kmod), aby automatyczne usuwać moduły co 2 minuty:
+.br
+ */2 * * * * test \-f /proc/modules && /sbin/modprobe \-r
+.SH STRATEGIA
+Idea polega na tym, by
+.B modprobe
+najpierw sprawdził katalog zawierający moduły skompilowane dla bieżącej wersji
+jądra. Jeśli właściwy moduł nie zostanie tam znaleziony,
+.B modprobe
+sprawdzi inne katalogi, wspólne dla głównego numery wersji jądra (np. 2.0,
+2.2). Jeśli tam też nie znajdzie modułu, 
+.B modprobe
+będzie szukać w katalogu zawierającym moduły dla domyślnego jądra, itd.
+.PP
+Podczas instalacji nowego Linuksa, moduły powinny być przeniesione do
+katalogu nazwanego od numeru jądra które jest instalowane.
+Wówczas należy zrobić dowiązanie symboliczne z tego katalogu do katalogu
+"default".
+.PP
+Podczas każdej kompilacji nowego jądra, polecenie
+.B "make modules_install"
+utworzy nowy katalog, ale nie zmieni dowiązania do katalogu default.
+.PP
+Kiedy otrzyma się moduł nie związany z konkretnym jądrem należy go umieścić
+w jednym z katalogów nie zależnych od wersji jądra w katalogu /lib/modules.
+.PP
+Takie jest standardowe zachowanie, które może być zmienione poprzez
+odpowiednie wpisy do /etc/modules.conf.
+.SH PRZYKŁADY
+.TP
+modprobe -t net
+Załaduj jeden z modułów, który znajduje się w katalogu oznaczonym "net".
+Każdy moduł jest wyprubowywany aż do momentu kiedy któryś z nich zostanie
+załadowany (standardowo: /lib/modules/net).
+.TP
+modprobe \-t net
+Ładuje jeden z modułów znajdujących się w katalogu "net". Próbuje wszystkich
+modułów po kolei, aż z jednym się uda.
+.TP
+modprobe \-a \-t boot
+Wszystkie moduły znajdujące się w katalogach oznaczonych przez
+.B "boot"
+będą załadowane.
+.TP
+modprobe slip
+Polecenie to spowoduje próbę załadowania modułu slhc.o o ile nie został
+uprzednio załadowany, ponieważ moduł slip wymaga funkcjonalności modułu slhc.
+Ta zależność będzie opisana w pliku "modules.dep" utworzonym wcześniej
+automatycznie przez polecenie
+.BR depmod .
+.TP
+modprobe \-r slip
+usunie moduł slip. Usunie również automatycznie moduł slhc, o ile nie jest on
+również używany przez jakiś inny moduł (np. ppp).
+.SH PLIKI
+.nf
+/etc/modules.conf (alternatywnie, przestarzały /etc/conf.modules)
+/lib/modules/*/modules.dep,
+/lib/modules/*
+.fi
+.SH ZOBACZ TAKŻE
+depmod(8),
+lsmod(8),
+kerneld(8),
+ksyms(8),
+rmmod(8)
+.SH "TRYB BEZPIECZNY"
+Jeśli efektywny uid jest różny od rzeczywistego uid, modprobe analizuje
+podane parametry szczególnie podejrzliwie. Ostatni parametr jest zawsze
+traktowany jak nazwa modułu, nawet gdy zaczyna się od '-'. Może być podana
+nazwa tylko jednego modułu a opcje postaci "zmienna=wartość" są zabronione.
+Nazwa modułu jest zawsze traktowana jak łańcuch znakowy, w trybie bezpiecznym
+nie są przeprowadzane rozwinięcia. Jednakże, rozwinięcia nadal są wykonywane
+odnośnie danych zawartych w pliku konfiguracyjnym.
+.PP
+euid może być różny od uid podczas wywoływania modprobe przez jądro; dzieje
+się tak dla jąder >= 2.4.0-test11. W świecie idealnym modprobe mógłby ufać
+jądru, że przekazuje tylko prawidłowe parametry. Jednakże, pojawiła się co
+najmniej jedna metoda wykorzystania tego lokalnie dla uzyskania uprawnień
+roota, gdyż wysokopoziomowy kod kernela przekazywał bezpośrednio parametry
+od użytkownika do modprobe, bez kontroli.
+.PP
+.ne 8
+.B modprobe
+automatycznie ustawia tryb bezpieczny, gdy środowisko składa się jedynie
+z następujących zmiennych:
+.nf
+ HOME=/
+ TERM=linux
+ PATH=/sbin:/usr/sbin:/bin:/usr/bin
+.fi
+Jest to wykrywanie uruchamiania modprobe przez jądro dla jąder 2.2 do
+2.4.0-test11, nawet gdy uid == euid, jak się dzieje dla wcześniejszych jąder.
+.SH "LOGOWANIE POLECEŃ"
+Jeśli istnieje katalog /var/log/ksymoops, a modprobe zostanie uruchomiany z
+opcją powodującą załadowanie lub usunięcie modułu, modprobe zaloguje swoje
+polecenie i kod powrotu w /var/log/ksymoops/`date\ +%Y%m%d.log`.
+Nie ma przełącznika wyłączającego automatyczne logowanie. Jeśli nie ma ono
+występować, nie należy tworzyć katalogu /var/log/ksymoops. Jeśli ten katalog
+istnieje, powinien być on własnością roota i mieć prawa dostępu 644 lub
+600 oraz należy uruchamiać codziennie, lub w podobnych odstępach czasu,
+skrypt insmod_ksymoops_clean.
+.SH "NIEZBĘDNE NARZĘDZIA"
+depmod(8),
+insmod(8)
+.SH UWAGI
+Wzorce podane programowi modprobe często wymagają cytowania, aby
+mieć pewność, że są interpretowany we właściwy sposób.
+.SH AUTOR
+Jacques Gelinas (jack@solucorp.qc.ca)
+.br
+Bjorn Ekwall (bj0rn@blox.se)

@@ -1,0 +1,515 @@
+.\" {PTM/PB/0.1/02-06-1999/"przykłady pliku rc procmaila"}
+.\" Translation 1999 Przemek Borys <pborys@dione.ids.pl>
+.\"if n .pl +(135i-\n(.pu)
+.de Id
+.ds Rv \\$3
+.ds Dt \\$4
+..
+.Id $Id: procmailex.5,v 1.5 2000/10/22 16:15:31 wojtek2 Exp $
+.TH PROCMAILEX 5 \*(Dt BuGless
+.rn SH Sh
+.de SH
+.br
+.ne 11
+.Sh "\\$1"
+..
+.rn SS Ss
+.de SS
+.br
+.ne 10
+.Ss "\\$1"
+..
+.rn TP Tp
+.de TP
+.br
+.ne 9
+.Tp \\$1
+..
+.rn RS Rs
+.de RS
+.na
+.nf
+.Rs
+..
+.rn RE Re
+.de RE
+.Re
+.fi
+.ad
+..
+.de Sx
+.PP
+.ne \\$1
+.RS
+..
+.de Ex
+.RE
+.PP
+..
+.na
+.SH NAZWA
+procmailex \- przykłady plików rc procmaila
+.SH SKŁADNIA
+.B przykłady $HOME/.procmailrc
+.ad
+.SH OPIS
+Dla opisu formatu pliku rc zobacz stronę
+.BR procmailrc (5).
+.PP
+Technika punktów ważonych jest opisana szczegółowo na stronie
+.BR procmailsc (5).
+.PP
+Ta strona podręcznika pokazuje kilka przykładowych reguł. Przykłady
+kompletnych plików rc znajdziesz w sekcji UWAGI podręcznika
+.BR procmail (1),
+możesz też zajrzeć do przykładowych plików rc, które są rozprowadzane wraz ze
+źródłami procmaila jako część dystrybucji
+(procmail*/examples/?procmailrc).
+.SH PRZYKŁADY
+Posortuj pocztę przychodzącą z listy dyskusyjnej scuba-dive do folderu
+pocztowego scubafile (używa lokalnego pliku blokującego scubafile.lock).
+.Sx 3
+:0:
+* ^TOscuba
+scubafile
+.Ex
+Forwarduj pocztę o kompilatorach od petera do williama (i zachowaj kopię
+lokalnie, w petcompil).
+.Sx 10
+:0
+* ^From.*peter
+* ^Subject:.*compilers
+{
+   :0 c
+   ! william@somewhere.edu
+
+   :0
+   petcompil
+}
+.Ex
+Równoważne rozwiązanie, które robi to samo:
+.Sx 7
+:0 c
+* ^From.*peter
+* ^Subject:.*compilers
+! william@somewhere.edu
+
+   :0 A
+   petcompil
+.Ex
+Równoważne, lecz trochę wolniejsze rozwiązanie, robiące to samo:
+.Sx 9
+:0 c
+* ^From.*peter
+* ^Subject:.*compilers
+! william@somewhere.edu
+
+:0
+* ^From.*peter
+* ^Subject:.*compilers
+petcompil
+.Ex
+Jeśli jesteś nowy jeśli chodzi o procmaila i planujesz trochę
+poeksperymentować, to dobrze jest mieć jakiś rodzaj
+.I sieci bezpieczeństwa.
+Wstawienie następujących dwóch reguł ponad wszystkimi innymi regułami,
+zapewni, że ostatnie 32 wiadomości będą chronione.  Aby działało to zgodnie z
+oczekiwaniami, musisz utworzyć w katalogu $MAILDIR katalog `backup'.
+.Sx 5
+:0 c
+backup
+
+:0 ic
+| cd backup && rm \-f dummy `ls \-t msg.* | sed \-e 1,32d`
+.Ex
+Jeśli twój system nie generuje początkowych linii `From ', lub generuje je w
+nieprawidłowy sposób, możesz to naprawić wywołując procmail z opcją \-f-.
+Innym sposobem naprawienia tego problemu jest wstawienie następujących dwóch
+reguł powyżej wszystkich innych reguł pliku rc. Będą one filtrować nagłówek
+dowolnego listu przez formail, który obetnie wszelkie początkowe
+`From ' i automatycznie je odtworzy.
+.Sx 2
+:0 fhw
+| formail \-I "From " \-a "From "
+.Ex
+Dodaj nagłówki wszystkich wiadomości, które nie przyszły od postmastera, do
+prywatnej kolekcji nagłówków (dla statystyk, lub debuggowania poczty); użyj
+pliku blokującego `headc.lock'. Aby zapewnić, że plik blokujący nie zostanie
+usunięty przed zakończeniem potoku, trzeba podać opcję `w'; w przeciwnym
+wypadku plik blokujący zostałby usunięty w momencie przyjęcia przez potok
+poczty.
+.Sx 3
+:0 hwc:
+* !^FROM_MAILER
+| uncompress headc.Z; cat >>headc; compress headc
+.Ex
+Lub jeśli chcesz użyć efektywniejszego gzip-a zamiast compress-a:
+.Sx 3
+:0 hwc:
+* !^FROM_MAILER
+| gzip >>headc.gz
+.Ex
+Forwarduj wszystkie wiadomości krótsze niż 1000 bajtów na mój adres domowy
+(w tej regule nie potrzebny jest plik blokujący).
+.Sx 3
+:0
+* < 1000
+! myname@home
+.Ex
+Podziel nadchodzący z listy dyskusyjnej surfing digest na pojedyncze
+wiadomości i zachowaj je w surfing, używając lokalnego pliku lokującego
+surfing.lock.
+.Sx 3
+:0:
+* ^Subject:.*surfing.*Digest
+| formail +1 \-ds >>surfing
+.Ex
+Zachowaj w pliku postm wszystko pochodzące od postmastera, lub
+mailer-deamona. Użyj pliku postm.lock jako lokalnego pliku lokującego.
+.Sx 3
+:0:
+* ^FROM_MAILER
+postm
+.Ex
+Prosta reguła auto-odpowiadająca. Upewnia się, że nie odpowiada na pocztę od
+jakiegoś demona (np. odbita poczta lub poczta z list dyskusyjnych), ani na
+listy pochodzące od ciebie samego. Jeśli zabezpieczenia te nie zostaną
+podjęte, to może się zdarzyć katastrofa. Aby reguła odpowiadała na pocztę
+przychodzącą, powinieneś wstawić ją przed wszystkie inne reguły pliku rc.
+Radzi się jednak wstawiać ją
+.I za
+wszelkimi regułami, które obsługują pocztę pochodzącą z list dyskusyjnych;
+zazwyczaj nie jest dobrym pomysłem generowanie automatycznych odpowiedzi na
+listy dyskusyjne (tak, regexp
+!^FROM_DAEMON powinien je wyłapać, jednak jeśli lista dyskusyjna nie pracuje
+zgodnie z konwencjami, to może to być zbyt mało).
+.Sx 6
+:0 h c
+* !^FROM_DAEMON
+* !^X-Loop: twój@własny.adres.pocztowy
+| (formail \-r \-A"Precedence: junk" \e
+    \-A"X-Loop: twój@własny.adres.pocztowy" ; \e
+   echo "Poczta odebrana.") | $SENDMAIL \-t
+.Ex
+Bardziej skomplikowana reguła auto-odpowiadająca, która implementuje
+funkcjonalność znanego programu
+.BR vacation (1).
+Reguła ta jest oparta na tych samych zasadach co poprzednia. Dodatkowo
+obsługuje bazę vacation, wyłączając nazwisko nadawcy i wstawiając je do pliku
+vacation.cache, o ile było ono nowe (plik vacation.cache jest
+obsługiwany przez formail, który będzie się upewniał, że zawiera tylko
+najnowsze nazwiska; rozmiar pliku jest ograniczony do 8192 bajtów). Jeśli
+nazwisko było nowe, wysłana zostanie auto-odpowiedź.
+.Sx 14
+SHELL=/bin/sh    # dla innych powłok trzeba to poprawić
+
+:0 Whc: vacation.lock
+* !^FROM_DAEMON
+* !^X-Loop: twój@własny.adres.pocztowy
+| formail \-rD 8192 vacation.cache
+
+  :0 ehc         # jeśli nazwiska nie było w cache
+  | (formail \-rA"Precedence: junk" \e
+       \-A"X-Loop: twój@własny.adres.pocztowy" ; \e
+     echo "Odebrałem twój list,"; \e
+     echo "lecz nie wrócę do poniedziałku."; \e
+     echo "-- "; cat $HOME/.signature \e
+    ) | $SENDMAIL \-oi \-t
+.Ex
+Wszelkie wiadomości dotyczące TeX-a zachowaj w oddzielnych, unikalnych
+nazwach pliku, w katalogu o nazwie texmail (katalog musi istnieć); nie ma
+potrzeby używać w tym wypadku plików blokujących, więc ich nie używamy.
+.Sx 3
+:0
+* (^TO|^Subject:.*)TeX[^t]
+texmail
+.Ex
+To samo co powyżej, lecz teraz zapisujemy listy w numerowanych plikach
+(folder pocztowy MH).
+.Sx 3
+:0
+* (^TO|^Subject:.*)TeX[^t]
+texmail/.
+.Ex
+Możesz też wprowadzić list do kilku folderów naraz. Następująca reguła
+dostarczy pocztę do dwóch folderów MH i jednego folderu katalogowego. Jest
+to w rzeczywistości tylko jeden plik z dwoma dodatkowymi dowiązaniami
+twardymi (hardlinks).
+.Sx 3
+:0
+* (^TO|^Subject:.*)TeX[^t]
+texmail/. wordprocessing dtp/.
+.Ex
+Zachowaj wszystkie listy o spotkaniach (meetings) w folderze, który jest w
+comiesięcznie zmienianym katalogu . Np. jeśli był Styczeń 1994, folder
+miałby nazwę 94-01/meeting, a lokalny plik blokujący nazywałby się
+`94-01/meeting.lock'.
+.Sx 3
+:0:
+* meeting
+`date +%y-%m`/meeting
+.Ex
+To samo co wyżej, lecz jeśli katalog `94-01' nie istniałby, to automatycznie
+zostanie utworzony:
+.Sx 9
+MONTHFOLDER=`date +%y-%m`
+
+:0 ic
+* ? test ! \-d $MONTHFOLDER
+| mkdir $MONTHFOLDER
+
+:0:
+* meeting
+${MONTHFOLDER}/meeting
+.Ex
+To samo co powyżej, lecz z użyciem innych środków:
+.Sx 6
+MONTHFOLDER=`date +%y-%m`
+DUMMY=`test \-d $MONTHFOLDER || mkdir $MONTHFOLDER`
+
+:0:
+* meeting
+${MONTHFOLDER}/meeting
+.Ex
+Jeśli jesteś podłączony do kilku list dyskusyjnych, a ludzie crosspostują na
+niektóre z nich, to możesz otrzymywać zduplikowane listy (po jednym z każdej
+listy). Następująca reguła eliminuje powtórzone listy. Mówi formailowi by
+trzymał 8KB plik cache, w którym będzie zapisywał Message-ID ostatnio
+odbieranych listów. Ponieważ elementy te muszą być unikalne dla każdego
+nowego listu, to są idealnym rozwiązaniem na duplikaty. Wstaw zwyczajnie
+następującą regułę na początek swojego pliku rc i gotowe.
+.Sx 2
+:0 Wh: msgid.lock
+| formail \-D 8192 msgid.cache
+.Ex
+Podczas bezpośredniego dostarczania do folderów emacsa (np. folderów pocztowych
+obsługiwanych przez dowolny pocztowy pakiet emacsowy, np. RMAIL czy VM),
+powinieneś używać kompatybilnych z emacsem plików blokujących. Mailerom
+emacsowe brakuje piątej klepki pod tym względem, denerwują się
+bardzo jeśli ktoś dostarcza pocztę do folderów, które znajdują się już w ich
+buforach wewnętrznych. Następująca reguła zakłada, że $HOME odpowiada
+/home/john.
+.Sx 5
+MAILDIR=Mail
+
+:0:/usr/local/lib/emacs/lock/!home!john!Mail!mailbox
+* ^Subject:.*cokolwiek
+mailbox
+.Ex
+Inaczej, możesz kazać procmailowi dostarczać pocztę do swoich własnych
+mailboxów, a następnie periodycznie opróżniać je i kopiować do plików
+emacsowych przy użyciu
+.BR movemail .
+Movemail używa lokalnych plików blokujących mailbox.lock dla danego mailboxa.
+.PP
+Aby wyciągnąć określone nagłówki z listu i wstawić je do zmiennych
+środowiskowych, możesz użyć dowolnej z następujących konstrukcji:
+.Sx 5
+SUBJECT=`formail \-xSubject:`    # pole regularne
+FROM=`formail \-rt \-xTo:`        # przypadek specjalny
+
+:0 h                            # metoda alternatywna
+KEYWORDS=| formail \-xKeywords:
+.Ex
+Jeśli używasz w pliku procmailrc plików tymczasowych i chcesz upewnić się,
+że są one usuwane zaraz przed zakończeniem pracy procmaila, możesz użyć
+linijek podobnych do tych:
+.Sx 2
+TEMPORARY=$HOME/tmp/pmail.$$
+TRAP="/bin/rm \-f $TEMPORARY"
+.Ex
+Słowo kluczowe TRAP może być także użyte do zmiany kodu wyjścia
+procmaila. Np. jeśli chcesz by procmail zakończył pracę z kodem wyjścia `1'
+zamiast standardowego kodu, możesz użyć:
+.Sx 3
+EXITCODE=""
+TRAP="exit 1;"   # Kończący średnik jest istotny
+                 # gdyż exit nie jest samodzielnym programem
+.Ex
+Albo też jeśli kod wyjścia nie musi zależeć od programów uruchamianych z
+TRAP, możesz użyć zwykłego:
+.Sx 1
+EXITCODE=1
+.Ex
+Następująca reguła drukuje każdy nadchodzący list, który wygląda jak plik
+postscriptowy.
+.Sx 3
+:0 Bb
+* ^^%!
+| lpr
+.Ex
+Następująca reguła robi to samo, lecz jest trochę bardziej selektywna.
+Drukuje tylko te pliki postscriptowe, które pochodzą od print-serwera.
+Pierwszy warunek dopasowuje tylko jeśli zostanie znaleziony w nagłówku.
+Następny dopasowuje tylko na początku ciała wiadomości.
+.Sx 4
+:0 b
+* ^From[ :].*print-server
+* B ?? ^^%!
+| lpr
+.Ex
+To samo co wyżej, lecz z użyciem innych środków:
+.Sx 7
+:0
+* ^From[ :].*print-server
+{
+  :0 B b
+  * ^^%!
+  | lpr
+}
+.Ex
+Podobnie:
+.Sx 4
+:0 HB b
+* ^^(.+$)*From[ :].*print-server
+* ^^(.+$)*^%!
+| lpr
+.Ex
+Załóżmy, że masz dwa konta i że używasz ich obu regularnie, lecz są one w
+różnych miejscach (np. możesz czytać pocztę z tylko jednego z dwóch kont).
+Jeśli chciałbyś forwardować pocztę przybywającą na konto jeden do konta dwa
+i odwrotnie. Pierwszą rzeczą, która przychodzi na myśl jest użycie na obydwu
+hostach plików .forward; lecz to nie zadziała gdyż utworzysz pętlę pocztową.
+Możesz uniknąć pętli przez wstawienie następującej reguły na początku
+wszystkich innych reguł w plikach $HOME/.procmailrc obydwu hostów. Jeśli
+upewnisz się, że dodałeś te samo pole X-Loop: na obydwu hostach, to poczta
+może już być spokojnie forwardowana na drugie konto.
+.Sx 4
+:0 c
+* !^X-Loop: twojlogin@twoj.adres.pocztowy
+| formail \-A "X-Loop: twojlogin@twoj.adres.pocztowy" | \e
+   $SENDMAIL \-oi twojlogin@drugie.konto
+.Ex
+Jeśli ktoś przesyła ci pocztę ze słowem `retrieve' w temacie, to następująca
+reguła automatycznie odeśle z powrotem zawartość pliku info_file. Jak we
+wszystkich regułach, uważamy na pętle pocztowe.
+.Sx 6
+:0
+* !^From +TWOJ_USERNAME
+* !^Subject:.*Re:
+* !^FROM_DAEMON
+* ^Subject:.*retrieve
+| (formail \-r ; cat info_file) | $SENDMAIL \-oi \-t
+.Ex
+A teraz przykład bardzo prostego serwera plików dostępnego przez pocztę.
+Dla bardziej wymagających aplikacji, sugeruję rzucenie okiem na
+.B SmartList
+(dostępne w tym samym miejscu co dystrybucja procmaila).
+Ten serwer plików odsyła najwyżej jeden plik na dane żądanie, ignoruje
+ciało nadchodzących listów, a linia tematu Subject: musi wyglądać jak
+"Subject: send file plik_którego_chcesz" (spacje są istotne),
+nie zwraca plików, które mają nazwy rozpoczynające się od kropki i nie
+umożliwia odbioru plików spoza drzewa katalogów serwera plików.
+.Sx 18
+:0
+* ^Subject: send file [0-9a-z]
+* !^X-Loop: twojlogin@twoj.adres.pocztowy
+* !^Subject:.*Re:
+* !^FROM_DAEMON
+* !^Subject: send file .*[/.]\e.
+{
+  MAILDIR=$HOME/fileserver # zmień katalog do katalogu serwera plików
+
+  :0 fhw                   # odwróć nagłówek listu i wyciągnij nazwę
+  * ^Subject: send file \e/[^ ]*
+  | formail \-rA "X-Loop: twojlogin@twoj.adres.pocztowy"
+
+  FILE="$MATCH"            # żądany plik
+
+  :0 ah
+  | cat \- ./$FILE 2>&1 | $SENDMAIL \-oi \-t
+}
+.Ex
+Następujący przykład zamienia wstępnie wszystkie przychodzące listy w czystym
+tekście, kodowane w formatach MIME na ładniejszy format 8-bitowy, który może
+być używany i wyświetlany w prostszy sposób przez większość programów.
+Program
+.BR mimencode (1)
+jest częścią pakietu metamail Nathaniela Borensteina.
+.Sx 17
+:0
+* ^Content-Type: *text/plain
+{
+  :0 fbw
+  * ^Content-Transfer-Encoding: *quoted-printable
+  | mimencode \-u \-q
+
+     :0 Afhw
+     | formail \-I "Content-Transfer-Encoding: 8bit"
+
+  :0 fbw
+  * ^Content-Transfer-Encoding: *base64
+  | mimencode \-u \-b
+
+     :0 Afhw
+     | formail \-I "Content-Transfer-Encoding: 8bit"
+}
+.Ex
+Następujący przykład jest raczej egzotyczny, lecz służy tylko ilustracji
+właściwości. Załóżmy, że masz w swoim katalogu domowym plik o nazwie
+".pilne", a osoba wymieniona w tym pliku jest wysyłającym  nadchodzącego
+listu i chciałbyś, by ten list był zachowany w katalogu $MAILDIR.pilne
+zamiast w dowolnym z normalnych folderów pocztowych. Możesz wówczas zrobić
+tak (uważaj, długość $HOME/.pilne powinna być niższa niż $LINEBUF,
+jeśli to konieczne, zwiększ wartość LINEBUF):
+.Sx 5
+URGMATCH=`cat $HOME/.pilne`
+
+:0 B:
+* $^From.*${URGMATCH}
+pilne
+.Ex
+Całkowicie innym zastosowaniem procmaila byłoby warunkowe dołączanie filtrów
+do niektórych (wychodzących) tekstów lub listów. Typowym przykładem byłoby
+filtrowanie, w którym używasz potoków dla wszystkich wychodzących list aby upewnić 
+się czy będziemy kodować w MIME tylko wtedy gdy to konieczne.
+Np. w tym wypadku możesz uruchomić procmaila wewnątrz potoku rodzaju:
+.Sx 1
+cat newtext | procmail ./mimeconvert | mail chris@where.ever
+.Ex
+Plik rc
+.B mimeconvert
+powinien zawierać coś w rodzaju (=0x80= i =0xff= powinny być zamienione
+prawdziwymi 8-bitowymi znakami):
+.Sx 10
+DEFAULT=|     # potok na stdout zamiast
+              # dostarczania pocztę jak zwykle
+:0 Bfbw
+* [=0x80=-=0xff=]
+| mimencode \-q
+
+  :0 Afhw
+  | formail \-I 'MIME-Version: 1.0' \e
+     \-I 'Content-Type: text/plain; charset=ISO-8859-1' \e
+     \-I 'Content-Transfer-Encoding: quoted-printable'
+.Ex
+.SH "ZOBACZ TAKŻE"
+.na
+.nh
+.BR procmail (1),
+.BR procmailrc (5),
+.BR procmailsc (5),
+.BR sh (1),
+.BR csh (1),
+.BR mail (1),
+.BR mailx (1),
+.BR binmail (1),
+.BR uucp (1),
+.BR aliases (5),
+.BR sendmail (8),
+.BR egrep (1),
+.BR grep (1),
+.BR biff (1),
+.BR comsat (8),
+.BR mimencode (1),
+.BR lockfile (1),
+.BR formail (1)
+.hy
+.ad
+.Sh AUTOR
+Stephen R. van den Berg z RWTH-Aachen, Germany
+.Rs
+berg@pool.informatik.rwth-aachen.de
+.\" @MY_ALT_MAIL_ADDR@
+.Re
+.\".if n .pl -(\n(.tu-1i)

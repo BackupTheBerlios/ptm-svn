@@ -1,0 +1,40 @@
+.\" {PTM/LK/0.1/27-09-1998/"zeisstopnm - konwersja plików Zeissa to p*m"}
+.\" Tłumaczenie: 27-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.\" Permission to use, copy, modify, and distribute this software and its
+.\" documentation for any purpose and without fee is hereby granted, provided
+.\" that the above copyright notice appear in all copies and that both that
+.\" copyright notice and this permission notice appear in supporting
+.\" documentation. This software is provided "as is" without express or
+.\" implied warranty.
+.TH zeisstopnm 1 "15 lipca 1993"
+.IX zeisstopnm
+.SH NAZWA
+zeisstopnm \- dokonaj konwersji pliku zbieżnoogniskowego Zeissa do postaci
+przenośnej mapy.
+.SH SKŁADNIA
+.B zeisstopnm
+.RI [ \-pgm
+|
+.IR \-ppm ]
+.RI [ plik_zeissa ]
+.SH OPIS
+Odczytuje plik zbieżnoogniskowy Zeissa i zapisuje go w postaci przenośnej
+mapy (pliki p?m). Rodzaj pliku wyjściowego zależy od typu pliku
+wejściowego. Plik w skali szarości przetwarzany jest do formatu
+.IR pgm " (portable greymap)."
+W każdym innym przypadku tworzony jest plik w formacie
+.IR ppm " (portable pixmap)."
+Program informuje, jaki typ pliku jest tworzony.
+.SH OPCJE
+.TP
+.B \-pgm
+Plik wyjściowy będzie w formacie
+.IR pgm "."
+.TP
+.B \-ppm
+Plik wyjściowy będzie w formacie
+.IR ppm "."
+.SH "ZOBACZ TAKŻE"
+.BR pnm (5)
+.SH AUTOR
+Copyright (C) 1993 by Oliver Trepte

@@ -1,0 +1,14 @@
+# Lista polskich stron man dla pakietu
+# at 3.1.8, rel.56
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+at.1	man1/at.1
+atd.8	man8/atd.8
+atq.1	man1/atq.1
+atrm.1	man1/atrm.1
+atrun.8	man8/atrun.8
+batch.1	man1/batch.1
+#
+# koniec listy

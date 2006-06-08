@@ -1,0 +1,25 @@
+.\" {PTM/WK/0.1/15-07-1999/"testuje dyskietki, oznacza błędne bloki w FAT"}
+.TH mbadblocks 1 "15 lipca 1999" mtools-3.9.6
+.SH NAZWA
+mbadblocks - testuje dyskietki, oznacza błędne bloki w FAT
+.SH SKŁADNIA
+.B mbadblocks
+.IB napęd :
+.SH OPIS
+.PP
+\fBmbadblocks\fR przegląda dyskietkę DOS w poszukiwaniu błędnych bloków
+(bad blocks).
+Wszystkie nieużywane błędne bloki są odpowiednio oznaczane w FAT.
+Polecenie przeznaczono do użycia bezpośrednio po użyciu \fBmformat\fR.
+Nie jest przeznaczone do odzyskiwania błędnych bloków.
+.SH BŁĘDY
+\fBmbadblocks\fR powinno (ale jeszcze tego nie robi :-( ) podejmować próby
+odzyskania używanych błędnych bloków przez powtarzanie odczytu, a następnie
+oznakowanie ich jako błędnych.
+.SH UWAGI
+Niniejsza, polska wersja dokumentacji, powstała jako tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. W stosunku do automatycznie generowanej
+z Textinfo dokumentacji oryginalnej dokonano przesunięcia sekcji opisującej
+konwersję dokumentacji do \fBmtools\fR(1). Tam też znajdziesz notę prawną
+dotyczącą rozpowszechniania, modyfikacji i tłumaczenia dokumentacji pakietu
+mtools

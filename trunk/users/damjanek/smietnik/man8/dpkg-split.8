@@ -1,0 +1,247 @@
+.\" {PTM/PR/0.1/09-08-1999/"narzędzie dzielenia/łączenia pakietów Debiana"}
+.\" Translation 1999 by Piotr Roszatycki
+.\" Last update: Robert Luberda <robert@debian.org>, Jun 2001, dpkg 1.9.9
+.\" Hey, Emacs!  This is an -*- nroff -*- source file.
+.\" Authors: Ian Jackson
+.TH DPKG-SPLIT 8 "23 czerwca 1996" "Projekt Debiana" "Debian Linux"
+.SH NAZWA
+dpkg\-split \- narzędzie dzielenia/łączenia pakietów Debiana
+.SH SKŁADNIA
+.B dpkg-split
+.BR -s | --split
+.IR pełne\-archiwum " [" przedrostek ]
+.br
+.B dpkg-split
+.BR -j | --join
+.IR "część część " ...
+.br
+.B dpkg-split
+.BR -I | --info
+.IR "część część " ...
+.br
+.B dpkg-split
+.BR -a | --auto
+.BI -o " pełne\-archiwum część"
+.br
+.B dpkg-split
+.BR -l | --listq
+.br
+.B dpkg-split
+.BR -d | --discard
+.RI [ "pakiet pakiet " ...]
+.SH OPIS
+.B dpkg-split
+dzieli pakiety binarne Debiana na mniejsze części oraz scala je z powrotem,
+tak że możliwe jest przechowanie większych pakietów na małych nośnikach,
+takich jak dyskietki.
+
+Program wywołuje się ręcznie, wraz z opcją
+.BR --split ", " --join " lub " --info .
+
+Możliwe jest także wywołanie automatyczne, poprzez użycie opcji
+.B --auto .
+Wtedy to tworzona jest kolejka części pakietu, a gdy wszystkie części
+będą dostępne, cały pakiet zostanie odtworzony.
+Opcje
+.BR --listq " i " --discard
+pozwalają zarządzać kolejką.
+
+Wszystkie działania, takie jak rozdzielanie, łączenie, czy kolejkowanie,
+powodują wyświetlenie informacji na standardowe wyjście. Informacje te
+można zignorować.
+.SH OPCJE DZIAŁAŃ
+.TP
+.BR --split ", " -s
+Rozdzielenie pojedynczego pakietu binarnego na poszczególne części.
+
+Części mają nazwę
+.IB przyrostek . N of M .deb
+gdzie
+.I N
+jest numerem części, rozpoczynając od 1, a
+.I M
+jest liczbą wszystkich części (dziesiętnie).
+
+Jeśli nie podano
+.IR przedrostka ,
+to użyta jest nazwa pliku
+.IR pełnego\-archiwum ,
+wraz z katalogiem, gdy jest określony. Ponadto usunięta jest
+końcówka
+.BR .deb .
+.TP
+.BR --join ", " -j
+Łączenie części pakietu i odtworzenie oryginalnego pliku sprzed
+dzielenia.
+
+Pliki podane jako argumenty muszą być częściami tego samego
+oryginalnego pakietu. Każda część musi pojawić się raz na liście
+argumentów, ale nie jest konieczne zachowanie właściwej kolejności.
+
+Części muszą być wygenerowane z użyciem tego samego rozmiaru, co oznacza,
+że muszą to być te same części utworzone za pomocą polecenia
+.BR "dpkg-split --split" .
+
+Nazwy plików części nie mają znaczenia dla procesu odtworzenia pakietu.
+
+Domyślnie, odtworzony plik ma nazwę
+.IB pakiet - wersja .deb\fR.
+
+.TP
+.BR --info ", " -I
+Wyświetlanie informacji, podanych w formacie czytelnym dla człowieka, o częściach
+pakietu. Argumenty, które nie są częścią pakietu, powodują wyświetlenie 
+informacji o tym fakcie na standardowym wyjściu.
+.TP
+.BR --auto ", " -a
+Automatyczne kolejkowanie części i odtworzenie pakietu, gdy to jest możliwe.
+
+Podana
+.I część
+zostaje sprawdzona i porównana z innymi częściami tego samego pakietu,
+które znajdują się w kolejce.
+
+Jeśli wszystkie części pakietu są już dostępne, pakiet jest
+odtwarzany i zapisywany do
+.IR pełnego\-archiwum .
+
+Jeśli jeszcze nie ma wszystkich części, podana
+.I część
+jest kopiowana do kolejki i
+.I pełne\-archiwum
+nie jest odtwarzane.
+
+Jeśli plik
+.I część
+nie jest częścią pakietu binarnego,
+.B dpkg\-split
+zakończy się i zwróci kod błędu 1, albo kod błędu 2 w przypadku
+wystąpienia innych problemów.
+
+Opcja
+.BR --output " lub " -o
+musi zostać podana w przypadku użycia
+.BR --auto .
+(W przeciwnym razie program nie wiedziałby, jakiego spodziewać
+się pliku wyjściowego.)
+.TP
+.BR --listq ", " -l
+Listowanie zawartości kolejki części pakietu do odtworzenia.
+
+Dla każdego pliku części pakietu wyświetlana jest nazwa pakietu,
+część w kolejce, całkowita liczba bajtów przechowywanych w kolejce.
+.TP
+.BR --discard ", " -d
+Usuwa części pakietu z kolejki.
+
+Jeśli nie podano nazwy
+.IR pakietu ,
+czyszczona jest cała kolejka. Gdy nazwa jest podana, usuwane
+są tylko części podanego pakietu.
+.TP
+.BR --help ", " -h
+Wyświetlenie informacje o opcjach
+.BR dpkg\-split .
+.TP
+.BR --version
+Wyświetlenie informacje o wersji
+.BR dpkg\-split .
+.TP
+.BR --licence
+Wyświetlenie informacje o licencji
+.B dpkg\-split
+oraz braku jego gwarancji. (Obsługiwany jest także amerykański
+sposób pisowni
+.BR \-\-license .)
+.SH POZOSTAŁE OPCJE
+.TP
+.BI --depotdir " katalog"
+Określenie alternatywnego katalogu dla kolejki części pakietów do
+zrekonstruowania. Domyślnym jest
+.BR /var/lib/dpkg .
+.TP
+.BI --partsize\fR|\fB-S " Kbajtów"
+Określenie maksymalnego rozmiaru części pakietu w kilobajtach (1024 bajtów).
+Domyślnym jest 450KB.
+.TP
+.BI --output\fR|\fB-O " pełne\-archiwum"
+Określenie nazwy pliku pełnego archiwum.
+
+Ta opcja nadpisuje domyślną nazwę przy odtwarzaniu pakietu
+.RB ( \-\-join )
+oraz jest wymagana przy automatycznym odtwarzaniu pakietu
+.RB ( \-\-auto ).
+.TP
+.BR --npquiet ", " -Q
+Gdy wykonywane jest automatyczne łączenie części pakietu,
+.B dpkg\-split
+zwykle wyświetla informacje o błędzie, gdy dany plik
+.I części
+nie jest częścią pakietu. Ta opcja zapobiega wyświetlaniu
+nadmiernej ilości informacji przez programy takie jak
+.BR dpkg .
+.TP
+.BR --msdos
+Pliki generowane przez
+.B \-\-split
+są zapisywane w formacie odczytywanym przez MSDOS.
+
+Zmieniany jest przedrostek, zarówno ten domyślny jak i ten podany w argumencie:
+litery są zamieniane na małe, znak plusa zamieniany jest na 
+.BR x ,
+a pozostałe znaki są pomijane.
+
+Powstały przedrostek jest ucinany do niezbędnego rozmiaru. Powstała nazwa
+ma postać
+.IB "przedrostekN" of M .deb..
+.SH KODY BŁĘDU
+Kod błędu 0 oznacza, że żądana operacja dzielenia, łączenia czy jakakolwiek
+inna, zakończyła się sukcesem. Polecenie
+.B \-\-info
+kończy się sukcesem nawet gdy podany plik nie jest częścią pakietu.
+
+Kod błędu 1 oznacza, że opcja
+.B \-\-auto
+została wykonana na pliku, który nie jest
+.I częścią
+pakietu.
+
+Kod błędu 2 pojawia się przy różnego rodzaju problemach, takich jak
+błędy wywołania funkcji systemu, uszkodzenie plików części pakietu,
+czy innych wypadkach.
+.SH BŁĘDY
+.B dpkg\-split
+używa raczej starej konwencji nazw plików pakietów.
+
+Pobranie pełnej informacji o pakietach w kolejce jest niemożliwe,
+bez przeszukania katalogu kolejki.
+
+Nie ma prostego testu na sprawdzenie, czy dany plik jest na pewno
+częścią pakietu.
+
+Architektura nie jest określona w plikach części pakietu, jedynie
+w kontrolnych plikach całego pakietu, tak więc architektura nie
+jest częścią generowanej nazwy pliku.
+.SH PLIKI
+.TP
+.B /var/lib/dpkg/parts
+Domyślny katalog kolejki części pakietów czekających na automatyczne
+odtworzenie.
+
+Nazwy plików w tym katalogu są wewnętrznie utworzone przez
+.B dpkg\-split
+i nie są użyteczne dla innych programów.
+.SH ZOBACZ TAKŻE
+.BR deb (5),
+.BR deb\-control (5),
+.BR dpkg\-deb (1),
+.BR dpkg (8)
+.SH AUTOR
+.B dpkg\-split
+oraz ten podręcznik napisał Ian Jackson
+Copyright (C) 1995-1996
+i udostępnił na Powszechnej Licencji Publicznej GNU; BEZ JAKIEJKOLWIEK
+GWARANCJI. Szczegóły w
+.B /usr/share/doc/dpkg/copyright
+oraz
+.BR /usr/share/common-licences/GPL .

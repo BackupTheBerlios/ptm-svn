@@ -1,0 +1,44 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 17:08:16 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Mon Oct 21 17:47:19 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Translation (c) 1998 "Gwidon S. Naskrent" <naskrent@hoth.amu.edu.pl>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Mar 2002,
+.\"              manpages 1.48
+.\"
+.TH motd 5 1992-12-29 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+motd \- komunikat dnia
+.SH OPIS
+Zawartość \fB/etc/motd\fP jest wyświetlana przez
+.BR login (1)
+po poprawnym zalogowaniu się, ale przed uruchomieniem powłoki zgłoszeniowej.
+
+Skrót "motd" oznacza "message of the day" (wiadomość/komunikat dnia). Plik ten
+był tradycyjnie używany do tego właśnie celu (wymaga znacznie mniej miejsca na
+dysku niż poczta do wszystkich użytkowników).
+.SH PLIKI
+.I /etc/motd
+.SH "ZOBACZ TAKŻE"
+.BR login (1),
+.BR issue (5).

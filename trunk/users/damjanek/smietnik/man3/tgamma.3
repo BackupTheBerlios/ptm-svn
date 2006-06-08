@@ -1,0 +1,30 @@
+.\" Tłumaczenie wersji man-pages 1.53 - sierpień 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" -----------
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Distributed under GPL
+.\" Based on glibc infopages
+.TH TGAMMA 3 2002-08-10 "GNU" "funkcje matematyczne libc"
+.SH NAZWA
+tgamma, tgammaf, tgammal \- prawdziwa funkcja gamma
+.SH SKŁADNIA
+.B #include <math.h>
+.sp
+.BI "double tgamma(double " x );
+.br
+.BI "float tgammaf(float " x );
+.br
+.BI "long double tgammal(long double " x );
+.sp
+.SH OPIS
+Funkcje te zwracają wartość funkcji Gamma dla argumentu \fIx\fP. Nazwa
+funkcji musi brzmieć "prawdziwa funkcja gamma", gdyż istnieje już funkcja
+.I gamma()
+zwracająca co innego.
+Szczegóły opisano w
+.BR lgamma (3).
+.SH "ZGODNE Z"
+C99.
+.SH "ZOBACZ TAKŻE"
+.BR lgamma (3),
+.BR gamma (3)

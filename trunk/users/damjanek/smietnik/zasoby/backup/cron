@@ -1,0 +1,11 @@
+# Lista polskich stron man dla pakietu
+# cron
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+cron.8		man8/cron.8
+crontab.1	man1/crontab.1
+crontab.5	man5/crontab.5
+#
+# koniec listy

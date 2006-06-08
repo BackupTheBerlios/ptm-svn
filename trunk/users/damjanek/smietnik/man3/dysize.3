@@ -1,0 +1,56 @@
+.\" Tłumaczenie wersji man-pages 1.45 - grudzień 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.\"  Copyright 2001 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" aeb: some corrections
+.TH DYSIZE 3 "12 listopada 2001" "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+dysize \- podaje liczbe dni zadanego roku
+.SH SKŁADNIA
+.sp
+.BR "#define _BSD_SOURCE" "   /* lub: #define _SVID_SOURCE */
+.br
+.BR "#include <time.h>
+.sp
+.BI "int dysize(int " rok );
+.sp
+.SH OPIS
+Funkcja zwraca 365 dla zwykłego roku, a 366 dla roku przestępnego.
+Określenie, czy rok jest przestępny odbywa się według formuły:
+.sp
+(rok) %4 == 0 && ((rok) %100 != 0 || (rok) %400 == 0)
+.sp
+Wzór ten jest zdefiniowany jako makro
+.IR __isleap(rok) ,
+które można również znaleźć w
+.IR <time.h> .
+.SH "ZGODNE Z"
+Funkcja ta pojawiła się w SunOS 4.x.
+.SH UWAGI
+Ta funkcja powstała jedynie dla celów zgodności. Nie należy jej używać
+w nowych programach.
+W wersji SCO tej funkcji występuje problem roku 2000.
+.SH "ZOBACZ TAKŻE"
+.BR strftime (3),
+.BR time (3)

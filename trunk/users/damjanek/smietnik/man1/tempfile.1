@@ -1,0 +1,73 @@
+.\" PTM/WK/2001-VI
+.\" Translation update: Robert Luberda <robert@debian.org>, Mar 2004, debianutils 2.8
+.\" $Id: tempfile.1,v 1.3 2004/04/05 11:04:55 robert Exp $
+.\" -*- nroff -*-
+.TH TEMPFILE 1 "22 marca 2004" "Debian"
+.SH NAZWA
+tempfile \- w bezpieczny sposób tworzy plik tymczasowy
+.SH SKŁADNIA
+.B tempfile
+[\-d KATALOG] [\-p ŁAŃCUCH] [\-s ŁAŃCUCH] [\-m TRYB] [\-n PLIK] [\-\-directory=KATALOG]
+[\-\-prefix=ŁAŃCUCH] [\-\-suffix=ŁAŃCUCH] [\-\-mode=TRYB] [\-\-name=PLIK] [\-\-help] [\-\-version]
+.SH OPIS
+.PP
+.B tempfile
+w bezpieczny sposób tworzy plik tymczasowy. Do wyboru nazwy korzysta z
+.BR tempnam (3)
+i otwiera plik używając flag O_RDWR | O_CREAT | O_EXCL. Nazwa pliku jest
+wypisywana na standardowym wyjściu.
+.PP
+Katalog, w którym ma być umieszczony plik jest wyszukiwany w następującej
+kolejności:
+.IP a)
+Katalog podany w zmiennej środowiskowej
+.BR TMPDIR ,
+jeśli można do niego zapisać.
+.IP b)
+Katalog wyszczególniony jako argument opcji
+.BR --directory ,
+jeśli ją podano.
+.IP c)
+Katalog
+.IR /tmp .
+.PP
+Pakiety Debiana korzystające z
+.B tempfile
+w skryptach opiekunów muszą być zależne od debianutils >= 1.6.
+.SH OPCJE
+.TP
+.BI "-d, --directory " KATALOG
+Umieszcza utworzony plik w zadanym KATALOGU.
+.TP
+.BI "-p, --prefix " ŁAŃCUCH
+Do wygenerowania nazwy wykorzystuje do pięciu liter z ŁAŃCUCHA.
+.TP
+.BI "-s, --suffix " ŁAŃCUCH
+Tworzy plik z ŁAŃCUCHEM jako przyrostkiem nazwy.
+.TP
+.BI "-m, --mode " TRYB
+Otwiera plik z zadanym TRYBEM, zamiast z domyślnym 0600.
+.TP
+.BI "-n, --name " PLIK
+Zamiast korzystać z
+.BR tempnam (3)
+jako nazwy pliku używa PLIKU.
+Jeśli podano tę opcję, to -d, -p i -s są ignorowane.
+.TP
+.B "--help"
+Wypisuje na standardowym wyjściu komunikat o sposobie użycia i pomyślnie
+kończy pracę.
+.TP
+.B "--version"
+Wypisuje na standardowym wyjściu informację o wersji i pomyślnie
+kończy pracę.
+.SH ZWRACANE WARTOŚCI
+Zwrócony kod 0 oznacza, że pomyślnie stworzono plik tymczasowy.
+Każdy inny kod wskazuje błąd.
+.SH BŁĘDY
+Przy tworzeniu plików na partycjach NFS nie gwarantuje się tworzenia
+wyłącznego.
+.SH "ZOBACZ TAKŻE"
+.BR tempnam (3)
+.BR mktemp (1)
+

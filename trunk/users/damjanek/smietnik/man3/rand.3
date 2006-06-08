@@ -1,0 +1,111 @@
+.\" Tłumaczenie wersji man-pages 1.39 - wrzesień 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Mon Mar 29 22:48:44 1993, David Metcalfe
+.\" Modified Wed Apr 28 01:35:00 1993, Lars Wirzenius
+.\" Modified Sat Jul 24 18:39:41 1993, Rik Faith (faith@cs.unc.edu)
+.\" Modified Thu May 18 10:10:13 1995, Rik Faith (faith@cs.unc.edu) to add
+.\"          better discussion of problems with rand on other systems.
+.\"          (Thanks to Esa Hyyti{ (ehyytia@snakemail.hut.fi).)
+.\" Modified Fri Apr 10 01:47:03 1998, Nicolás Lichtmaier <nick@debian.org>
+.\"          with contribution from Francesco Potorti <F.Potorti@cnuce.cnr.it>
+.\" --------
+.TH RAND 3 1995-05-18 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+rand, srand \- generator liczb losowych.
+.SH SKŁADNIA
+.nf
+.B #include <stdlib.h>
+.sp
+.B int rand(void);
+.sp
+.BI "void srand(unsigned int " seed );
+.fi
+.SH OPIS
+Funkcja \fBrand()\fP zwraca pseudolosową liczbę całkowitą z zakresu pomiędzy
+0 a \fBRAND_MAX\fR.
+.PP
+Funkcja \fBsrand()\fP ustawia swój argument jako wartość początkową dla
+nowego ciągu pseudolosowych liczb całkowitych zwracanych przez \fBrand()\fP.
+Ciągi te są powtarzalne poprzez wywołanie \fBsrand()\fP z tą samą wartością
+początkową.
+.PP
+Jeśli nie podano wartości początkowej, funkcja \fBrand()\fP automatycznie
+ustawia tę wartość na 1.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBrand()\fP zwraca wartość z zakresu pomiędzy 0 a RAND_MAX.
+Funkcja \fBsrand()\fP nie zwraca żadnej wartości.
+.SH UWAGI
+Wersje \fBrand()\fP i \fBsrand()\fP w bibliotece C Linuksa korzystają
+z tego samego generatora liczb losowych, co \fBrandom()\fP i \fBsrandom()\fP,
+więc mniej znaczące bity powinny być tak samo losowe jak bity bardziej
+znaczące. Jednakże, w starszych implementacjach
+.B rand()
+bity mniej znaczące są znacznie mniej losowe niż bity bardziej znaczące.
+.PP
+W
+.I Numerical Recipes in C: The Art of Scientific Computing
+(William H. Press, Brian P. Flannery, Saul A. Teukolsky, William
+T. Vetterling; New York: Cambridge University Press, 1992 (wyd. 2,
+str. 277)), umieszczono następujące komentarze:
+.RS
+"Jeśli chcesz wygenerować liczbę losową spomiędzy 1 a 10, powinieneś
+zawsze robić to korzystając z bardziej znaczących bitów, jak w
+.RS
+.sp
+j=1+(int) (10.0*rand()/(RAND_MAX+1.0));
+.sp
+.RE
+a nigdy z czegoś podobnego do
+.RS
+.sp
+j=1+(rand() % 10);
+.sp
+.RE
+(co korzysta z mniej znaczących bitów)."
+.RE
+.PP
+Generacja liczb losowych jest złożonym zagadnieniem. Książka
+.I Numerical Recipes in C
+(patrz referencje powyżej)
+zawiera doskonałą dyskusję praktycznych wyników generacji liczb losowych
+w rozdziale 7 (Random Numbers).
+.PP
+Bardziej teoretyczną dyskusję, która również szeroko omawia wiele praktycznych
+wyników można znaleźć w rozdziale 3 (Random Numbers) Donalda E. Knutha
+.IR "The Art of Computer Programming" ,
+tom 2 (Seminumerical Algorithms), wyd. 2; Reading, Massachusetts:
+Addison-Wesley Publishing Company, 1981.
+.SH "ZGODNE Z"
+SVID 3, BSD 4.3, ISO 9899
+.SH "ZOBACZ TAKŻE"
+.BR random (3),
+.BR srandom (3),
+.BR initstate (3),
+.BR setstate (3)

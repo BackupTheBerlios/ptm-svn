@@ -1,0 +1,229 @@
+.\" {PTM/LK/0.1/20-10-1998/"system hipertekstu"}
+.\" Tłumaczenie: 20-10-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH info 1 "7 grudnia 1990"
+.SH NAZWA
+info \- system hipertekstu GNU
+.SH SKŁADNIA
+.B info
+[
+.B \-\-nazwa-opcji wartość-opcji
+]
+.B opcja-menu "..."
+
+.SH COPYRIGHT
+.if n Copyright (C) 1989, 1993 Free Software Foundation, Inc.
+.if t Copyright \(co 1989, 1993 Free Software Foundation, Inc.
+.SH OPIS
+.LP
+W ramach projektu GNU stworzono system hipertekstu o nazwie
+.I Info
+pozwalający na drukowanie pliku pomocy lub jego przeglądanie 
+za pomocą programu
+.B info.
+Programu 
+.B info
+można używać
+wewnątrz edytora Emacs, lub też uruchamiać samodzielny program, który został
+opisany w tej instrukcji.
+Ta strona opisuje w skrócie możliwości programu.
+
+.SH OPCJE
+.TP
+.B \-\-directory katalog
+Dodanie
+.B katalogu
+do listy katalogów przeglądanych, gdy 
+.B info
+poszukuje pliku. Możesz użyć opcji
+.B \-\-directory 
+wielokrotnie.
+Możesz zamiast tej opcji użyć zmiennej środowiskowej
+.B INFOPATH;
+jeżeli opcja
+.B \-\-directory
+nie zostanie użyta, wówczas używana jest zmienna
+.B INFOPATH.
+Wartością
+.B INFOPATH 
+jest lista katalogów rozdzielonych dwukropkami. Jeżeli zmienna
+.B INFOPATH
+nie istnieje i nie użyto opcji
+.B \-\-directory-path,
+.B info
+używa domyślnej ścieżki.
+.TP
+.B \-f plik
+Otworzenie konkretnego pliku
+.B info.
+Domyślnie jest to plik
+.B dir;
+jeżeli użyjesz tej opcji,
+.B info
+rozpocznie przeglądanie węzła
+.B Top
+pliku, tzn. węzła (PLIK)Top.
+
+.TP
+.B \-n węzeł
+Przeglądanie konkretnego węzła w pliku startowym wczytywanym przez
+.B info.
+Ta opcja jest szczególnie użyteczna we współdziałaniu z opcją
+.B \-\-file.
+Możesz użyć opcji
+.B \-\-node
+wielokrotnie.
+
+.TP
+.B -o plik
+Zapisanie treści pliku info do 
+.B pliku, 
+zamiast uruchomienia interaktywnej sesji info.
+
+.TP
+.B \-h
+Wyświetlenie krótkiego opisu dostępnych opcji programu
+.B info.
+
+.TP
+.B \-\-version
+Wyświetlenie wersji programu
+.B info
+i zakończenie działania.
+
+.TP
+.B menu-item
+Pozostałe argumenty są traktowane przez
+.B info
+jako nazwy elementów menu. Pierwsza z nich jest opcją menu w pierwszym
+otwieranym pliku. Drugi argument jest opcją menu w węźle określonym
+pierwszym argumentem. Możesz się łatwo przenosić między węzłami korzystając
+z opcji menu je określających. Na przykład:
+
+.B       info emacs buffers
+
+wybiera najpierw opcję menu
+.B emacs 
+w węźle
+.B (dir)Top,
+a następnie opcję menu
+.B buffers
+w węźle
+.B (emacs)Top.
+.SH POLECENIA
+Podczas używania programu
+.B info
+dostępne są następujące polecenia:
+.TP
+.B h
+Wprowadzenie do używania programu Info.
+.TP
+.B ?
+Krótki opis poleceń Info.
+.TP
+.B h
+Wybór opcji menu 'info' w głównym węźle; daje to znacznie bardziej
+wyczerpujący zbiór informacji niż
+.B ?.
+.TP
+.B Ctrl-g
+Anulowanie jakiejkolwiek wykonywanej właśnie czynności.
+.TP
+.B Ctrl-l
+Odświeżenie ekranu.
+.PP
+Wybór innych węzłów:
+.TP
+.B n
+Wybranie węzła 'następnego' w stosunku do bieżącego.
+.TP
+.B p
+Wybranie węzła 'poprzedniego' w stosunku do bieżącego.
+.TP
+.B u
+Wybranie węzła 'nadrzędnego' w stosunku do bieżącego.
+.TP
+.B m
+Wybór opcji menu określonej przez wpisanie jej nazwy. Wybranie opcji menu
+powoduje przejście do innego węzła. Nie trzeba wpisywać kompletnej nazwy
+węzła; po wpisaniu kilku początkowych liter i naciśnięciu spacji lub
+tabulatora
+.B info
+spróbuje uzupełnić nazwę. Jeżeli do wpisanych początkowych liter pasuje
+kilka opcji menu to po ponownym naciśnięciu spacji lub tab zostanie
+wyświetlona ich lista. Możesz też uzyskać tę listę naciskając
+.B ?. 
+Po wpisaniu kilku znaków i naciśnięciu klawisza return 
+.B info
+spróbuje uzupełnić nazwę; jeżeli do początkowych liter pasowało kilka nazw
+opcji, wybrana zostanie pierwsza z nich.
+.TP
+.B f
+Przejście do węzła określonego przez odnośnik (hiperlink). Zostaniesz
+poproszony o wpisanie nazwy odnośnika (działa uzupełnianie nazw jak dla opcji 
+.BR m ")."
+.TP
+.B l
+Przejście do ostatnio odwiedzonego węzła.
+.PP
+przenoszenie się w granicach węzła:
+.TP
+.B Space
+Jedna strona w dół.
+.TP
+.B DEL
+Jedna strona w górę.
+.TP
+.B b
+Początek węzła.
+.PP
+Polecenia zaawansowane:
+.TP
+.B q
+Koniec pracy programu
+.B info.
+.TP
+.B 1
+Pierwsza opcja w menu danego węzła.
+.TP
+.B 2 \-\- 5
+Druga ... piąta opcja w menu danego węzła.
+.TP
+.B g
+Przeniesienie się do węzła określonego nazwą. Można podać również nazwę
+pliku, jak np.
+.B (PLIK)WĘZEŁ.
+.TP
+.B s
+Poszukiwanie w danym pliku
+.B info
+danego ciągu znaków.
+.TP
+.B M-x print-node
+Potokowe przesłanie (pipe) zawartości bieżącego węzła do polecenia
+określonego przez zmienną środowiskową
+.B INFO_PRINT_COMMAND.
+Jeżeli zmienna nie istnieje, zawartość węzła jest przesyłana bezpośrednio do 
+.B lpr.
+.SH ŚRODOWISKO
+.TP
+.B INFOPATH
+Lista nazw katalogów poprzedzielanych dwukropkami, w których należy szukać
+plików
+.B info.
+Używana, jeżeli nie użyto opcji 
+.B \-\-directory.
+.TP
+.B INFO_PRINT_COMMAND
+Nazwa polecenia służącego do drukowania.
+.SH ZOBACZ TAKŻE
+.BR emacs (1) ", pinfo" (1)
+.SH AUTOR
+.RS
+Brian Fox, Free Software Foundation
+.br
+bfox@ai.mit.edu
+.SH AUTOR OPISU
+.RS
+Robert Lupton; updated by Robert J. Chassell.
+.br
+rhl@astro.princeton.edu; bob@gnu.ai.mit.edu

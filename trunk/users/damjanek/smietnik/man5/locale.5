@@ -1,0 +1,576 @@
+.\" Hey Emacs, this is -*- nroff -*-
+.\"
+.\" This file is part of locale(1) which displays the settings of the
+.\" current locale.
+.\" Copyright (C) 1994  Jochen Hein (Hein@Student.TU-Clausthal.de)
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
+.\"
+.\" Translation (c) 1998 "Gwidon S. Naskrent" <naskrent@hoth.amu.edu.pl>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Mar 2002,
+.\"              manpages 1.48
+.\"
+.TH locale 5 1994-11-09 "Obsługa wielu języków" "Podręcznik użytkownika Linuksa"
+.SH NAZWA
+locale \- opis pliku definicji locale
+.SH OPIS
+Pliki definicji
+.B locale
+zawierają wszelkie informacje potrzebne poleceniu
+.BR localedef (1)
+do przekształcenia tych informacji w binarną bazę danych locale.
+
+Pliki definicji składają się z sekcji opisujących szczegółowo poszczególne
+kategorie locale.
+.SH SKŁADNIA
+Na początku pliku definicji locale znajduje się od nagłówek, który może
+zawierać następujące słowa kluczowe:
+.TP
+.IR <escape_char>
+po którym następuje pewien znak. Znak ten powinien być używany w pozostałej
+części pliku jako znak cytyjący, zaznaczając znaki które należy interpretować
+w szczególny sposób. Domyślnie jest to odwrotny ukośnik (
+.B \\\\  
+).
+.TP
+.I <comment_char>
+po którym następuje pewien znak. Znak ten będzie używany w pozostałej części
+pliku jako znak komentarza. Domyślnie jest to krzyżyk (#).
+
+.PP
+Definicje locale podzielone są na części \- jedna dla każdej kategorii locale.
+Każda część może zostać skopiowana z innego istniejącego locale, lub może
+zostać zdefiniowana od podstaw. Jeśli kategorię należy skopiować, jedynym
+dozwolonym słowem kluczowym dla tej definicji jest słowo
+.BR copy ,
+po którym następuje nazwa locale, które należy skopiować.
+
+.SS LC_CTYPE
+Definicja kategorii
+.B LC_CTYPE
+zaczyna się od napisu
+.I LC_CTYPE 
+w pierwszej kolumnie.
+
+Dozwolone są następujące słowa kluczowe:
+
+.TP
+.I upper
+po którym następuje lista wielkich liter. Litery od
+.B A
+do
+.B Z
+są dołączane automatycznie. Znaki, które określono jednocześnie jako
+.BR cntrl ,
+.BR digit ,
+.B punct
+lub
+.B space
+są niedozwolone.
+
+.TP
+.I lower
+po którym następuje lista małych liter. Litery od
+.B a
+do
+.B z
+są dołączane automatycznie. Znaki, które określono jednocześnie jako
+.BR cntrl ,
+.BR digit ,
+.B punct
+lub
+.B space
+są niedozwolone.
+
+.TP
+.I alpha
+po którym następuje lista liter. Wszystkie znaki określone jako 
+.B upper
+lub
+.B lower
+są dołączane automatycznie. Znaki, które określono jednocześnie jako
+.BR cntrl ,
+.BR digit ,
+.B punct
+lub
+.B space
+są niedozwolone.
+
+.TP
+.I digit
+po którym następuje lista znaków klasyfikowanych jako cyfry. Dozwolone są
+tylko cyfry od
+.B 0
+do
+.BR 9 .
+Są one dołączane domyślnie do tej klasy.
+
+.TP
+.I space
+po którym następuje lista znaków klasyfikowanych jako białe znaki.
+Znaki które określone są jednocześnie jako
+.BR upper ,
+.BR lower ,
+.BR alpha ,
+.BR digit ,
+.B graph
+lub
+.B xdigit
+są niedozwolone. Znaki 
+.BR <spacja> ,
+.BR <nowa-strona> ,
+.BR <nowa-linia> ,
+.BR <powrót-karetki> ,
+.B <tabulacja>
+i
+.B <tabulacja-pionowa>
+są dołączane domyślnie. 
+
+.TP
+.I cntrl
+po którym następuje lista znaków sterujących. Znaki, które określono
+jednocześnie jako
+.BR upper ,
+.BR lower ,
+.BR alpha ,
+.BR digit ,
+.BR punct ,
+.BR graph ,
+.B print
+lub
+.BR xdigit ,
+są niedozwolone.
+.TP
+.I punct
+po którym następuje lista znaków interpunkcyjnych. Znaki, które określono
+jednocześnie jako
+.BR upper ,
+.BR lower ,
+.BR alpha ,
+.BR digit ,
+.BR cntrl ,
+.BR xdigit
+oraz znak
+.B <spacja>
+są niedozwolone.
+
+.TP
+.I graph
+po którym następuje lista znaków widocznych, z wyłączeniem znaku
+.BR <spacja> .
+Znaki określone jako
+.BR upper ,
+.BR lower ,
+.BR alpha ,
+.BR digit ,
+.B xdigit
+oraz
+.B punct 
+są dołączane automatycznie. Znaki, które określono jednocześnie jako
+.B cntrl
+są niedozwolone.
+
+.TP
+.I print
+po którym następuje lista znaków widocznych, łącznie ze znakiem
+.BR <spacja> .
+Znaki określone jako
+.BR upper ,
+.BR lower ,
+.BR alpha ,
+.BR digit ,
+.BR xdigit ,
+.B punct
+oraz znak
+.B <spacja>
+są dołączane automatycznie. Znaki, które określono jednocześnie jako
+.B cntrl
+są niedozwolone.
+
+.TP
+.I xdigit
+po którym następuje lista znaków klasyfikowanych jako cyfry szesnastkowe.
+Muszą być podane cyfry dziesiętne, po których następuje jeden lub więcej
+zestawów sześciu znaków, w porządku rosnącym. Domyślnie zawarte są następujące
+znaki:
+.B 0
+do
+.B 9 ,
+.B a
+do
+.B f ,
+.B A
+do
+.B F .
+
+.TP
+.I blank
+po którym następuje lista znaków klasyfikowanych jako 
+.B puste .
+Znaki
+.B <spacja>
+i 
+.B <tabulacja>
+są dołączane automatycznie.
+
+.TP
+.I toupper
+po którym następuje lista odwzorowań liter małych na wielkie. Każde
+odwzorowanie to para składająca się z małej i wielkiej litery, rozdzielonych
+.B ,
+i zamkniętych w nawiasach. Elementy tej listy rozdzielone są średnikami.
+.TP
+.I tolower
+po którym następuje lista odwzorowań liter wielkich na małe. Jeśli nie
+występuje słowo kluczowe
+.BR tolower  ,
+to stosowane jest odwzorowanie odwrotne do listy
+.BR toupper .
+
+.PP
+Definicję
+.B LC_CTYPE
+kończy napis
+.IR "END LC_CTYPE" .
+
+.SS LC_COLLATE
+Kategoria 
+.B LC_COLLATE 
+definiuje reguły porównywania znaków. Z powodu ograniczeń w libc nie wszystkie
+opcje POSIX zostały zaimplementowane.
+
+Definicja zaczyna się od napisu
+.B LC_COLLATE
+w pierwszej kolumnie.
+
+Dozwolone są następujące słowa kluczowe:
+
+.TP
+.I collating-element
+
+.TP
+.I collating-symbol
+
+.PP
+Definicja porządku zaczyna się od linii:
+.TP
+.I order_start
+.PP
+po której następuje lista słów kluczowych 
+.BR forward ,
+.B backward
+lub
+.BR position .
+Definicja porządku składa się z linii opisujących kolejność, i zakończona
+jest słowem kluczowym
+.TP
+.IR order_end .
+.PP
+
+Więcej szczegółów można znaleźć w źródłach, w
+.B /usr/lib/nls/src
+zwłaszcza w przykładach
+.BR POSIX ,
+.B Example
+i
+.BR Example2 .
+
+.PP
+Definicję
+.B LC_COLLATE
+kończy napis
+.IR "END LC_COLLATE" .
+
+.SS LC_MONETARY
+Definicja zaczyna się od napisu
+.B LC_MONETARY
+w pierwszej kolumnie.
+
+Dozwolone są następujące słowa kluczowe:
+
+.TP
+.I int_curr_symbol
+po którym następuje międzynarodowy symbol waluty. Musi to być czteroznakowy
+łańcuch zawierający międzynarodowy symbol waluty zdefiniowany w standardzie
+ISO 4217 (trzy znaki), po których następuje separator.
+.TP
+.I currency_symbol
+po którym następuje symbol waluty lokalnej.
+.TP
+.I mon_decimal_point
+po którym następuje łańcuch służący do oddzielania części całkowitej od
+ułamkowej w zapisie dziesiętnym wielkości pieniężnych.
+.TP
+.I mon_thousands_sep
+po którym następuje łańcuch służący jako separator trzycyfrowych grup
+przy formatowaniu wielkości pieniężnych.
+.TP
+.I mon_grouping
+po którym następuje łańcuch opisujący sposób formatowania wielkości
+numerycznych.
+.TP
+.I positive_sign
+po którym następuje łańcuch służący jako znak dodatni dla wielkości
+pieniężnych.
+.TP
+.I negative_sign
+po którym następuje łańcuch służący jako znak ujemny dla wielkości
+pieniężnych.
+.TP
+.I int_frac_digits
+po którym następuje liczba cyfr dziesiętnych, które powinny wystąpić
+przy formatowaniu z
+.BR int_curr_symbol .
+.TP
+.I frac_digits
+po którym następuje liczba cyfr dziesiętnych, które powinny wystąpić
+przy formatowaniu z
+.BR currency_symbol .
+.TP
+.I p_cs_precedes
+po którym następuje liczba całkowita o wartości
+.B 1 
+jeżeli
+.I currency_symbol
+lub
+.I int_curr_symbol
+mają poprzedzać sformatowaną wielkość pieniężną, lub
+.B 0
+jeśli symbol ma występować po tej wielkości.
+.TP
+.I p_sep_by_space
+po którym następuje liczba całkowita.
+.RS
+.TP
+.B 0
+oznacza, że pomiędzy symbolem a wartością nie powinna wystąpić spacja.
+.TP
+.B 1
+oznacza, że pomiędzy symbolem a wartością powinna wystąpić spacja.
+.TP
+.B 2 
+oznacza, że pomiędzy symbolem a łańcuchem określającym znak powinna wystąpić
+spacja, jeśli elementy te przylegają do siebie.
+.RE
+.TP
+.I n_cs_precedes
+.RS
+.TP
+.B 0 
+- jeśli symbol następuje po wartości
+.TP
+.B 1
+- jeśli symbol poprzedza wartość
+.RE
+.TP
+.I n_sep_by_space
+Liczba całkowita o wartości
+.B 0
+jeśli 
+.I currency_symbol
+lub  
+.I int_curr_symbol
+nie jest oddzielony spacją od ujemnej wielkości pieniężnej, o wartości
+.B 1
+jeżeli symbol od wielkości oddziela spacja, a o wartości
+.B 2
+jeżeli spacja rodziela symbol i łańcuch określający znak, gdy stoją obok 
+siebie.
+.TP
+.I p_sign_posn
+.RS
+.TP
+.B 0
+Wielkość i
+.I currency_symbol
+lub
+.I int_curr_symbol
+są ujęte w nawiasy.
+.TP
+.B 1
+Łańcuch określający znak poprzedza wielkość i
+.I currency_symbol
+lub
+.IR int_curr_symbol .
+.TP
+.B 2
+Łańcuch określający znak następuje po wielkości i 
+.I currency_symbol
+lub
+.IR int_curr_symbol .
+.TP
+.B 3
+Łańcuch określający znak poprzedza
+.I currency_symbol
+lub
+.IR int_curr_symbol .
+.TP
+.B 4
+Łańcuch określający znak następuje po
+.I currency_symbol
+lub
+.IR int_curr_symbol .
+.RE
+.TP
+.I n_sign_posn
+.RS
+.TP
+.B 0
+Wielkość i
+.I currency_symbol
+lub
+.I int_curr_symbol
+są ujęte w nawiasy.
+.TP
+.B 1
+Łańcuch określający znak poprzedza wielkość i
+.I currency_symbol
+or the
+.IR int_curr_symbol .
+.TP
+.B 2
+Łańcuch określający znak następuje po wielkości i
+.I currency_symbol
+lub
+.IR int_curr_symbol .
+.TP
+.B 3
+Łańcuch określający znak poprzedza
+.I currency_symbol
+lub
+.IR int_curr_symbol .
+.TP
+.B 4
+Łańcuch określający znak następuje po
+.I currency_symbol
+lub
+.IR int_curr_symbol .
+.RE
+.PP
+Definicję 
+.B LC_MONETARY
+kończy napis
+.IR "END LC_MONETARY" .
+
+.SS LC_NUMERIC
+Definicja zaczyna się od napisu
+.B LC_NUMERIC
+w pierwszej kolumnie.
+
+Dozwolone są następujące słowa kluczowe:
+
+.TP
+.I decimal_point
+po którym następuje łańcuch służący przy formatowaniu wielkości liczbowych do
+oddzielania części całkowitej i ułamkowej liczb dziesiętnych.
+.TP
+.I thousands_sep
+po którym następuje łańcuch służący przy formatowaniu wielkości liczbowych
+jako separator grup trzycyfrowych.
+.TP
+.I grouping
+po którym następuje łańcuch określający sposób formatowania wielkości
+liczbowych.
+.PP
+Definicję
+.B LC_NUMERIC
+kończy napis
+.IR "END LC_NUMERIC" .
+
+.SS LC_TIME
+Definicja zaczyna się od napisu
+.B LC_TIME
+w pierwszej kolumnie.
+
+Dozwolone są następujące słowa kluczowe:
+
+.TP
+.I abday
+po którym następuje lista skrótów nazw dni tygodnia. Lista zaczyna się od
+niedzieli (lub jej tłumaczenia).
+.TP
+.I day
+po którym następuje lista nazw dni tygodnia. Lista zaczyna się od niedzieli.
+.TP
+.I abmon
+po którym następuje lista skrótów nazw miesięcy.
+.TP
+.I mon
+po którym następuje lista nazw miesięcy.
+.TP
+.I am_pm
+Odpowiednia reprezentacja łańcuchów
+.B am
+(przed południem) i 
+.B pm
+(po południu) .
+.TP
+.I d_t_fmt
+Odpowiedni format daty i czasu.
+.TP
+.I d_fmt
+Odpowiedni format daty.
+.TP
+.I t_fmt
+Odpowiedni format czasu.
+.TP
+.I t_fmt_ampm
+Odpowiedni format czasu dla zegara 12-godzinnego.
+.PP
+Definicję 
+.B LC_TIME
+kończy napis
+.IR "END LC_TIME" .
+
+.SS LC_MESSAGES
+Definicja zaczyna się od napisu
+.B LC_MESSAGES
+w pierwszej kolumnie.
+
+Dozwolone są następujące słowa kluczowe:
+
+.TP
+.I yesexpr
+po którym następuje wyrażenie regularne opisujące możliwe odpowiedzi
+na tak.
+.TP
+.I noexpr
+po którym następuje wyrażenie regularne opisujące możliwe odpowiedzi
+na nie.
+
+.PP
+Definicję
+.B LC_MESSAGES
+kończy napis
+.IR "END LC_MESSAGES" .
+
+Szczegóły można znależć w standardzie POSIX.2.
+.SH PLIKI
+/usr/lib/locale/
+\- baza danych bieżących ustawień locale tej kategorii.
+/usr/lib/nls/charmap/* \- pliki z zestawami znaków
+.SH BŁĘDY
+Ta strona podręcznika nie jest kompletna.
+.\" .SH AUTOR
+.\" Jochen Hein (hein@student.tu-clausthal.de)
+.SH "ZGODNE Z"
+POSIX.2
+.SH "ZOBACZ TAKŻE"
+Opisy locale w dokumentacji info w pakietach libc, gettext oraz poza tym
+.BR setlocale (3),
+.BR localeconv (3),
+.BR charmap (5),
+.BR locale (1),
+.BR localedef (1)

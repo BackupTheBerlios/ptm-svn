@@ -1,0 +1,86 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Tłumaczenie wersji man-pages 1.45 - grudzień 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright (c) 1993 Michael Haardt
+.\" (michael@moria.de)
+.\" Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Sat Jul 24 14:23:14 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Oct 18 17:31:43 1998 by Andries Brouwer (aeb@cwi.nl)
+.\" --------
+.TH FTIME 3 2001-12-14 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+ftime \- zwraca datę i czas
+.SH SKŁADNIA
+.B "#include <sys/timeb.h>"
+.sp
+.BI "int ftime(struct timeb *" tp );
+.SH OPIS
+Zwraca biężącą datę i aktualny czas w
+.IR tp ,
+które jest zdefiniowane następująco:
+.sp
+.in +1i
+.nf
+struct timeb {
+	time_t   time;
+	unsigned short millitm;
+	short    timezone;
+	short    dstflag;
+};
+.fi
+.in -1i
+.LP
+\fItime\fP jest tu liczbą sekund od początku epoki, \fImillitm\fP jest liczbą
+milisekund od chwili \fItime\fP sekund od początku epoki, \fItimezone\fP jest
+przesunięciem czasu dla lokalnej strefy czasowej, mierzonym w minutach
+w kierunku na zachód od Greenwich, a \fIdstflag\fP jest znacznikiem, który,
+jeśli jeśli ma wartość niezerową, wskazuje czy w danej części roku obowiązuje
+lokalnie czas letni.
+.LP
+Obecnie zawartość pól \fItimezone\fP i \fIdstflag\fP nie jest określona.
+.SH "WAROŚĆ ZWRACANA"
+Funkcja ta zawsze zwraca 0.
+.SH BŁĘDY
+Funkcja ta jest przestarzała. Nie należy jej używać. Jeśli wystarczy czas
+w sekundach, można używać
+.BR time (2);
+.BR gettimeofday (2)
+podaje mikrosekundy;
+.BR clock_gettime (3)
+podaje nanosekundy, lecz nie jest jeszcze powszechnie dostępna.
+.LP
+Pod libc4 i libc5 pole \fImillitm\fP jest znaczące, lecz wczesne wersje
+glibc2 miały błąd i zwracały tam 0; glibc 2.1.1 zachowuje sie znowu
+prawidłowo.
+.SH HISTORIA
+Funkcja
+.B ftime()
+pojawiła się w 4.2BSD.
+.SH "ZGODNE Z"
+BSD 4.2, POSIX 1003.1-2001.
+.SH "ZOBACZ TAKŻE"
+.BR gettimeofday (2),
+.BR time (2)

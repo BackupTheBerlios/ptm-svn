@@ -1,0 +1,40 @@
+.\" {PTM/LK/0.1/27-09-1998/"yuvsplittoppm - przekształcenie plików .Y, .U i .V do postaci .ppm"}
+.\" Tłumaczenie: 27-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH yuvsplittoppm 1 "26 sierpnia 93"
+.IX yuvsplittoppm
+.SH NAZWA
+yuvsplittoppm \- przekształć pliki typu Y, U i V do postaci przenośnej pixmapy
+(ppm)
+.SH SKŁADNIA
+.B yuvsplittoppm
+.I nazwa_bazowa szerokość wysokość
+[\-ccir601]
+.SH OPIS
+.I yuvsplittoppm
+odczytuje trzy pliki, zawierające składowe YUV; są to pliki:
+.I nazwa_bazowa
+.Y,
+.I nazwa_bazowa
+.U
+i
+.I nazwa_bazowa
+.V .
+Następnie zapisuje na standardowe wyjście przenośną pixmapę (plik .ppm).
+
+Ponieważ pliki YUV nie zawierają nagłówków, wymiary, tzn.
+.I szerokość
+oraz
+.I wysokość
+muszą być podane w linii poleceń.
+.SH OPCJE
+.TP
+.B \-ccir601
+Zakłada, że trójki YUV są przeskalowane do mniejszego zakresu zgodnie ze
+standardem
+CCIR 601 (MPEG). Inaczej program zakłada, że pliki są w standardzie
+JFIF (JPEG).
+.SH "ZOBACZ TAKŻE"
+ppmtoyuvsplit(1), yuvtoppm(1), ppm(5)
+.SH AUTOR
+Marcel Wijkstra <wijkstra@fwi.uva.nl>, na podstawie
+.I ppmtoyuvsplit.

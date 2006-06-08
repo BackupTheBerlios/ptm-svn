@@ -1,0 +1,67 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1995 Michael Chastain (mec@shell.portal.com), 15 April 1995.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Updated, aeb, 980612
+.\" Translation (c) 2002-2003 Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"              manpages 1.55
+.\"
+.TH UNIMPLEMENTED 2 2003-02-28 "Linux 2.4" "Podręcznik programisty Linuksa"
+.SH NAZWA
+afs_syscall, break, ftime, getpmsg, gtty, lock, mpx, prof, profil,
+putpmsg, security, stty, ulimit \- niezaimplementowane wywołania systemowe
+.SH SKŁADNIA
+Niezaimplementowane wywołania systemowe.
+.SH OPIS
+Te wywołania systemowe nie zostały zaimplementowane w kernelu Linuksa 2.4.
+.SH "WARTOŚĆ ZWRACANA"
+Te wywołania systemowe zawsze zwracają \-1 iustawiają
+.I errno
+na
+.BR ENOSYS .
+.SH UWAGI
+Należy zauważyć, że
+.IR ftime (3),
+.IR profil (3)
+i
+.IR ulimit (3)
+zostały zaimplementowane jako funkcje biblioteczne.
+
+Niektóre wywołania systemowe, takie jak
+.IR alloc_hugepages (2),
+.IR free_hugepages (2),
+.IR ioperm (2),
+.IR iopl (2)
+i
+.IR vm86 (2)
+istnieją tylko na niektórych architekturach.
+
+Niektóre wywołania systemowe, takie jak
+.IR ipc (2)
+i
+.IR {create,init,delete}_module (2)
+istnieją tylko dla jąder Linuksa zbudowanych z włączonym wspomaganiam dla
+nich.
+
+.SH "ZOBACZ TAKŻE"
+.BR obsolete (2)

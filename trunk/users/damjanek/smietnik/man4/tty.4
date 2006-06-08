@@ -1,0 +1,59 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 17:02:24 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.\" Tłumaczenie na język polski: Paweł Olszewski (alder@amg.net.pl)
+.\" {PTM/PO/0.2/02-06-1998/"bieżący terminal sterujący"}
+.\" Aktualność: man-pages 1.48
+.\" 
+.TH TTY 4 1992-01-21 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+tty \- bieżący terminal sterujący
+.SH OPIS
+Plik \fB/dev/tty\fP jest plikiem specjalnym urządzenia znakowego o numerze
+głównym 5 i pobocznym 0, najczęściej z prawami dostępu 0666 i należący do
+użytkownika root i grupy tty. Jest synonimem terminala sterującego
+danego procesu, jeśli taki istnieje.
+.LP
+Oprócz funkcji \fBioctl()\fP obsługiwanych przez urządzenie, do którego
+odwonosi się \fBtty\fP, obsługiwana jest dodatkowo następująca funkcja
+\fBioctl()\fP:
+.IP \fBTIOCNOTTY\fP
+Odłączenie bieżącego procesu od przypisanego mu terminala sterującego i
+usunięcie go z bieżącej grupy procesów, bez dołączania go do nowej grupy
+procesów (tj. ID grupy procesów przypisywana jest wartość zero). Ta funkcja
+\fBioctl()\fP działa jedynie na deskryptorach plików podłączonych do
+\fB/dev/tty\fP; jest używana przez procesy demonów, gdy są one uruchamiane
+przez użytkownika na terminalu. Proces próbuje otworzyć \fB/dev/tty\fP; jeśli
+operacja ta się powiedzie, proces odłącza się od terminala za pomocą
+\fBTIOCNOTTY\fP. Jeśli operacja ta się nie powiodła, wówczas oczywiście
+proces nie ma swojego terminala, więc nie potrzebuje się odłączać.
+.SH PLIKI
+/dev/tty
+.SH "ZOBACZ TAKŻE"
+.BR mknod (1),
+.BR chown (1),
+.BR getty (1),
+.BR termios (3), 
+.BR console (4),
+.BR ttys (4)

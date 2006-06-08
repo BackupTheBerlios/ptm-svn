@@ -1,0 +1,953 @@
+'\" t
+.\" Don't change the line above. it tells man that tbl is needed.
+.\" This man page is Copyright (C) 1999 Andi Kleen <ak@muc.de>.
+.\" Permission is granted to distribute possibly modified copies
+.\" of this page provided the header is included verbatim,
+.\" and in case of nontrivial modification author and date
+.\" of the modification is added to the header.
+.\" $Id: ip.7,v 1.3 2003/08/27 10:06:00 ankry Exp $
+.\" 
+.\" Translated and Modified 1999 by Paweł Wilk <siewca@pld.org.pl>
+.\" {PTM/PW/0.1/16-06-1999/"Implementacja protokołu IPv4 dla systemu Linux "}
+.\" Last Update: Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>, Aug 2003,
+.\"              man-pages 1.60
+.\" 
+.TH IP 7 2001-06-19 "Linux" "Podręcznik programisty Linuksa" 
+.SH NAZWA
+ip \- implementacja protokołu IPv4 dla systemu Linux 
+.SH SKŁADNIA
+.B #include <sys/socket.h>
+.br
+.\" .B #include <net/netinet.h> -- does not exist anymore
+.\" .B #include <linux/errqueue.h> -- never include <linux/foo.h>
+.B #include <netinet/in.h>
+.sp
+.IB tcp_socket " = socket(PF_INET, SOCK_STREAM, 0);"
+.br 
+.IB raw_socket " = socket(PF_INET, SOCK_RAW, " protokół ");"
+.br
+.IB udp_socket " = socket(PF_INET, SOCK_DGRAM, " protokół ");"
+.SH OPIS
+Linux implementuje protokół IPv4 
+opisany w RFC791 i RFC1122. 
+.B ip 
+zawiera 2. poziom 
+implementacji adresowania grupowego (multicasting)
+zgodny z RFC1112.  Zawiera też router IP 
+włączając w to filtr pakietów.
+.\" XXX: has someone verified that 2.1 is really 1812 compliant?
+.PP
+Protokół jest obsługiwany w jądrze i bazuje na zgodnym z BSD interfejsie
+gniazd. Więcej informacji na temat gniazd można znaleźć przeglądając
+.BR socket (7). 
+.PP
+Gniazdo IP jest tworzone poprzez wywołanie funkcji
+.BR socket (2) 
+jako 
+.BR "socket(PF_INET, rodzaj_gniazda, protokół)" .
+Poprawne typy gniazd to 
+.B SOCK_STREAM 
+służące do tworzenia gniazd pośredniczących w obsłudze protokołu 
+.BR tcp (7),
+także
+.B SOCK_DGRAM
+obsługujące protokół
+.BR udp (7),
+a nawet
+.B SOCK_RAW
+pozwalające tworzyć gniazda 
+.BR raw (7)
+(surowe) umożliwiające bezpośredni dostęp do protokołu IP.
+.I protokół
+jest protokołem bazującym na IP. Informacja o nim jest
+umieszczana w nagłówku wysyłanego bądź odbieranego pakietu IP.
+Dla gniazd TCP poprawnymi wartościami są tylko
+.B 0
+i
+.BR IPPROTO_TCP ,
+a dla gniazd UDP -
+.B 0
+i
+.BR IPPROTO_UDP .
+Dla
+.B SOCK_RAW 
+można podać dowolny prawidłowy numer protokołu IP określony przez IANA
+w RFC1700.
+.PP
+.\" XXX ip current does an autobind in listen, but I'm not sure if that should
+.\" be documented.
+Kiedy proces chce odbierać nowe, nadchodzące pakiety lub połączenia, powinien
+podłączyć gniazdo do adresu lokalnego interfejsu za pomocą funkcji
+.BR bind (2).
+Do dowolnej lokalnej pary (adres, port) można podłączyć tylko jedno gniazdo
+IP. Gdy w wywołaniu bind podana jest wartość
+.B INADDR_ANY ,
+to gniazdo zostanie dowiązane do
+.I wszystkich
+lokalnych interfejsów sieciowych. Gdy dla niedowiązanego gniazda zostanie
+wywołane
+.BR listen (2)
+lub
+.BR connect (2),
+gniazdo to zostanie automatycznie dowiązane do losowo wybranego wolnego portu,
+przy czym adres lokalny zostanie ustawiony na
+.BR INADDR_ANY .
+
+Przypisywanie (często w literaturze: "nazywanie") lokalnego
+gniazda TCP jest niemożliwe przez pewien okres czasu po jego zamknięciu,
+chyba że zostanie dla tego gniazda ustawiony atrybut
+.BR SO_REUSEADDR .
+Należy używać tego atrybutu z rozwagą, gdyż czyni on TCP mniej niezawodnym.
+
+.SH "FORMAT ADRESU"
+Adres gniazda IP jest przedstawiony za pomocą kombinacji adresu interfejsu IP
+i numeru portu. Podstawowy protokół IP nie zawiera numerów portów, są one
+zaimplementowane w protokołach wyższej warstwy, takich jak
+.BR udp (7)
+i
+.BR tcp (7).
+Dla gniazd surowych
+.B sin_port
+jest ustawione na protokół IP.
+Taki fragment określający połowę danych potrzebnych do 
+zachodzenia połączenia określa się też mianem półasocjacji.
+
+.PP
+.RS
+.nf
+.ta 4n 19n 31n
+struct sockaddr_in {
+	sa_family_t	sin_family;	/* rodzina adresów AF_INET */
+	u_int16_t	sin_port;	/* port - sieciowa kolejność bajtów */
+	struct in_addr  sin_addr;	/* adres internetowy */
+};
+
+/* Adres internetowy */
+struct in_addr {
+	u_int32_t	s_addr; /* adres IPv4 - sieciowa kolejność bajtów */
+};
+.ta
+.fi
+.RE
+.PP
+.I sin_family 
+ma zawsze wartość 
+.BR AF_INET .
+Jest to wymagane; w Linuksie 2.2 większość funkcji sieciowych zwraca
+.B EINVAL
+jeśli brakuje tego ustawienia.
+.I sin_port
+zawiera numer portu podany w sieciowej kolejności bajtów.
+Numery portów niższe niż 1024 nazywamy
+.BR "portami zarezerwowanymi" .
+Tylko procesy z efektywnym identyfikatorem użytkownika równym 0 lub
+z ustawionym atrybutem
+.B CAP_NET_BIND_SERVICE 
+mogą wywołać
+.BR bind (2)
+dla tego rodzaju gniazd. Należy zauważyć, że surowy protokół IPv4 jako taki
+nie zawiera pojęcia portu (takie rozróżnienie jest dopiero w warstwie
+transportowej, a to jest warstwa sieciowa). Numery portów pozwalające 
+identyfikować już konkretne procesy na odległej maszynie występują dopiero
+w protokołach wyższej warstwy, takich jak
+.BR tcp (4)
+i
+.BR udp (4).
+.PP
+.I sin_addr 
+to adres IP hosta (maszyny).
+Pole
+.I addr
+struktury 
+.B struct in_addr
+zawiera adres interfejsu maszyny w sieciowej kolejności bajtów.
+.B in_addr
+powinien być modyfikowany tylko przy użyciu funkcji bibliotecznych 
+.BR inet_aton (3),
+.BR inet_addr (3),
+.BR inet_makeaddr (3)
+lub bezpośrednio przez resolvera (patrz też
+.BR gethostbyname (3)).
+Adresy IPv4 dzielimy na pojedyncze (unicast), rozgłoszeniowe (broadcast)
+i grupowe (multicast). Adresy pojedyncze określają nam pojedynczy interfejs 
+maszyny, adresy rozgłoszeniowe określają wszystkie maszyny w obrębie jakiejś
+sieci (podsieci), a adresy grupowe wszystkie maszyny w obrębie jakiejś
+grupy odbiorców. Datagramy kierowane do adresów rozgłoszeniowych trafiają do
+odbiorcy tylko wtedy, gdy jego gniazdo ma ustawiony atrybut rozgłoszenia
+.BR SO_BROADCAST .
+Ten sam atrybut musi być też ustawiony, gdy zachodzi potrzeba wysłania
+datagramów rozgłoszenia. W aktualnej implementacji gniazda połączeniowe mogą
+używać wyłącznie adresów pojedynczych.
+.\" Leave a loophole for XTP @)
+
+Należy zauważyć, że dla adresu i portu zawsze jest używana sieciowa kolejność
+bajtów. W szczególności, oznacza to, że trzeba używać funkcji
+.BR htons (3) 
+dla numeru przypisanego do portu. Wszystkie funkcje standardowej
+biblioteki manipulujące adresem/portem automatycznie przekształcają podaną
+wartość na jej sieciową reprezentację.
+
+Istnieje kilka adresów specjalnych:
+.B INADDR_LOOPBACK
+(127.0.0.1)
+zawsze odnosi się do lokalnego hosta poprzez urządzenie loopback;
+.B INADDR_ANY
+(0.0.0.0)
+oznacza przy dowiązywaniu dowolny adres;
+.B INADDR_BROADCAST
+(255.255.255.255)
+oznacza dowolny host i ze względów historycznych zachowuje się przy
+dowiązywaniu tak samo jak
+.BR INADDR_ANY .
+
+.SH "OPCJE GNIAZD"
+
+IP wspiera niektóre opcje specyficzne dla protokołu, które mogą być 
+ustawione przy użyciu
+.BR setsockopt (2)
+i odczytane z pomocą
+.BR getsockopt (2).
+Poziom opcji gniazda dla IP to
+.BR SOL_IP .
+Dla każdego ze znaczników logicznych wartość całkowita zero oznacza fałsz, a
+każda inna - prawdę.
+
+.TP
+.B IP_OPTIONS
+Ustawia lub pobiera opcje IP, które będą wysyłane z każdym pakietem z
+danego gniazda. Argumenty są wskaźnikiem do bufora pamięci zawierającego
+opcje i ich długości.
+.BR setsockopt (2)
+ustawia opcje IP skojarzone z gniazdem.
+Maksymalny rozmiar opcji dla IPv4 to 40 bajtów. Zobacz RFC791 by poznać
+możliwe opcje. Gdy pakiet wstępnego potwierdzenia połączenia (ACK) dla
+gniazda typu
+.B SOCK_STREAM
+zawiera opcje IP, to opcje wychodzącego pakietu IP
+będą automatycznie pobrane z opcji IP pobranego pakietu z odwróconymi
+nagłówkami mówiącymi o trasie. Wobec tego, wychodzące pakiety będą
+wtedy zawierać lustrzane odbicia odbieranych opcji.
+Po ustanowieniu połączenia przychodzące pakiety nie są
+uprawnione do zmiany swoich opcji. Przetwarzanie wszystkich przychodzących
+opcji źródła może być wyłączone przy pomocy kontrolki systemowej
+.BR accept_source_route ,
+domyślnie wyłączonej.
+W przypadku gniazd datagramowych opcje IP mogą być ustawione jedynie przez
+użytkownika lokalnego. Funkcja
+.BR getsockopt (2)
+z argumentem
+.I IP_OPTIONS
+zwróci obecnie wysłane opcje poprzez umieszczenie ich w dostarczonym buforze.
+
+.TP
+.B IP_PKTINFO
+Przekazuje pomocniczy komuniakt IP_PKTINFO zawierający strukturę
+.B pktinfo
+dostarczającą trochę informacji o przychodzącym pakiecie. Działa to jedynie
+dla gniazd datagramowych. Argument jest znacznikiem mówiącym gniazdu, czy
+należy przekazać komunikat IP_PKTINFO, czy też nie. Sam komunikat może
+zostać przesłany/otrzymany wraz zpakietem jedynie jako komunikat sterujący 
+za pomocą
+.BR recvmsg (2)
+lub
+.BR sendmsg (2).
+
+.IP
+.RS
+.ta 4n 19n 33n
+.nf
+struct in_pktinfo {
+	unsigned int	ipi_ifindex;	/* Indeks interfejsu */
+	struct in_addr	ipi_spec_dst;	/* Adres lokalny */
+	struct in_addr	ipi_addr;	/* Nagłówek adresu docelowego */
+};
+.fi
+.RE
+.IP
+.\" XXX elaborate on that.
+.B ipi_ifindex
+jest indeksem interfejsu, przez który pakiet został odebrany.
+Adres
+.B ipi_spec_dst
+jest lokalnym adresem pakietu, a
+.B ipi_addr
+jest adresem docelowym wynikającym z nagłówka pakietu. 
+Jeśli
+.B IP_PKTINFO 
+jest przekazane do
+.BR sendmsg(2)
+a
+.\" This field is grossly misnamed
+.B ipi_spec_dst
+ma wartość niezerową, to
+.B IP_PKTINFO
+zostanie użyte jako źródłowy adres lokalny podczas przeszukiwania tablicy
+routingu i dla ustawienia opcji routingu wg adresu źródłowego.
+Gdy
+.B ipi_ifindex
+ma wartość niezerową, to podstawowy adres lokalny interfejsu wskazywanego
+przez ten indeks nadpisuje
+.B ipi_spec_dst
+podczas przeszukiwania tablicy routingu.
+.TP
+.B IP_RECVTOS
+Jeśli jest ustawione, to pomocniczy komunikat
+.I IP_TOS
+jest przepuszczany razem z nadchodzącymi pakietami. 
+Zawiera on bajt, który określa pole zdefiniowane także jako bajt 
+znajdujące się w nagłówku pakietu, a zwane Typ Usługi/Pierwszeństwa.
+Wymaga logicznego znacznika w postaci liczby całkowitej.
+
+.TP
+.B IP_RECVTTL
+Gdy ten znacznik jest ustawiony, przepuszczny jest komuniakat pomocniczy
+.IR IP_RECVTTL ,
+zawierający pole określane mianem "czas życia"
+odbieranego pakietu w postaci bajtu. Nie jest to wspierane w przypadku
+strumieniowych gniazd typu
+.BR SOCK_STREAM .
+
+.TP
+.B IP_RECVOPTS
+Przekauje użytkownikowi wszystkie nadchodzące opcje IP
+z komunikatu sterującego
+.I IP_OPTIONS 
+Nagłówek wyboru trasy i inne opcje są już wstępnie wypełnione
+informacjami o lokalnej maszynie. Nie stosuje się w przypadku gniazd typu
+.IR SOCK_STREAM .
+
+.TP
+.B IP_RETOPTS
+Działanie identyczne do
+.I IP_RECVOPTS
+ale zwraca surowe, nieprzetworzone opcje włącznie z rekordem opcji mówiącym o
+znaczniku czasowym i trasie, nie wypełnionym wartościami w tym przejściu
+pakietu.
+
+.TP
+.B IP_TOS
+Ustawia lub pobiera pole znacznika Typ-Usługi (ang. Type-Of-Service - w
+skrócie TOS), które jest przesyłane z każdym pakietem IP pochodzącym z danego
+gniazda. Służy do ustalenia priorytetów pakietów w sieci. TOS jest bajtem.
+Oto definicje niektórych standardowych znaczników TOS:
+.B IPTOS_LOWDELAY 
+minimalizacja opóźnienia we wzajemnym ruchu,
+.B IPTOS_THROUGHPUT
+optymalizacja wyjścia,
+.B IPTOS_RELIABILITY
+optymalizacja pod kątem niezawodności,
+.B IPTOS_MINCOST
+powinna być używana jako "dane wypełniające" tam, gdzie szybkość transmisji
+nie ma większego znaczenia. Można podać najwyżej jedną z powyższych wartości
+TOS. Inne bity są niepoprawne i powinny być wyzerowane.
+Linux domyślnie wysyła najpierw datagram
+.B IPTOS_LOWDELAY
+ale dokładne zachowanie zależy od konfiguracji właściwości szeregowania.
+.\" XXX elaborate on this 
+Niektóre poziomy o wysokim priorytecie mogą wymagać efektywnego
+identyfikatora użytkownika 0 lub ustawionego atrybutu
+.IR CAP_NET_ADMIN .
+Priorytet można też ustawić w sposób niezależny od protokołu poprzez
+opcję gniazda
+.RB ( SOL_SOCKET ", " SO_PRIORITY )
+(patrz też
+.BR socket (7)). 
+
+.TP  
+.B IP_TTL
+Ustawia lub pobiera pole "czas życia" (ang. Time-To-Live, w skrócie TTL)
+dla każdego wychodzącego z danego gniazda pakietu IP.
+
+.TP
+.B IP_HDRINCL
+Jeśli włączone to dopuszczalne jest tworzenie przez użytkownika własnego
+nagłówka IP przed danymi użytkownika. Działa to jedynie dla gniazd
+.BR SOCK_RAW .
+Obejrzyj też
+.BR raw (7)
+by uzyskać więcej informacji. Gdy ten znacznik jest włączony, to wartości
+ustawiane przez
+.BR IP_OPTIONS ,
+.B IP_TTL
+i
+.B IP_TOS
+są ignorowane.
+
+.TP
+.BR IP_RECVERR " (zdefiniowane w <linux/errqueue.h>)"
+Włącza zwiększoną pewność przy realizowaniu zawiadomień o błędach.
+Gdy jest to ustawione w gnieździe datagramowym to wszystkie generowane błędy
+będą zapamiętane w specjalnej, przypisanej do gniazda, kolejce błędów. Gdy
+użytkownik (proces użytkownika) otrzyma błąd (poprzez zwrócony kod błędu
+operacji na gnieździe) to błędy mogą być odebrane przy użyciu funkcji
+.BR recvmsg (2) 
+z ustawionym znacznikiem
+.BR MSG_ERRQUEUE . 
+Struktura opisująca błąd
+.B sock_extended_err 
+zostanie przekazana w pomocniczym komuniakcie o typie
+.B IP_RECVERR 
+i poziomie 
+.BR SOL_IP . 
+Jest to niezwykle pomocne przy niezawodnym przechwytywaniu błędów 
+niepołączonych gniazd. Odbierana z kolejki błędów porcja danych 
+zawiera pakiet z informacją o błędzie.
+.IP
+Komunikat sterujący
+.I IP_RECVERR
+zawiera strukturę
+.B sock_extended_err
+zdefiniowaną następująco:
+.IP
+.RS
+.ne 18
+.nf
+.ta 4n 20n 32n
+#define SO_EE_ORIGIN_NONE	0
+#define SO_EE_ORIGIN_LOCAL	1
+#define SO_EE_ORIGIN_ICMP	2
+#define SO_EE_ORIGIN_ICMP6	3
+
+struct sock_extended_err {
+	u_int32_t	ee_errno;	/* numer błędu */
+	u_int8_t	ee_origin;	/* źródło błędu */
+	u_int8_t	ee_type;	/* typ */
+	u_int8_t	ee_code;	/* kod */
+	u_int8_t	ee_pad;
+	u_int32_t	ee_info;	/* informacje dodatkowe */
+	u_int32_t	ee_data;	/* inne dane */
+	/* Dalej mogą wystąpić dodatkowe dane */
+};
+
+struct sockaddr *SO_EE_OFFENDER(struct sock_extended_err *);
+.ta
+.fi
+.RE
+.IP
+.B ee_errno
+zawiera numer errno błędu kolejki.
+.B ee_origin
+jest kodem miejsca pochodzenia błędu.
+Pozostałe pola są zależne od protokołu. Makro
+.B SO_EE_OFFENDER
+zwraca wskaźnik do adresu obiektu sieciowego, z którego pochodził błąd
+o zadanym wskaźniku do komunikatu pomocniczego.
+Gdy ten adres nie jest znany, pole
+.I sa_family
+struktury
+.B sockaddr
+zawiera wartość
+.B AF_UNSPEC
+a pozostałe pola tej struktury są
+.B sockaddr
+niezdefiniowane.
+.IP
+IP używa struktury
+.B sock_extended_err
+w następujący sposób:
+.I ee_origin
+ustawione na
+.B SO_EE_ORIGIN_ICMP
+dla błędów odbieranych jako pakiet ICMP, albo też
+.B SO_EE_ORIGIN_LOCAL
+dla błędów generowanych lokalnie. Nieznane wartości należy ignorować.
+.I ee_type
+i 
+.I ee_code
+są ustawiane zgodnie z typem i kodem pól w nagłówku ICMP.
+.I ee_info
+zawiera rozpoznaną wartość MTU dla błędów
+.BR EMSGSIZE .
+Komunikat zawiera również
+.IR "sockaddr_in węzła" ,
+który spowodował błąd, a do którego można uzyskać dostęp za pomocą makra
+.BR SO_EE_OFFENDER .
+Pole
+.I sin_family
+adresu SO_EE_OFFENDER ma wartość
+.IR AF_UNSPEC ,
+gdy źródło błędu nie jest znane.
+Gdy błąd pochodzi z sieci, wszystkie opcje IP
+.RI ( IP_OPTIONS ", " IP_TTL ", "
+itd.) włączone w gnieździe i zawarte w pakiecie błędu są przekazywane jako
+komunikaty kontrolne. Właściwe dane pakietu, który spowodował błąd są
+zwracane jako normalne dane.
+.\" XXX: is it a good idea to document that? It is a dubious feature.
+.\" Przy gniazdach TCP typu
+.\" .B SOCK_STREAM 
+.\" znacznik
+.\" .B IP_RECVERR 
+.\" ma trochę odmienną semantykę. Zamiast w sposób niezawodny umieszczać w kolejce 
+.\" informacje o błędach, wszystkie nadchodzące błędy przekazuje jak najszybciej
+.\" do użytkownika. Może to być przydatne przy krótkotrwałych
+.\" strumieniowych połączeniach TCP, które potrzebują szybkiej obsługi błędów.
+.\" Używaj tej opcji ostrożnie: sprawia ona, że połączenie TCP staje się zawodne, 
+.\" gdyż opcja ta nie dopuszcza do jego poprawnego odtworzenia w przypadku
+.\" przesunięć tras i innych występujących często sytuacji.
+Należy zauważyć, że TCP nie ma kolejki błędów;
+.B MSG_ERRQUEUE
+jest niedozwolone w przypadku gniazd
+.BR SOCK_STREAM .
+Wszystkie błędy są przekazywane poprzez zwracaną wartość funkcji albo
+.BR SO_ERROR .
+.IP
+Dla gniazd surowych,
+.B IP_RECVERR 
+włącza przepuszczanie do aplikacji wszystkich odebranych komunikatów ICMP 
+o błędach, w przeciwnym przypadku błędy są zgłaszane tylko dla gniazd
+połączonych.
+.IP
+Mamy tu do czynienia ze znacznikiem logicznym zapisanym 
+za pomocą liczby całkowitej
+.B IP_RECVERR 
+domyślnie wyłączonym.
+
+.TP
+.B IP_MTU_DISCOVER
+Ustawia lub pobiera opcję badania MTU ścieżki (ang. Path MTU Discovery)
+dla gniazda.
+.\" addons
+.\" MTU oznacza Maksymalny Element Transmisji (ang. Maximal 
+.\" Transmission Unit), czyli maksymalny rozmiar każdej wysyłanej lub odbieranej
+.\" porcji danych. Nie dotyczy to jak mogłoby się wydawać tylko tych warstw sieci,
+.\" przy których operujemy pojęciem pakietu - MTU to bardziej ogólne ustawienie
+.\" informujące o tym, jaka jednorazowa porcja danych (nie zawsze zorganizowanych w pakiety)
+.\" może być bez rozdrabniania przesłana daną siecią (np. dla standardu Ethernet będzie to 
+.\" zwykle 1500 bajtów).
+.\" Jeśli dana sieć musi przenieść porcje danych większe niż maksymalny
+.\" określony dla niej rozmiar, to pakiety te przy wejściu do sieci
+.\" muszą zostać rozdrobnione, a przy wychodzeniu z sieci scalone. Ustawiając
+.\" zbyt dużą wartość MTU wymuszamy czasochłonne czasem operacje scalania 
+.\" i rozdrabniania pakietów. Ustalając MTU powinniśmy wziąć pod uwagę
+.\" kanałową zdolność naszej sieci, ew. wszystkich sieci, przez które
+.\" wędrować będą dane.
+.\" EOF-addons
+Gdy opcja ta jest włączona, to Linux będzie przeprowadzał badanie MTU scieżki
+dla tego gniazda zgodnie z definicją zawartą w RFC1191. Znacznik zakazu
+fragmentacji jest ustawiany we wszystkich pakietach wychodzących.
+Ogólne, domyślne zachowanie określone dla danego systemu jest ustawiane
+przez "kontrolkę systemową"
+.B ip_no_pmtu_disc 
+dla gniazd typu
+.B SOCK_STREAM 
+i wyłączone dla wszystkich innych typów gniazd. W przypadku gniazd innych niż
+.B SOCK_STREAM
+za odpowiednie, zgodne z wartością MTU, spakietowanie danych i za wykonanie
+ewentualnych retransmisji jest odpowiedzialny program użytkownika. Jądro
+odrzuci pakiety większe niż znane MTU ścieżki gdy ten znacznik jest ustawiony
+(łącznie z
+.B EMSGSIZE
+).
+
+.TS
+tab(:);
+c l
+l l.
+Znaczniki badania MTU ścieżki:Znaczenia
+IP_PMTUDISC_WANT:Używaj ustawień zależnych od trasy
+IP_PMTUDISC_DONT:Nie badaj MTU ścieżki
+IP_PMTUDISC_DO:Zawsze badaj MTU ścieżki
+.TE
+
+
+Gdy włączone jest badanie MTU ścieżki, jądro automatycznie namierza
+wartości MTU ścieżki dla każdego hosta docelowego. Gdy aktywne jest
+połączenie z danym hostem, można wygodnie odczytać aktualnie rozpoznaną
+wartość MTU ścieżki za pomocą
+.BR connect (2)
+używając opcji gniazda
+.B IP_MTU
+(np. po wystąpieniu błędu
+.B EMSGSIZE
+). Może ona się zmieniać z czasem.
+Dla gniazd bezpołączeniowych z wieloma hostami docelowymi, MTU dla danego,
+również nowego, hosta docelowego można uzyskać za pomocą kolejki błędów
+(zobacz
+.BR IP_RECVERR ).
+Po nadejściu każdej aktualizacji MTU zostanie skolejkowany nowy błąd.
+
+W trakcie rozpoznawania MTU, pakiety inicjujące z gniazd datagramowych mogą
+zostać porzucone. Programy korzystające z UDP powinny być tego świadome i nie
+brać tego pod uwagę w swojej strategii retransmisji pakietów.
+
+Aby zanicjować proces badania MTU ścieżki dla gniazd niepołączonych można
+rozpocząć z dużym rozmiarem datagramu (do 64K-nagłówek bajtów) i pozwolić
+na jego zmniejszenie w wyniku aktualizacji MTU ścieżki.
+.\" XXX this is an ugly hack
+
+Aby oszacować inicjalne MTU ścieżki, należy podłączyć gniazdo datagramowe
+do adresu docelowego za pomocą
+.BR connect (2)
+i pobrać MTU wołając
+.BR getsockopt (2)
+z opcją
+.BR IP_MTU .
+
+.TP
+.B IP_MTU
+Pobiera znaną aktualnie wartość MTU ścieżki obecnego gniazda.
+Jest to poprawne tylko, gdy gniazdo zostało połączone. Zwraca liczbę całkowitą.
+Działa tylko z
+.BR getsockopt (2). 
+.\"
+.TP
+.B IP_ROUTER_ALERT
+Przekazuje wszystkie pakiety z opcją Alarmu Rutera IP, które miałyby być
+przekazywane (ang. forwarded) do tego gniazda. Działa tylko dla gniazd
+surowych. Jest to przydatne na przykład dla demonów RSVP działających
+w przestrzeni użytkownika. Wykorzystane pakiety nie są przekazywane (ang.
+forwarded) przez jądro. Ponowne ich wysłanie należy do obowiązków programu
+użytkownika. Dowiązywanie gniazda jest w tym przypadku ignorowane, pakiety
+te są filtrowane jedynie w oparciu o protokół.
+Wymaga liczby całkowitej jako argumentu.
+.\"
+.TP
+.B IP_MULTICAST_TTL
+Ustawia lub pobiera wartość czas-życia-pakietu dla wychodzących z tego gniazda
+pakietów grupowych. Jest bardzo istotnym w przypadku adresowania grupowego by
+ustawić najmniejszą możliwą wartość TTL. Domyślnie jest to 1, co oznacza, że
+pakiety grupowe nie opuszczają sieci lokalnej, chyba że program użytkownika
+wyraźnie tego żąda. Argument jest liczbą całkowitą.
+.\"
+.TP
+.B IP_MULTICAST_LOOP
+Ustawia lub pobiera logiczny argument typu całkowitego, mówiący o tym, czy
+przesyłane  pakiety grupowe powinny wracać do lokalnego gniazda.
+.\"
+.TP
+.B IP_ADD_MEMBERSHIP
+Przyłącza grupę adresów. Argumentem jest struktura
+.B "struct ip_mreqn" .
+.PP
+.RS
+.nf
+.ta 4n 19n 34n
+struct ip_mreqn {
+	struct in_addr	imr_multiaddr;	/* grupowy adres IP */
+	struct in_addr	imr_address;	/* adres IP interfejsu lokalnego */
+	int		imr_ifindex;	/* indeks nnterfejsu */
+};
+.fi
+.RE
+.IP
+.I imr_multiaddr
+zawiera adres grupy, którą aplikacja chce podłączyć lub rozłączyć.
+Musi być to poprawny adres grupowy (multicast).
+.I imr_address
+jest to adres lokalnego interfejsu, przez który system powinien połączyć
+grupę; jeśli jest równy
+.BR INADDR_ANY ,
+to odpowiedni interfejs jest wybierany przez system.
+.I imr_ifindex
+jest indeksem interfejsu, który powinien być podłączony/odłączony do 
+obsługi grupy
+.I imr_multiaddr 
+lub 0 by wskazać na dowolny interfejs. 
+.IP
+Dla kompatybilności stara struktura
+.B ip_mreq 
+wciąż jest obsługiwana. Różni się wprawdzie od
+.B ip_mreqn 
+lecz tylko tym, że nie zawiera pola 
+.IR imr_ifindex .
+Działa tylko z
+.BR setsockopt (2).
+.\"
+.TP
+.B IP_DROP_MEMBERSHIP
+Odłącza się od grupy adresów. Argumentem jest struktura
+.B ip_mreqn 
+lub 
+.B ip_mreq 
+podobna do
+.IR IP_ADD_MEMBERSHIP .
+.\"
+.TP
+.B IP_MULTICAST_IF
+Ustawia lokalne urządzenie dla gniazda grupowego. Argumentem jest struktura
+.B ip_mreqn 
+lub 
+.B ip_mreq 
+podobna do
+.IR IP_ADD_MEMBERSHIP .
+.IP
+Gdy podana jest niepoprawna opcja gniazda, to zwracaną wartością jest
+.BR ENOPROTOOPT .
+.SH SYSCTLS
+Protokół IP obsługuje interfejs kontrolek systemowych (sysctl) i korzysta z
+niego do ustawiania niektórych opcji globalnych. Kontrolki mogą być dostępne
+przez zapis lub odczyt wykonany na plikach
+.B /proc/sys/net/ipv4/*
+lub poprzez użycie interfejsu w postaci funkcji
+.BR sysctl (2).
+.\"
+.TP
+.B ip_default_ttl 
+Ustawia domyślną wartość "czasu życia" (ang. time-to-live) wychodzących
+pakietów. Może być ona zmieniona dla gniazda za pomocą opcji
+.BR IP_TTL .
+.\"
+.TP
+.B ip_forward
+Włącza przekazywanie (ang. forwarding) pakietów przy użyciu logicznego
+znacznika. Może być ustawione także na podstawie interfejsu.
+.\"
+.TP
+.B ip_dynaddr
+Włącza dynamiczne adresowanie gniazda oraz przepisywanie adresu dla maskowania
+przy zmianie adresu interfejsu. Jest to bardzo przydatne w przypadku
+korzystania z interfejsu sprzęgniętego z linią telefoniczną, którego adres IP
+może się zmieniać. 0 oznacza brak przepisywania, 1 włącza przepisywanie a 2
+włącza tryb rozwlekły (ang. verbose).
+.\"
+.TP
+.B ip_autoconfig
+Nie udokumentowane.
+.\"
+.TP
+.B ip_local_port_range
+Zawiera dwie liczby całkowite, które definiują lokalny zakres portów
+przydzielanych gniazdom. Przydzielanie zaczyna się od pierwszej podanej
+wartości i kończy na drugiej. Należy zauważyć, że zakres ten nie powinien
+pokrywać się z zakresem portów wykorzystywanym do maskowania (chociaż taka
+sytuacja jest obsługiwana). Dowolny wybór może również powodować problemy
+z niektórymi firewalami, które robią pewne założenia odnośnie portów
+używanych lokalnie. Pierwsza liczba powinna być co najmniej >1024, a lepiej
+>4096, aby uniknąć konfliktów z dobrze znanymi portami i zminimalizować
+problemy z firewalami.
+.\"
+.TP
+.B ip_no_pmtu_disc
+Jeśli jest to włączone to domyślnie nie będzie wykonywane badanie MTU ścieżki
+dla gniazd TCP. Badanie MTU może się nie sprawdzać w przypadku źle
+skonfigurowanych firewali (odrzucających wszelkie pakiety ICMP) lub źle
+skonfigurowanych interfejsów (np. połączenie typu point-to-point, gdzie oba
+końce nie zgadzają się na MTU). Lepiej poprawić wszelkie wadliwie
+skonfigurowane rutery po drodze niż całkowicie wyłączyć badanie MTU ścieżki,
+ponieważ nie wykonywanie tej operacji pociąga za sobą duże straty w obrębie
+sieci.
+.\"
+.TP
+.BR ipfrag_high_thresh ", " ipfrag_low_thresh 
+Jeśli liczba zebranych w kolejce fragmentów IP osiągnie wartość określoną
+przez
+.BR ipfrag_high_thresh ,
+wtedy kolejka jest opróżniana do ilości określonej w
+.BR ipfrag_low_thresh . 
+Zawiera ona liczbę całkowitą z podaną liczbą bajtów.
+.TP
+.B ip_always_defrag
+[Nowa w jądrze 2.2.13; we wczaśniejszych wersjach jądra funkcją tą sterowało
+się w czasie kompilacji za pomocą opcji
+.BR CONFIG_IP_ALWAYS_DEFRAG ]
+
+Gdy ten znacznik logiczny jest włączony (różny od 0) przychodzące fragmenty
+(części pakietów IP, które się pojawiają, gdy pewien host pomiędzy hostem
+źródłowym a docelowym zdecyduje, że pakiety były za duże i podzieli je na
+kawałki) będą ponownie złożone (zdefragmentowane) przed ich przetworzeniem,
+nawet jeśli mają być przekazane dalej (and. forwarded).
+
+Należy włączać jedynie przy działającym firewalu stanowiącym główne wejście
+do danej sieci lub działającym przezroczystym proxy; nigdy nie należy tego
+włączać na zwykłym routerze lub hoscie. W przeciwnym przypadku łączność może
+zostać zakłócona, gdy fragmenty będą podróżować innymi łączami. Defragmentacja
+powoduje również znaczne wykorzystanie pamięci i czasu procesora.
+
+Jest to włączane automagicznie, gdy skonfihurowane jest maskowanie lub
+przezroczyste proxy.
+.TP
+.B neigh/*
+See
+.BR arp (7).
+.\" XXX Document the conf/*/* sysctls 
+.\" XXX Document the route/* sysctls
+.\" XXX document them all
+.SH IOCTLS
+Te kontrolki wejścia/wyjścia są dostępne poprzez użycie
+.BR ioctl (2).
+Wszystkie dotyczące IP zostały opisane w 
+.BR socket (4).
+.PP
+Kontrolki wejścia/wyjścia dotyczące ustawień firewala są udokumentowane w
+.BR ipfw (7)
+z pakietu 
+.BR ipchains .
+.PP
+Kontrolki wejścia/wyjścia używane do konfigurowania podstawowych parametrów
+urządzeń opisane są w 
+.BR netdevice (7).  
+.\" XXX Add a chapter about multicasting
+.SH UWAGI
+Należy być bardzo ostrożnym przy stosowaniu opcji
+.B SO_BROADCAST
+\- nie jest ona w systemie Linux uprzywilejowana, jest więc łatwo przeciążyć
+sieć za pomocą niedbale użytych rozgłoszeń. W przypadku protokołów nowych
+aplikacji lepiej używać grupy adresowej zamiast rozgłoszeń. Stosowanie
+adresów rozgłoszeniowych jest nieostrożnością.
+.PP
+Niektóre inne implementacje gniazd BSD dopuszczają dla gniazd opcje
+.I IP_RCVDSTADDR
+i 
+.I IP_RECVIF
+używane do pobierania adresu przeznaczenia i interfejsu odbieranych
+datagramów. Linux posiada bardziej ogólną opcję
+.I IP_PKTINFO
+robiącą to samo.
+.PP
+.SH BŁĘDY
+.\" XXX document all errors. We should really fix the kernels to give more uniform
+.\"     error returns (ENOMEM vs ENOBUFS, EPERM vs EACCES etc.)  
+.TP
+.B ENOTCONN
+Operacja może być wykonana tylko na połączonym gnieździe, a gniazdo nie
+zostało połączone.
+.TP
+.B EINVAL
+Przypisano niewłaściwy argument. W przypadku operacji wysyłania może to być
+spowodowane przez wysyłanie drogą przypisaną do
+.I "czarnej dziury" .
+.TP
+.B EMSGSIZE 
+Datagram jest większy niż wartość MTU po drodze do celu i nie może być
+podzielony.
+.TP
+.B EACCES
+Użytkownik próbował wykonać operację nie mając potrzebnych praw. Obejmuje to:
+Wysyłanie pakietu na adres rozgłoszeniowy bez ustawionego znacznika
+.B SO_BROADCAST.
+Wysyłanie pakietu
+.I zakazaną
+drogą.
+Próbę modyfikacji ustawień firewala bez efektywnego identyfikatora użytkownika
+równego 0 lub
+.BR CAP_NET_ADMIN . 
+Próbę przypisania zarezerwowanego portu bez efektywnego identyfikatora
+użytkownika równego 0 albo ustawionego znacznika
+.BR CAP_NET_BIND_SERVICE . 
+
+.TP
+.B EADDRINUSE
+Próbowano przypisać port do adresu będącego już w użyciu.
+.TP
+.BR ENOPROTOOPT " i " EOPNOTSUPP
+Przypisano niewłaściwą opcję gniazda.
+.TP
+.B EPERM
+Użytkownik nie ma praw do ustawiania wysokiego priorytetu, zmiany
+konfiguracji lub wysyłania sygnałów do żądanych procesów lub grup procesów.
+.TP
+.B EADDRNOTAVAIL
+Zażądano nieistniejącego interfejsu lub żądany adres źródłowy nie jest adresem
+lokalnym.
+.TP
+.B EAGAIN
+Operacja na gnieździe z wyłączonym blokowaniem spowodowałaby zablokowanie.
+.TP
+.B ESOCKTNOSUPPORT
+Gniazdo nie jest skonfigurowane lub zażądano nieznanego typu gniazda.
+.TP
+.B EISCONN
+.BR connect (2)
+była wywołana na już połączonym gnieździe.
+.TP
+.B EALREADY
+Operacja łączenia na gnieździe nieblokującym już trwa.
+.TP
+.B ECONNABORTED
+Połączenie zostało zamknięte podczas
+.BR accept (2). 
+.TP
+.B EPIPE
+Połączenie zostało nieoczekiwanie zamknięte lub wyłączył się drugi koniec.
+.TP
+.B ENOENT
+.B SIOCGSTAMP 
+było wywołane na gnieździe, do którego nie dotarł żaden pakiet.
+.TP
+.B EHOSTUNREACH
+Brak wpisu określającego adres docelowy w tabeli routingu. Błąd ten może być
+wywołany przez komunikat ICMP od zdalnego routera lub dla lokalnej tabeli
+routingu.
+.TP
+.B ENODEV 
+Urządzenie sieciowe niedostępne lub niezdolne wysyłać pakiety IP.
+.TP
+.B ENOPKG 
+Podsystem jądra nie był konfigurowany.
+.TP
+.BR ENOBUFS ", " ENOMEM
+Niewystarczająca ilość dostępnej pamięci. Często oznacza to, że przydzielanie
+pamięci jest ograniczone przez ograniczenia bufora gniazda, a nie przez
+ograniczenia pamięci systemowej. Jednak nie jest to pewne na 100%.
+.PP
+Inne błędy mogą być generowane przez protokoły niższych warstw; obejrzyj
+.BR tcp (7),
+.BR raw (7),
+.BR udp (7)
+i
+.BR socket (7).
+.SH WERSJE
+.IR IP_PKTINFO , 
+.IR IP_MTU , 
+.IR IP_MTU_DISCOVER , 
+.IR IP_PKTINFO , 
+.I IP_RECVERR
+i
+.I IP_ROUTER_ALERT
+są nowymi opcjami w Linuksie 2.2. Są one jednocześnie specyficzne dla Linuksa
+i nie powinny być używane w przenośnych programach.
+.PP
+.B struct ip_mreqn 
+jest nowa w Linuksie 2.2. Linux 2.0 wspierał jedynie 
+.BR ip_mreq .
+.PP
+Kontrolki systemowe pojawiły się z Linuksem 2.2.
+.SH ZGODNOŚĆ
+Dla zgodności z Linuksem 2.0, wciąż jest dopuszczalna przestarzała składnia
+.BI "socket(PF_INET, SOCK_RAW, " protocol )
+by stworzyć gniazdo typu
+.BR packet (7). 
+Nie jest to zbyt poprawne i powinno być zastępowane przez
+.BI "socket(PF_PACKET, SOCK_RAW, " protocol )\fR.
+Głównym powodem jest różnica w strukturze adresowej
+.B sockaddr_ll
+przechowującej informacje dla warstwy łącza (dokładniej: warstwy kanałowej), 
+które kiedyś przechowywane były w 
+.BR sockaddr_pkt .
+.SH USTERKI
+Jest zbyt wiele nieokreślonych wartości błędów.
+.PP
+Nie są opisane kontrolki wejścia/wyjścia do konfigurowania specyficznych dla
+IP opcji interfejsu i tabele ARP.
+.PP
+Niektóre wersje glibc zapominają zadeklarować
+.IR in_pktinfo .
+Można to aktualnie obejść, kopiując ją do programu z niniejszej strony
+podręcznika.
+.PP
+Pobieranie pierwotnego adresu docelowego za pomocą wywołania
+.BR recvmsg (2)
+z
+.B MSG_ERRQUEUE
+w
+.I msg_name
+nie działa w niektórych jądrach 2.2.
+.SH AUTORZY
+Tę stronę podręcznika napisał Andi Kleen.
+Wyjaśnienia niektórych pojęć (tylko wersja polska) Paweł Wilk.
+.SH "ZOBACZ TAKŻE"
+.BR sendmsg (2),
+.BR recvmsg (2),
+.BR socket (7),
+.BR netlink (7),
+.BR tcp (7),
+.BR udp (7),
+.BR raw (7),
+.BR ipfw (7)
+.PP
+RFC791 zawiera pierwotną specyfikację protokołu IP.
+.br
+RFC1122 zawiera wymagania dla hostów IPv4.
+.br
+RFC1812 zawiera wymagania dla routerów IPv4.
+\"  LocalWords:  XXX autobind INADDR REUSEADDR

@@ -1,0 +1,64 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Tłumaczenie wersji man-pages 1.50 - czerwiec 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Portions extracted from /usr/include/dirent.h are:
+.\"                    Copyright 1991, 1992 Free Software Foundation
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.TH GETDIRENTRIES 3 1993-07-22 "BSD/MISC" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getdirentries \- odczytanie wpisów z katalogu w formacie niezależnym od
+systemu plików
+.SH SKŁADNIA
+.B #define _BSD_SOURCE
+or
+.B #define _SVID_SOURCE
+.br
+.B #include <dirent.h>
+.sp
+.BI "ssize_t getdirentries(int " fd ", char *" buf ", size_t " nbytes
+.BI ", off_t *" basep );
+.SH OPIS
+Wczytuje do
+.I buf
+wpisy z katalogu określonego przez
+.IR fd .
+Odczytywanych jest co najwyżej
+.I nbytes
+bajtów. Czytanie rozpoczyna się przy przesunięciu
+.RI * basep ,
+i
+.RI * basep
+jest przesuwane do nowej pozycji po przeczytaniu.
+.SH "WARTOŚĆ ZWRACANA"
+.B getdirentries
+zwraca liczbę przeczytanych bajtów, lub zero, gdy próba czytania następuje na
+końcu katalogu. Gdy wystąpi błąd, zwracane jest \-1 i odpowiednio ustawiane
+.IR errno .
+.SH BŁĘDY
+Szczegóły znajdują się z kodzie źródłowym biblioteki linuksowej.
+.SH "ZOBACZ TAKŻE"
+.BR open (2),
+.BR lseek (2)

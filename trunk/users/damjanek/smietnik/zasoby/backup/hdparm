@@ -1,0 +1,9 @@
+# Lista polskich stron man dla pakietu
+# hdparm
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+hdparm.8	man1/hdparm.8
+#
+# koniec listy

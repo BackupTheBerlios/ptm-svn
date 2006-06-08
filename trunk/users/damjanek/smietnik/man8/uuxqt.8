@@ -1,0 +1,104 @@
+.\" {PTM/PB/0.1/01-05-1999/"Demon wywołania UUCP"}
+''' $Id: uuxqt.8,v 1.4 2001/09/16 09:38:35 wojtek2 Exp $
+.TH uuxqt 8 "Taylor UUCP 1.06"
+.SH NAZWA
+uuxqt \- demon wywołania UUCP
+.SH SKŁADNIA
+.B uuxqt
+.RI [ opcje ]
+.SH OPIS
+Demon
+.I uuxqt
+wywołuje polecenia zażądane przez
+.IR uux (1)
+z zarówno lokalnego systemu, jak i systemów zdalnych.
+Jest uruchamiany automatycznie przez demona
+.IR uucico (8)
+(chyba że 
+.IR uucico (8)
+zostało wywołane z opcją
+.B \-q
+lub
+.BR \-\-nouuxqt ).
+
+Zazwyczaj nie ma potrzeby wywoływania tego polecenia, gdyż jest ono wywoływane
+przez
+.IR uucico (8).
+Jednak czasem może być używane do zyskania większej kontroli nad
+przetwarzaniem kolejki zadań.
+
+Wielokrotne wywołania 
+.I uuxqt
+mogą pracować naraz, pod kontrolą polecenia konfiguracyjnego
+.IR max-uuxqts .
+.SH OPCJE
+.I uuxqt
+można przekazać następujące opcje:
+.TP 5
+.B \-c polecenie, \-\-command polecenie
+Wykonuje tylko żądania podanego polecenia. Na przykład:
+.br
+.in +0.5i
+.nf
+uuxqt --command rmail
+.fi
+.in -0.5i
+.TP 5
+.B \-s system, \-\-system system
+Wywołuje tylko żądania pochodzące z podanego systemu.
+.TP 5
+.B \-x typ, \-\-debug typ
+Włącza generowanie informacji diagnostycznych zadanego rodzaju. Rozpoznawane
+są następujące:
+abnormal, chat, handshake, uucp-proto, proto, port,
+config, spooldir, execute, incoming, outgoing.  
+Dla
+.I uuxqt
+znaczenie mają tylko abnormal, config, spooldir i execute.
+
+Można podać wiele typów pooddzielanych przecinkami, a opcja
+.B \-\-debug
+może pojawić się wielokrotnie. Można podać również liczbę, która włączy
+kolejne rodzaje z powyższej listy; na przykład,
+.B \-\-debug 2
+jest równoważne
+.B \-\-debug abnormal,chat.
+
+Wyjście diagnostyczne jest wysyłane do pliku informacji diagnostycznych,
+zazwyczaj jednego z
+/usr/spool/uucp/Debug, /usr/spool/uucp/DEBUG, lub
+/usr/spool/uucp/.Admin/audit.local.
+.TP 5
+.B \-I plik, \-\-config plik
+Wskazuje plik konfiguracyjny, z którego ma korzystać program.
+Opcja ta może być niedostępna, zależnie od tego, jak skompilowano
+.IR uuxqt .
+.TP 5
+.B \-v, \-\-version
+Wypisuje wersję i kończy pracę.
+.TP 5
+.B \-\-help
+Wypisuje informację o sposobie użycia i kończy pracę.
+.SH PLIKI
+Nazwy plików można zmieniać podczas kompilacji lub w pliku
+konfiguracyjnym, więc poniższe są tylko przybliżeniami.
+
+.br
+/usr/lib/uucp/config - Plik konfiguracyjny.
+.br
+/usr/spool/uucp -
+Katalog kolejkowy UUCP.
+.br
+/usr/spool/uucp/Log -
+Plik logu UUCP.
+.br
+/usr/spool/uucppublic -
+Domyślny katalog publiczny UUCP.
+.br
+/usr/spool/uucp/Debug -
+Plik z informacjami diagnostycznymi.
+.SH ZOBACZ TAKŻE
+uucp(1), uux(1), uucico(8)
+.SH AUTOR
+Ian Lance Taylor
+(ian@airs.com)

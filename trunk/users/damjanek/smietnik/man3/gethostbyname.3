@@ -1,0 +1,262 @@
+.\" Translation: Robert Luberda <robert@debian.org>, Oct 2003, manpages 1.60
+.\" $Id: gethostbyname.3,v 1.4 2004/10/09 14:51:29 robert Exp $
+.\"
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat May 22 18:43:54 1993, David Metcalfe
+.\" Modified Sun Jul 25 10:42:30 1993, Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Feb 16 13:23:10 1997, Andries Brouwer (aeb@cwi.nl)
+.\" Modified Mon Dec 21 14:49:33 1998, Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sat Aug 12 18:11:32 2000, Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sat May 19 23:37:50 2001, Andries Brouwer (aeb@cwi.nl)
+.\"
+.TH GETHOSTBYNAME 3 2000-08-12 "BSD" "Podręcznik programisty Linuksa"
+.SH NAZWA
+gethostbyname, gethostbyaddr, sethostent, endhostent, herror, hstrerror \- zwróć wpis sieciowy komputera
+.SH SKŁADNIA
+.nf
+.B #include <netdb.h>
+.B extern int h_errno;
+.sp
+.BI "struct hostent *gethostbyname(const char *" nazwa );
+.sp
+.B #include <sys/socket.h> "      " /* dla AF_INET */
+.BI "struct hostent *gethostbyaddr(const char *" adres ,
+.BI "  int " dlug ", int " typ );
+.sp
+.BI "void sethostent(int " stayopen );
+.sp
+.B void endhostent(void);
+.sp
+.BI "void herror(const char *" s );
+.sp
+.BI "const char *hstrerror(int " err );
+.sp 2
+/* rozszerzenia GNU */
+.br
+.BI "struct hostent *gethostbyname2(const char *" nazwa ", int " af );
+.sp
+.BI "int gethostbyname_r (const char *" nazwa ,
+.BI "  struct hostent *" ret ", char *" buf ", size_t " buflen ,
+.BI "  struct hostent **" result ", int *" h_errnop );
+.sp
+.BI "int gethostbyname2_r (const char *" nazwa ", int " af,
+.BI "  struct hostent *" ret ", char *" buf ", size_t " buflen ,
+.BI "  struct hostent **" result ", int *" h_errnop );
+.fi
+.SH OPIS
+Funkcja \fBgethostbyname()\fP dla danego komputera \fInazwa\fP  zwraca strukturę
+typu \fIhostent\fP. \fINazwa\fP jest tutaj albo nazwą komputera, albo adresem IPv4
+w standardowej notacji z kropkami, albo adresem IPv6 w notacji ze średnikami
+(i być może kropkami). (Proszę przeczytać RFC 1984, aby uzyskać opis adresów IPv6).
+Jeżeli
+.I nazwa
+jest adresem Ipv4 lub IPv6, to
+.BR gethostbyname ()
+nie wykonuje żadnych sprawdzeń i po prostu kopiuje
+.I nazwę
+do pola
+.I h_name
+oraz jej odpowiednik
+.I struct in_addr
+do pola
+.I h_addr_list[0]
+zwracanej struktury
+.IR hostent .
+Jeżeli \fInazwa\fP nie kończy się kropką oraz ustawiono zmienną środowiskową \fBHOSTALIASES\fP,
+to wyszukiwanie \fInazwy\fP zacznie się od pliku z aliasami, wskazywanego
+przez \fBHOSTALIASES\fP. (format tego pliku opisany jest w
+.BR hostname (7)).
+Bieżąca domenta i jej domeny nadrzędne są przeszukiwane, chyba że \fInazwa\fP
+kończy się kropką.
+.PP
+Funkcja \fBgethostbyaddr()\fP zwraca strukturę  typu \fIhostent\fP dla zadanego adresu
+\fIadres\fP o długości \fIdlug\fP i typie adresu
+\fItyp\fP. Obecnie jedynym poprawnym typem adresu jest
+.BR AF_INET .
+.PP
+Funkcja \fBsethostent()\fP określa, jeżeli \fIstayopen\fP jest prawdziwe (1),
+że do odpytywania serwera nazw będzie użyte połączenie TCP i to połączenie
+będzie otwarte podczas kolejnych zapytań. W przeciwnym wypadku serwer nazw
+będzie odpytywany przy użyciu datagramów UDP.
+.PP
+Funkcja \fBendhostent()\fP kończy połączenie TCP odpytywania serwera nazw.
+.PP
+(Przestarzała) funkcja \fBherror()\fP wypisuje na standardowe wyjście błędów komunikat
+błędu przypisany do bieżącej wartości zmiennej \fIh_errno\fP.
+.PP
+(Przestarzała) funkcja \fBhstrerror()\fP dla przekazanego numeru błędu (zazwyczaj
+\fIh_errno\fP) zwraca odpowiadający mu komunikat błędu.
+.PP
+Funkcje \fBgethostbyname()\fP i \fBgethostbyaddr()\fP używają do
+odpytywania serwera kombinacji któregokolwiek bądź wszystkich serwerów nazw
+\fBnamed\fP(8), wydzielonych linii z \fI/etc/hosts\fP,
+oraz Systemu Informacji Sieciowej (Network
+Information Service \- NIS lub YP), w zależności od zawartości linii
+\fIorder\fP w pliku \fI/etc/host.conf\fP.  (Proszę przeczytać
+.BR resolv+ (8)).
+Domyślnie najpierw odpytywane są serwery \fBnamed\fP(8), a następnie
+przeglądany jest \fI/etc/hosts\fP.
+.PP
+Struktura \fIhostent\fP zdefiniowana w \fI<netdb.h>\fP następująco:
+.sp
+.RS
+.nf
+.ne 7
+.ta 8n 16n 32n
+struct hostent {
+	char	*h_name;		/* oficjalna nazwa komputera */
+	char	**h_aliases;		/* lista aliasów */
+	int	h_addrtype;		/* typ adresu komputera */
+	int	h_length;		/* długość adresu */
+	char	**h_addr_list;		/* lista adresów */
+}
+#define h_addr	h_addr_list[0]		/* dla zachowania zgodności  */
+ 	 		/* z wcześniejszymi wersjami */
+.ta
+.fi
+.RE
+.PP
+Struktra \fIhostent\fP składa się z:
+.TP
+.I h_name
+Oficjalna nazwa komputera.
+.TP
+.I h_aliases
+Zakończona zerem tablica alternatywnych nazw komputera.
+.TP
+.I h_addrtype
+Typ adresu; obecnie zawsze jest to
+.BR AF_INET .
+.TP
+.I h_length
+Długość adresu w bajtach.
+.TP
+.I h_addr_list
+Zakończona zerem tablica adresów sieciowych komputera w sieciowym porządku bajtów
+(network byte order).
+.TP
+.I h_addr
+Pierwszy adres z \fIh_addr_list\fP \- dla zachowania zgodności ze wcześniejszymi wersjami
+.SH "WARTOŚĆ ZWRACANA"
+Funkcje \fBgethostbyname()\fP i \fBgethostbyaddr()\fP zwracają strukturę
+\fIhostent\fP lub wskaźnik NULL w przypadku błędu. W razie błędu, zmienna
+\fIh_errno\fP przechowuje numer błędu.
+.SH BŁĘDY
+Zmienna \fIh_errno\fP może przyjmować następujące wartości:
+.TP
+.B HOST_NOT_FOUND
+Podany komputer jest nieznany.
+.TP
+.BR NO_ADDRESS " lub " NO_DATA
+Żądana nazwa jest poprawna, ale nie ma adresu IP.
+.TP
+.B NO_RECOVERY
+Wystąpił trwały błąd serwera nazw.
+.TP
+.B TRY_AGAIN
+Autorytatywny serwer nazw zwrócił tymczasowy błąd. Proszę spróbować ponownie później.
+.SH PLIKI
+.TP
+.I /etc/host.conf
+plik konfiguracyjny
+resolver configuration file
+.TP
+.I /etc/hosts
+plik bazy danych komputerów
+.SH "ZGODNE Z"
+BSD 4.3.
+.SH UWAGI
+Standard SUS-v2 jest błędny i określa parametr
+.I len
+funkcji
+.B gethostbyaddr()
+jako mający typ
+.IR size_t .
+(No nie jest właściwe, ponieważ musi to być typ
+.IR int ,
+którym
+.I size_t
+nie jest. POSIX 1003.1-2001 używa
+.IR socklen_t ,
+co jest OK)
+.LP
+Funkcje
+.BR gethostbyname ()
+i
+.BR gethostbyaddr ()
+mogą zwracać wskaźniki do danych statycznych, które mogą być nadpisane
+przez kolejne wywołania. Kopiowanie
+.I struct hostent
+nie wystarcza, ponieważ zawiera ona wskaźniki - wymagane jest skopiowanie wszystkiego.\" FIXME deep copy
+.LP
+Glibc2 ma także funkcję
+.BR gethostbyname2() ,
+która działa jak
+.BR gethostbyname() ,
+ale pozwala określić rodzinę adresów, do której musi należeć zadany adres.
+.LP
+Glibc2 ma także wielowątkowe wersje
+.B gethostbyname_r()
+i
+.BR gethostbyname2_r() .
+Zwracają one 0 w przypadku powodzenia i niezero w razie błędu. Wynik funkcji
+jest przechowywany w strukturze o adresie
+.IR ret .
+Po wywołaniu funkcji
+.RI * result
+będzie NULL w razie błędu albo wskaźnikiem do wyniku, gdy funkcja zakończy się
+powodzeniem. Pomocnicze dane są przechowywane w buforze
+.I buf
+o długości
+.IR buflen .
+(Jeżeli bufor jest za mały, to funkcje te zwrócą
+.BR ERANGE .)
+Globalna zmienna
+.I h_errno
+nie jest modyfikowana, ale numer błędu jest przekazywany w zmiennej, której
+adres został podany w
+.IR h_errnop .
+.PP
+POSIX 1003.1-2001 traktuje
+.B gethostbyaddr()
+i
+.B gethostbyname()
+jako spuściznę i wprowadza
+.sp
+.nf
+.BI "struct hostent *getipnodebyaddr (const void *restrict " addr ,
+.BI "  socklen_t " len ", int " type ", int *restrict " error_num );
+.sp
+.BI "struct hostent *getipnodebyname (const char *" name ,
+.BI "  int " type ", int " flags ", int *" error_num );
+.SH "ZOBACZ TAKŻE"
+.BR resolver (3),
+.BR hosts (5),
+.BR hostname (7),
+.BR resolv+ (8),
+.BR named (8)

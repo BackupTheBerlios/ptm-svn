@@ -1,0 +1,388 @@
+.\" {PTM/PB/0.1/09-05-1999/"forntend systemu formatowania dokumentów"}
+.ig \"-*- nroff -*-
+Copyright (C) 1989-1995 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be included in
+translations approved by the Free Software Foundation instead of in
+the original English.
+..
+.de TQ
+.br
+.ns
+.TP \\$1
+..
+.\" Like TP, but if specified indent is more than half
+.\" the current line-length - indent, use the default indent.
+.de Tp
+.ie \\n(.$=0:((0\\$1)*2u>(\\n(.lu-\\n(.iu)) .TP
+.el .TP "\\$1"
+..
+.TH GROFF 1 "26 czerwca 1995" "Groff wersja 1.10"
+.SH NAZWA
+groff \- frontend systemu formatowania dokumentów groff
+.SH SKŁADNIA
+.B groff
+[
+.B \-tpeszaivhblCENRSVXZ
+]
+[
+.BI \-w nazwa
+]
+[
+.BI \-W nazwa
+]
+[
+.BI \-m nazwa
+]
+[
+.BI \-F dir
+]
+[
+.BI \-T dev
+]
+[
+.BI \-f fam
+]
+[
+.BI \-M dir
+]
+[
+.BI \-d cs
+]
+[
+.BI \-r cn
+]
+[
+.BI \-n num
+]
+[
+.BI \-o lista
+]
+[
+.BI \-P arg
+]
+[
+.IR pliki \|.\|.\|.\|
+]
+.SH OPIS
+.B groff
+jest frontendem do systemu formatowania dokumentów groff. Normalnie
+uruchamia on program
+.B troff
+i odpowiedni dla wybranego urządzenia postprocesor.
+Dostępne urządzenia to:
+.TP
+.B ps
+Dla drukarek/przeglądarek postscriptowych.
+.TP
+.B dvi
+Dla formatu TeX dvi.
+.TP
+.B X75
+Dla przeglądarki X11 75 dpi
+.TP
+.B X100
+Dla przeglądarki X11 100 dpi
+.TP
+.B ascii
+Dla urządzeń tekstowych
+.TP
+.B latin1
+Dla urządzeń tekstowych, akceptujących zestaw znaków ISO Latin-1.
+.LP
+Postprocesor używany dla danego urządzenia jest podawany komendą
+.B postpro
+w pliku opisu urządzenia.
+Może to być unieważnione opcją
+.BR \-X .
+.LP
+Domyślnym urządzeniem jest
+.BR ps .
+Opcjonalnie może ono preprocesować przez dowolne z
+.BR pic ,
+.BR eqn ,
+.BR tbl ,
+.B refer
+lub
+.B soelim.
+.LP
+Opcje bez argumentu mogą być zgrupowane za pojedynczym
+.BR \- .
+Plik o nazwie
+.B \-
+oznacza standardowe wejście.
+.LP
+Komenda
+.B grog
+może być używana do zgadywania prawidłowych komend groff, w celu
+sformatowania pliku.
+.SH OPCJE
+.TP
+.B \-h
+Wydrukuj informację o użyciu.
+.TP
+.B \-e
+Preprocesuj poprzez eqn.
+.TP
+.B \-t
+Preprocesuj poprzez tbl.
+.TP
+.B \-p
+Preprocesuj poprzez pic.
+.TP
+.B \-s
+Preprocesuj poprzez soelim.
+.TP
+.B \-R
+Preprocesuj poprzez refer.
+Nie istnieje mechanizm do przekazywania argumentów do 
+.BR refer ,
+ponieważ większość opcji refer ma równoważne komendy, które mogą być
+włączone w pliku.
+Więcej szczegółów znajdziesz w
+.BR refer (1).
+.TP
+.B \-v
+Powoduje, że programy uruchamiane przez
+.B groffa
+drukują swój numer wersji.
+.TP
+.B \-V
+Wydrukuj potok na standardowym wyjściu zamiast wykonywania go.
+.TP
+.B \-z
+Powstrzymaj wyjście
+.BR troffa .
+Drukowane będą tylko komunikaty o błędach.
+.TP
+.B \-Z
+Nie postprocesuj wyjścia 
+.BR troffa .
+Normalnie
+.B groff
+automatycznie uruchamia odpowiedni postprocesor.
+.TP
+.BI \-P arg
+Przekaż postprocesorowi
+.IR arg .
+Każdy argument powinien być przekazywany w osobnej opcji
+.BR \-P .
+Zauważ, że
+.B groff
+nie dokleja
+.B \-
+do
+.I arg
+przed przekazaniem go postprocesorowi.
+.TP
+.B \-l
+Wyślij wyjście na drukarkę.
+Komenda używana do wykonania jest określona przez komendę
+.B print
+w pliku opisu urządzenia.
+.TP
+.BI \-L arg
+Przekaż
+.I arg
+spoolerowi.
+Każdy argument powinien być przekazany w osobnej opcji
+.BR \-L . 
+Zauważ, że 
+.B groff
+nie dokleja
+.B \-
+do
+.I arg
+przed przekazaniem go postprocesorowi.
+.TP
+.BI \-T dev
+Przygotuj wyjście dla urządzenia
+.IR dev .
+Domyślnym urządzeniem jest
+.BR ps .
+.TP
+.B \-X
+Przejrzyj przy użyciu
+.B gxditview
+zamiast używać zwykłego postprocesora.
+.B Groff
+przekazuje programowi
+.B gxditview
+opcję
+.BR -printCommand ,
+która powoduje, że akcja
+.B Print
+robi to samo, co 
+.B groff
+by zrobił, gdyby otrzymał opcję
+.BR -l .
+Nie jest zbyt prawdopodobne, by wyszły z tego dobre efekty, chyba że z
+.BR \-Tps .
+.TP
+.B \-N
+Nie zezwalaj na nowe linie z ogranicznikami eqn.
+Jest to to samo, co opcja
+.B \-N
+w 
+.BR eqn .
+.TP
+.B \-S
+Bezpieczniejszy tryb. Przekaż opcję
+.B \-S
+do
+.B pic
+i użyj w troffie makr
+.BR \%\-msafer .
+.TP
+.B \-a
+.TQ
+.B \-b
+.TQ
+.B \-i
+.TQ
+.B \-C
+.TQ
+.B \-E
+.TQ
+.BI \-w nazwa
+.TQ
+.BI \-W nazwa
+.TQ
+.BI \-m nazwa
+.TQ
+.BI \-o lista
+.TQ
+.BI \-d cs
+.TQ
+.BI \-r cn
+.TQ
+.BI \-F dir
+.TQ
+.BI \-M dir
+.TQ
+.BI \-f fam
+.TQ
+.BI \-n num
+Te są opisane w
+.BR troff (1) .
+.SH ŚRODOWISKO
+.TP
+.SM
+.B GROFF_COMMAND_PREFIX
+Jeśli jest to ustawione na
+.IR X ,
+to 
+.B groff
+uruchomi 
+.IB X'owego troffa
+zamiast
+.BR troffa .
+Tyczy się to także
+.BR tbl ,
+.BR pic ,
+.BR eqn ,
+.B refer
+i
+.BR soelim .
+Nie ma to wpływu na
+.BR grops ,
+.BR grodvi ,
+.BR grotty
+i
+.BR gxditview .
+.TP
+.SM
+.B GROFF_TMAC_PATH
+Oddzielona dwukropkami lista katalogów, w których szukać plików z makrami.
+.TP
+.SM
+.B GROFF_TYPESETTER
+Domyślne urządzenie.
+.TP
+.SM
+.B GROFF_FONT_PATH
+Oddzielona dwukropkami lista katalogów, w których szukać katalogu
+.BI dev nazwa \fR.
+.TP
+.SM
+.B PATH
+Ścieżka przeszukiwania dla komend wywoływanych przez
+.BR groff .
+.TP
+.SM
+.B GROFF_TMPDIR
+Katalog, w którym tworzone są pliki tymczasowe.
+Jeśli nie jest to ustawione, a ustawione jest
+.B
+.SM TMPDIR
+\fR, to pliki tymczasowe będą składane w tym katalogu.
+W przeciwnym wypadku będą tworzone w
+.BR /tmp .
+Komendy
+.BR grops (1)
+i
+.BR refer (1)
+mogą tworzyć pliki tymczasowe.
+.SH PLIKI
+.Tp \w'\fB/usr/lib/groff/font/dev\fIname\fB/DESC'u+3n
+.BI /usr/lib/groff/font/dev nazwa /DESC
+Plik opisu urządzenia dla urządzenia
+.IR nazwa .
+.TP
+.BI /usr/lib/groff/font/dev nazwa / F
+Plik z fontem dla fontu
+.I F
+urządzenia
+.IR nazwa .
+.SH AUTOR
+James Clark <jjc@jclark.com>
+.SH BŁĘDY
+Zgłaszaj błędy na bug-groff@prep.ai.mit.edu.
+Załącz kompletny przykład, który pozwoli powielić błąd i załącz
+informację o używanej wersji groffa.
+.SH COPYRIGHT
+Copyright \(co 1989, 1990, 1991, 1992 Free Software Foundation, Inc.
+.LP
+groff jest darmowy; możesz go rozpowszechniać i modyfikować zgodnie z
+licencją GNU GPL, wydaną przez Free Software Foundation, w wersji 2 lub
+późniejszej. 
+.LP
+groff jest udostępniany w nadziei, że będzie przydatny, lecz BEZ ŻADNEJ
+GWARANCJI. Obejrzyj licencję dla dalszych szczegółów.
+.LP
+Powinieneś otrzymać kopię GPL wraz z groffem; zobacz plik COPYING. Jeśli
+nie, napisz do Free Software Foundation,
+59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+.SH DOSTĘPNOŚĆ
+Najnowsza wersja groffa jest zawsze dostępna z anonimowego ftp na
+prep.ai.mit.edu (18.71.0.38) w katalogu
+pub/gnu.
+.SH "ZOBACZ TAKŻE"
+.BR grog (1),
+.BR troff (1),
+.BR tbl (1),
+.BR pic (1),
+.BR eqn (1),
+.BR soelim (1) ,
+.BR refer (1),
+.BR grops (1),
+.BR grodvi (1),
+.BR grotty (1),
+.BR gxditview (1),
+.BR groff_font (5),
+.BR groff_out (5),
+.BR groff_ms (7),
+.BR me (7),
+.BR groff_char (7),
+.BR msafer (7)

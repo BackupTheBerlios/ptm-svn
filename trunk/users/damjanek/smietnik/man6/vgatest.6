@@ -1,0 +1,80 @@
+.\" {PTM/TH/1999-11-21)
+.TH vgatest 6 "29 Lipiec 1997" "Svgalib (>= 1.2.11)" "Podręcznik użytkownika svgalib"
+.SH NAZWA
+vgatest \- przeprowadza podstawowe testy na dowolnym trybie graficznym svgalib
+.SH SKŁADNIA
+
+.B vgatest
+
+.SH OPIS
+Program testujący tryby graficzne. Na początku program wyświetla listę
+wspieranych trybów, następnie należy podać numer i otrzymamy obraz testowy 
+wybranego trybu.
+
+Obraz testowy zawiera sekwencje skrzyżowanych linii (w różnych kolorach, jeśli testowany
+tryb wspiera wyświetlanie wielu kolorów) w lewym górnych rogu.
+
+Niżej widzimy pasy w trzech kolorach: czerwonym, zielonym, niebieskim ze 
+wzrastającą intensywnością z lewej do prawej. W zależności od możliwości
+trybu przejścia są bardziej lub mniej skokowe (płynne w true color).
+
+W przypadku trybów z 32K lub więcej kolorami, na wierzchu tego 
+pojawi się sześć kwadratów, każdy z innym cieniowaniem kolorów.
+
+Pokazuje także niektóre szczegóły z
+.BR vga_getmodeinfo (3).
+
+To demo jest częścią svgalib i może być znalezione w podkatalogu
+.I demos/
+oryginalnej dystrybucji svgalib. Nie jest ono jednak instalowane w systemie 
+domyślnie, czasami nie wiadomo gzie je można znaleźć jeśli svgalib była zainstalowana
+razem z którąś dystrybujcją linuksa. Nawet wtedy jeśli masz to demo prawdopodobnie
+nie będziesz miał źródeł i czasami będzie to miało dla ciebie ograniczony użytek.
+
+W razie jakiegokolwiek problemu, po prostu zdobądź dystrybucję svgalib z sieci.
+Nie będziesz musiał jej instalować, wystarczy że zrobisz
+.B make
+w katalogu
+.I demos/
+Kiedy to pisano,
+.I svgalib-1.2.12.tar.gz
+była najnowszą wersją i może być ściągnięta przez ftp z
+.IR "sunsite.unc.edu" " w " "/pub/Linux/libs/graphics"
+lub
+.IR "tsx-11.mit.edu" " w " "/pub/linux/sources/libs",
+które prawdopodobnie będą mirrorowane przez serwer znajdujący się
+bliżej ciebie.
+
+.SH ZOBACZ TAKŻE
+
+.BR svgalib (7),
+.BR vgagl (7),
+.BR libvga.config (5),
+.BR vga_getmodeinfo (3),
+.BR threed (6),
+.BR accel (6),
+.BR bg_test (6),
+.BR eventtest (6),
+.BR forktest (6),
+.BR fun (6),
+.BR keytest (6),
+.BR mousetest (6),
+.BR scrolltest (6),
+.BR speedtest (6),
+.BR spin (6),
+.BR testaccel (6),
+.BR testgl (6),
+.BR testlinear (6),
+.BR plane (6),
+.BR wrapdemo (6)
+
+.SH AUTOR
+Ta strona manuala była opracowana przez Michaela Wellera <eowmob@exp-math.uni-essen.de>.
+Dokładne źródło pochodzenia dema, do którego się odwoływano, a także oryginalnej dokumentacji 
+jest nieznane. 
+
+Jest bardzo możliwe, że są one do pewnego stopnia stworzone przez Harma Hanemaayera <H.Hanemaayer@inter.nl.net>.
+
+Możliwe, że jest to niezgodne z prawdą. Proszę o wybaczenie faktycznego autora i 
+radością przyjmę jakiekolwiek dodatki i poprawki do tej pierwszej wersji manuala svgalib.
+

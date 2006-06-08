@@ -1,0 +1,52 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" Translation (c) 1998 Przemek Borys <pborys@dione.ids.pl>
+.\"
+.TH GETPID 2 1993-07-23 "Linux 0.99.11" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getpid, getppid \- pobranie identyfikatora procesu
+.SH SKŁADNIA
+.B #include <sys/types.h>
+.br
+.B #include <unistd.h>
+.sp
+.B pid_t getpid(void);
+.br
+.B pid_t getppid(void);
+.SH OPIS
+.B getpid
+zwraca ID obecnego procesu. (Jest to często wykorzystywane przez funkcje
+generujące unikalne nazwy plików tymczasowych.)
+
+.B getppid
+zwraca PID rodzica obecnego procesu.
+.SH "ZGODNE Z"
+POSIX, BSD 4.3, SVID
+.SH "ZOBACZ TAKŻE"
+.BR exec (3),
+.BR fork (2),
+.BR kill (2),
+.BR mkstemp (3),
+.BR tmpnam (3),
+.BR tempnam (3),
+.BR tmpfile (3)

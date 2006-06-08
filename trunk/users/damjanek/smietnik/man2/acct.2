@@ -1,0 +1,120 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" PTM/Last-Update: Andrzej Krzysztofowicz, Jan 2002, manpages 1.47
+.\" $Id: acct.2,v 1.5 2002/01/13 23:22:29 ankry Exp $
+.\"
+.\" Copyright (c) 1993 Michael Haardt
+.\" (u31b3hs@pool.informatik.rwth-aachen.de),
+.\" Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Thu Jul 22 14:00:08 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Aug 10 1993 by Alan Cox <iiitac@pyramid.swansea.ac.uk>
+.\" Modified Wed Nov 4  1998 by Tigran Aivazian <tigran@sco.com>
+.\"
+.TH ACCT 2 1998-11-04 "Linux 2.1.126" "Podręcznik programisty Linuksa"
+.SH NAZWA
+acct \- włączenie/wyłączenie ewidencjonowania procesów
+.SH SKŁADNIA
+.ad l
+.nf
+.B #include <unistd.h>
+.sp
+.BI "int acct(const char *" filename );
+.fi
+.ad b
+.SH DESCRIPTION
+Funkcja wywołana z nazwą istniejącego pliku jako parametrem, włącza
+ewidencjonowanie procesów i powoduje dopisywanie do pliku \fIfilename\fP
+informacji o każdym zakończonym procesie. Argument \fBNULL\fP
+powoduje wyłączenie ewidencjonowania procesów.
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracane jest 0, w razie błędu zwracane jest
+\-1 i odpowiednio ustawiane
+.IR errno .
+.SH BŁĘDY
+.TP
+.B EACCES
+Brak prawa do zapisu do podanego pliku.
+.TP
+.B EACCES
+Parametr
+.I filename
+nie jest zwykłym plikiem.
+.TP
+.B EFAULT
+.I filename
+wskazuje poza dostępną dla użytkownika przestrzeń adresową.
+.TP
+.B EIO
+Błąd zapisu do pliku
+.IR filename .
+.TP
+.B EISDIR
+.I filename
+jest katalogiem.
+.TP
+.B ELOOP
+Podczas rozwiązywania
+.I filename
+napotkano zbyt wiele dowiązań symbolicznych.
+.TP
+.B ENAMETOOLONG
+Nazwa
+.I filename
+jest za długa.
+.TP
+.B ENOENT
+Podany plik nie istnieje.
+.TP
+.B ENOMEM
+Brak pamięci.
+.TP
+.B ENOSYS
+Rozlicznie procesów nie zostało włączone w czasie kompilacji jądra systemu.
+Odpowiednim parametrem jądra ustawiającym tę opcję jest CONFIG_BSD_PROCESS_ACCT.
+.TP
+.B ENOTDIR
+Składnik
+.IR filename ,
+który powinien być katalogiem, w rzeczywistości nim nie jest.
+.TP
+.B EPERM
+Proces wywołujący tę funkcję ma niewystarczające uprawnienia do włączenia
+ewidencjonowania procesów.
+.TP
+.B EROFS
+Plik
+.I filename
+znajduje się w systemie plików tylko do zapisu.
+.TP
+.B EUSERS
+Brak wolnych struktur plikowych w jądrze lub brak pamięci.
+.SH "ZGODNE Z"
+SVr4 (ale nie POSIX). SVr4 dokumentuje błądy  EBUSY, ale nie
+EISDIR czy ENOSYS. AIX i HPUX również dokumentują EBUSY (próba włączenia
+ewidencjonowania, podczas gdy jest ono już włączone). Dotyczy to również
+Solarisa (próba włączenia ewidencjonowania z wykorzystaniem pliku, który
+jest już używany).
+.SH UWAGI
+W wypadku załamania się systemu, informacje ewidencjonowania procesów nie
+będą dodane, nie zakończone procesy nigdy nie będą zaewidencjonowane.

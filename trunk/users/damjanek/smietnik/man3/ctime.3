@@ -1,0 +1,235 @@
+.\" {PTM/AB/0.1/15-12-1998/"asctime, ctime, gmtime, localtime, mktime - konwersja binarnej daty i czasu na format ASCII"}
+.\" tłumaczenie Adam Byrtek <abyrtek@priv.onet.pl>
+.\" Aktualizacja do man-pages 1.47 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:49:27 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Fri Apr 26 12:38:55 MET DST 1996 by Martin Schulze (joey@linux.de)
+.\" Modified 2001-11-13, aeb
+.\" Modified 2001-12-13, joey, aeb
+.\"
+.\" ------------
+.TH CTIME 3 2001-12-13 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+asctime, ctime, gmtime, localtime, mktime \- konwersja daty i czasu
+do postaci czasu rozłożonego lub ASCII
+.SH SKŁADNIA
+.nf
+.B #include <time.h>
+.sp
+.BI "char *asctime(const struct tm *" tm );
+.br
+.BI "char *asctime_r(const struct tm *" tm ", char *" buf );
+.sp
+.BI "char *ctime(const time_t *" timep );
+.br
+.BI "char *ctime_r(const time_t *" timep ", char *" buf );
+.sp
+.BI "struct tm *gmtime(const time_t *" timep );
+.br
+.BI "struct tm *gmtime_r(const time_t *" timep ", struct tm *" result );
+.sp
+.BI "struct tm *localtime(const time_t *" timep );
+.br
+.BI "struct tm *localtime_r(const time_t *" timep ", struct tm *" result );
+.sp
+.BI "time_t mktime(struct tm *" tm );
+.fi
+.SH OPIS
+Funkcje \fBctime()\fP, \fBgmtime()\fP oraz \fBlocaltime()\fP przyjmują
+argument typu \fItime_t\fP, reprezentujący czas kalendarzowy.
+Zinterpretowany jako bezwzględna wartość czasu, określa on ilość sekund,
+jakie upłynęły od godziny 00:00:00 1 stycznia 1970 czasu Coordinated
+Universal Time (UTC).
+.PP
+Funkcje \fBasctime()\fP oraz \fBmktime()\fP przyjmują jako argument
+czas rozłożony, który jest reprezentacją podzieloną na rok, miesiąc,
+dzień itd.
+.PP
+Czas rozłożony jest przechowywany w strukturze \fItm\fP, zdefiniowanej
+w \fI<time.h>\fP następująco:
+.sp
+.RS
+.nf
+.ne 11
+.ta 8n 16n 32n
+struct tm {
+	int	tm_sec;			/* sekundy */
+	int	tm_min;			/* minuty */
+	int	tm_hour;		/* godziny */
+	int	tm_mday;		/* dzień miesiąca */
+	int	tm_mon;			/* miesiąc */
+	int	tm_year;		/* rok */
+	int	tm_wday;		/* dzień tygodnia */
+	int	tm_yday;		/* dzień roku */
+	int	tm_isdst;		/* sezonowa zmiana czasu */
+};
+.ta
+.fi
+.RE
+.PP
+Elementy struktury \fItm\fP to:
+.TP
+.I tm_sec
+Liczba sekund po pełnej minucie, normalnie z zakresu od 0 do 59, ale może
+wynosić nawet do 61, aby umożliwić sekundy przestępne.
+.TP
+.I tm_min
+Liczba minut po pełnej godzinie, z zakresu od 0 do 59.
+.TP
+.I tm_hour
+Liczba godzin po północy, z zakresu od 0 do 23.
+.TP
+.I tm_mday
+Dzień tygodnia, z zakresu od 1 do 31.
+.TP
+.I tm_mon
+Liczba miesięcy od stycznia, z zakresu od 0 do 11.
+.TP
+.I tm_year
+Liczba lat od 1900.
+.TP
+.I tm_wday
+Liczba dni od niedzieli, z zakresu od 0 do 6.
+.TP
+.I tm_yday
+Liczba dni od 1 stycznia, z zakresu od 0 do 365.
+.TP
+.I tm_isdst
+Znacznik, który wskazuje, czy dla podanego czasu została przeprowadzona zmiana
+czasu zimowy/letni. Jeśli wartość ta jest dodatnia, to zmiana czasu została
+przeprowadzona, jeśli wynosi zero - zmiany nie przeprowadzono, a jeśli jest
+ujemna - oznacza to, że informacja dotycząca zmiany czasu nie jest dostępna.
+.PP
+Wywołanie
+.BI ctime( t )
+jest równoważne
+.BI asctime(localtime( t )) \fR.
+Przekształca ono czas kalendarzowy \fIt\fP na łańcuch o postaci
+.sp
+.RS
+"śro sty 30 21:49:08 1993\\n"
+.RE
+.sp
+Skróty dni tygodnia to `nie', `pon', `wto', `śro', `czw', `pią' i `sob'.
+Skróty miesięcy to `sty', `lut', `mar', `kwi', `maj', `cze', `lip', `sie',
+`wrz', `paź', `lis' i `gru'. Zwracany jest wskaźnik do statycznego łańcucha,
+który to łańcuch może zostać nadpisany przy kolejnym wywołaniu dowolnej
+funkcji daty i czasu. Funkcja zapisuje również informacje na temat aktualnej
+strefy czasowej do zewnętrznej zmiennej \fItzname\fP (patrz
+.BR tzset (3)).
+Wielowejściowa wersja tej funkcji, \fBctime_r()\fP, robi to samo, ale
+zapisuje łańcuch w podanym przez użytkownika buforze o długości co
+najmniej 26. Nie musi ona ustawiać \fItzname\fP.
+.PP
+Funkcja \fBgmtime()\fP przekształca czas kalendarzowy \fItimep\fP na czas
+rozłożony, wyrażony w Coordinated Universal Time (UTC). Może ona zwrócić
+wartość NULL, jeśli rok nie daje się zapisać jako liczba całkowita. Zwracany
+jest wskaźnik do statycznej struktury, która to struktura może zostać
+nadpisana przy kolejnym wywołaniu dowolnej funkcji daty i czasu.
+Funkcja \fBgmtime_r()\fP robi to samo, ale zapisuje dane do struktury podanej
+przez użytkownika. Nie musi ona ustawiać \fItzname\fP.
+.PP
+Funkcja \fBlocaltime()\fP przekształca czas kalendarzowy \fItimep\fP na czas
+rozłożony, wyrażony względem wybranej przez użytkownika strefy czasowej.
+Funkcja działa tak, jakby wywoływała
+.BR tzset (3)
+i wpisywała do zewnętrznej zmiennej \fItzname\fP informacje na temat
+aktualnej strefy czasowej, do \fItimezone\fP - różnicę w sekundach pomiędzy
+Coordinated Universal Time (UTC) a lokalnym czasem standardowym,
+a do \fIdaylight\fP - wartość niezerową jeśli przez jakąś część roku
+obowiązuje inny czas niż podany (zimowy/letni).
+Zwracany jest wskaźnik do statycznej struktury, która to struktura może zostać
+nadpisana przy kolejnym wywołaniu dowolnej funkcji daty i czasu.
+Funkcja \fBlocaltime_r()\fP robi to samo, ale zapisuje dane do struktury
+podanej przez użytkownika. Nie musi ona ustawiać \fItzname\fP.
+.PP
+Funkcja \fBasctime()\fP przekształca czas rozłożony \fItm\fP na łańcuch
+tego samego formatu, co \fBctime()\fP. Zwracany jest wskaźnik do statycznego
+łańcucha, który to łańcuch może zostać nadpisany przy kolejnym wywołaniu
+dowolnej funkcji daty i czasu.
+Funkcja \fBasctime_r()\fP robi to samo, ale zapisuje łańcuch w podanym przez
+użytkownika buforze o długości co najmniej 26.
+.PP
+Funkcja \fBmktime()\fP przekształca strukturę czasu rozłożonego, wyrażoną w
+czasie lokalnym, na czas kalendarzowy. Funkcja ignoruje wartości elementów
+\fItm_wday\fP i \fItm_yday\fP i oblicza je ponownie na podstawie innych
+informacji ze struktury czasu rozłożonego. Jeśli elementy struktury mają
+wartości spoza zakresu wartości dopuszczalnych, to zostana znormalizowane
+(w taki sposób, że np. 40 października zostanie zamieniony na 9 listopada).
+Wywołanie \fBmktime()\fP zapisuje również informacje na temat aktualnej
+strefy czasowej do zewnętrznej zmiennej \fItzname\fP. Jeśli podany czas
+rozłożony nie może zostać przedstawiony jako czas kalendarzowy (liczba
+sekund od początku epoki), \fBmktime()\fP zwraca wartość (time_t)(\-1)
+i nie zmienia wartości elementów \fItm_wday\fP i \fItm_yday\fP struktury
+czasu rozłożonego.
+.SH "WARTOŚĆ ZWRACANA"
+Każda z tych funkcji zwraca opisaną powyżej wartość lub NULL
+(\-1 w przypadku \fBmktime()\fP) w razie wystąpienia błędu.
+.SH UWAGI
+Następujące cztery funkcje
+.BR acstime() ,
+.BR ctime() ,
+.B gmtime()
+i
+.B localtime()
+zwracają wskaźnik do statycznych danych i w związku z tym nie są
+przystosowane do wielowątkowości.
+Wielowątkowe wersje
+.BR acstime_r() ,
+.BR ctime_r() ,
+.B gmtime_r()
+i
+.BR localtime_r()
+są wymienione w SUSv2 i dostępne począwszy od libc 5.2.5.
+.LP
+Wersja struktury tm zawarta w glibc posiada dodatkowe pola
+.sp
+.RS
+.nf
+long tm_gmtoff;           /* Sekundy na wschód od UTC */
+const char *tm_tm_zone;   /* Skrót strefy czasowej */
+.fi
+.RE
+.sp
+zdefiniowane, gdy _BSD_SOURCE jest ustawione przed włączeniem
+.IR <time.h> .
+Jest to rozszerzenie BSD, obecnie w 4.3BSD-Reno.
+.SH "ZGODNE Z"
+SVID 3, POSIX, BSD 4.3, ISO 9899
+.SH "ZOBACZ TAKŻE"
+.BR date (1),
+.BR gettimeofday (2),
+.BR newctime (3),
+.BR time (2),
+.BR utime (2),
+.BR clock (3),
+.BR difftime (3),
+.BR strftime (3),
+.BR strptime (3),
+.BR tzset (3)

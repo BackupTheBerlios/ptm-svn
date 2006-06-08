@@ -1,0 +1,40 @@
+.\" {PTM/PB/0.1/20-06-1999/"zapytaj użytkownika o nazwę pliku w podanym formacie"}
+.TH getfilename 1 "Release 1"
+.SH NAZWA
+getfilename - zapytaj użytkownika o nazwę pliku w określonym formacie
+.SH SKŁADNIA
+.ta 8n
+\fBgetfilename\fP  typ-formatu nazwa-pliku
+.br
+.SH OPIS
+Program
+.I getfilename
+zapyta użytkownika o nazwę pliku w podanym formacie i skopiuje ten plik do
+nazwy pliku podanej w drugim argumencie.
+
+Jeśli nie wydaje ci się to zbyt użyteczne samo w sobie, to masz rację.
+Jednak jest to wszystko, czego potrzeba, aby dodać użytecznych właściwości
+do programów zorientowanych mailcapowo, takich jak mailto(1). Na przykład
+dzięki poniższej linijce umieszczonej w pliku mailcap program mailto może
+pomóc użytkownikowi we włączeniu PostScriptu do wysyłanego listu:
+
+application/postscript ; lpr -Pipa %s ; description="Include a Postscript File";\
+	compose="getfilename Postscript %s"
+
+.SH ZOBACZ TAKŻE
+mailto(1), metamail(1)
+.SH BŁĘDY
+Jest to taki malutki programik, że mógłby właściwie być bez błędzików, lecz
+nie zakładałbym się o to.
+.SH COPYRIGHT
+Copyright (c) 1991 Bell Communications Research, Inc. (Bellcore)
+
+Zezwala się na używanie, kopiowanie i dytrybucję tego materiału dla
+dowolnych celów i bez opłat. Warunkiem jest zamieszczenie tej notki o
+prawach i to, że nazwa Bellcore nie będzie używana do reklam lub podobnych
+celów bez wcześniejszego uzgodnienia tego z autoryzowanym reprezentantem
+Bellcore. BELLCORE NIE MÓWI NIC O JAKOŚCI CZY WYDAJNOŚCI TEGO MATERIAŁU.
+JEST UDOSTĘPNIANY "JAKI JEST", BEZ ŻADNYCH JAWNYCH LUB DOMYŚLNYCH
+GWARANCJI.
+.SH AUTOR
+Nathaniel S. Borenstein, Bellcore

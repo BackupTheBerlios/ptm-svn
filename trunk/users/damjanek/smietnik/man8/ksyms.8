@@ -1,0 +1,39 @@
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory
+.\" $ Id: ksyms.8 1.2 Sun, 06 May 2001 14:52:26 +1000 kaos $
+.\"
+.\" $Id: ksyms.8,v 1.2 2001/11/13 13:43:00 ankry Exp $
+.\"
+.TH KSYMS 8 "26 grudnia 1996" Linux "Wsparcie dla modułów"
+.SH NAZWA
+ksyms \- wypisuje symbole udostępniane przez kernel.
+.SH SKŁADNIA
+.B ksyms
+[ \-a ] [ \-h ] [ \-m ]
+.SH OPIS
+.B ksyms
+Wypisuje informacje o udostępnianych przez jądro symbolach. Format jest
+postaci: adres, nazwa, i moduł, w którym go zdefiniowano.
+.SS OPCJE
+.TP
+.I \-a
+Wypisuje wszystkie symbole. Domyślnie, symbole z właściwego jądra są
+pomijane.
+.TP
+.I \-h
+Pomija nagłówki kolumn.
+.TP
+.I \-m
+Wypisuje informacje o modułach. Włącza do listingu adres, pod którym moduł
+został załadowany do jądra i jego rozmiar.
+.SH "ZOBACZ TAKŻE"
+insmod(8), modprobe(8), depmod(8), rmmod(8), lsmod(8)
+.SH HISTORIA
+Polecenie
+.B ksyms
+zostało wymyślone przez Bjorna Ekwalla <bj0rn@blox.se>
+.br
+Opcja '-m' została powołana przez Davida Hindsa <dhinds@allegro.stanford.edu>
+.br
+Zaktualizowane dla 2.1.17 przez Richarda Hendersona <rth@tamu.edu>

@@ -1,0 +1,83 @@
+.\" {PTM/AB/0.1/11-12-1998/"abs - wartość bezwzględna zmiennej całkowitej"}
+.\" tłumaczenie Adam Byrtek (abyrtek@priv.onet.pl)
+.\" Last update: Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>, Jun 2001,
+.\"              manpages 1.48
+.\" ------------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Mon Mar 29 22:31:13 1993, David Metcalfe
+.\" Modified Sun Jun  6 23:27:50 1993, David Metcalfe
+.\" Modified Sat Jul 24 21:45:37 1993, Rik Faith (faith@cs.unc.edu)
+.\" Modified Sat Dec 16 15:02:59 2000, Joseph S. Myers
+.\"
+.TH ABS 3 2000-12-17 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+abs, labs, llabs, imaxabs \- oblicza wartość bezwzględną zmiennej całkowitej
+.SH SKŁADNIA
+.nf
+.B #include <stdlib.h>
+.sp
+.BI "int abs(int " j );
+.br
+.BI "long int labs(long int " j );
+.br
+.BI "long long int llabs(long long int " j );
+.sp
+.B #include <inttypes.h>
+.sp
+.BI "intmax_t imaxabs(intmax_t " j );
+.fi
+.SH OPIS
+Funkcja \fBabs()\fP oblicza wartość bezwzględną argumentu integer \fIj\fP.
+Funkcje \fBlabs()\fP, \fBllabs()\fP oraz \fBimaxabs()\fP obliczają
+wartość bezwzględną argumentu \fIj\fP, mającego typ numeryczny odpowiedni
+dla danej funkcji.
+.SH "WARTOŚĆ ZWRACANA"
+Zwraca wartość bezwzględną argumentu numerycznego odpowiedniego typu.
+.SH "ZGODNE Z"
+SVID 3, POSIX.1, BSD 4.3, ISO/IEC 9899 (C99). POSIX.1 (edycja z 1996 r.) tylko
+wymaga istnienia funkcji \fBabs()\fP. ISO/IEC 9899:1990 (C89) zawiera tylko
+funkcje \fBabs()\fP i \fBlabs()\fP; funkcje \fBllabs()\fP oraz \fBimaxabs()\fP
+zostały dodane w C99.
+.SH UWAGI
+Wartość bezwzględna najmniejszej ujemnej liczby całkowitej jest nieokreślona.
+.PP
+Funkcja \fBllabs()\fP jest zawarta w bibliotece glibc od wersji 2.0, nie ma
+jej natomiast w libc5 i libc4. Funkcja \fBimaxabs()\fP jest zawarta w glibc od wersji 2.1.1
+.PP
+Aby funkcja \fBllabs()\fP była zadeklarowana, może być potrzebne zdefiniowanie
+\fB_ISOC99_SOURCE\fP lub \fB_ISOC9X_SOURCE\fP (w zależności od wersji glibc)
+jeszcze przed dołączeniem standardowych nagłówków.
+.PP
+Funkcje \fBabs()\fP i \fBlabs()\fP są także wbudowanymi funkcjami kompilatora GCC.
+Od wersji 3.0 kompilatora GCC funkcje \fBllabs()\fP oraz \fBimaxabs()\fP również
+są funkcjami wbudowanymi.
+.SH "ZOBACZ TAKŻE"
+.BR ceil (3),
+.BR floor (3),
+.BR fabs (3),
+.BR rint (3)

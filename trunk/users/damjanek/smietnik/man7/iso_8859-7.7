@@ -1,0 +1,163 @@
+'\" t
+.\" Tłumaczenie wersji man-pages 1.48 - marzec 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"         ostatnia aktualizacja - sierpień 2003 (man-pages 1.60)
+.\"
+.\" Copyright 1999      Dimitri Papadopoulos (dpo@club-internet.fr)
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.TH ISO_8859-7 7 1999-05-31 "Linux" "Podręcznik programisty Linuksa"
+.nh
+.SH NAZWA
+iso_8859-7 \- zestaw znaków ISO 8859-7 zakodowany ósemkowo, dziesiętnie
+i szesnastkowo
+.SH OPIS
+Standard ISO 8859 zawiera kilka ośmiobitowych rozszerzeń zestawu znaków
+ASCII (znanego także jako ISO 646-IRV). W ISO 8859-7 zakodowane są znaki
+.\" modern monotonic Greek.
+używane we współczesnym greckim.
+.SS "Alfabety ISO 8859"
+Pełny zestaw alfabetów ISO 8859 obejmuje:
+.P
+.TS
+l l.
+ISO 8859-1	języki zachodnioeuropejskie (Latin-1)
+ISO 8859-2	języki środkowo- i wschodnioeuropejskie (Latin-2)
+ISO 8859-3	języki południowoeuropejskie i inne (Latin-3)
+ISO 8859-4	języki skandynawskie i bałtyckie (Latin-4)
+ISO 8859-5	łaciński/cyrylica
+ISO 8859-6	łaciński/arabski
+ISO 8859-7	łaciński/grecki
+ISO 8859-8	łaciński/hebrajski
+ISO 8859-9	Latin-1 zmodyfikowany dla tureckiego (Latin-5)
+ISO 8859-10	języki nordyckie, lapoński i eskimoski (Latin-6)
+ISO 8859-11	łaciński/tajlandzki
+ISO 8859-13	języki wybrzeża bałtyckiego (Latin-7)
+ISO 8859-14	celtycki (Latin-8)
+ISO 8859-15	języki zachodnioeuropejskie (Latin-9)
+ISO 8859-16	rumuński (Latin-10)
+.TE
+.SS "Znaki ISO 8859-7"
+Poniższa tabela zawiera te drukowalne znaki z ISO 8859-7, które
+nie zostały wymienione na stronie podręcznika
+.BR ascii (7).
+Znaki występujące w czwartej kolumnie będą poprawnie widoczne jedynie
+w środowisku skonfigurowanym dla ISO 8859-7.
+
+.TS
+l l l c lp-1.
+ósem.	dzies.	szes.	znak	opis
+_
+240	160	A0	 	NO-BREAK SPACE
+241	161	A1	Ą	MODIFIER LETTER REVERSED COMMA
+242	162	A2	˘	MODIFIER LETTER APOSTROPHE
+243	163	A3	Ł	POUND SIGN
+246	166	A6	Ś	BROKEN BAR
+247	167	A7	§	SECTION SIGN
+250	168	A8	¨	DIAERESIS
+251	169	A9	Š	COPYRIGHT SIGN
+253	171	AB	Ť	LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+254	172	AC	Ź	NOT SIGN
+255	173	AD	­	SOFT HYPHEN
+257	175	AF	Ż	HORIZONTAL BAR
+260	176	B0	°	DEGREE SIGN
+261	177	B1	ą	PLUS-MINUS SIGN
+262	178	B2	˛	SUPERSCRIPT TWO
+263	179	B3	ł	SUPERSCRIPT THREE
+264	180	B4	´	GREEK TONOS
+265	181	B5	ľ	GREEK DIALYTIKA TONOS
+266	182	B6	ś	GREEK CAPITAL LETTER ALPHA WITH TONOS
+267	183	B7	ˇ	MIDDLE DOT
+270	184	B8	¸	GREEK CAPITAL LETTER EPSILON WITH TONOS
+271	185	B9	š	GREEK CAPITAL LETTER ETA WITH TONOS
+272	186	BA	ş	GREEK CAPITAL LETTER IOTA WITH TONOS
+273	187	BB	ť	RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+274	188	BC	ź	GREEK CAPITAL LETTER OMICRON WITH TONOS
+275	189	BD	˝	VULGAR FRACTION ONE HALF
+276	190	BE	ž	GREEK CAPITAL LETTER UPSILON WITH TONOS
+277	191	BF	ż	GREEK CAPITAL LETTER OMEGA WITH TONOS
+300	192	C0	Ŕ	GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS
+301	193	C1	Á	GREEK CAPITAL LETTER ALPHA
+302	194	C2	Â	GREEK CAPITAL LETTER BETA
+303	195	C3	Ă	GREEK CAPITAL LETTER GAMMA
+304	196	C4	Ä	GREEK CAPITAL LETTER DELTA
+305	197	C5	Ĺ	GREEK CAPITAL LETTER EPSILON
+306	198	C6	Ć	GREEK CAPITAL LETTER ZETA
+307	199	C7	Ç	GREEK CAPITAL LETTER ETA
+310	200	C8	Č	GREEK CAPITAL LETTER THETA
+311	201	C9	É	GREEK CAPITAL LETTER IOTA
+312	202	CA	Ę	GREEK CAPITAL LETTER KAPPA
+313	203	CB	Ë	GREEK CAPITAL LETTER LAMDA
+314	204	CC	Ě	GREEK CAPITAL LETTER MU
+315	205	CD	Í	GREEK CAPITAL LETTER NU
+316	206	CE	Î	GREEK CAPITAL LETTER XI
+317	207	CF	Ď	GREEK CAPITAL LETTER OMICRON
+320	208	D0	Đ	GREEK CAPITAL LETTER PI
+321	209	D1	Ń	GREEK CAPITAL LETTER RHO
+323	211	D3	Ó	GREEK CAPITAL LETTER SIGMA
+324	212	D4	Ô	GREEK CAPITAL LETTER TAU
+325	213	D5	Ő	GREEK CAPITAL LETTER UPSILON
+326	214	D6	Ö	GREEK CAPITAL LETTER PHI
+327	215	D7	×	GREEK CAPITAL LETTER CHI
+330	216	D8	Ř	GREEK CAPITAL LETTER PSI
+331	217	D9	Ů	GREEK CAPITAL LETTER OMEGA
+332	218	DA	Ú	GREEK CAPITAL LETTER IOTA WITH DIALYTIKA
+333	219	DB	Ű	GREEK CAPITAL LETTER UPSILON WITH DIALYTIKA
+334	220	DC	Ü	GREEK SMALL LETTER ALPHA WITH TONOS
+335	221	DD	Ý	GREEK SMALL LETTER EPSILON WITH TONOS
+336	222	DE	Ţ	GREEK SMALL LETTER ETA WITH TONOS
+337	223	DF	ß	GREEK SMALL LETTER IOTA WITH TONOS
+340	224	E0	ŕ	GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND TONOS
+341	225	E1	á	GREEK SMALL LETTER ALPHA
+342	226	E2	â	GREEK SMALL LETTER BETA
+343	227	E3	ă	GREEK SMALL LETTER GAMMA
+344	228	E4	ä	GREEK SMALL LETTER DELTA
+345	229	E5	ĺ	GREEK SMALL LETTER EPSILON
+346	230	E6	ć	GREEK SMALL LETTER ZETA
+347	231	E7	ç	GREEK SMALL LETTER ETA
+350	232	E8	č	GREEK SMALL LETTER THETA
+351	233	E9	é	GREEK SMALL LETTER IOTA
+352	234	EA	ę	GREEK SMALL LETTER KAPPA
+353	235	EB	ë	GREEK SMALL LETTER LAMDA
+354	236	EC	ě	GREEK SMALL LETTER MU
+355	237	ED	í	GREEK SMALL LETTER NU
+356	238	EE	î	GREEK SMALL LETTER XI
+357	239	EF	ď	GREEK SMALL LETTER OMICRON
+360	240	F0	đ	GREEK SMALL LETTER PI
+361	241	F1	ń	GREEK SMALL LETTER RHO
+362	242	F2	ň	GREEK SMALL LETTER FINAL SIGMA
+363	243	F3	ó	GREEK SMALL LETTER SIGMA
+364	244	F4	ô	GREEK SMALL LETTER TAU
+365	245	F5	ő	GREEK SMALL LETTER UPSILON
+366	246	F6	ö	GREEK SMALL LETTER PHI
+367	247	F7	÷	GREEK SMALL LETTER CHI
+370	248	F8	ř	GREEK SMALL LETTER PSI
+371	249	F9	ů	GREEK SMALL LETTER OMEGA
+372	250	FA	ú	GREEK SMALL LETTER IOTA WITH DIALYTIKA
+373	251	FB	ű	GREEK SMALL LETTER UPSILON WITH DIALYTIKA
+374	252	FC	ü	GREEK SMALL LETTER OMICRON WITH TONOS
+375	253	FD	ý	GREEK SMALL LETTER UPSILON WITH TONOS
+376	254	FE	ţ	GREEK SMALL LETTER OMEGA WITH TONOS
+.TE
+.SH HISTORIA
+ISO 8859-7 był wcześniej znany jako ELOT-928 lub ECMA-118:1986.
+.SH "ZOBACZ TAKŻE"
+.BR ascii (7)

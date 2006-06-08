@@ -1,0 +1,36 @@
+.\" {PTM/WK/0.1/15-07-1999/"wyświetla zawartość pliku MSDOS"}
+.TH mtype 1 "15 lipca 1999" mtools-3.9.6
+.SH NAZWA
+mtype - wyświetla zawartość pliku MSDOS
+.SH SKŁADNIA
+.BR mtype " [" -ts ]
+.IR plikDOS " [" plikiDOS ...]
+.SH OPIS
+Polecenie \fBmtype\fR wyświetla podany plik DOSu na ekranie.
+.PP
+Do ustawienia urządzenia i bieżącego katalogu roboczego (w odniesieniu do
+DOSu) można użyć \fBmcd\fR. Domyślnym jest \fBA:\\\fR.
+.PP
+\fBmtype\fR zwraca 0 w przypadku powodzenia, 1 przy całkowitym
+niepowodzeniu, 2 przy częściowym.
+.PP
+W przeciwieństwie do polecenia \fBTYPE\fR DOSu, \fBmtype\fR pozwala na
+użycie wielu argumentów.
+.SH OPCJE
+Oprócz standardowych opcji, \fBmtype\fR posiada następujące:
+.TP
+.B \-t 
+Przeglądanie pliku tekstowego. \fBmtype\fR zamienia źródłowe sekwencje końca
+linii: właściwy dla DOS powrót karetki/wysuw linii (CRLF) na pojedynczy
+wysuw linii (LF) używany w Uniksie.
+.TP
+.B \-s 
+Obcina ósmy bit w danych.
+.RE
+.SH UWAGI
+Niniejsza, polska wersja dokumentacji, powstała jako tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. W stosunku do automatycznie generowanej
+z Textinfo dokumentacji oryginalnej dokonano przesunięcia sekcji opisującej
+konwersję dokumentacji do \fBmtools\fR(1). Tam też znajdziesz notę prawną
+dotyczącą rozpowszechniania, modyfikacji i tłumaczenia dokumentacji pakietu
+mtools

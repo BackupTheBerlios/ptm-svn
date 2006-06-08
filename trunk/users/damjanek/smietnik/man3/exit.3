@@ -1,0 +1,99 @@
+.\" Tłumaczenie wersji man-pages 1.45 (przy wykorzystaniu tłumaczenia
+.\" Adama Byrtka <abyrtek@priv.onet.pl> wersji GNU) - grudzień 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" 
+.\" Copyright (C) 2001 Andries Brouwer <aeb@cwi.nl>.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.TH EXIT 3 2001-11-17 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+exit \- normalne zakończenie programu
+.SH SKŁADNIA
+.nf
+.B #include <stdlib.h>
+.sp
+.BI "void exit(int " status );
+.fi
+.SH OPIS
+Funkcja \fBexit()\fP powoduje normalne zakończenie programu i zwraca do
+procesu macierzystego wartość \fIstatus & 0377\fP.
+(patrz
+.BR wait (2)).
+Wszystkie funkcje zarejestrowane za pomocą \fBatexit()\fP oraz \fBon_exit()\fP
+są wykonywane w kolejności odwrotnej niż zostały zarejestrowane, a wszystkie
+otwarte strumienie są zamykane i wypróżniane są ich bufory. Pliki utworzone
+za pomocą \fItmpfile()\fP są usuwane.
+.LP
+Standard C wymienia dwie definicje
+\fIEXIT_SUCCESS\fP i \fIEXIT_FAILURE\fP,
+które mogą zostać przekazane do \fBexit()\fP, aby wskazać, odpowiednio, czy
+zakończenie było pomyślne, czy nie.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBexit()\fP nie powraca.
+.SH "ZGODNE Z"
+SVID 3, POSIX, BSD 4.3, ISO 9899 (``ANSI C'')
+.SH NOTES
+Za pomocą \fBatexit()\fP i \fBon_exit()\fP można zarejestrować dodatkowe
+funkcje, które zostaną wywołane podczas zakończenia.
+Usuwana z szeregu, a następnie wywoływana, jest zawsze ostatnia funkcja.
+Nie jest zdefiniowane, co się stanie, jeżeli podczas przetwarzania
+tych funkcji zostanie wywołane \fBexit()\fP lub \fBlongjmp()\fP.
+.LP
+Używanie EXIT_SUCCESS i EXIT_FAILURE zamiast 0 i pewnej wartości niezerowej,
+jak 1 lub \-1, zapewnia nieco lepszą przenośność (do środowisk nieuniksowych).
+W szczególności, VMS używa innej konwencji.
+.LP
+BSD próbował zestandaryzować kody zakończenia - obejrzyj plik
+.IR <sysexits.h> .
+.LP
+Po wywołaniu \fBexit()\fP, kod zakończenia musi zostać przekazany do procesu
+macierzystego. Możliwe są trzy przypadki. Jeśli proces macierzysty ma
+ustawione SA_NOCLDWAIT lub ustawiony uchwyt SIGCHLD na SIG_IGN, to kod ten
+jest ignorowany. Jeśli proces macierzysty czekał na potomny, jest on
+powiadamiany o kodzie powrotu. W obu przypadkach kończący się proces ginie
+natychmiast. Jeśli proces macierzysty nie poinformował, że nie jest
+zainteresowany kodem zakończenia ani nie czeka, kończący się proces przechodzi
+w proces "zombie" (który nie zawiera nic oprócz pojedynczego bajtu
+reprezentującego kod zakończenia) tak, że proces macierzysty może poznać kod
+powrotu poprzez późniejsze wywołanie jednej z funkcji \fIwait()\fP.
+.LP
+Jeśli implementacja wspiera sygnał SIGCHLD, to zostanie on wysłany
+do procesu macierzystego. Jeśli proces macierzysty ustawił SA_NOCLDWAIT,
+to nie jest zdefiniowane, czy sygnał SIGCHLD zostanie wysłany.
+.LP
+Jeśli proces jest inicjatorem sesji a sterujący nim terminal jest terminalem
+starującym dla sesji, to do każdego z procesów należących do grupy procesów
+pierwszoplanowych tego terminala sterującego, zostanie wysłany sygnał SIGHUP,
+a terminal zostanie odłączony od sesji umożliwiając jego przejęcie przez
+nowy proces
+sterujący.
+.LP
+Jeśli zakończenie peocesu powoduje osierocenie grupy procesów, a którykolwiek
+z członków nowoosieroconej grupy procesów jest zatrzymany, to po sygnale
+SIGHUP do każdego z procesów tej grupy procesów zostanie wysłany sygnał
+SIGCONT.
+.SH "ZOBACZ TAKŻE"
+.BR _exit (2),
+.BR wait (2),
+.BR atexit (3),
+.BR on_exit (3),
+.BR tmpfile (3)

@@ -1,0 +1,84 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\" 
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\" 
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\" 
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\" 
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 16:59:10 1993 by Rik Faith (faith@cs.unc.edu)
+.\" 
+.\" Tłumaczenie na język polski: Paweł Olszewski (alder@amg.net.pl)
+.\" {PTM/PO/0.1/02-06-1998/"pamięć systemowa, pamięć jądra i porty systemowe"}
+.\" Aktualność: man-pages 1.48
+.\" 
+.TH MEM 4 1992-11-21 "Linux" "Podręcznik Programisty Linuksa"
+.SH NAZWA
+mem, kmem, port \- pamięć systemowa, pamięć jądra i porty systemowe
+.SH OPIS
+\fBmem\fP jest plikiem urządzenia znakowego, który jest obrazem całej
+pamięci głównej komputera. Może być używany na przykład do badania (a nawet
+poprawiania) systemu.
+.LP
+Adresy bajtów w \fBmem\fP interpretuje się jako fizyczne adresy pamięci.
+Odwołania do nie istniejących miejsc w pamięci spowodują, że będą
+zwracane błędy.
+.LP
+Badanie i poprawianie pamięci przy ustawionych bitach tylko-odczyt lub
+tylko-zapis najprawdopodobniej doprowadzi do niespodziewanych wyników.
+.LP
+Tworzy się go najczęściej poleceniami:
+.RS
+.sp
+mknod -m 660 /dev/mem c 1 1
+.br
+chown root:mem /dev/mem
+.sp
+.RE
+.LP
+Plik \fBkmem\fP jest tym samym, co \fBmem\fP, z tym wyjątkiem, że
+zamiast pamięci fizycznej udostępniana jest wirtualna pamięć jądra.
+.LP
+Tworzy się go najczęściej poleceniami:
+.RS
+.sp
+mknod -m 640 /dev/kmem c 1 2
+.br
+chown root:mem /dev/kmem
+.sp
+.RE
+.LP
+Plik \fBport\fP jest zbliżony do \fBmem\fP, ale udostępniane są porty we/wy.
+.LP
+Tworzy się go najczęściej poleceniami:
+.RS
+.sp
+mknod -m 660 /dev/port c 1 4
+.br
+chown root:mem /dev/port
+.sp
+.RE
+.SH PLIKI
+.I /dev/mem
+.br
+.I /dev/kmem
+.br
+.I /dev/port
+.SH "ZOBACZ TAKŻE"
+.BR mknod (1),
+.BR chown (1),
+.BR ioperm (2)

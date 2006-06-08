@@ -1,0 +1,321 @@
+.\" {PTM/WK/1999-11}
+.TH RosettaMan 1
+.SH NAZWA
+RosettaMan, rman - odwrotna kompilacja stron man z postaci sformatowanej
+do różnych formatów źródłowych
+.SH SKŁADNIA
+rman [ \fIopcje \fR] [ \fIplik \fR] 
+.SH OPIS
+\fIRosettaMan\fR przyjmuje strony man podręcznika systemowego z większości
+popularnych odmian Unixa i przekształca je na jeden z wielu formatów tekstu
+źródłowego. Uprzednio \fIRosettaMan\fR wymagał, by przed przetwarzaniem
+strony zostały sformatowane przez nroff. Od wersji 3.0 \fIwoli
+źródła [tn]roff\fR i zwykle daje wyniki, które są jeszcze lepsze. Zaś
+przetwarzanie źródłowej postaci stron man jest jedyną metodą tłumaczenia
+tabel.
+.PP
+W analizie źródeł [tn]roff powinno się zaimplementować dowolnie duży
+podzbiór [tn]roff, czego nie zrobiłem i nie zrobię, zatem wyniki mogą być
+dość odległe. Zaimplementowałem jednak znaczący podzbiór używanych
+w stronach man, łącznie z tbl (ale nie eqn), testami if, definicjami makr
+ogólnych. Wyniki zatem zwykle wyglądają doskonale. Jeśli nie, sformatuj
+stronę przy pomocy nroff przed przesłaniem jej do RosettaMan. Jeśli jednak
+RosettaMan nie rozpoznaje ważnego makra używanego przez liczną klasę stron
+man, to wyślij mi e-mail ze źródłem i stroną sformatowaną nroff-em a
+zobaczę, co da się zrobić. Uruchamiając RosettaMan ze źródłem strony
+zawierającym makro .so (włączanie innych albo przekierowanie
+do innego źródła [tn]roff), powinieneś być w katalogu nadrzędnym danej
+strony, gdyż strony są zapisywane przy takim właśnie założeniu. Na przykład,
+jeśli przekształcasz /usr/man/man1/ls.1, to zmień uprzednio katalog na /usr/man. 
+.PP
+\fIRosettaMan \fR przyjmuje strony man z: SunOS, Sun Solaris, 
+Hewlett-Packard HP-UX, AT&T System V, OSF/1 aka Digital UNIX, 
+DEC Ultrix, SGI IRIX, Linux, FreeBSD, SCO. Przetwarzanie postaci źródłowej
+działa dla: SunOS, Sun Solaris, Hewlett-Packard HP-UX, AT&T System 
+V, OSF/1 aka Digital UNIX, DEC Ultrix. Potrafi tworzyć drukowalne
+tylko-ASCII (usunięte znaki sterujące), tylko-nagłówki-sekcji, 
+Tk, TkMan, [tn]roff (tradycyjne źródła stron man), SGML, HTML, 
+MIME, LaTeX, LaTeX2e, RTF, Perl 5 POD. Modularna budowa umożliwia łatwe
+dodawanie dodatkowych formatów wyjściowych.
+.PP
+Najnowsza wersja RosettaMan dostępna jest zawsze z
+\fIftp://ftp.cs.berkeley.edu/ucb/people/phelps/tcltk/rman.tar.Z\fR. 
+.SH OPCJE
+Poniższe dwie opcje nie powinny być używane z innymi. Powodują zakończenie
+pracy przez RosettaMan bez przetwarzania wejścia.
+.TP
+.BR -h ", " --help 
+Pokaż listę opcji wiersza poleceń i zakończ pracę.
+.TP
+.BR -v ", " --version 
+Pokaż numer wersji i zakończ pracę.
+.PP
+\fIFiltr powinieneś podać jako pierwszy, gdyż ta ustawia różne inne parametry.
+Pozostałe opcje podaj po nim.
+.TP
+.BR -f ", " --filter " [" ASCII | roff | TkMan | Tk | Sections | HTML | SGML | MIME |
+.RS 14
+.BR LaTeX | LaTeX2e | RTF | POD ]
+.RE
+.RS 8
+Ustaw filtr wyjścia. Domyślnie jest to ASCII.
+.RE
+.TP
+.BR -S ", " --source 
+RosettaMan usiłuje samoczynnie określić czy dane wejściowe są w postaci
+źródłowej czy w sformatowanej; posłuż się tą opcją do zadeklarowania wejścia
+w postaci źródłowej.
+.TP
+.BR -F ", " --format ", " --formatted 
+RosettaMan usiłuje samoczynnie określić czy dane wejściowe są w postaci
+źródłowej czy w sformatowanej; posłuż się tą opcją do zadeklarowania wejścia
+w postaci sformatowanej.
+.TP
+.BR -l ", " --title " \fIłańcuch-printf\fR"
+W trybie HTML ustawia tytuł (znacznik <TITLE>) stron man, pobierając parametry
+takie jak opcja \fI-r\fR. 
+.TP
+.BR -r ", " --reference ", " --manref " \fIłańcuch-printf\fR"
+W trybach HTML i SGML określa postać URL, przy pomocy której pozyskiwać
+inne strony man. Łańcuch może używać dwu podanych parametrów: nazwy strony
+man i jej sekcji. (Zobacz sekcja Przykłady.)
+Jeżeli łańcuch jest pusty (tak jak ustawiony z powłoki przez "-r ''"),
+ma wartość `-' lub `off', to odnośniki występujące na stronie man nie będą
+wymienione na znaczniki HREF, lecz tylko zapisane czcionką pochyłą (italic).
+Jeśli Twój printf obsługuje określanie pozycji XPG3, to może to być dość
+elastyczne.
+.\" If your printf supports XPG3 positions specifier, this can be quite flexible.
+.TP
+.BR -V ", " --volumes " \fI<lista rozdzielana drukropkami>\fR"
+Ustawia listę dozwolonych wolumenów (części) sprawdzanych
+podczas wyszukiwania powiązań z innymi stronami man. Domyślnie jest to
+\fI1:2:3:4:5:6:7:8:9:o:l:n:p\fR (nazwy części mogą być wieloznakowe).
+Jeżeli po łańcuchu zawierającym znaki różne od białych znaków
+występuje bezpośrednio lewy nawias, następnie jedna z nazw wolumenów,
+zaś kończy się opcjonalnymi innymi znakami i prawym nawiasem -- to taki łańcuch
+zgłaszany jest jako odnośnik do innej strony man. Jeśli w użytej opcji -V
+łańcuch zaczyna się od znaku równości, to nie są dozwolone żadne dodatkowe
+znaki pomiędzy dopasowaną nazwą wolumenu a prawym nawiasem. (Opcja ta jest
+potrzebna dla SCO UNIX.)
+.PP
+Poniższe opcje mają zastosowanie tylko wtedy, gdy jako wejście podano strony
+sformatowane. Nie mają zastosowania lub nie zawsze są obsługiwane poprawnie
+dla stron w postaci źródłowej.
+.TP
+.BR -b ", " --subsections 
+Oprócz tytułów sekcji próbuj rozpoznawać tytuły podsekcji. W niektórych
+odmianach może to powodować kłopoty.
+.TP
+.BR -K ", " --nobreak 
+Wskaż, że strony man nie posiadają łamania strony, zatem nie szukaj w pobliżu
+stopek i nagłówków. (Starsze makra nroff -man zawsze wstawiały łamanie strony,
+ale ostatnio niektórzy dostawcy zauważyli, że wydruki robione są poprzez
+troff, podczas gdy nroff -man służy do formatowania stron do czytania
+na ekranie, a zatem usunęli łamanie stron.)
+\fIRosettaMan \fR zwykle obsługuje tę sytuację poprawnie, nawet bez tej flagi.
+.TP
+.BR -k ", " --keep 
+Pozostaw nagłówki i stopki jako kanoniczny raport na końcu strony.
+.TP
+.BR -c ", " --changeleft 
+Przesuń changebars, takie jak znajdowane w stronach man Tcl/Tk, do lewej.
+.ig
+.\" Analiza poszerzona działa tak dobrze, że opcja --nonaggressive
+.\" została usunięta
+.TP
+.BR -m ", " --nonaggressive
+\fIWyłącz\fR poszerzoną analizę stron man. Domyślnie włączona, poszerzona
+analiza stron podręcznika man opuszcza nagłówki i stopki, identyfikację
+sekcji i inne.
+..
+.TP
+.BR -n ", " --name " \fInazwa\fR"
+Ustaw nazwę strony man (używane w formacie roff). Jeśli nazwę pliku podano
+w postaci "\fInazwa\fB.\fIsekcja\fR", to nazwa i sekcja są określane
+automatycznie. Jeśli strona jest analizowana ze źródła [tn]roff i posiada
+wiersz .TH, to są one wyłuskiwane z tego wiersza.
+.TP
+.BR -p ", " --paragraph 
+Przełącznik trybu akapitów. Zastosowany filtr określa, czy wiersze powinny
+być łamane, tak jak zrobiłby to nroff, czy też płynąć razem tworząc akapity.
+Głównie do użytku wewnętrznego.
+.TP
+.BR -s ", " section " \fI#\fR"
+Ustaw numer wolumenu (części, sekcji) strony man (używane w formacie roff).
+.\" W źródłowych automatyczne, w preformatowanych tak naprawdę nie działa
+.ig
+.TP
+.BR -T ", " tables
+Włącz poszerzoną analizę tabel.
+..
+.TP
+.BR -t ", " --tabstops " \fI#\fR"
+Niektóre zestawy makr używają, gdzie to możliwe, tabulatorów zamiast spacji
+w celu zmniejszenia liczby używanych znaków. Ta opcja ustawia pozycje
+tabulacji co \fI#\fR kolumn. Domyślnie co 8.
+.SH UWAGI NT.TYPÓW FILTRÓW
+.SS ROFF
+W niektórych odmianach Unixa strony man dostarczane są bez źródeł [tn]roff,
+czyniąc z Twojej drukarki laserowej niewiele więcej niż laserowo napędzaną
+drukarkę rozetkową.
+Ten filtr próbuje odtworzyć pierwotne dyrektywy [tn]roff, które następnie mogą
+być skompilowane przez [tn]roff.
+.SS TkMan
+TkMan, hipertekstowa przeglądarka stron man, posługuje się programem
+\fIRosettaMan\fR do pokazywania stron man bez, zwykle zbędnych, nagłówków
+i stopek na każdej stronie. Zbiera również nagłówki sekcji (i opcjonalnie
+podsekcji), by z rozwijalnego menu zapewnić bezpośredni dostęp
+do odpowiednich części strony. TkMan oraz Tcl/Tk, narzędzie, w którym jest
+on napisany, dostępne są przez anonimowe ftp z 
+\fIftp://ftp.smli.com/pub/tcl/\fR
+.SS Tk
+Opcja ta generuje tekst w postaci serii list Tcl składających się z par
+tekst-znaczniki, gdzie nazwy znaczników z grubsza odpowiadają używanym w HTML.
+Wynik taki może być wstawiony do tekstowego widgetu Tk przez wykonanie
+\fIeval <textwidget> insert end <text>\fR.
+Format ten powinien być stosunkowo łatwy do analizowania przez inne programy,
+które potrzebują zarówno tekstu jak i znaczników. Zobacz też ASCII.
+.\" trudno stwierdzić, jaki jest format używany przez Ensemble
+.ig
+.SS Ensemble
+Ensemble, multimedialny edytor dokumentów strukturalnych, jest obecnie
+rozwijany przez grupy badawcze profesorów Michaela A. Harrisona oraz
+Susan L. Graham na University of California, Berkeley.  Przy poprawnej
+strukturze i specyfikacjach prezentacji (schematy), wygląd strony man może
+być znacząco zmieniony przez Ensemble.
+..
+.SS ASCII
+Przy wydruku na drukarce wierszowej strony man usiłują uzyskać specjalne
+efekty tekstu przez nadpisywanie znaków ponownie tymi samymi znakami
+(by otrzymać pogrubienie) czy znakami dolnej kreski (podkreślenia)
+(by otrzymać pokreślenie znaku). Inne oprogramowanie przetwarzające teksty,
+jak edytory, wyszukiwarki czy programy indeksujące musi temu przeciwdziałać.
+Filtr ASCII pozbywa się dodatków z opisanego sposobu formatowania.
+Przepuszczenie przez potok wyjścia z nroff do \fIcol -b\fR również usuwa
+takie formatowanie, ale pozostawia brzydkie nagłówki i stopki stron.
+Zobacz także Tk.
+.SS Sections
+Zrzuca tytuły sekcji i (opcjonalnie) podsekcji. Może być przydatne dla
+innego programu przetwarzającego strony man.
+.SS HTML
+Przy prostym rozszerzeniu serwera HTTP dla Mosaic czy innej przeglądarki
+WWW [np.Netscape], \fIRosettaMan\fR może w locie tworzyć wysokiej jakości
+kod HTML. Kilka takich rozszerzeń i wskazanie na inne dołączone są
+w katalogu \fIcontrib\fR programu \fIRosettaMan\fR.
+.SS SGML
+Ten filtr zmierza do Docbook DTD, ale mam nadzieję, że ktoś faktycznie
+zainteresowany tą opcją wygładzi tworzone znaczniki. Spróbuj, a zobaczysz,
+jak blisko są one obecnie.
+.SS MIME
+MIME (Multipurpose Internet Mail Extensions), jak zdefiniowano w RFC 1563, 
+odpowiednie do spożycia przez programy pocztowe obsługujące MIME
+albo jako wzbogacone dokumenty Emacsa (>=19.26).
+.SS LaTeX i LaTeX2e
+Czemu nie? 
+.SS RTF
+Użyj wyniku na Mac-u, NeXT lub czymkolwiek. Może weź losowe strony man
+i lepiej połącz je z systemem dokumentacji NeXTa. Może NeXT ma swoje własne
+makra stron man, które to robią.
+.SS PostScript i FrameMaker
+W celu uzyskania PostScriptu użyj \fIgroff\fR lub \fIpsroff\fR.
+By utworzyć MIF dla FrameMakera posłuż się jego wbudowanym filtrem.
+W obu przypadkach potrzebujesz źródła \fI[tn]roff\fR, więc jeśli dysponujesz
+wyłącznie sformatowaną wersją strony man, użyj najpierw filtru roff
+z \fIRosettaMan\fR.
+.SH PRZYKŁADY
+Konwersja \fIsformatowanej\fR strony podręcznika man o nazwie \fIls.1\fR
+na powrót do postaci źródłowej [tn]roff: 
+.PP
+\fIrman -f roff /usr/local/man/cat1/ls.1 > /usr/local/man/man1/ls.1\fR
+.PP
+W celu zaoszczędzenia miejsca długie strony man są często kompresowane.
+Kompresja jest szczególnie efektywna dla stron sformatowanych, gdyż zawierają
+wiele spacji. Ponieważ jest to długa strona, prawdopodobnie posiada podsekcje,
+które próbujemy wydzielić (niektóre zestawy makr nie wyróżniają podsekcji
+wystarczająco dobrze, by \fIRosettaMan\fR je wykrył). Zamieńmy ją na
+format LaTeX-u:
+.PP
+\fIpcat /usr/catman/a_man/cat1/automount.z | rman -b -n automount -s 1 -f latex > automount.man\fR
+.PP
+Albo też:
+.br
+\fIman 1 automount | rman -b -n automount -s 1 -f latex > automount.man \fR
+.PP
+Dla użytkowników HTML/Mosaic [czy Netscape] \fIRosettaMan\fR może, bez zmiany
+kodu źródłowego, utworzyć odnośniki (links) HTML do innych stron man w formacie
+HTML albo utworzonych wcześniej albo w locie. Załóżmy najpierw, że wstępnie
+stworzone wersje HTML stron man umieszczane będą w \fI/usr/man/html\fR. 
+Utwórzmy je jedna po drugiej w następujący sposób:
+.PP
+\fIrman -f html -r 'http:/usr/man/html/%s.%s.html' /usr/man/cat1/ls.1 > /usr/man/html/ls.1.html \fR
+.PP
+Jeżeli rozszerzyłeś swego klienta HTML tak, by tworzył kod HTML w locie, to
+powinieneś posłużyć się czymś takim
+.PP
+\fIrman -f html -r 'http:~/bin/man2html?%s:%s' /usr/man/cat1/ls.1 \fR
+.br
+przy bieżącym tworzeniu wersji HTML stron man.
+.SH BŁĘDY/NIEZGODNOŚCI
+\fIRosettaMan\fR nie we wszystkich przypadkach jest doskonały, ale zwykle
+wykonuje dobrą robotę, i w każdym przypadku redukuje kłopot z konwersją
+stron podręcznika man do niewielkich poprawek edycyjnych.
+.PP
+Tabele w sformatowanych stronach, szczególnie H-P, nie są obsługiwane
+najlepiej. Upewnij się, że jako parametr podajesz plik źródłowy strony, co
+umożliwi rozpoznanie tabel.
+.PP
+Przeglądarka stron man o nazwie \fIwoman \fR wykorzystuje swoją własną
+koncepcję formatowania stron podręcznika systemowego. Rozwiązanie to może być
+mylące dla \fIRosettaMan\fR.
+Możesz ominąć ten problem przesyłając sformatowany tekst strony man wprost
+do \fIRosettaMan\fR. 
+.PP
+Format wynikowy [tn]roff posługuje się fB do włączania pogrubienia (Bold).
+Jeżeli Twój zestaw makr wymaga .B, to będziesz musiał przetworzyć
+wynik z \fIRosettaMan\fR.
+.SH ZOBACZ TAKŻE
+.BR tkman (1),
+.BR fIxman (1),
+.BR man (1),
+.BR man (7)
+lub
+.BR man (5)
+.br
+w zależności od swojej odmiany UNIXa.
+.SH COPYRIGHT
+RosettaMan 
+.br
+Copyright (c) 1993-1996 Thomas A. Phelps (\fIphelps@ACM.org\fR) 
+.br
+All Rights Reserved. 
+.br
+developed at the 
+.br
+University of California, Berkeley 
+.br
+Computer Science Division 
+.PP
+Permission to use, copy, modify, and distribute this software 
+and its documentation for educational, research and non-profit 
+purposes, without fee, and without a written agreement is hereby 
+granted, provided that the above copyright notice and the following 
+paragraph appears in all copies. 
+.PP
+Permission to incorporate this software into commercial products 
+may be obtained from the Office of Technology Licensing, 2150 
+Shattuck Avenue, Suite 510, Berkeley, CA 94704. 
+.PP
+IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY 
+PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL 
+DAMAGES ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, 
+EVEN IF THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE. 
+.PP
+THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES, 
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
+AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER 
+IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS 
+NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, 
+OR MODIFICATIONS. 
+.PP
+Manual page last updated on $Date: 2000/10/22 16:15:29 $ 

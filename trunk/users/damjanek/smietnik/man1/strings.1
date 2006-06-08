@@ -1,0 +1,151 @@
+.\" 1999 PTM Przemek Borys
+.\" Copyright (c) 1993 Free Software Foundation
+.\" See section COPYING for conditions for redistribution
+.TH strings 1 "25 June 1993" "cygnus support" "GNU Development Tools"
+.de BP
+.sp
+.ti \-.2i
+\(**
+..
+
+.SH NAZWA
+strings \- drukuj łańcuchy drukowalnych znaków z plików
+
+.SH SKŁADNIA
+.hy 0
+.na
+.TP
+.B strings
+.RB "[\|" \-a | \-\c
+.RB | \-\-all "\|]" 
+.RB "[\|" \-f | \-\-print\-file\-name "\|]"
+.RB "[\|" \-o "\|]" 
+.RB "[\|" \-\-help "\|]" 
+.RB "[\|" \-v | \-\-version "\|]"  
+.RB "[\|" \-n
+.I min\-len\c
+.RI | \-min\-len\c
+.RB | "\-\-bytes="\c
+.I min\-len\c
+\&\|]
+.RB "[\|" \-t
+.I {o,x,d}\c
+.RB "[\|" "\-\-target=\fIbfdname" "\|]"
+.RB | "\-\-radix="\c
+.I {o,x,d}\c
+\&\|]
+.I plik\c
+.ad b
+.hy 1
+.SH OPIs
+Dla każdego podanego
+.IR pliku ,
+GNU \c
+.B strings
+drukuje drukowalne sekwencje znaków, mające co najmniej 4 znaki długości (lub
+liczbę podaną przez opcje, opisane niżej), za którymi następuje znak
+niedrukowalny. Domyślnie z plików obiektowych drukuje tylko łańcuchy 
+zainicjalizowanych i
+ładowanych sekcji. Dla innych rodzajów plików, drukuje
+łańcuchy z całego pliku.
+
+.PP
+.B strings
+jest przydatny do określania zawartości nietekstowych plików.
+
+.SH OPCJE
+Długie i krótkie opcje są równoważnymi alternatywami.
+
+.TP
+.B \-a
+.TP
+.B \-\-all
+.TP
+.B \-
+Nie skanuj tylko zainicjalizowanych i ładowanych sekcji plików obiektowych;
+skanuj całe.
+
+.TP
+.B \-f
+.TP
+.B \-\-print\-file\-name
+Drukuj nazwę pliku przed każdym stringiem.
+
+.TP
+.B \-\-help
+Wydrukuj streszczenie opcji
+.B strings
+na stdout i zakończ.
+
+.TP
+.B \-v
+.TP
+.B \-\-version
+Wydrukuj numer wersji
+.B strings
+na stdout i zakończ.
+
+.TP
+.B "\-n \fImin\-len\fP"
+.TP
+.B "\-\fImin\-len\fP"
+.TP
+.B "\-bytes=\fImin\-len\fP"
+Drukuj sekwencje znaków, które mają przynajmniej
+.I min\-len
+znaków, zamiast domyślnych 4.
+
+.TP
+.BR "\-t " {o,x,d}
+.TP
+.BR "\-\-radix=" {o,x,d}
+Drukuj offset w pliku przed każdym łańcuchem. Pojedynczy argument znakowy
+określa format offsetu\(emósemkowy,
+szesnastkowy, lub dziesiętny.
+
+.TP
+.BI "\-\-target=" "bfdname"
+Podaj format kodu obiektowego, inny niż domyślny format twojego systemu.
+Dla dalszych detali i listy dostępnych formatów, zobacz
+.BR objdump ( 1 ).
+
+.TP
+.B \-o
+Jak
+.BR "\-t o" .
+
+.PP
+
+.SH "ZOBACZ TAKŻE"
+Opis
+.RB "`\|" binutils "\|'"
+w
+.B
+info\c
+\&; 
+.I
+The GNU Binary Utilities\c
+\&, Roland H. Pesch (October 1991);
+.BR ar ( 1 ),
+.BR nm ( 1 ),
+.BR objdump ( 1 ),
+.BR ranlib ( 1 ).
+
+
+.SH KOPIOWANIE
+Copyright (c) 1993 Free Software Foundation, Inc.
+.PP
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be included in
+translations approved by the Free Software Foundation instead of in
+the original English.

@@ -1,0 +1,55 @@
+.\" 1999 PTM, Przemek Borys
+.\"
+.\" Generated automatically from man.config.5.in by the
+.\" configure script.
+.\"
+.\" @(#)man.config
+.TH MAN.CONFIG 5 "30 Marca 1994"
+.SH NAZWA
+man.config \- dane konfiguracyjne systemu podręcznika man
+.SH OPIS
+.LP
+Plik ten jest odczytywany przez
+.BR man (1)
+i składa się z (a) informacji o tym, jak konstruować ścieżkę przeszukiwania
+dla podręczników, (b) pełnych nazw (ze ścieżkami) dla programów takich, jak
+nroff, eqn, tbl, itd, używanych przez man oraz (c) listy dekompresorów dla
+plików o podanych rozszerzeniach. Alternatywną wersję tego pliku można podać
+przez
+.LP
+.RS
+man -C private_man.config ...
+.RE
+.LP
+Nazwy komend mogą być przekazywane z opcjami. Przydatne opcje można znaleźć
+w grotty(1). Np. zamiast domyślnej linii
+.LP
+.RS
+.nf
+NROFF /usr/bin/groff -mandoc -Tlatin1
+.fi
+.RE
+.LP
+można napisać
+.LP
+.RS
+.nf
+NROFF /usr/bin/groff -mandoc -Tlatin1 -P-u -P-b
+.fi
+.RE
+.LP
+co powoduje zaniechanie pokreślania i wytłuszczania.
+.SH "ZOBACZ TAKŻE"
+.BR col (1),
+.BR (g)eqn (1),
+.BR (g)pic (1), 
+.BR groff (1),
+.BR grotty (1),
+.BR (g)refer (1), 
+.BR (g)tbl (1),
+.BR less (1),
+.BR man (1)
+oraz
+.BR compress (1),
+.BR gzip (1).
+

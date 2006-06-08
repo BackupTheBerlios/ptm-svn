@@ -1,0 +1,134 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\" 
+.\" PTM 1999 Przemek Borys
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Aug 2002,
+.\"              manpages 1.53
+.\" 
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\" 
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\" 
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" 
+.\" Modified Sat Jul 24 13:35:59 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Sun Nov 28 17:19:01 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Sat Jan 13 12:58:08 1996 by Michael Haardt
+.\"   <michael@cantor.informatik.rwth-aachen.de>
+.\" Modified Sun Jul 21 18:59:33 1996 by Andries Brouwer <aeb@cwi.nl>
+.\" 2001-12-13 added remark by Zack Weinberg
+.\" 
+.TH WRITE 2 2001-12-13 "Linux 2.0.32" "Podręcznik programisty Linuksa"
+.SH NAZWA
+write \- zapis do deskryptora pliku
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.BI "ssize_t write(int " fd ", const void *" buf ", size_t " count );
+.SH OPIS
+.B write
+zapisuje maksymalnie
+.I count
+bajtów do pliku wskazywanego przez deskryptor
+.IR fd .
+Zapis następuje z bufora wskazywanego przez
+.IR buf .
+POSIX wymaga, by \fBread()\fP, które może pojawić się po zakończeniu
+\fBwrite()\fR, zwróciło nowe dane. Należy zauważyć, że nie wszystkie systemy
+plików są zgodne z POSIX.
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracana jest liczba zapisanych bajtów (zero oznacza
+nie zapisanie niczego). Po błędzie zwracane jest \-1 i odpowiednio ustawiane
+.IR errno .
+Jeśli \fIcount\fR jest równe zero, a deskryptor pliku odnosi się do zwykłego
+pliku, zostanie zwrócone zero, nie powodując żadnych innych efektów.
+Dla plików specjalnych wyniki są nieprzenośne.
+.SH BŁĘDY
+.TP
+.B EBADF
+.I fd
+nie jest prawidłowym deskryptorem pliku lub nie jest otwarty dla zapisu.
+.TP
+.B EINVAL
+.I fd
+jest dowiązany do obiektu, który nie nadaje się do zapisu.
+.TP
+.B EFAULT
+.I buf
+jest poza dostępną dla użytkownika przestrzenią adresową.
+.TP
+.B EFBIG
+Wykonano próbę zapisu do pliku przekraczającą zależny od implementacji
+maksymalny rozmiar pliku lub przekraczającą maksymalny rozmian pliku dla
+danego procesu. Ewentualnie, wystąpiła próba zapisu na pozycji poza
+maksymalną dozwoloną pozycją w pliku.
+.TP
+.B EPIPE
+.I fd
+jest podłączony do potoku, lub gniazda, którego koniec czytający jest
+zamknięty. Gdy wystąpi taka sytuacja, proces piszący również otrzyma sygnał
+.BR SIGPIPE .
+(Tak więc wartość zwracana podczas zapisu jest widoczna jedynie, gdy program
+przechwytuje blokuje lub ignoruje ten sygnał.)
+.TP
+.B EAGAIN
+Wybrano nieblokujące we/wy (za pomocą
+.BR O_NONBLOCK ),
+a do potoku lub gniazda
+.I fd
+nie można natychmiast zapisać danych.
+.TP
+.B EINTR
+Wywołanie zostało przerwane sygnałem przed zapisaniem jakichkolwiek danych.
+.TP
+.B ENOSPC
+Na urządzeniu zawierającym plik, do którego odnosi się
+.IR fd ,
+nie ma miejsca na dane.
+.TP
+.B EIO
+Podczas modyfikacji i-węzła wystąpił niskopoziomowy błąd we/wy.
+.PP
+Mogą wystąpić również inne błędy, zależne od rodzaju obiektu podłączonego do
+.IR fd .
+.SH "ZGODNE Z"
+SVr4, SVID, POSIX, X/OPEN, 4.3BSD. SVr4 dokumentuje dodatkowe kody błędów
+EDEADLK, ENOLCK, ENOLNK, ENOSR, ENXIO i ERANGE. Pod SVr4 zapis
+może zostać przerwany w każdej chwili, nie zaś tylko przed zapisaniem
+jakichkolwiek danych, zwracając EINTR.
+.SH NOTES
+Pomyślne zakończenie
+.B write
+nie gwarantuje, że dane zostały zapisane na dysku. W rzeczywistości,
+w niektórych błędnych implementacjach nie gwarantuje to nawet, że zostało
+zarezerwowane miejsce na dane. Jedynym sposobem, aby te rzeczy zapewnić jest
+wywołanie
+.BR fsync (2)
+po zapisaniu wszytkich danych.
+.SH "ZOBACZ TAKŻE"
+.BR close (2),
+.BR fcntl (2),
+.BR fsync (2),
+.BR ioctl (2),
+.BR lseek (2),
+.BR open (2),
+.BR read (2),
+.BR select (2),
+.BR fwrite (3),
+.BR writev (3)

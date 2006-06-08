@@ -1,0 +1,124 @@
+.TH MAILADDR 7 "24 czerwca 1995" Linux "Podręcznik użytkownika Linuksa" \" -*- nroff -*-
+.\"
+.\" Copyright (c) 1983, 1987 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms are permitted
+.\" provided that the above copyright notice and this paragraph are
+.\" duplicated in all such forms and that any documentation,
+.\" advertising materials, and other materials related to such
+.\" distribution and use acknowledge that the software was developed
+.\" by the University of California, Berkeley.  The name of the
+.\" University may not be used to endorse or promote products derived
+.\" from this software without specific prior written permission.
+.\" THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+.\"
+.\"	@(#)mailaddr.7	6.5 (Berkeley) 2/14/89
+.\"
+.\" Extensively rewritten by Arnt Gulbrandsen <agulbra@troll.no>.  My
+.\" changes are placed under the same copyright as the original BSD page.
+.\"
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" fool hilith19: "
+.UC 5
+.SH NAZWA
+mailaddr \- opis adresowania poczty
+.SH OPIS
+Ta strona daje krótkie wprowadzenie do adresów pocztowych SMTP, używanych w
+internecie. Adresy te mają ogólny format
+.PP
+	user@domain
+.PP
+gdzie domain jest hierarchiczną, oddzieloną kropkami listą poddomen. Na
+przykład adresy
+.PP
+	eric@monet.berkeley.edu
+.br
+	Eric Allman <eric@monet.berkeley.edu>
+.br
+	eric@monet.berkeley.edu (Eric Allman)
+.PP
+są prawidłowymi formami tego samego adresu.
+.PP
+Część domenowa (``monet.berkeley.edu'') może być nazwą hosta internetowego,
+lub logicznym adresem pocztowym. Część domenowa nie jest wrażliwa na
+duże/małe litery.
+.PP
+Część lokalna (``eric'') zwykle jest nazwą użytkownika, lecz jej znaczenie
+jest zdefiniowane przez lokalne oprogramowanie. Jest czasem wrażliwa na
+wielkość liter, lecz zwykle nie jest. Jeśli widzisz, że część lokalna
+wygląda jak śmieci, to zwykle jest tak z powodu bramkowania między
+wewnętrznymi systemami e-mail sieci, oto przykłady:
+.PP
+	"surname/admd=telemail/c=us/o=hp/prmd=hp"@some.where
+.br
+	USER%SOMETHING@some.where
+.br
+	machine!machine!name@some.where
+.br
+	I2461572@some.where
+.PP
+(Są to odpowiednio: bramka X.400, bramka do wewnętrznegos systemu
+pocztowego, który nie ma właściwego wsparcia internetowego, bramka UUCP, a
+ostatnie jest tylko nudną polityką przydzielania nazw użytkownika.)
+.PP
+Część imienia i nazwiska (``Eric Allman'') możezostać albo umieszczona na
+początku, poza <>, lub na końcu w (). (Mówiąc konkretnie, te konwencje nie
+są identyczne, lecz różnica wykracza poza tę stronę.) Nazwa może wymagać
+zacytowania przy pomocy "" jeśli zawiera określone znaki, np. ``.'':
+.PP
+	"Eric P. Allman" <eric@monet.berkeley.edu>
+.SS Skracanie.
+.PP
+Wiele systemów pocztowych umożliwia użytkownikom skracanie nazwy domeny. Na
+przykład, użytkownicy berkeley.edu mogą użyć ``eric@monet'' aby wysłać
+pocztę do Erica Allmana. 
+.SS Adresy routowe.
+.PP
+Pod pewnymi warunkami, może być koniecznym routowanie wiadomości poprzez
+wiele hostów, aby dostarczyć ją do miejsca przeznaczenia. Normalnie dzieje
+się to niewidocznie, lecz czasem nie, zazwyczaj przy starszych programach.
+Adresy pokazujące te trasy są nazywane ``adresami routowymi''
+(route-addrs.). Używają składni:
+.PP
+	<@hosta,@hostb:user@hostc>
+.PP
+Określa to, że wiadomość powinna być przesłana do hosta a, potem do hosta b,
+a na koniec do hosta c. Niektóre hosty potępiają adresy routowe i wysyłają
+bezpośrednio do hosta c.
+.PP
+Adresy routowe pojawiają się często w adresach zwrotnych, ponieważ są one
+ogólnie powiększane przez oprogramowanie każdego hosta. Generalnie jest
+możliwym ignorowanie wszystkiego poza częścią ``user@hostc'' adresu aby
+określić właściwego wysyłającego.
+.SS Postmaster.
+.PP
+Każdy host powinien mieć użytkownika, lub alias ``postmaster'', do którego
+zgłaszane są problemy pocztowe. Adres ``postmaster'' nie jest wrażliwy na
+wielkość liter.
+.SS "NAJCZĘŚCIEJ ZADAWANE PYTANIA"
+rtfm.mit.edu i wiele innych mirrorów mają kolekcje FAQ (frequently asked
+questions). Poszukaj proszę i użyj pobliskiego archiwum FAQ; są ich setki na
+świecie.
+.I mail/inter-network-guide
+wyjaśnia, jak wysyłać pocztę między różnymi sieciami.
+.I mail/country-codes
+zawiera listę głównych domen (np. ``no'' jest Norwegią, ``pl'' Polską).
+.I mail/college-email/part*
+podaje przydatne wskazówki na temat lokalizowania adresów e-mail.
+.SH PLIKI
+.I /etc/aliases
+.br
+.I ~/.forward
+.SH "ZOBACZ TAKŻE"
+.BR binmail (1),
+.BR mail (1),
+.BR mconnect (1),
+.BR forward (5),
+.BR aliases (5),
+.BR sendmail (8),
+.BR vrfy (8),
+RFC822 (Standard for the Format of Arpa Internet Text Messages).
+

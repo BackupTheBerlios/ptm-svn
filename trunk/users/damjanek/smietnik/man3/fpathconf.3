@@ -1,0 +1,167 @@
+.\" {PTM/AB/0.1/13-03-1999/""}
+.\" translated by Adam Byrtek <alpha@irc.pl>
+.\" Aktualizacja do man-pages 1.45 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Wed Jul 28 11:12:26 1993 by Rik Faith (faith@cs.unc.edu)
+.\" ------------
+.TH FPATHCONF 3  "1993-04-04" "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fpathconf, pathconf \- pobranie konfiguracji dla plików
+.SH SKŁADNIA
+.nf
+.B #include <unistd.h>
+.sp
+.BI "long fpathconf(int " filedes ", int " name );
+.nl
+.BI "long pathconf(char *" path ", int " name );
+.fi
+.SH OPIS
+Funkcja
+.B fpathconf()
+pobiera wartość opcji konfiguracyjnej
+.I name
+dla otwartego deskryptora pliku
+.IR filedes .
+.PP
+Funkcja
+.B pathconf()
+pobiera wartość opcji konfiguracyjnej
+.I name
+dla
+pliku o nazwie
+.IR path .
+.PP
+Odpowiednie makra, zdefiniowane w
+.BR <unistd.h> ,
+są wartościami minimalnymi. Jeśli aplikacja chce korzystać z wartości, które
+mogą się zmieniać, to może wywołać
+.B fpathconf()
+lub
+.BR pathconf() ,
+które zwracają bardziej liberalne wyniki.
+.PP
+Ustawianie jednej z poniższych stałych jako wartości
+.IR name ,
+zwraca następujące opcje konfiguracji:
+.TP
+.B _PC_LINK_MAX
+zwraca maksymalną liczbę dowiązań do pliku. Jeśli
+.I filedes
+lub
+.I path
+odnoszą  się do katalogu, to wartość dotyczy całego katalogu.
+Odpowiadające temu makro to
+.BR _POSIX_LINK_MAX .
+.TP
+.B _PC_MAX_CANON
+zwraca maksymalną długość sformatowanej linii wejściowej, przy czym
+.I filedes
+lub
+.I path
+musi odnosić się do terminala.
+Odpowiadające temu makro to
+.BR _POSIX_MAX_CANON .
+.TP
+.B _PC_MAX_INPUT
+zwraca maksymalną długość linii wejściowej, przy czym
+.I filedes
+lub
+.I path
+musi odnosić się do terminala.
+Odpowiadające temu makro to
+.BR _POSIX_MAX_INPUT .
+.TP
+.B _PC_NAME_MAX
+zwraca maksymalną długość nazwy pliku w katalogu
+.I path
+lub
+.IR filedes ,
+jaką proces może utworzyć. Odpowiadające temu makro to
+.BR _POSIX_NAME_MAX .
+.TP
+.B _PC_PATH_MAX
+zwraca maksymalną długość względnej ścieżki, gdy
+.I path
+lub
+.I filedes
+jest katalogiem bieżącym. Odpowiadające temu makro to
+.BR _POSIX_PATH_MAX .
+.TP
+.B _PC_PIPE_BUF
+zwraca rozmiar bufora łącza komunikacyjnego (pipe), przy czym
+.I filedes
+musi odnosić się do FIFO lub łącza, a
+.I path
+musi odnosić się do FIFO. Odpowiadające temu makro to
+.BR _POSIX_PIPE_BUF .
+.TP
+.B _PC_CHOWN_RESTRICTED
+zwraca wartość niezerową jeśli wywołanie
+.BR chown (2)
+nie może być zastosowane do tego pliku. Jeśli
+.I filedes
+lub
+.I path
+odnoszą się do katalogu, to dotyczy to wszystkich plików w tym
+katalogu. Odpowiadające temu makro to
+.BR _POSIX_CHOWN_RESTRICTED .
+.TP
+.B _PC_NO_TRUNC
+zwraca wartość niezerową jeśli dostęp do plików o nazwach dłuższych od
+.B _POSIX_NAME_MAX
+powoduje błąd. Odpowiadające temu makro to
+.BR _POSIX_NO_TRUNC .
+.TP
+.B _PC_VDISABLE
+zwraca wartość niezerową jeśli przetwarzanie znaków specjalnych może być
+wyłączone, przy czym
+.I filedes
+lub
+.I path
+muszą odnosić się do terminala.
+.SH "WARTOŚĆ ZWRACANA"
+Jeśli istnieje ograniczenie, to jest ono zwracane. Jeśli system dla danego
+zasobu nie ma ograniczenia, zwracane jest \-1 a
+.I errno
+pozostaje niezmienione. Jeśli wystąpi błąd, zwracane jest \-1 a
+ustawienie
+.I errno
+określa charakter błędu.
+.SH "ZGODNE Z"
+POSIX.1
+.SH UWAGI
+W danym katalogu mogą istnieć pliki o nazwach dłuższych niż wartość
+zwrócona dla
+.I name
+równego
+.BR _PC_NAME_MAX .
+.PP
+Niektóre ze zwracanych wartości mogą być olbrzymie, nie nadają się one do
+alokowania pamięci.
+.SH "ZOBACZ TAKŻE"
+.BR getconf (1),
+.BR statfs (2),
+.BR open (2),
+.BR sysconf (3)

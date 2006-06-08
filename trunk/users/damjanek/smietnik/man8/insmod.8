@@ -1,0 +1,333 @@
+.\" Tłumaczenie wersji z modutils-2.4.10 - październik 2001 PTM
+.\" częściowo oparte na insmod.1 z PTM autorstwa Marcina Mazurka
+.\" Andrzej Krzysztofowicz <ankry@green.mif.pg.gda.pl>
+.\"
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory.
+.\" $ Id: insmod.8 1.2 Tue, 02 Oct 2001 11:22:51 +1000 kaos $
+.\"
+.TH INSMOD 8 "2 paźdxiernika 2001" Linux "Wsparcie dla modułów"
+.SH NAZWA
+insmod \- instaluje ładowalny moduł jądra
+.hy 0
+.SH SKŁADNIA
+.B insmod
+[\-fhkLmnpqrsSvVxXyY] [\-e\ nazwa_przechowalni] [\-o\ nazwa_modułu]
+[\-O\ nazwa_blob] [\-P\ przedrostek] moduł [\ symbol=wartość\ ...\ ]
+.SH OPIS
+.B insmod
+instaluje ładowalny moduł do działającego jądrze.
+.PP
+.B insmod
+próbuje dołączyć moduł do uruchomionego jądra systemu przez
+rozwiązanie wszystkich symboli z tabeli udostępnianych symboli jądra.
+.PP
+Jeśli nazwa pliku modułu, podana jest bez katalogu i rozszerzenia,
+.B insmod
+będzie szukał modułu w kilku standardowych katalogach. Można użyć zmiennej
+środowiska MODPATH aby zmienić to standardowe zachowanie.
+Jeśli istnieje plik konfiguracyjny modułów taki, jak /etc/modules.conf (lub
+(przestarzały) /etc/conf.modules), ścieżki w nim zdefiniowane będą miały
+priorytet nad zdefiniowanymi w MODPATH.
+.br
+Można również posłużyć się zmienną środowiska MODULECONF dla wybrania innego
+pliku konfiguracyjnego niż standardowy /etc/modules.conf (lub (przestarzały)
+/etc/conf.modules).
+Ta zmienna środowiska będzie miała priorytet nad wszystkimi powyższymi
+definicjami.
+.SS OPCJE
+.TP
+.I "-f --force"
+Usiłuje załadować moduł nawet jeśli wersja uruchomionego jądra i jądra dla
+którego moduł został skompilowany nie zgadzają się. Powoduje to jedynie
+wyłączenie kontroli zgodności wersji. Opcja ta nie ma wpływu na sprawdzanie
+nazw symboli. Jeśli nazwy symboli w module nie zgadzają się z kernelem,
+wymuszenie nie jest możliwe.
+.TP
+.I "-h --help"
+Wypisuje tekst pomocy.
+.TP
+.I "-k --autoclean"
+Ustawia dla danego modułu atrybut automatycznego usuwania. \fBkerneld\fP(8)
+usunie każdy moduł z tym atrybutem, jeśli nie będzie on używany przez pewien
+okres czasu \(em zazwyczaj jedną minutę.
+.TP
+.I "-L --lock"
+Za pomocą \fBflock\fR(2) zapobiega jednoczesnemu łądowaniu tego samego
+modułu.
+.TP
+.I "-m --map"
+Wypisuje odwzorowanie ładowanych symboli, które może pomóc w odszukaniu
+usterki w przypadku wystąpienia błędu jądra (kernel panic).
+.TP
+.I "-n --noload"
+Symulacja pracy, wykonuje wszystko oprócz załadowania modułu do jądra. Jeśli
+wywołane z
+.I -m
+lub
+.IR -O ,
+w wyniku uruchomienia powstanie odwzorowanie symboli lub plik z kopią kodu
+modułu w jądrze (blob). Ze względu na fakt, że moduł nie zostanie załadowany,
+rzeczywisty adres jądra, pod którym moduł byłby załadowany pozostanie
+nieznany, więc zarówno odwzorowanie symboli, jak i plik blob zostaną oparte
+na z góry ustalonym adresie 0x12340000.
+.TP
+.I "-p --probe"
+Sprawdza, czy moduł może zostać załadowany bez kłopotów. Obejmuje to
+znalezienie modułu w ścieżce wyszukiwania dla modułów, sprawdzanie numerów
+wersji i rozwiązanie symboli. nie są sprawdzane przesunięcia ani nie są
+tworzone odwzorowanie symboli i plik blob.
+.TP
+.I "-q --quiet"
+Nie wypisuje listy nierozwiązanych symboli.
+Nie narzeka na niezgodne wersje. Wystąpienie problemu zostanie jedynie
+uwidocznione w kodzie zakończenia programu
+.IR insmod .
+.TP
+.I "-r --root"
+Niektórzy użytkownicy kompilują moduły jako użytkownik inny niż root,
+a następnie instalują je jako root. W wyniku tego właścicielem modułów nie
+będzie root, nawet jeśli jest on właścicielem katalogu modułów. Jeśli
+dopuści się innego użytkownika niż root jako właściciela modułów, umożliwi
+się nieproszonemu gościowi nadpisanie istniejących modułów będących
+własnością tego użytkownika i wykorzystanie załadowania go do uzyskania
+uprawnień roota.
+.TP
+.I ""
+Domyślnie, modutils odrzucą próbę załadowania modułu nie należącego do
+root-a. Podanie -r zniesie błąd i pozwoli root-owi załadować moduły, które
+nie są jego własnością.
+.B Uwaga:
+domyślne wartość opcji sprawdzania, czy właścicielem jest root może być
+zmieniona podczas konfiguracji modutils.
+.TP
+.I ""
+.B Używanie
+.I -r
+\fBdo wyłączenia sprawdzania, czy właścicielem jest root lub ustawienie
+wartości domyślnej na "nie sprawdzaj, czy właścicielem jest root" podczas
+konfiguracji stanowi poważne naruszenie bezpieczeństwa i nie jest
+zalecane.\fR
+.TP
+.I "-s --syslog"
+Wyprowadza wszystko do \fBsyslog\fP(3) zamiast na terminal.
+.TP
+.I "-S --kallsyms"
+Wymusza, aby ładowany moduł zawierał dane kallsyms, nawet gdy jądro ich
+nie obsługuje. Ta opcja jest przeznaczona dla małych systemów, gdzie jądro
+jest ładowane bez danych kallsyms, ale wybrane moduły potrzebują kallsyms
+dla poszukiwania usterek.
+.TP
+.I "-v --verbose"
+Włącza wyświetlanie dużej ilości informacji.
+.TP
+.I "-X --export, -x --noexport"
+Odpowiednio, udostępnia lub nie wszystkie symbole zewnętrzne modułów.
+Standardowo, symbole są udostępniane. Ta opcja ma jedynie znaczenie, gdy
+moduł sam jawnie nie udostępnia swojej własnej tabeli symboli i dlatego
+jest w zaniku.
+.I "-Y --ksymoops, -y --noksymoops"
+Dodaje/nie dodaje do ksyms symboli dla ksymoops. Symbole te są używane przez
+ksymoops aby zapewnić większe możliwości poszukiwania usterek, gdy wystąpi
+w tym module Oops (błąd kernela). Standardowo, symbole dla ksymoops są
+zdefiniowane. Ta opcja jest niezależna od opcji -X/-x.
+.TP
+.I ""
+Symbole dla ksymoops zwiększają ładowany moduł o około 260 bajtów. O ile nie
+cierpi się na wyrażny brak przestrzeni adresowej kernela i nie próbuje się
+zminimalizować ksyms, należy przyjąć wartość domyślną i otrzymywać bardziej
+precyzyjne informacje o usterkach w razie Oops. Symbole dla ksymoops są
+niezbędne, aby w sposób trwały przechowywać dane modułów.
+.TP
+.I "-o \fRnazwa_modułu\fI --name\fR=nazwa_modułu\fI"
+Podanie jawne nazwy modułu, zamiast wywodzenia jej z podstawowej części
+nazwy pliku z modułem.
+.TP
+.I "-O \fRnazwa_blob\fI --blob\fR=nazwa_blob\fI"
+Zachowuje obiekt binarny w
+.IR nazwa_blob .
+Wynikiem jest binarny blob (bez nagłówków ELF) pokazujący, co dokładnie
+zostało załadowane do kernela po manipulacjach sekcjami i przesunięciach.
+Zaleca się opcję
+.IR -m ,
+aby otrzymać odwzorowanie symboli obiektu.
+.TP
+.I "-P \fRprzedrostek\fI --prefix\fR=przedrostek\fI"
+Ta opcja może być używana z wersjonowanymi modułami, przy jądrze SMP lub
+jądrze z obsługą wysokiej pamięci (bigmem), gdyż wówczas do nazw symboli
+modułów dodawany jest dodatkowy przedrostek.
+Jeśli jądro zostało zbudowane z wersjonowanymi symbolami, to
+.I insmod
+automatycznie wyciągnie przedrostek z definicji "get_module_symbol" lub
+"inter_module_get", z których jeden musi istnieć w dowolnym kernelu
+obsługującym moduły. Jeśli symbole jądra nie są wersjonowane, a moduł został
+zbudowany z wersjonowanymi symbolami, to użytkownik musi podać \-P.
+.TP
+.I "-e \fRnazwa_przechowalni\fI --persist\fR=nazwa_przechowalni\fI"
+Określa, skąd powinny być odczytane jakiekolwiek trwałe dane dla modułu
+podczas jego ładowania i gdzie powinny one zostać zapisane, gdy ta kopia
+modułu będzie usuwana z jądra.  Opcja ta jest milcząco ignorowana, gdy
+moduł nie posiada żadnych trwale przechowywanych danych. Trwałe dane są
+odczytywane przez
+.I insmod
+jedynie, gdy ta opcja zostanie podana. Domyślnie,
+.I insmod
+nie przetwarza żadnych trwałych danych.
+Skrócona forma:
+.I -e
+"" (pusty łańcuch) jest interpretowana przez
+.I insmod
+jako wartość
+.I persistdir
+(zobacz
+.BR modules.conf (5)),
+po której występuje nazwa pliku modułu, względem ścieżki, w której moduł
+został znaleziony, z pominięciem końcowych \'.gz', \'.o' i \'.mod'. Jeśli
+zostanie podane
+.IR persistdir =
+(tzn. persistdir jest pustym polem) wówczas ta forma skrócona zostanie
+milcząco zignorowana.
+.SS "PARAMETRY MODUŁÓW"
+Niektóre z modułów akceptują podawanie im parametrów w czasie ładowania w
+celu dostosowania ich do określonych warunków pracy.
+Tymi parametrami najczęściej są adresy portów I/O i numery przerwań, które
+zmieniają się w zależności od sprzętu, a których detekcja nie jest możliwa.
+.PP
+W modułach zbudowanych dla jąder seri 2.0, jakikolwiek symbol będący
+wskaźnikiem do typu całkowitego lub znakowego może być potraktowany jako
+parametr i zmodyfikowany. Poczynając od jąder 2.1, symbole stanowiące
+parametry są jawnie zaznaczone, aby tylko określone parametry mogły być
+modyfikowane. Co więcej, podawana jest informacja o typie parametru aby przy
+ładowaniu można było ją skontrolować.
+.PP
+W przypadku wartości całkowitych, wszystkie wartości mogą zostać podane
+dziesiętnie, ósemkowo lub szenastkowo np.: 17, 021 lub 0x11.
+Tablice wartości podajemy jako ciąg elementów rozdzielonych przecinkami;
+elementy mogą być pominięte przez ominięcie ich wartości.
+.PP
+W modułach serii 2.0, wartości które nie zaczynają się od cyfry traktowane
+są jako łańcuchy. Poczynając od jąder 2.1, informacja o typie parametru
+wskazuje czy wartość ma być interpretowana jako łańcuch. Jeśli wartość zaczyna
+się od cudzysłowu (\fI"\fP), łańcuch jest interpretowany jak w C,
+sekwencje ucieczkowe i in. Należy zauważyć, że przy podawaniu parametrów z
+linii poleceń powłoki, może istnieć potrzeba zabezpieczenia samych cudzysłowów
+przed interpretacją przez powłokę.
+.SS "MODUŁY I SYMBOLE NA LICENCJI GPL"
+Począwszy od jądra 2.4.10, moduły powinny zawierać łańcuch będący nazwą
+licencji, zdefiniowany za pomocą MODULE_LICENSE(). Niektóre łańcuchy są
+rozpoznawane jako zgodne z GPL, wszelkie inne łańcuchy licencji, lub brak
+licencji oznaczają, że moduł jest traktowany jako zastrzeżony. Zajrzyj do
+include/linux/module.h po listę zgodnych z GPL łańcuchów licencji.
+.PP
+Jeśli jądro obsługuje znacznik
+.I /proc/sys/kernel/tainted
+to
+.I insmod
+podczas ładowania modułu nie na licencji GPL, wykona operację OR dla znacznika
+tainted (skażony) i '1'. Jeśli kernel obsługuje skażenia, to podczas
+ładowania modułu bez licencji wypisane zostanie ostrzeżenie; ostrzeżenie
+będzie wypisywane zawsze, nawet przy starszych, nieobsługujących skażeń,
+jądrach, dla modułów posiadających MODULE_LICENSE() niezgodne z GPL.
+Minimalizuje to liczbę ostrzeżeń podczas używania nowych modutils
+ze starymi jądrami.
+.PP
+Tryb
+.I insmod\ -f
+(wymuszenie) przy jądrach obsługujących skażenia, będzie zawsze powodować
+wykonanie OR dla znacznika tainted i '2', zawsze też będzie wypisywane
+ostrzeżenie.
+.PP
+Niektórzy autorzy kodu jądra wymagają, aby symbole udostępniane przez ich
+kod mogły być wykorzystywane wyłącznie przez moduły na licencji zgodnej z
+GPL. Symbole te są udostępniane przez EXPORT_SYMBOL_GPL zamiast zwykłego
+EXPORT_SYMBOL. Symbole "tylko dla GPL" udostępniane przez kernel i inne
+moduły są widziane wyłącznie przez moduły na licencji zgodnej z GPL. Symbole
+te pojawią się w /proc/ksyms z przedrostkiem 'GPLONLY_'.
+Podczas ładowania modułu na licencji GPL
+.I insmod
+ignoruje przedrostek GPLONLY_ dla symboli, więc ładowany moduł odwołuje się
+po prostu do zwykłej nazwy symbolu, bez przedrostka. Symbole "tylko dla
+GPL" stały się niedostępne dla modułów o licencji niezgodnej z
+GPL, włączając w to moduły bez jakiejkolwiek licencji.
+.SS "POMOC KSYMOOPS"
+Aby pomóc w analizie Oopsów (błędów) jądra podczas używania modułów, insmod
+domyślnie dodaje kilka symboli do ksyms, zobacz opcja \fB-Y\fP.
+Symbole te zaczynają się od \fB__insmod_\fP\fInazwamodułu\fP\fB_\fP.
+\fInazwamodułu\fP jest niezbędna, aby symbol był unikalny, dozwolone jest
+ładowanie tego samego obiektu więcej niż raz podając różne nazwy modułu.
+Obecnie zdefiniowane są symbole
+.PP
+__insmod_\fInazwamodułu\fP_O\fIplikobiektu\fP_M\fIczas\fP_V\fIwersja\fP
+.PP
+\fIplikobiektu\fP jest nazwą pliku z którego moduł został załadowany.
+Zapewnia to, że ksymoops dopasuje kod do właściwego obiektu. \fIczas\fP jest
+podanym szesnastkowo znacznikiem czasu ostatniej modyfikacji dla tego pliku,
+zero gdy stat zakończy się niepomyślnie. \fIwersja\fP jest wersją jądra, dla
+której moduł skompilowano, -1, gdy numer wersji jest niedostpny. Symbol
+_O posiada taki sam adres początkowy, jak nagłowek modułu.
+.PP
+__insmod_\fInazwamodułu\fP_S\fInazwasekcji\fP_L\fIdługość\fP
+.PP
+Symbol ten pojawia się na początku wybranych sekcji ELF, obecnie
+.text, .rodata, .data i .bss. Pojawia sie on jedynie w sekcjach o niezerowym
+rozmiarze. \fInazwasekcji\fP jest nazwą sekcji ELF, \fIdługość\fP jest jej
+podanym dziesiętnie rozmiarem. Symbole te pomagają programowi ksymoops
+odwzorować adresy w sekcjach, w których nie są dostępne żadne symbole.
+.PP
+__insmod_\fInazwamodułu\fP_P\fInazwa_przechowalni\fP
+.PP
+Tworzone przez insmod jedynie gdy moduł posiada jeden lub więcej parametrów
+oznaczonych jako trwałe dane i jest dostępny plik przechowujący te trwałe
+dane (patrz
+.I -e
+powyżej).
+.PP
+Inny problem przy analizie Oops jądra polega na tym, że zawartość /proc/ksyms
+i /proc/modules cmoże się zmienić pomiędzy Oopsami i podczas przetwarzania
+pliku logu. Aby pomóc pokonać ten problem, insmod i rmmod będą automatycznie
+kopiować /proc/ksyms i /proc/modules do /var/log/ksymoops o ile katalog
+/var/log/ksymoops istnieje. Będzie stosowany przedrostek
+`date\ +%Y%m%d%H%M%S`. Administrator systemu może podać ksymoops, który
+zrzut plików ma być użyty podczas analizy Oopsa. Nie ma przełącznika
+wyłączającego to automatyczne kopiowanie, więc jeśli nie powinno ono
+występować, nie należy tworzyć katalogu /var/log/ksymoops. Jeśli ten katalog
+istnieje, powinien on być własnością roota, mieć prawa dostępu 644 lub 600
+i należy uruchamiać codziennie, lub w podobnych odstępach czasu, poniższy
+skrypt. Jest on zainstalowany jako insmod_ksymoops_clean.
+.PP
+.ne 8
+.nf
+  #!/bin/sh
+  # Usuwa zachowane zawartości ksyms i modules nie używane przez 2 dni
+  if [ -d /var/log/ksymoops ]
+  then
+	  set -e
+	  # Upewnia się, że zawsze zostanie co najmniej jedna wersja
+	  d=`date +%Y%m%d%H%M%S`
+	  cp -a /proc/ksyms /var/log/ksymoops/${d}.ksyms
+	  cp -a /proc/modules /var/log/ksymoops/${d}.modules
+	  find /var/log/ksymoops -type f -atime +2 -exec rm {} \\;
+  fi
+.SH "ZOBACZ TAKŻE"
+\fBrmmod\fP(8), \fBmodprobe\fP(8), \fBdepmod\fP(8), \fBlsmod\fP(8),
+\fBksyms\fP(8), \fBmodules\fP(2), \fBgenksyms\fP(8), \fBkerneld\fP(8),
+\fBksymoops\fP(kernel).
+.SH HISTORIA
+Wsparcie dla modułów zostało zapoczątkowane przez Anonima
+.br
+Pierwsza wersja Linuksowa przygotowana przez Basa Laarhovena <bas@vimec.nl>
+.br
+Wersja 0.99.14 przygotowana przez Jona Tombsa <jon@gtex02.us.es>
+.br
+Rozbudowana przez Bjorna Ekwalla <bj0rn@blox.se>
+.br
+Pierwotna pomoc dla ELF od Erica Youngdale'a <eric@aib.com>
+.br
+Aktualizowna do 2.1.17 przez Richarda Hendersona <rth@tamu.edu>
+.br
+Rozszerzona przez Bjorna Ekwalla <bj0rn@blox.se> dla modutils-2.2.* w marcu 1999
+.br
+Pomocy przy ksymoops udzielił Keith Owens <kaos@ocs.com.au> w maju 1999
+.br
+Zarządza: Keith Owens <kaos@ocs.com.au>.

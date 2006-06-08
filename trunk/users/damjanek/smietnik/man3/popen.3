@@ -1,0 +1,176 @@
+.\" 1999 PTM Przemek Borys
+.\" Aktualizacja Jarosław Beczek <bexx@poczta.onet.pl>
+.\" Aktualizacja do man-pages 1.47 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)popen.3	6.4 (Berkeley) 4/30/91
+.\"
+.\" Converted for Linux, Mon Nov 29 14:45:38 1993, faith@cs.unc.edu
+.\" Modified Sat May 18 20:37:44 1996 by Martin Schulze (joey@linux.de)
+.\" Modified 7 May 1998 by Joseph S. Myers (jsm28@cam.ac.uk)
+.\" --------
+.TH POPEN 3 1998-05-07 "BSD" "Podręcznik programisty Linuksa"
+.SH NAZWA
+popen, pclose \- we/wy procesu
+.SH SKŁADNIA
+.B #include <stdio.h>
+.sp
+.BI "FILE *popen(const char *" command ", const char *" type );
+.sp
+.BI "int pclose(FILE *" stream );
+.SH OPIS
+Funkcja
+.B popen()
+otwiera proces, tworząc łącze, rozwidlając się przez fork() i wywołując powłokę.
+Ponieważ łącze jest z definicji jednokierunkowe, argument
+.I type
+może określać tylko odczyt albo tylko zapis, nie oba naraz. Otrzymany w wyniku
+tego strumień będzie tylko do odczytu albo tylko do zapisu.
+.PP
+Argument
+.I command
+jest wskaźnikiem do zakończonego znakiem NUL łańcucha, zawierającego wiersz
+poleceń powłoki. Polecenie to jest przekazywane do
+.I /bin/sh
+przy użyciu opcji
+.BR \-c ;
+wszelka interpretacja jest dokonywana przez powłokę. Argument
+.I type
+jest zakończonym znakiem NUL łańcuchem, który musi być albo `r', albo `w'
+(odpowiednio dla odczytu i zapisu).
+.PP
+Wartość zwracana przez
+.B popen()
+to normalny strumień we/wy, lecz powinien on być zamykany przy użyciu
+.B pclose()
+zamiast
+.BR fclose() .
+Zapisywanie do takiego strumienia powoduje pisanie na standardowe wejście
+polecenia. Standardowe wyjście polecenia jest takie samo, jak procesu, który
+wywołał
+.BR popen() ,
+chyba że zostało to zmienione przez polecenie. Podobnie, odczyt z tak
+otwartego strumienia powoduje odczyt ze standardowego wyjścia polecenia, a
+standardowe wejście polecenia jest wtedy tożsame z wejściem procesu, który
+wywołał
+.BR popen() .
+.PP
+Należy zauważyć, że strumienie wyjściowe powstałe z
+.B popen
+są domyślnie w pełni buforowane.
+.PP
+Funkcja
+.B pclose
+oczekuje na zakończenie stowarzyszonego procesu i zwraca jego kod zakończenia,
+podobnie jak to czyni
+.BR wait4 .
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja
+.B popen
+zwraca
+.B NULL
+jeśli nie powiodły się wywołania
+.BR fork (2)
+lub
+.BR pipe (2),
+lub jeśli nie udało się przydzielić pamięci.
+.PP
+Funkcja
+.B pclose
+zwraca \-1 jeśli
+.\" W aktualizacji dalsze linijki są w komentarzu bo nikt nie wie
+.\" czy to prawda. Dalej oryginalny dopisek:
+.\" These conditions actually give undefined results, so I commented
+.\" them out.
+.\" .I stream
+.\" nie jest związany z otwartym poleceniem, jeśli
+.\" .I stream
+.\" już jest zamknięty lub jeśli
+.B wait4
+zwróci błąd lub zostały wykryte jakieś inne błędy.
+.SH BŁĘDY
+Funkcja
+.B popen
+nie ustawia
+.IR errno ,
+jeżeli nie uda się przydzielić pamięci. Jeżeli nie powiodą się
+wywoływane przez nią 
+.BR fork() " lub " pipe() ,
+to
+.I errno
+będzie odpowiednio ustawione. Jeżeli argument
+.I mode
+będzie nieprawidłowy i zostanie to wykryte, to
+.I errno
+zostanie ustawione na
+.BR EINVAL .
+.PP
+Jeżeli nie będzie możliwe otrzymanie kodu zakończenia procesu potomnego przez
+.BR pclose() ,
+to
+.I errno
+zostanie ustawione na
+.BR ECHILD .
+.SH "ZGODNE Z"
+POSIX.2
+.SH USTERKI
+Ponieważ offset standardowego wejścia polecenia otwartego dla odczytu jest
+taki sam dla tego polecenia i dla procesu, który wywołał
+.BR popen() ,
+więc jeśli oryginalny proces wykona buforowany odczyt, to pozycja na wejściu
+polecenia może być inna niż oczekiwano. Podobnie, wyjście polecenia otwartego
+dla zapisu może zostać wymieszane z wyjściem procesu oryginalnego. Temu
+ostatniemu można zapobiec, wołając przed
+.BR popen
+funkcję
+.BR fflush (3).
+.PP
+Błąd w wywołaniu powłoki jest nieodróżnialny od błędu powłoki przy wywoływaniu
+polecenia, czy od natychmiastowego zakończenia polecenia. Jedynym śladem jest
+kod zakończenia równy 127.
+.SH HISTORIA
+Funkcje
+.B popen()
+i
+.B pclose()
+pojawiły się w wersji 7 AT&T UNIX.
+.SH "ZOBACZ TAKŻE"
+.BR fork (2),
+.BR sh (1),
+.BR pipe (2),
+.BR wait4 (2),
+.BR fflush (3),
+.BR fclose (3),
+.BR fopen (3),
+.BR stdio (3),
+.BR system (3)

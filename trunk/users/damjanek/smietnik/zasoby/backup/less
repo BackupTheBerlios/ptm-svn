@@ -1,0 +1,10 @@
+# Lista polskich stron man dla pakietu
+# less
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+less.1		man1/less.1
+lesskey.1	man1/lesskey.1
+#
+# koniec listy

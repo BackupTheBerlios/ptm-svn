@@ -1,0 +1,13 @@
+# Lista polskich stron man dla pakietu
+# diffutils: diff 2.7, patch 2.5.4
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+cmp.1	man1/cmp.1
+diff.1	man1/diff.1
+diff3.1	man1/diff3.1
+sdiff.1	man1/sdiff.1
+patch.1	man1/patch.1
+#
+# koniec listy

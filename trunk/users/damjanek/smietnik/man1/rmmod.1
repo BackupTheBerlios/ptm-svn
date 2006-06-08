@@ -1,0 +1,43 @@
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory
+.\" $Id: rmmod.1,v 1.2 2000/09/30 17:08:37 wojtek2 Exp $
+.\"
+.\" {PTM/MM/0.1/18-11-1998/"rmmod.1 - usuń załadowany moduł"
+.TH RMMOD 1 "26 Dec 1996" Linux "Linux Module Support"
+.SH NAZWA
+rmmod \- usuń załadowany moduł
+.SH SKŁADNIA
+.B rmmod
+[ \-as ] moduł ...
+.SH OPIS
+.B rmmod
+usuwa załadowany moduł z działającego jądra systemu.
+.PP
+.B rmmod
+próbuje usunąć zbiór modułów z jądra, pod warunkiem, że nie są one używane i 
+nie odnoszą się do nich inne moduły.
+.PP
+Jeśli więcej niż jeden moduł został podany w lini poleceń, wymienione moduły
+będą usunięte równocześnie.  Zostaną usunięte także moduły wymagające siebie
+nawzajem (stacked modules).
+.SS OPCJE
+.TP
+.I \-a
+Usuń wszystkie nieużywane moduły.
+.TP
+.I \-s
+Wyjście przekaż do \fBsyslog\fP(3) zamiast na terminal.
+.SH ZOBACZ TAKŻE
+insmod(1), lsmod(1), ksyms(1), modules(2)
+.SH HISTORIA
+.lp
+Wsparcie dla modułów zapoczątkowane przez Anonima
+.br
+Pierwsza wersja Linuksowa przygotowana przez Bas Laarhoven <bas@vimec.nl>
+.br
+Wersja 0.99.14 przygotowana przez Jon Tombs <jon@gtex02.us.es>
+.br
+Rozbudowana przez Bjorn Ekwall <bj0rn@blox.se>
+.br
+Aktualizowna do 2.1.17 przez Richard Henderson <rth@tamu.edu>

@@ -1,0 +1,140 @@
+.\" {PTM/PB/0.1/12-05-1999/"Koules -- gra akcji"}
+.TH KOULES 6 "28 Jul 1995" "Linux" "Gry"
+
+.SH NAZWA
+koules.svga \- Gra akcji dla Linuksa
+
+.SH SKŁADNIA
+koules.svga [-slMmdh]
+
+.SH KOULES OD GÓRY:
+.br
+
+.br
+                             .
+.br
+                 ---       .  .                    O
+.br
+                /   \\        . .
+.br
+               |     |    . . .. ---
+.br
+                \\   /           /   \\        X           O
+.br
+                 ---           |    O|
+.br
+                                \\  O/
+.br
+                                 ---       ---
+.br
+                .       O                 /O O\\
+.br
+             . . . .                     |     |
+.br
+              . . .                       \\   /
+.br
+            .  .X.  .          O           ---
+.br
+              . . .                         .
+.br
+             . . . .                       ...
+.br
+                .                         . . .
+.br
+                                         . . . .
+.br
+                                        .   .   .
+.br
+                          BAW
+.br
+                          SIĘ
+.br
+                        DOBRZE !
+
+
+.SH OPIS
+.B Koules
+jest grą akcji. Misją jest rozwalenie wszystkich myśliwców koules z twojego
+sektora
+
+.SH "   OPCJE"
+.TP
+.B \-h 
+daje pomoc
+.TP
+.B \-s 
+włącza mały ekran (320x200), który może się przydać na słabszych maszynach
+.TP
+.B \-l 
+włącza duży ekran (640x480), jest to domyślne
+.TP
+.B \-M 
+wyłącza wsparcie dla myszy
+.TP
+.B \-d 
+wyłącza dźwięk.
+
+
+.B Punktacja:
+.br
+  Odbicie czegoś            :  +1
+.br
+  Zjedzenie rozszerzenia    :  +10
+.br
+.B  Na końcu poziomu
+.br
+  każde życie               :  +20
+.br
+  każdy stracony poziom     :  -100
+.br
+.B  W trybie deathmatch
+.br
+  każdy zniszczony konkurent:  +100
+
+.SH WYMAGANIA
+
+386DX+, pracujący pod kontrolą Linuksa (możesz spróbować z 386SX, lecz
+uważaj... będzie to powolne). Koprocesor jest mile widziany. Ponadto karta
+grafiki działająca z SVGALIB. Ładna klawiatura...
+
+Aby mieć dźwięk, potrzebujesz karty dźwiękowej, która potrafi odtwarzać
+8-bitowy dźwięk cyfrowy, oraz sterowniki Voxware w wersji co najmniej 2.9.
+Alternatywnie pcsnd dla sterownika pc-speakera.
+
+Do obsługi joystickiem musisz mieć wkompilowane w jądro odpowiednie patche
+(lub użyć nowszego modułu joysticka).
+
+Do obsługi myszką skonfiguruj odpowiednio svgalib w
+/usr/local/lib/libvga.conf
+
+.SH PRZENOŚNOŚĆ
+
+Program jest napisany w ANSI C i używa biblioteki svgalib.
+
+.SH BŁĘDY/OGRANICZENIA
+
+W moim svgalib.1.2.6 jest błąd:
+przełącz się na inną konsolę, z powrotem, naciśnij enter i wszystko się
+zawali. To nie błąd koules!!!
+
+Są problemy z kontrolerem klawiatury dla trybu więcej niż 2 graczy (użyj
+myszy lub joysticka)
+
+
+.SH AUTOR
+Jan Hubicka
+
+.B email:
+hubicka@limax.paru.cas.cz
+.br
+
+.B smail:
+.br
+       Jan Hubicka
+.br
+       Dukelskych bojovniku 1944
+.br
+       Tabor 39001
+.br
+       Czech Republic
+

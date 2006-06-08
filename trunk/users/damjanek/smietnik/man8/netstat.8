@@ -1,0 +1,449 @@
+.\" {PTM/PB/0.1/01-07-1999/"wyświetl połączenia sieciowe, tablice routingu, statystyki interfejsu, maskaradowane połączenia i komunikaty netlinkowe"}
+.\" Translation (c) 1999 Przemek Borys <pborys@dione.ids.pl>
+.\"
+.\" netstat.8 
+.\"
+.\" Original: (mdw@tc.cornell.edu & dc6iq@insu1.etec.uni-karlsruhe.de)
+.\"
+.\" Modified: Bernd.Eckenfels@inka.de
+.\"
+.\"
+.TH NETSTAT 8 "20 lutego 1999" "narzędzia sieciowe" "Podręcznik programisty linuksowego"
+
+.SH NAZWA
+netstat \- Wyświetl połączenia sieciowe, tablice routingu, statystyki
+interfejsu, połączenia masquerade, komunikaty netlinkowe
+
+.SH SKŁADNIA
+
+.B netstat 
+.RB [ \-venaoc ]
+.RB [ \-\-tcp | \-t ]
+.RB [ \-\-udp | \-u ]
+.RB [ \-\-raw | \-w ]
+.RB [ \-\-unix | \-u ] 
+.RB [ \-\-inet | \-\-ip ]
+.RB [ \-\-ax25 ]
+.RB [ \-\-ipx ] 
+.RB [ \-\-netrom ]
+
+.PP
+
+.B netstat 
+.RB [ \-veenc ]
+.RB [ \-\-inet ] 
+.RB [ \-\-ipx ]
+.RB [ \-\-netrom ] 
+.RB [ \-\-ddp ]
+.RB [ \-\-ax25 ]
+.RB { \-\-route | \-r }
+
+.PP
+
+.B netstat
+.RB [ \-veenac ]
+.RB { \-\-interfaces | \-i }
+.RI [ iface ]
+
+.PP
+
+.B netstat
+.RB [ \-enc ]
+.RB { \-\-masquerade | \-M }
+
+.PP
+
+.B netstat 
+.RB [ \-cn ]
+.RB { \-\-netlink | \-N }
+
+.PP
+
+.B netstat 
+.RB { \-V | \-\-version }
+.RB { \-h | \-\-help }
+
+.PP
+.SH OPIS
+.B Netstat
+wyświetla dane o podsystemie sieciowym Linuksa.
+
+.SS "(bez opcji)"
+Możesz obejrzeć status połączeń sieciowych jako listing otwartych gniazd.
+Jest to domyślna operacjia: Jeśli nie podasz rodzin adresów, to wydrukowane
+zostaną aktywne gniazda wszystkich skonfigurowanych rodzin adresów. Używając
+opcji
+.B -e
+możesz uzyskać dodatkowe informacje (userid). Z opcją 
+.B -v
+możesz nakazać netstatowi narzekać na rodziny adresów, które nie są
+wspierane przez jądro.
+Opcja
+.B -o
+wyświetla dodatkowe dane o timerach sieciowych.
+.B -a
+wydrukuje wszystkie gniazda, włączając w to gniazda nasłuchujące serwerów.
+Rodzina adresów
+.B inet
+wyświetla gniazda raw, udp i tcp.
+
+.SS "\-r, \-\-route"
+Używając opcji
+.BR \-r ", " \-\-route
+, uzystkujesz tablice routingu jądra, w formacie tym samym, którego używa
+.B "route -e" .
+.B "netstat -er" 
+użyje formatu wyjściowego 
+.BR route .
+Proszę, obejrzyj
+.BR route (8)
+dla dalszych szczegółów.
+
+.SS "\-i, \-\-interface \fIiface\fI"
+Jeśli używasz opcji
+.BR -i ", " --interfaces
+, wydrukowana zostanie tablica wszystkich (lub określonych przez 
+.IR iface ) 
+interfejsów sieciowych. Format wyjściowy jest taki jak w 
+.B "ifconfig -e"
+i jest omówiony w
+.BR ifconfig (8).
+.B "netstat -ei" 
+wydrukuje tablicę pojedynczego wpisu interfejsowego, zupełnie jak
+.B ifconfig .
+Opcją
+.B -a
+możesz włączać nieskonfigurowane interfejsy (które np. nie mają ustawionej
+flagi
+.BR U = UP ).
+
+.SS "\-M, \-\-masquerade"
+
+Oglądana może być również lista wszystkich maskaradowanych sesji. Opcją
+.B -e 
+możesz włączyć więcej danych o numerowaniu sekwencji (sequenze numbering?) 
+i deltach spowodowanych przez przepisywanie danych na sesjach FTP (komenda
+PORT). Wsparcie do maskaradowania jest używane do ukrywania hostów z
+nieoficjalnymi adresami sieciowymi ze świata zewnętrznego, zgodni z tym, co
+opisano w
+.BR ipfw (4), ipfwadm "(8) i " ipfw (8).
+
+.SS "\-N, \-\-netlink"
+
+Ostatnie jądra mają wsparcie jądro/użytkownik, które nazywa się netlink.
+Możesz otrzymywać komunikaty o tworzeniu lub kasowaniu interfejsów lub
+trasach (routes)  z
+.I /dev/route
+(36,0).
+
+.PP
+.SH OPCJE
+.SS "\-v, \-\-verbose"
+Mów użytkownikowi co się dzieje, działając interaktywnie. Co ważne,
+drukuj niektóre interesujące o nieskonfigurowanych rodzinach adresów.
+
+.SS "\-n, \-\-numeric"
+pokazuje adresy numeryczne; nie próbuje zdeterminować symbolicznego hosta,
+portu czy nazwy użytkownika.
+
+.SS "\-A, \-\-af \fIfamily\fI"
+użyj innej metody ustawiania rodzin adresów.
+.I rodzina
+jest listą oddzielonych przecinkami słów kluczowych, takich jak
+.BR inet , 
+.BR unix , 
+.BR ipx , 
+.BR ax25 , 
+.B netrom 
+i
+.BR ddp .
+To ma taki sam efekt, jak długie opcje
+.BR \-\-inet ,
+.BR \-\-unix ,
+.BR \-\-ipx ,
+.BR \-\-ax25 ,
+.B \-\-netrom
+i
+.BR \-\-ddp.
+
+.SS "\-c, \-\-continous"
+To spowoduje, że
+.B netstat
+będzie drukował wybraną tablicę na ekran w trybie ciągłym, co sekundę, aż
+tego nie przerwiesz.
+
+.PP
+.SH WYJŚCIE
+
+.PP
+.SS Aktywne połączenia internetowe \fR(TCP, UDP, RAW)\fR
+
+.SS "Proto" 
+Protokół (tcp, udp, raw) używany przez gniazdo.
+
+.SS "Recv-Q"
+Liczba bajtów nie skopiowanych przez program użytkownika podłączonego do
+tego gniazda.
+
+.SS "Send-Q"
+Liczba bajtów, których odbiór nie został potwierdzony przez zdalny host.
+
+.SS "Local Address" 
+Adres lokalny (lokalna nazwa hosta) i numer portu gniazda. O ile nie podano
+opcji
+.B -n
+, adres gniazda jest resolwowany do jego postaci kanonicznej, a numer portu
+jest tłumaczony na odpowiadającą mu nazwę usługi.
+
+.SS "Foreign Address"
+Zdalny adres (nazwa zdalnego hosta) i numer portu jego gniazda. Podobnie jak
+w opcji lokalnego adresu, opcja
+.B -n
+wyłącza rozpoznawanie nazwy hosta i usługi.
+
+.SS "State"
+Stan gniazda. Ponieważ w RAW to nie działa, a zazwyczaj w UDP też nie, to
+pole pozostaje czasem puste. Normalnie może być to jedna z kilku wartości:
+.TP
+.I
+ESTABLISHED
+Gniazdo zestawiło połączenie.
+.TP
+.I
+SYN_SENT
+Gniazdo aktywnie próbuje zestawić połączenie.
+.TP
+.I
+SYN_RECV
+Połączenie jest inicjalizowane.
+.TP
+.I
+FIN_WAIT1
+Gniazdo jest zamknięte, a połączenie się zamyka.
+.TP
+.I
+FIN_WAIT2
+Połączenie jest zamknięte, a gniazdo czeka na zamknięcie na drugim końcu.
+.TP
+.I
+TIME_WAIT
+Gniazdo czeka po zamknięciu na retransmisję zdalnego zamknięcia.
+.TP
+.I
+CLOSED
+Gniazdo nie jest używane.
+.TP
+.I
+CLOSE_WAIT
+Zdalny koniec zamknął i oczekuje aż gniazdo się zamknie.
+.TP
+.I
+LAST_ACK
+Zdalny koniec zamknął, a gniazdo jest zamknięte. Oczekiwanie potwierdzenia.
+.TP
+.I
+LISTEN
+Gniazdo nasłuchuje nadchodzących połączeń. Te gniazda są wyświetlane tylko
+jeśli ustawiono opcję
+.BR -a , --listening .
+.TP
+.I
+CLOSING
+Obydwa gniazda są zamknięte, lecz wciąż nie mamy wysłanych wszystkich
+danych.
+.TP
+.I
+UNKNOWN
+Stan gniazda jest nieznany.
+
+.SS "User"
+Nazwa lub UID właściciela gniazda.
+
+.SS "Timer"
+(musi to być napisane)
+
+
+.PP
+.SS Gniazda aktywne dziedziny UNIX-owej
+
+
+.SS "Proto" 
+Protokół (zwykle unix) używany przez gniazdo.
+
+.SS "RefCnt"
+Liczba referencji (np. załączonych przez to gniazdo procesów).
+
+.SS "Flags"
+Wyświetlane flagi to SO_ACCEPTON (wyświetlane jako
+.BR ACC ),
+SO_WAITDATA 
+.RB ( W )
+lub SO_NOSPACE 
+.RB ( N ). 
+SO_ACCECPTON 
+jest używane na niepodłączonych gniazdach jeśli odpowiadające im procesy
+oczekują na żądanie połączenia. Pozostałe flagi zwykle nie są interesujące.
+
+.SS "Type"
+Istnieje wiele rodzajów dostępu do gniazd:
+.TP
+.I
+SOCK_DGRAM
+Gniazdo jest używane w trybie datagramowym (bezpołączeniowym).
+.TP
+.I
+SOCK_STREAM
+Gniazdo jest strumieniowe (połączeniowe).
+.TP
+.I
+SOCK_RAW
+Gniazdo jest gniazdem typu raw.
+.TP
+.I
+SOCK_RDM
+Gniazdo serwuje rdm (reliably-delivered messages).
+.TP
+.I
+SOCK_SEQPACKET
+Gniazdo jest gniazdem typu sequential packet.
+.TP
+.I
+SOCK_PACKET
+Gniazdo dostępu interfejsu RAW.
+.TP
+.I
+UNKNOWN
+Któż wie, co przyszłość może nam przynieść - wypełnij :-)
+
+.PP
+.SS "State"
+To pole będzie zawierać jedno z następujących słów kluczowych:
+.TP
+.I
+FREE
+Gniazdo nie jest zaalokowane
+.TP
+.I
+LISTENING
+Gniazdo nasłuchuje żądania połączenia. Te gniazda są wyświetlane tylko z
+opcją
+.BR -a , --listening .
+.TP
+.I
+CONNECTING
+Gniazdo ma zamiar zestawić połączenie.
+.TP
+.I
+CONNECTED
+Gniazdo jest połączone.
+.TP
+.I
+DISCONNECTING
+Gniazdo się rozłącza.
+.TP
+.I
+(empty)
+Gniazdo nie jest podłączone do innego.
+.TP
+.I
+UNKNOWN
+Ten stan powinien nigdy nie nadejść.
+
+.SS "Path"
+Wyświetla ścieżkę do procesów przywiązanych do gniazda.
+
+.PP
+.SS Aktywne gniazda IPX
+
+(powinno to być zrobione przez kogoś, kto je zna)
+
+.PP
+.SS Aktywne gniazda BET/ROM
+
+(powinno to być zrobione przez kogoś kto je zna)
+
+.PP
+.SS Aktywne gniazda AX/25
+
+(powinno to być zrobione przez kogoś kto je zna)
+
+.PP
+.SH PLIKI
+.ta
+.I /etc/services
+-- Plik translacji usług
+
+.I /proc/net/dev
+-- informacja o urządzeniach
+
+.I /proc/net/raw
+-- informacja o gniazdach RAW
+
+.I /proc/net/tcp
+-- informacja o gniazdach TCP
+
+.I /proc/net/udp
+-- informacja o gniazdach UDP
+
+.I /proc/net/unix
+-- informacja o gniazdach dziedziny UNIX-owej
+
+.I /proc/net/ipx
+-- informacja o gniazdach IPX
+
+.I /proc/net/ax25
+-- informacja o gniazdach AX25
+
+.I /proc/net/appeltalk
+-- informacja o gniazdach DDP (appletalk)
+
+.I /proc/net/nr
+-- informacja o gniazdach NET/ROM
+
+.I /proc/net/route
+-- informacje o routingu IP jądra
+
+.I /proc/net/ax25_route
+-- informacje o routingu AX25 jądra
+
+.I /proc/net/ipx_route
+-- informacje o routingu IPX jądra
+
+.I /proc/net/nr_nodes
+-- nodelista jądra dla NET/ROM
+
+.I /proc/net/nr_neigh
+-- jądrowi sąsiedzi NET/ROM
+
+.I /proc/net/ip_masquerade
+-- maskaradowane połączenia jądra
+
+.fi
+
+.PP
+.SH ZOBACZ TAKŻE
+.BR route (8), 
+.BR ifconfig (8), 
+.BR ipfw (4), 
+.BR ipfw (8), 
+.BR ipfwadm (8)
+
+.PP
+.SH BŁĘDY
+Czasami mogą pojawić się dziwne informacje jeśli gniazdo zmienia się podczas
+przeglądania. Rzadko się to zdarza.
+.br
+Opcje
+.B netstat -i
+są opisane tak, jak powinny działać po którymś cleanupie wydania BETA
+pakietu net-tools.
+
+.PP
+.SH AUTORZY
+Interfejs użytkownika netstata został napisany przez Freda Baumgartena
+<dc6iq@insu1.etec.uni-karlsruhe.de> strona podręcznika man przez
+Matta Welsha <mdw@tc.cornell.edu>. Była poprawiana przez
+Alana Coxa <Alan.Cox@linux.org>, który mógł się bardziej postarać.
+.br
+Strona man i komendy załączone w pakiecie net-tools zostały kompletnie
+prztworzone przez Bernd Eckenfels <ecki@linux.de>.

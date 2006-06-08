@@ -1,0 +1,110 @@
+.\" Tłumaczenie wersji z modutils-2.4.10 - październik 2001 PTM
+.\" częściowo oparte na rmmod.1 z PTM autorstwa Marcina Mazurka
+.\" Andrzej Krzysztofowicz <ankry@green.mif.pg.gda.pl>
+.\"
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory
+.\" $ Id: rmmod.8 1.3 Sun, 06 May 2001 14:52:26 +1000 kaos $
+.\"
+.TH RMMOD 8 "12 listopada 2000" Linux "Wsparcie dla modułów"
+.SH NAZWA
+rmmod \- usuwa załadowany moduł
+.SH SKŁADNIA
+.B rmmod
+[ \-aehrsvV ] moduł ...
+.SH OPIS
+.B rmmod
+usuwa załadowany moduł z działającego jądra systemu.
+.PP
+.B rmmod
+próbuje usunąć zbiór modułów z jądra, pod warunkiem, że nie są one używane i 
+nie odwołują się do nich inne moduły.
+.PP
+Jeśli w lini poleceń podano więcej niż jeden moduł, wymienione moduły będą
+usunięte w podanej kolejności. Pozwala to na usuwanie modułów powiązanych.
+.PP
+W razie podania opcji '-r' podjeta zostanie próba rekurencyjnego usunięcia
+modułów. Oznacza to, że jeśli w linii poleceń podany zostanie moduł
+znajdujący się na wierzchołku stosu, to zostaną również usunięte wszystkie
+moduły, z których korzysta dany moduł, o ile to będzie możliwe. 
+.PP
+.SS OPCJE
+.TP
+.I "-a --all"
+Wykonuje autoczyszcenie: zaznacza nieużywane moduły jako "do usunięcia" i
+usuwa już zaznaczone moduły. Moduły zostają usunięte, jeśli nie zostały użyte
+od czasu poprzedniego autoczyszczenia. Te dwa przebiegi zapobiegają usunięciu
+modułów chwilowo nieużywanych.
+.TP
+.I "-e --persist"
+Zachowuje trwałe dane dla wymienionych modułów bez usuwania jakichkolwiek.
+Jeśli nie podano nazwy żadnego modułu, to dane są zachowywane dla wszystkich
+modułów zawierających trwałe dane. Są one zachowywane jedynie, gdy zarówno
+jądro, jak i modutils obsługują trwałe dane a /proc/ksyms zawiera wpis
+.br
+__insmod_\fInazwamodułu\fP_P\fInazwa_przechowalni\fP
+.TP
+.I "-h --help"
+Wypisuje tekst pomocy.
+.TP
+.I "-r --stacks"
+Usuwa stos modułów.
+.TP
+.I "-s --syslog"
+Wyprowadza wszystko do \fBsyslog\fP(3) zamiast na terminal.
+.TP
+.I "-v --verbose"
+Włącza wyświetlanie dużej ilości informacji.
+.TP
+.I "-V --version"
+Wypisuje wersję modutils.
+.SH "TRWAŁE DANE"
+Jeśli moduł zawiera trwałe dane (zobacz
+.IR insmod (8)
+i
+.IR modules.conf (5)),
+to usunięcie modułu zawsze powoduje zapisanie tych danych do pliku o nazwie
+podanej w symbolu __insmod _P. Trwałe dane można również zachować w dowolnej
+chwili poprzez rmmod\ -e. Nie spowoduje to usunięcia żadnego modułu.
+.PP
+Gdy trwałe dane są zapisywane do pliku, są one poprzedzone wygenerowaną linią
+komentarza,
+.br
+#% \fIwersja_kernela czas\fR
+.br
+Wygenerowane linie komentarza zaczynają się od '#%', wszystkie wygenerowane
+komentarze są usuwane z istniejącego pliku, inne komentarze są zachowane.
+Wartości zachowywanych danych są zapisywane do pliku z zachowaniem
+istniejącej kolejności komentarzy i przypisań. Nowe wartości są dopisywane
+na końcu pliku. Jeśli plik zawiera wartości, które nie istnieją w module,
+to te wartości zostaną zachowane, ale będą poprzedzone wygenerowanym
+komentarzem ostrzegającym, że nie były używane. Ostatnia operacja pozwala
+użytkownikowi na przełaczanie pomiędzy kernelami bez utraty trwałych danych
+i bez otrzymywania komunikatów o błędach.
+.PP
+.B Uwaga:
+Wspierane są jedynie komentarze, dla których '#' jest pierwszym różnym od
+spacji znakiem linii. Wszystkie niepuste linie, które nie zaczynają sie od
+'#' stanowią opcje modułu, po jednej w linii. Z linii opcji usuwane są
+początkowe spacje, reszta linii jest przekazywana do programu insmod jako
+opcja, łącznie z wszelkimi znakami na końcu linii.
+.SH "ZOBACZ TAKŻE"
+insmod(8), lsmod(8), ksyms(8), modprobe(8)
+.SH HISTORIA
+.lp
+Wsparcie dla modułów zostało zapoczątkowane przez Anonima
+.br
+Pierwsza wersja Linuksowa przygotowana przez Basa Laarhovena <bas@vimec.nl>
+.br
+Wersja 0.99.14 przygotowana przez Jona Tombsa <jon@gtex02.us.es>
+.br
+Rozbudowana przez Bjorna Ekwalla <bj0rn@blox.se>
+.br
+Aktualizowna do 2.1.17 przez Richarda Hendersona <rth@tamu.edu>
+.br
+Aktualizowna do 2.2.2 przez Bjorna Ekwalla <bj0rn@blox.se>
+.br
+Aktualizowna do modutils 2.3.20 przez Keitha Owensa <kaos@ocs.com.au>
+.br
+Trwałe dane dla modułów 2.3.22 przez Keitha Owensa <kaos@ocs.com.au>.

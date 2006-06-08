@@ -1,0 +1,86 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:29:54 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.\" Tłumaczenie wersji man-pages 1.50 - czerwiec 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH GETGRENT 3 1993-04-04 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getgrent, setgrent, endgrent \- odczytanie wpisu z pliku group
+.SH SKŁADNIA
+.nf
+.B #include <grp.h>
+.B #include <sys/types.h>
+.sp
+.B struct group *getgrent(void);
+.sp
+.B void setgrent(void);
+.sp
+.B void endgrent(void);
+.fi
+.SH OPIS
+Funkcja \fBgetgrent()\fP zwraca wskaźnik do struktury zawierającej informacje
+o grupie z pliku \fI/etc/group\fP. Przy pierwszym wywołaniu zwraca pierwszy
+wpis; podczas dalszych wywołań zwraca kolejne wpisy.
+.PP
+Funkcja \fBsetgrent()\fP przesuwa wskaźnik pliku na początek pliku
+\fI/etc/group\fP.
+.PP
+Funkcja \fBendgrent()\fP zamyka plik \fI/etc/group\fP.
+.PP
+Strukturę \fIgroup\fP zdefiniowano w \fI<grp.h>\fP następująco:
+.sp
+.RS
+.nf
+.ta 8n 16n 32n
+struct group {
+        char    *gr_name;        /* nazwa grupy */
+        char    *gr_passwd;      /* hasło dla grupy */
+        gid_t   gr_gid;          /* id grupy */
+        char    **gr_mem;        /* członkowie grupy */
+};
+.ta
+.fi
+.RE
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBgetgrent()\fP zwraca strukturę zawierającą informacje o grupie, lub
+NULL, gdy nie ma więcej wpisów lub gdy wystąpił błąd.
+.SH BŁĘDY
+.TP
+.B ENOMEM
+Zabrakło pamięci na przydzielenie struktury informacji o grupie.
+.SH PLIKI
+.TP
+.I /etc/group
+Plik bazy danych dla grup
+.SH "ZGODNE Z"
+SVID 3, BSD 4.3
+.SH "ZOBACZ TAKŻE"
+.BR fgetgrent (3),
+.BR getgrnam (3),
+.BR getgrgid (3)

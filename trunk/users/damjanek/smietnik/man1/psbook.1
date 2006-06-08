@@ -1,0 +1,43 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl>
+.TH PSBOOK 1 "PSUtils Wydanie 1 Łata 17"
+.SH NAZWA
+psbook \- przekształca strony pliku postscriptowego w sygnatury
+.SH SKŁADNIA
+.B psbook
+[
+.B \-q
+] [
+.B \-s\fIsygnatura\fR
+] [
+.I plik_we
+[
+.I plik_wy
+] ]
+.SH OPIS
+.I Psbook
+przekształca kolejność stron dokumentu postscriptowego  w ``sygnatury'' (w 
+postaci nowego pliku postscriptowego), przeznaczone do drukowania książek lub
+broszur. Plik wejściowy powinien stosować się do konwencji strukturyzacji
+dokumentu Adobe (DSC).
+.PP
+Opcja
+.I \-s
+wybiera rozmiar używanej sygnatury. Rozmiar sygnatury jest liczbą stron,
+które zostaną zagięte i złożone ze sobą; podana liczba powinna być
+wielokrotnością czterech. Domyślną akcją jest używanie jednej sygnatury na
+cały plik. Jeśli plik nie zawiera wielkorotności 4 stron, dodane zostaną
+puste strony wypełnienia.
+.PP
+Psbook normalnie wypisuje liczbę przekształconych stron; opcja
+.I \-q
+powstrzymuje to działanie.
+.SH AUTOR
+Copyright (C) Angus J. C. Duggan 1991-1995
+.SH "ZOBACZ TAKŻE"
+psbook(1), psselect(1), pstops(1), epsffit(1), psnup(1), psresize(1), psmerge(1), fixscribeps(1), getafm(1), fixdlsrps(1), fixfmps(1), fixmacps(1), fixpsditps(1), fixpspps(1), fixtpps(1), fixwfwps(1), fixwpps(1), fixwwps(1), extractres(1), includeres(1)
+.SH ZNAKI TOWAROWE
+.B PostScript
+jest znakiem towarowym Adobe Systems Incorporated.
+.SH BŁĘDY
+.I Psbook
+nie przyjmuje wszystkich komentarzy DSC.

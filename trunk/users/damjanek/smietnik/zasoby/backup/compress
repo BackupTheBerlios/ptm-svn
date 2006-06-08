@@ -1,0 +1,10 @@
+# Lista polskich stron man dla pakietu
+# compress
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+compress.1	man1/compress.1
+uncompress.1	man1/uncompress.1
+#
+# koniec listy

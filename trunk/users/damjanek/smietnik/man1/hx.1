@@ -1,0 +1,153 @@
+.\" Tłumaczenie (c) Wojciech Aleksander <walx@polbox.com>, 2002
+.\" Na podstawie wersji programu hx dostępnego w dystrybucji Debian GNU/Linux 3.0
+.\" 
+.TH hx 1 "HotlineX" "asf"
+.SH Nazwa
+hx \- Klient HotlineX.
+.SH Składnia
+.B hx
+.RB [ \-n
+.IR pseudonim ]
+.RB [ \-i
+.IR ikona ]
+.SH Opis
+Program
+.B hx
+jest pełnoekranowym interfejsem dla Hotline sterowanym z wiersza poleceń.
+.SH Polecenia
+.TP
+.I "server [serwer [port]] [-l identyfikator] [-p hasło]"
+podłącza do serwera używając podanego identyfikatora użytkownika i hasła
+.TP
+.I "who [string]"
+wyświetla listę użytkowników, jeżeli podana zostanie jakaś wartość, wyświetla
+tylko te pseudonimy, które ją zawierają.
+.TP
+.I "pwho [chat] [string]"
+wyświetla listę użytkowników bieżącego czatu, jeśli żaden nie zostanie zdefiniowany.
+.TP
+.I "nick [-i ikona]"
+zmienia pseudonim oraz ikonę na podane wartości.
+.TP
+.I "icon <ikona>"
+zmienia ikonę.
+.TP
+.I "me <chat>"
+wysyła czat poprzedzony *** (alt+return robią to samo)
+.TP
+.I "msg {nick|sock#} <string>"
+wysyła wiadomość prywatną do nick|sock#.
+.TP
+.I "kick [-b] {nick|sock#}"
+odłącza nick|sock# od serwera.
+.TP
+.I "news"
+wyświetla plik z newsami na serwerze.
+.TP
+.I "post <string>"
+wysyła podany łańcuch na newsy.
+.TP
+.I "chat {nick|sock#}"
+rozpoczyna prywatną rozmowę z nick|sock#.
+.TP
+.I "join <chat#>"
+dołącza się do rozmowy prywatnej chat#.
+.TP
+.I "leave {chatsubject|chat#}"
+opuszcza prywatną rozmowę chat#.
+.TP
+.I "invite {chatsubject|chat#} {nick|sock#}"
+zaprasza nick|sock# do rozmowy.
+.TP
+.I "subject <string>"
+ustala temat rozmowy bieżącej
+.TP
+.I "chats"
+wyświetla listę rozmów, w których uczestniczysz.
+.TP
+.I "load <plik1> [plik2...]"
+wywołuje polecenia z plików.
+.TP
+.I "type [-n] [-c] <plik1> [plik2...]"
+wysyła pliki do rozmowy lub newsów.
+.TP
+.I "ls [katalog]"
+wyświetla zawartość katalogu lub zdalnie robi cwd, jeśli nie zostanie
+podana żadna wartość.
+.TP
+.I "cd <katalog>"
+zmienia zdalny katalog na podany.
+.TP
+.I "lcd <katalog>"
+zmienia katalog lokalny na podany.
+.TP
+.I "pwd"
+wyświetla zdalny katalog roboczy.
+.TP
+.I "lpwd"
+wyświetla lokalny katalog roboczy.
+.TP
+.I "dirchar <dirchar>"
+zmienia separator katalogów na wartość podaną jako dirchar.
+.TP
+.I "get [-aR] [-z <zdalny> <lokalny>] <plik1> [plik2...]"
+kopiuje pliki z komputera zdalnego na lokalny.
+.TP
+.I "put [-aR] [-z <lokalny> <zdalny>] <plik1> [plik2...]"
+kopiuje pliki z komputera lokalnego na serwer.
+.TP
+.I "mkdir <plik1> [plik2...]"
+tworzy katalogi na maszynie zdalnej.
+.TP
+.I "rm <plik1> [plik2...]"
+kasuje pliki z serwera.
+.TP
+.I "xfers"
+wyświetla listę bieżących transferów.
+.TP
+.I "xfkill [all] [xfer1] [xfer2...]"
+kończy podany transfer.
+.TP
+.I "colourz"
+wysyła rozmowę w kolorach ANSI.
+.TP
+.I "clear"
+czyści bieżący bufor ekranu i terminalu.
+.TP
+.I "save <plik>"
+zapisuje stan bieżącego bufora ekranu do pliku.
+.TP
+.I "hl [type]"
+wysyła nagłówek hl z {type = type; trans = hx_trans; flag = 0; len = len2 = 2; hc = 0;}
+.TP
+.I "version"
+wyświetla numer wersji programu hx, którego aktualnie używasz.
+.TP
+.I "commands"
+wyświetla listę wszystkich poleceń.
+.SH Zmienne systemowe
+.TP
+.B HXNICK
+Pseudonim, jaki ma zostać użyty zamiast identyfikatora z pliku passwd.
+.TP
+.B HXICON
+Ikona, jaka ma zostać użyta.
+.TP
+.B HOME
+Zastępuje domyślną ścieżkę z pliku passwd.
+.TP
+.B TERM
+Typ terminalu w użyciu. (tj. vt100)
+.TP
+.B LINES
+Ilość linii na terminalu.
+.TP
+.B COLUMNS
+Ilość kolumn na terminalu.
+.SH Pliki
+.B ~/.hxrc
+Skrypt wczytywany przy uruchamianiu programu
+.SH Informacje
+http://krazynet.com/hx/ \- email: ran@krazynet.com
+.SH Zobacz także
+hxd(8)

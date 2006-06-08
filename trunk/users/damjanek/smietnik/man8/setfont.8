@@ -1,0 +1,229 @@
+.\" {PTM/PB/0.1/02-04-1999/"ładuj font konsolowy EGA/VGA"}
+.\" @(#)man/man8/setfont.8	1.0 941227
+.\" Updated 2002 Grzegorz Goławski <grzegol@pld.org.pl>
+.TH "SETFONT" "8" "11 lutego 2001" "" "Wsparcie międzynarodowe"
+.SH "NAZWA"
+setfont \- ładuj font konsolowy ekranu dla EGA/VGA
+.SH "SKŁADNIA"
+.B setfont
+.RI "[\-O " "font+umap.orig" "] [\-o " "font.orig" ]
+.RI "[\-om " "cmap.orig" ]
+.RI "[\-ou " "umap.orig" ]
+.RI "[\-" "N" "] [" "font.new ..." ]
+.RI "[\-m " "cmap" ]
+.RI "[\-u " "umap" ]
+.RI "[\-h" "H" ]
+.RI "[\-v] [\-V]"
+.I X "setfont polecenie" "" "\fLsetfont\fR polecenie"
+.SH "OPIS"
+Komenda
+.I setfont
+Wczytuje czcionkę z pliku
+.I font.new
+i ładuje do generatora znaków EGA/VGA, a opcjonalnie wypisuje poprzedni
+font. Może ona również wczytać różne tablice odwzorowań i wypisać zawartość
+poprzednich.
+.LP 
+Jeżeli nie podano żadnych argumentów (lub tylko opcję
+.RI \- N
+dla jakiejś liczby
+.IR N ),
+wtedy ładowana jest domyślna czcionka
+.RI (8x N )
+(zobacz poniżej). Można podać wiele małych fontów, zawierających tablice
+unikodowe, a
+.B setfont
+połączy je i wczyta całość.
+Typowe użycie:
+.TP 
+.B setfont
+Wczytaj domyślną czcionkę.
+.TP 
+.B "setfont drdos8x16"
+Wszytaj podaną czcionkę (tutaj 448\-glifowy [448\-glyph] font drdos).
+.TP 
+.B "setfont cybercafe \-u cybercafe"
+Wczytaj podaną czcionkę, który nie posiada mapy unikodowej i dostarcz ją.
+.TP 
+.B "setfont LatArCyrHeb\-19 \-m 8859\-2"
+Wczytaj podaną czcionkę (tutaj 512\-glifowy łączący różne zestawy znaków)
+i wskaż, że lokalnym zestawem znaków jest ISO 8859\-2.
+
+.SH "FORMATY CZCIONEK"
+Standardowym formatem czcionek w Linuksie jest PSF. Posiada on nagłówek
+opisujący własności fontu takie jak rozmiar znaku, po którym występuje mapa
+bitowa glifów, po której opcjonalnie występować może tablica odwzorowań
+unikodowego, dająca wartość unikodową dla każdego glifu.
+Rozpoznawanych jest również wiele innych (przestarzałych) formatów.
+Gdy plik wejściowy ma format strony kodowej (prawdopodobnie z
+rozszerzeniem .cp), zawierającej trzy czcionki o rozmiarach np. 8x8, 8x14 i 8x16,
+wtedy jedna z opcji \-8 lub \-14 lub \-16 musi być podana, by wybrać jeden
+z nich. Surowe pliki z czcionkami są plikami binarnymi o rozmiarze
+.RI 256* N
+bajtów, zawierającymi obrazy bitowe każdego z 256 znaków, po jednym bajcie na każdą skanowaną linię i po
+.I N
+bajtów na znak (0 <
+.I N
+<= 32).
+Większość czcionek ma szerokość 8 bitów, lecz z urządzeniem bufora ramki (fb)
+użyte mogą być inne szerokości.
+
+.SH "WYSOKOŚĆ CZCIONKI"
+Program
+.B setfont
+nie posiada wbudowanych informacji na temat trybów graficznych VGA, ale
+po prostu prosi jądro o wczytanie pewnej mapy bitowej do pamięci znakowej
+ROM karty graficznej. Jednak od Linuksa 1.3.1 jądro wie wystarczająco
+o trybach graficznych EGA/VGA aby wybrać inną odległość lini (line
+distance). Domyślną wysokością znaku będzie liczba
+.I N
+wyciągnięta z czcionki lub podana jako opcja. Użytkownik jednak może podać inną
+wysokość znaku
+.IR H ,
+używając opcji
+.IR "\-h" .
+
+.SH "MAPY KONSOLI"
+W drodze od wyjścia programu użytkownika do wyświetlenia na konsoli
+zaangażowanych jest kilka odwzorowań. Gdy konsola jest w trybie utf8 (zobacz
+.BR start_unicode (1))
+wtedy jądro oczekuje, że wyjście programu użytkownika jest kodowane jako
+UTF\-8 (zobacz
+.BR utf\-8 (7))
+i konwertuje je do Unikodu (ucs2).
+W przeciwnym razie, 8\-bitowe wyjście programu jest zamieniane na 16\-bitowe
+wartości unikodowe za pomocą tablicy translacji. Taka tablica nazywana jest
+.IR "unikodową mapą konsoli (Unicode console map)" .
+Są cztery takie tablice: trzy wbudowane w jądro i czwarta, która może być
+ustawiona, dzięki opcji
+.I "\-m"
+programu
+.BR setfont .
+Między tymi tablicami wybiera sekwencja eskejpowa; po wczytaniu
+.IR cmap ,
+.B setfont
+wyrzuci na wyjściu eskejpową sekwencję Esc ( to sprawia, że jest to aktywna
+translacja).
+.LP 
+Przykładami argumentów dla opcji
+.I "\-m"
+są
+.IR 8859\-1 ,
+.IR 8859\-2 ", ...,"
+.IR 8859\-15 ,
+.IR cp437 ", ...,"
+.IR cp1250 .
+.LP 
+Jądro znajduje prawidłowy glif dla podanej wartości unikodowej symbolu,
+który ma być wyświetlony, używając informacji o odwzorowaniu unikodowym czcionki
+i wyświetla go.
+.LP 
+Stare czcionki nie posiadają informacji o odwzorowaniu unikodowym i dlatego
+istnieją mapy bezpośrednio\-do\-fontu (direct\-to\-font maps) (wczytywane także
+dzięki opcji
+.IR "\-m" ),
+które dają zgodność (correspondence) pomiędzy bajtami użytkownika,
+a pozycjami czcionek.
+Najbardziej powszechną zgodnością jest ta podana w pliku
+.I trivial
+(gdzie wartości bajtów użytkownika są używane bezpośrednio jako pozycje
+czcionek). Czasami preferowane są inne zgodności, gdyż sprzęt PC video
+oczekuje, że znaki rysowane będą na pewnych pozycjach fontów.
+.LP 
+Gdy podany zostanie argument
+.I "\-m none"
+wczytanie i aktywacja tablicy odwzorowań zostaną powstrzymane. Poprzednia mapa
+konsoli może być zachowana dzięki opcji
+.IR "\-om plik" .
+Te opcje sprawiają, że
+.BR mapscrn (8)
+jest przestarzały. (Jednak może być użyteczny przy czytaniu tego podręcznika).
+
+.SH "UNIKODOWE MAPY CZCIONEK"
+Zgodność między glifami w foncie a wartościami unikodowymi jest opisana
+przez unikodową tablicę odwzorowań. W wielu plikach z czcionkami zawarte są
+unikodowe tablice odwzorowań, które mogą być wskazane przez opcję
+.IR "\-u" .
+Program
+.B setfont
+wczyta taką unikodową tablicę odwzorowań, chyba że podana została opcja
+.IR "\-ou none" .
+Poprzednia unikodowa tablica odwzorowań będzie zachowana jako część zapisanego
+pliku z czcionką, gdy użyta będzie opcja \-O. Tablica ta może być także zapisana
+w oddzielnym pliku dzięki opcji
+.IR "\-ou plik" .
+Te opcje sprawiają, że
+.BR loadunimap (8)
+jest przestarzały.
+.LP 
+Unikodowa tablica odwzorowań powinna przydzielić kilka glifów do
+\'brakującego znaku' (missing character) o wartości U+fffd. W przeciwnym razie
+brakujące znaki nie są tłumaczone, dając pogmatwane rezultaty.
+
+Zazwyczaj nie jest potrzebna tablica odwzorowań, a unikodowa tablica odwzorowań
+jest już zawarta w foncie (czasami wskazyje na to rozszerzenie .psfu), więc
+większość użytkowników nie musi się martwić dokładnym znaczeniem i
+funkcjonalnością tych tablic.
+
+Każdy może dodać unikodową tablicę odwzorowań do czcionki psf używając
+.BR psfaddtable (1).
+
+.SH "OPCJE"
+.TP 
+.BI "\-h " H
+Zmień wysokość czcionki.
+.TP 
+.BI "\-m " plik
+Wczytaj mapę konsoli lub unikodową mapę konsoli z
+.IR plik .
+.TP 
+.BI "\-o " plik
+Zachowaj poprzednią czcionkę w
+.IR plik .
+.TP 
+.BI "\-O " plik
+Zachowaj poprzednią czcionkę i mapę unikodową w
+.IR plik .
+.TP 
+.BI "\-om " plik
+Przechowaj mapę konsoli w
+.IR plik .
+.TP 
+.BI "\-ou " plik
+Zachowaj poprzednią mapę unikodową w
+.IR plik .
+.TP 
+.BI "\-u " plik
+Wczytaj tablicę unikodową opisującą czcionkę z
+.IR plik .
+.TP 
+.B \-v
+Bądź gadatliwy.
+.TP 
+.B \-V
+Wypisz numer wersji i wyjdź.
+
+.SH "PLIKI"
+.I /usr/share/consolefonts
+jest domyślnym katalogiem na czcionki.
+.I /usr/share/unimaps
+jest domyślnym katalogiem na mapy unikodowe.
+.I /usr/share/consoletrans
+jest domyślnym katalogiem na mapowania ekranu.
+Domyślną czcionką jest plik
+.I default
+(lub
+.IR default8x N
+gdy podana została opcja \-N dla jakiejś liczby N), z możliwym odpowiednim
+rozszerzeniem (takim jak .psf).
+.SH "ZOBACZ TAKŻE"
+.BR psfaddtable (1),
+.BR start_unicode (1),
+.BR loadunimap (8),
+.BR utf\-8 (7),
+.BR mapscrn (8)
+.\" 
+.SH "AUTORZY"
+.\" Eugene G. Crosser (crosser@pccross.msk.su)
+.\" .br 
+.\" Andries E. Brouwer (aeb@cwi.nl)

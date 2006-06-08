@@ -1,0 +1,17 @@
+# Lista polskich stron man dla pakietu
+# man
+# (lista wg ver.2.3.10, db 2.3.1, G.Wilford 1995)
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+apropos.1	man1/apropos.1
+catman.8	man8/catman.8
+man.1		man1/man.1
+mandb.8		man8/mandb.8
+manpath.1	man1/manpath.1
+manpath.5	man5/manpath.5
+whatis.1	man1/whatis.1
+zsoelim.1	man1/zsoelim.1
+#
+# koniec listy

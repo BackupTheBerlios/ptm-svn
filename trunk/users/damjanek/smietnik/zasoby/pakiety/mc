@@ -1,0 +1,11 @@
+# Lista polskich stron man dla pakietu
+# mc
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+mc.1		man1/mc.1
+mcedit.1	man1/mcedit.1
+mcserv.8	man8/mcserv.8
+#
+# koniec listy

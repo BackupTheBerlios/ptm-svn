@@ -1,0 +1,3359 @@
+%& -translate-file=il2-pl
+\def\fontprefix{pl}
+\input texinfo   @c -*-texinfo-*-
+
+@c %**start of header
+@setfilename wget.info
+@settitle Podręcznik GNU Wget
+@c Disable the monstrous rectangles beside overfull hbox-es.
+@finalout
+@c Use `odd' to print double-sided.
+@setchapternewpage on
+@documentencoding ISO-8859-2
+@documentlanguage pl
+@c %**end of header
+
+@iftex
+@c Remove this if you don't use A4 paper.
+@afourpaper
+@end iftex
+
+@c This should really be generated automatically, possibly by including
+@c an auto-generated file.
+@set VERSION 1.8.2
+@set UPDATED maj 2002
+
+@ifinfo
+@dircategory Net Utilities
+@dircategory World Wide Web
+@direntry
+* Wget: (wget).         Narzędzie do nieinteraktywnego ściągania z sieci.
+@end direntry
+@c The non-interactive network downloader.
+@end ifinfo
+
+@ifinfo
+Ten plik dokumentuje narzędzie GNU Wget służące do pobierania danych z sieci.
+
+@c man begin COPYRIGHT
+Copyright (C) 1996, 1997, 1998, 2000, 2001 Free Software
+Foundation, Inc.
+
+Zezwala się na sporządzanie i rozpowszechnianie niezmienionych kopii tego
+podręcznika, pod warunkiem zachowania na wszystkich kopiach informacji
+o prawach autorskich i niniejszego zezwolenia.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries a copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+@end ignore
+Zezwala się na kopiowanie, rozpowszechnianie i/lub modyfikowanie tego
+dokumentu na warunkach Licencji Wolnej Dokumentacji GNU (GNU Free
+Documentation License) w wersji 1.1 lub jakiejkolwiek nowszej wersji
+opublikowanej przez Fundację Wolnego Oprogramowania, przy czym Sekcjami
+niezmiennymi są ,,GNU General Public License'' i ,,GNU Free Documentation
+License'', bez treści przedniej lub tylnej strony okładki.
+Egzemplarz licencji zamieszczono w sekcji zatytułowanej
+,,GNU Free Documentation License''.
+@c man end
+@end ifinfo
+
+@titlepage
+@title GNU Wget
+@subtitle Narzędzie do nieinteraktywnego pobierania plików
+@subtitle Opis aktualny dla wersji @value{VERSION}, @value{UPDATED}
+@author napisał: Hrvoje Nik@v{s}i@'{c} i twórcy programu
+
+@ignore
+@c man begin AUTHOR
+Pierwotnie napisane przez Hrvoje Niksic <hniksic@arsdigita.com>.
+@c man end
+@c man begin SEEALSO
+Plik GNU Info dla @file{wget}.
+@c man end
+@end ignore
+
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1996, 1997, 1998, 2000, 2001 Free Software
+Foundation, Inc.
+
+Zezwala się na kopiowanie, rozpowszechnianie i/lub modyfikowanie tego
+dokumentu na warunkach Licencji Wolnej Dokumentacji GNU (GNU Free
+Documentation License) w wersji 1.1 lub jakiejkolwiek nowszej wersji
+opublikowanej przez Fundację Wolnego Oprogramowania, przy czym Sekcjami
+niezmiennymi są ,,GNU General Public License'' i ,,GNU Free Documentation
+License'', bez treści przedniej lub tylnej strony okładki.
+Egzemplarz licencji zamieszczono w sekcji zatytułowanej
+,,GNU Free Documentation License''.
+@end titlepage
+
+@ifinfo
+@node Top, Od tłumacza, (dir), (dir)
+@top Wget @value{VERSION}
+
+Niniejszy podręcznik opisuje wersję @value{VERSION} GNU Wget, swobodnie
+dostępnego narzędzia do pobieranie plików z sieci.
+
+Copyright @copyright{} 1996, 1997, 1998, 2000, 2001 Free Software
+Foundation, Inc.
+
+@menu
+* Od tłumacza::         Parę słów od tłumacza.
+* Przegląd::            Możliwości Wget.
+* Wywołanie::           Argumenty Wget podawane w wierszu poleceń.
+* Pobieranie rekurencyjne:: Opis pobierania rekurencyjnego.
+* Odnośniki::           Dostępne metody podążania za odnośnikami.
+* Znaczniki czasu::     Kopie lustrzane zależne od znaczników czasu.
+* Plik konfiguracyjny:: Plik inicjujący Wget.
+* Przykłady::           Przykłady użycia.
+* Rozmaitości::         Rzeczy, które nie pasują nigdzie indziej.
+* Dodatki::             Trochę przydatnych informacji.
+* Kopiowanie::          Można rozdawać kopie Wget i tego podręcznika.
+* Skorowidz pojęć::     Tematy poruszone w tym podręczniku.
+@end menu
+@end ifinfo
+
+@node Od tłumacza, Przegląd, Top, Top
+@unnumbered Od tłumacza
+Niniejszy przekład powstał w ramach Projektu Tłumaczenia Manuali
+(@uref{http://ptm.linux.pl/}), z wykorzystaniem tłumaczenia podręcznika
+systemowego man, które wykonał Leszek Krupiński (@email{d@@z.pl)}.
+
+Zgłoszenia błędów, komentarze i sugestie dotyczące wersji polskiej
+proszę przesyłać na listę dyskusyjną Projektu: @email{ptm@@amg.net.pl}.
+
+Polskie nieoficjalne tłumaczenie GNU General Public License oraz
+GNU Free Documentation License można znaleźć na @uref{http://gnu.org.pl/}.
+Proszę pamiętać, że pod względem prawnym obowiązujące są wyłącznie
+oryginalne, angielskie wersje.  Stanowisko FSF w tej kwestii wyjaśniono
+na stronie @uref{http://www.gnu.org/copyleft/copyleft.html}.
+
+W.Kotwica (@email{wkotwica@@post.pl})
+
+@node Przegląd, Wywołanie, Od tłumacza, Top
+@chapter Przegląd
+@cindex przegląd
+@cindex cechy
+
+@c man begin DESCRIPTION
+GNU Wget jest wolnym programem narzędziowym do pobierania plików
+z World Wide Web. Obsługuje protokoły @sc{http}, @sc{https} i @sc{ftp},
+a także pobieranie poprzez serwery proxy @sc{http}.
+
+@c man end
+Ten rozdział stanowi przegląd niektórych możliwości programu.
+
+@itemize @bullet
+@item
+Wget jest nieinteraktywny, co znaczy, że może pracować w tle, kiedy
+użytkownik nie jest zalogowany.  Dzięki temu można rozpocząć pobieranie
+i rozłączyć się z systemem, pozostawiając programowi ukończenie pracy.
+W przeciwieństwie do tego, większość przeglądarek WWW wymaga nieustannej
+obecności użytkownika, co może być poważną przeszkodą przy przesyłaniu
+dużej ilości danych.
+@c man end
+
+@sp 1
+@item
+@ignore
+@c man begin DESCRIPTION
+
+@c man end
+@end ignore
+@c man begin DESCRIPTION
+Wget potrafi podążać za odnośnikami zawartymi w stronach @sc{hmtl}
+i tworzyć lokalne wersje zdalnych witryn @sc{www}, w pełni odtwarzając
+strukturę katalogów oryginalnego ośrodka. Jest to czasami nazywane
+,,pobieraniem rekurencyjnym''. Podczas takiego działania Wget respektuje
+ustalenia Standardu Robot Exclusion (@file{/robots.txt}). Możliwe
+jest poinstruowanie programu, by w pobieranych plikach @sc{html}
+przekształcał odnośniki tak, aby wskazywały na lokalne kopie, do
+przeglądania bez połączenia.
+@c man end
+
+@sp 1
+@item
+Przy pobieraniu plików przez @sc{ftp} dostępne jest posługiwanie się maskami
+nazw plików i tworzenie rekurencyjnych kopii lustrzanych.  Wget umie odczytać
+znaczniki czasowe plików podawane przez serwery @sc{http} i @sc{ftp}
+i lokalnie je zapisać.  Potrafi zauważyć, że zdalny plik zmienił się od czasu
+ostatniego pobrania i automatycznie pobrać nową wersję.  Dzięki temu Wget
+nadaje się do tworzenia kopii lustrzanych zarówno ośrodków @sc{ftp},
+jak i stron głównych.
+
+@sp 1
+@item
+@ignore
+@c man begin DESCRIPTION
+
+@c man end
+@end ignore
+@c man begin DESCRIPTION
+Wget został zaprojektowany tak, by działać solidnie również przy powolnych
+bądź niestabilnych połączeniach. Jeżeli pobieranie nie udaje się z powodu
+problemów z siecią, ponawia próby aż do ściągnięcia całości pliku. Jeśli
+dany serwer obsługuje taką możliwość, Wget nakaże kontynuację pobierania
+od miejsca, w którym przerwano.
+@c man end
+
+@sp 1
+@item
+Wget potrafi korzystać z serwerów proxy, co może odciążyć sieć,
+przyspieszyć pobieranie i umożliwić dostęp poza zapory ogniowe (firewalls).
+Jeśli jednak znajdujemy się za zaporą, która wymaga stosowania bramki typu
+socks, można wziąć bibliotekę socks i zbudować Wget z obsługą socks.
+Wget obsługuje też, jako opcję, bierne pobieranie @sc{ftp} (passive
+downloading).
+@c man end
+
+@sp 1
+@item
+Wbudowane funkcje oferują mechanizm precyzyjnego wyboru odnośników, po chcemy
+by program przechodził do następnych plików (@pxref{Odnośniki}).
+
+@sp 1
+@item
+Pobieranie można wygodnie śledzić na ekranie dzięki wypisywanym kropkom,
+z których każda reprezentuje ustaloną ilość otrzymanych danych (domyślnie
+1KB).  Oznakowanie to można dostosować do własnych upodobań.
+
+@sp 1
+@item
+Większość funkcji jest w pełni konfigurowalna, albo za pośrednictwem opcji
+wiersza poleceń, albo poprzez plik inicjujący @file{.wgetrc}
+(@pxref{Plik konfiguracyjny}).  Wget umożliwia definiowanie
+@dfn{ogólnosystemowych}, globalnych plików startowych (domyślnie
+@file{/usr/local/etc/wgetrc}) zawierających ustawienia dla całego ośrodka.
+
+@ignore
+@c man begin FILES
+@table @samp
+@item /usr/local/etc/wgetrc
+Domyślne położenie @dfn{globalnego} pliku startowego.
+ 
+@item .wgetrc
+Prywatny plik startowy użytkownika.
+@end table
+@c man end
+@end ignore
+
+@sp 1
+@item
+Na koniec, GNU Wget jest wolnym oprogramowaniem.  To znaczy, że każdy
+może je używać, rozpowszechniać i/lub zmieniać na warunkach określonych
+w Powszechnej Licencji Publicznej GNU (GNU General Public License),
+opublikowanej przez Free Software Foundation (@pxref{Kopiowanie}).
+@end itemize
+
+@node Wywołanie, Pobieranie rekurencyjne, Przegląd, Top
+@chapter Wywołanie
+@cindex wywołanie
+@cindex wiersz poleceń
+@cindex argumenty
+@cindex nohup
+
+Domyślnie, wywołanie Wget jest bardzo proste.  Podstawowa składnia jest taka:
+
+@example
+@c man begin SYNOPSIS
+wget [@var{opcja}]@dots{} [@var{URL}]@dots{}
+@c man end
+@end example
+
+Wget po prostu ściągnie wszystkie @sc{url}-e podane w wierszu poleceń.
+@var{URL} to @dfn{Uniform Resource Locator}, zdefiniowany niżej.
+
+Jednakże, można zmieniać różne domyślne parametry Wget.
+Wykonuje się to na dwa sposoby: na stałe, dodając odpowiednie polecenie
+do @file{.wgetrc} (@pxref{Plik konfiguracyjny}), lub podając je w wierszu poleceń.
+
+@menu
+* Format URL::
+* Składnia opcji::
+* Podstawowe opcje uruchamiania::
+* Opcje dziennika i pliku wejściowego::
+* Opcje ściągania::
+* Opcje katalogów::
+* Opcje HTTP::
+* Opcje FTP::
+* Opcje pobierania rekurencyjnego::
+* Opcje rekurencyjnego akceptowania/odrzucania::
+@end menu
+
+@node Format URL, Składnia opcji, Wywołanie, Wywołanie
+@section Format URL
+@cindex URL
+@cindex składnia URL
+
+@dfn{URL} jest akronimem od Uniform Resource Locator (Uniwersalny
+Identyfikator Zasobu). Uniwersalny identyfikator zasobu stanowi zwięzłe
+znakowe przedstawienie zasobu dostępnego poprzez Internet.  Wget rozpoznaje
+składnię @sc{url} zgodnie z @sc{rfc1738}.  Jest to postać najszerzej
+stosowana (nawiasy kwadratowe oznaczają części opcjonalne):
+
+@example
+http://host[:port]/katalog/plik
+ftp://host[:port]/katalog/plik
+@end example
+
+W @sc{url} można też umieścić swoją nazwę użytkownika i hasło:
+
+@example
+ftp://użytkownik:hasło@@host/ścieżka
+http://użytkownik:hasło@@host/ścieżka
+@end example
+
+Zarówno @var{użytkownika}, jak i @var{hasło}, albo oba, można pominąć.
+Jeśli pominiemy nazwę użytkownika @sc{http} lub hasło, nie będą przesyłane
+dane uwierzytelniające (authentication).  Jeśli pominiemy nazwę użytkownika
+@sc{ftp}, zostanie zastosowane @samp{anonymous}.  Jeśli pominiemy hasło
+@sc{ftp}, jako domyślne hasło zostanie podany nasz
+adres e-mail.@footnote{Jeśli w katalogu domowym mamy plik @file{.netrc},
+to hasło będzie szukane również w nim.}
+
+@strong{Ważne}: jeśli w wierszu poleceń podamy @sc{url} zawierający
+hasło, to będzie ono, tak samo jak wpisana nazwa użytkownika, widoczne
+w jawnej postaci dla każdego użytkownika naszego systemu, który użyje
+@code{ps}.
+W systemach wielodostępnych wystawia to bezpieczeństwo na poważne
+ryzyko. Problem można obejść stosując @code{wget -i -} i wprowadzając
+@sc{url}-e na standardowe wejście Wgeta, po jednym w wierszu,
+i na zakończenie listy naciskając @kbd{C-d}.
+
+Niebezpieczne znaki można kodować w @sc{url} jako @samp{%xy}, gdzie @code{xy}
+jest szesnastkowym zapisem wartości kodu @sc{ascii} znaku.  Niektóre
+z powszechnych niebezpiecznych znaków to @samp{%} (cytowany jako @samp{%25}),
+@samp{:} (cytowany jako @samp{%3A}) i @samp{@@} (cytowany jako @samp{%40}).
+Wyczerpującą listę niebezpiecznych znaków można znaleźć w @sc{rfc1738}.
+
+Wget obsługuje też funkcję @code{type} dla @sc{url}-i @sc{ftp}.
+Domyślnie, dokumenty pobierane są w trybie binarnym (typ @samp{i}),
+co znaczy, że są ściągane bez zmian.  Innym przydatnym trybem jest
+tryb @samp{a} (@dfn{ASCII}), w którym ograniczniki linii przeształcane są
+między różnymi systemami operacyjnymi, jest zatem użyteczny przy pobieraniu
+plików tekstowych.  Oto przykład:
+
+@example
+ftp://host/katalog/plik;type=a
+@end example
+
+Rozpoznawane są także dwa alternatywne warianty specyfikacji @sc{url},
+@c        widespreaded use
+z powodów historycznych (histerycznych?) i rozpowszechnionego ich
+wykorzystywania.
+
+składnia-tylko-dla-@sc{ftp} (obsługiwana przez @code{NcFTP}):
+@example
+host:/katalog/plik
+@end example
+
+składnia-tylko-dla-@sc{http} (wprowadzona przez @code{Netscape}):
+@example
+host[:port]/katalog/plik
+@end example
+
+Obie te formy są niezalecane i ich obsługa w przyszłości może zniknąć.
+
+Jeśli nie rozumiesz różnicy pomiędzy tymi notacjami lub nie wiesz, której
+użyć, użyj po prostu zwykłego formatu, z jakiego korzystasz w ulubionej
+przeglądarce, jak @code{Lynx} czy @code{Netscape}.
+
+@node Składnia opcji, Podstawowe opcje uruchamiania, Format URL, Wywołanie
+@section Składnia opcji
+@cindex opcje, składnia
+@cindex składnia opcji
+
+Ponieważ Wget do przetwarzania przesłanych mu argumentów korzysta
+z GNU getopts, każda z opcji ma postać krótką i długą.  Długie nazwy opcji
+są wygodniejsze do zapamiętania, ale potrzeba więcej czasu na ich wpisanie.
+Można swobodnie łączyć oba rodzaje opcji lub podawać opcje po argumentach
+wiersza poleceń.  Zatem możemy napisać:
+
+@example
+wget -r --tries=10 http://fly.srk.fer.hr/ -o log
+@end example
+
+Spację pomiędzy opcją przyjmującą argument a tym argumentem można pominąć.
+Zamiast @samp{-o log} można napisać @samp{-olog}.
+
+Kilka opcji nie wymagających argumentu można zapisać razem, jak tu:
+
+@example
+wget -drc @var{URL}
+@end example
+
+Jest to w pełni równoważne wpisaniu:
+
+@example
+wget -d -r -c @var{URL}
+@end example
+
+Ponieważ opcje mogą być podawane po argumentach, można zakończyć je za pomocą
+@samp{--}.  Zatem poniższe spowoduje próbę ściągnięcia @sc{url}-a @samp{-x},
+zgłaszając błąd do pliku @file{log}:
+
+@example
+wget -o log -- -x
+@end example
+
+Wszystkie opcje, które pobierają listy rozdzielanych przecinkami elementów,
+przestrzegają konwencji, wedle której podanie pustej listy wymazuje jej
+wartość. Przydaje się to do kasowania ustawień odczytanych z @file{.wgetrc}.
+Na przykład, jeśli nasz plik @file{.wgetrc} nadaje @code{exclude_directories}
+wartość @file{/cgi-bin}, to poniższy przykład najpierw przywraca tę opcję
+do stanu pustego,
+a następnie ustawia tak, by pomijane były @file{/~nobody} i @file{/~somebody}.
+Można także wymazywać listy w @file{.wgetrc} (@pxref{Składnia wgetrc}).
+
+@example
+wget -X '' -X /~nobody,/~somebody
+@end example
+
+@c man begin OPTIONS
+
+@node Podstawowe opcje uruchamiania, Opcje dziennika i pliku wejściowego, Składnia opcji, Wywołanie
+@section Podstawowe opcje uruchamiania
+
+@table @samp
+@item -V
+@itemx --version
+Wyświetla wersję Wget.
+
+@item -h
+@itemx --help
+Wypisuje komunikat pomocy, opisujący wszystkie opcje, jakie można przekazać
+Wget w wierszu poleceń.
+
+@item -b
+@itemx --background
+Przechodzi w tło natychmiast po rozpoczęciu pracy.  Jeśli nie podano pliku
+wyjściowego za pomocą @samp{-o}, wyjście jest przekierowywane
+do @file{wget-log}.
+
+@cindex wykonanie polecenia wgetrc
+@item -e @var{polecenie}
+@itemx --execute @var{polecenie}
+Wykonuje @var{polecenie} tak, jakby było częścią @file{.wgetrc}
+(@pxref{Plik konfiguracyjny}).  Polecenie wywołane w ten sposób zostanie wykonane
+@emph{po} poleceniach z @file{.wgetrc}, więc będzie mieć nad nimi priorytet.
+@end table
+
+@node Opcje dziennika i pliku wejściowego, Opcje ściągania, Podstawowe opcje uruchamiania, Wywołanie
+@section Opcje dziennika i pliku wejściowego
+
+@table @samp
+@cindex plik wyjściowy
+@cindex plik dziennika
+@cindex wyjście, do pliku
+@cindex dziennik
+@cindex rejestr
+@cindex log, plik
+@item -o @var{dziennik}
+@itemx --output-file=@var{dziennik}
+Rejestruje wszystkie komunikaty w pliku @var{dziennika}.
+Normalnie są zgłaszane na standardowym wyjściu błędów.
+
+@cindex dopisywanie do logu
+@cindex dopisywanie do dziennika
+@item -a @var{dziennik}
+@itemx --append-output=@var{dziennik}
+Dodaje komunikaty na końcu pliku @var{dziennika}.  Jest to to samo,
+co @samp{-o}, tyle że dopisuje do @var{dziennika} zamiast nadpisywać
+stary.  Jeśli plik @var{dziennik} nie istnieje, jest tworzony.
+
+@cindex debug
+@item -d
+@itemx --debug
+Włącza wyjście diagnostyczne, czyli wypisywanie rozmaitych informacji
+ważnych dla twórców Wget, gdy nie działa on poprawnie.  Administrator twojego
+systemu mógł skopilować Wget bez obsługi trybu usuwania błędów, wówczas
+@samp{-d} nie będzie działać.  Należy zauważyć, że kompilacja z obsługą
+diagnostyki jest zawsze bezpieczna -- Wget skompilowany w ten sposób
+@emph{nie} będzie wypisywał żadnych informacji diagnostycznych dopóki
+nie zażądamy tego opcją @samp{-d}.
+@xref{Zgłaszanie błędów}, gdzie bliżej opisano zastosowanie @samp{-d}
+do wysyłania zgłoszeń błędów.
+
+@cindex quiet
+@item -q
+@itemx --quiet
+Tryb cichy. Wyłącza wyjście Wget.
+
+@cindex verbose
+@item -v
+@itemx --verbose
+Pełne wyjście, z wszystkimi dostępnymi danymi.  Jest to opcja domyślna.
+
+@item -nv
+@itemx --non-verbose
+Niepełne wyjście -- wyłącza pełne wyjście, ale nie ucisza całkowicie
+(to robi się opcją @samp{-q}); komunikaty o błędach i podstawowe informacje
+będą nadal wypisywane.
+
+@cindex input-file
+@item -i @var{plik}
+@itemx --input-file=@var{plik}
+Czyta @sc{url}-e z pliku wejściowego @var{plik}, w związku z czym nie trzeba
+ich podawać w wierszu poleceń.  Jeśli @sc{url}-e podano zarówno w wierszu
+poleceń, jak i w pliku wejściowym, to pierwsze zostaną pobrane pliki
+wymienione w wierszu poleceń.  @var{Plik} nie musi być dokumentem @sc{html}
+(ale nie przeszkadza, jeśli nim jest) -- wystarczy, że @sc{url}-e będą
+po prostu kolejno spisane.
+
+Jednakże jeśli zostanie podana opcja @samp{--force-html}, to plik będzie
+traktowany jak dokument @samp{html}.  Mogą się wówczas pojawić kłopoty
+z odnośnikami względnymi, które można rozwiązać dodając
+@code{<base href="@var{url}">} do pliku lub podając @samp{--base=@var{url}}
+w wierszu poleceń.
+
+@cindex force html
+@item -F
+@itemx --force-html
+Kiedy wejście jest czytane z pliku, wymusza aby było traktowane jako
+@sc{html}.  Pozwala to na pobieranie względnych odnośników z istniejących
+plików @sc{html} znajdujących się na lokalnym dysku naszego komputera,
+przez dodanie znacznika @code{<base href="@var{url}">} do pliku @sc{html}
+lub użycie opcji @samp{--base}.
+
+@cindex podstawa dla odnośników względnych w pliku wejściowym
+@item -B @var{URL}
+@itemx --base=@var{URL}
+Użyte w połączeniu z @samp{-F}, stosuje @var{URL} jako podstawę dla
+@c             prepends @var{URL} to relative
+odnośników względnych w pliku podanym przez @samp{-i}.
+@end table
+
+@node Opcje ściągania, Opcje katalogów, Opcje dziennika i pliku wejściowego, Wywołanie
+@section Opcje ściągania
+
+@table @samp
+@cindex bind(), adres
+@cindex adres bind()
+@cindex adres IP klienta
+@cindex IP, adres klienta
+@item --bind-address=@var{adres}
+Podczas tworzenia klienckich połączeń TCP/IP, wiąże z lokalnym komputerem,
+przez @code{bind()}, zadany @var{adres}. @var{Adres} można podać jako nazwę
+hosta lub adres IP.  Może się przydać jeśli nasza maszyna ma przypisane
+kilka adresów IP.
+
+@cindex ponawianie
+@cindex powtórzenia
+@cindex próby
+@cindex liczba ponowień
+@item -t @var{liczba}
+@itemx --tries=@var{liczba}
+Ustawia liczbę ponawiania prób na @var{liczbę}.
+Dla nieskończonego ponawiania podajemy 0 lub @samp{inf}.
+
+@item -O @var{plik}
+@itemx --output-document=@var{plik}
+Dokumenty nie będą zapisywane do odpowiednich plików, ale wszystkie
+zostaną sklejone i zapisane do @var{pliku}.  Jeśli @var{plik} istnieje,
+to zostanie nadpisany.  Jeśli jako @var{plik} podano @samp{-}, dokumenty
+będą zapisane na standardowe wyjście.  Włączenie tej opcji automatycznie
+ustawia liczbę prób na 1.
+
+@cindex nadpisywanie, pliku
+@cindex przebijanie, pliku
+@cindex ściąganie wielokrotne
+@cindex no-clobber
+@item -nc
+@itemx --no-clobber
+Jeśli plik jest pobierany więcej niż raz do tego samego katalogu, zachowanie
+się Wget zależy od kilku opcji, między innymi @samp{-nc}.  W pewnych
+przypadkach istniejący lokalny plik będzie nadpisany, @dfn{przebity}
+(ang. clobbered), przy powtórzeniu ściągania.
+W innych przypadkach zostanie zachowany.
+
+Przy uruchomieniu Wget bez opcji @samp{-N}, @samp{-nc} lub @samp{-r}
+pobranie tego samego pliku do tego samego katalogu spowoduje pozostawienie
+pierwotnego egzemplarza @var{pliku} i nadanie drugiemu nazwy
+@samp{@var{plik}.1}.  Gdy plik będzie ściągany kolejny raz, trzeci
+egzemplarz otrzyma nazwę @samp{@var{file}.2}, i tak dalej.
+Przy podanej opcji @samp{-nc}, zachowanie takie jest wstrzymywane,
+a Wget odmawia pobrania nowszych kopii @samp{@var{pliku}}.  Dlatego też,
+``@code{no-clobber}'' jest w rzeczywistości złą nazwą dla tego trybu --
+nie chroni on przed nadpisywaniem (gdyż temu zapobiegają już numeryczne
+przyrostki), ale przed zachowywaniem wielu wersji pliku.
+
+Przy uruchomieniu Wget z @samp{-r}, ale bez @samp{-N} czy @samp{-nc},
+ponowne ściągnięcie pliku powoduje, że nowa kopia po prostu nadpisuje
+starą.  Dodanie @samp{-nc} zapobiega takiemu zachowaniu, skutkując zamiast
+tego zachowaniem pierwotnej wersji i ignorowaniem ewentualnych nowe kopii
+z serwera.
+
+Przy uruchomieniu Wget z @samp{-N}, z opcją @samp{-r} lub bez niej,
+decyzja, czy ściągać nową wersję pliku czy też nie, zależy od znaczników
+czasu (dat modyfikacji) i rozmiarów lokalnego i zdalnego pliku
+(@pxref{Znaczniki czasu}).  @samp{-nc} nie można podawać równocześnie
+z @samp{-N}.
+
+Zauważ, że jeśli podano @samp{-nc}, pliki z przyrostkami @samp{.html}
+lub @samp{.htm} (fuj) będą odczytywane z dysku i przetwarzane tak,
+jakby zostały pobrane z Sieci.
+
+@cindex kontynuowanie pobierania
+@cindex nieukończone  pobrania
+@cindex wznawianie ściągania
+@item -c
+@itemx --continue
+Kontynuuje pobieranie częściowo ściągniętego pliku.  Przydatne, gdy chcemy
+dokończyć ściąganie rozpoczęte lub w poprzednim przebiegu Wget lub przez
+inny program.  Na przykład:
+
+@example
+wget -c ftp://sunsite.doc.ic.ac.uk/ls-lR.Z
+@end example
+
+Jeśli w bieżącym katalogu istnieje plik @file{ls-lR.Z}, Wget przyjmie, że
+jest to początkowy fragment zdalnego pliku i zażąda od serwera kontynuacji
+pobierania od offsetu równego długości lokalnego pliku.
+
+Zauważ, że nie ma potrzeby podawania tej opcji jeśli chcemy tylko, by aktualnie
+wywołany Wget ponownie próbował ściągać plik, w połowie którego zostało zerwane
+połączenie.  Jest to zachowanie domyślne.  Opcja @samp{-c} wpływa tylko na
+wznawianie pobrań zaczętych @emph{przed} bieżącym wywołaniem Wget i tylko dla
+tych plików, których lokalne kopie nadal istnieją.
+
+Bez @samp{-c}, polecenie z poprzedniego przykładu pobrałby po prostu zdalny
+plik do @file{ls-lR.Z.1}, pozostawiając w spokoju obcięty plik @file{ls-lR.Z}.
+
+Począwszy od Wget 1.7, jeśli użyjemy @samp{-c} dla niepustego pliku, a okaże
+się, że serwer nie obsługuje kontynuacji ściągania, to program odmówi
+rozpoczęcia ściągania od zera, które prowadziłoby do zniszczenia istniejącej
+zawartości.  Jeśli naprawdę chcemy ściągać od początku, powinniśmy usunąć
+taki plik.
+
+Również od wersji 1.7, jeśli użyjemy @samp{-c} dla pliku, którego rozmiar
+jest taki sam, jak na serwerze, to Wget odmówi ściągnięcia pliku i wypisze
+komunikat objaśniający.  Tak samo dzieje się, gdy plik jest mniejszy na
+serwerze niż lokalnie (prawdopodobnie dlatego, że został zmieniony na serwerze
+od czasu naszej ostatniej próby ściągania) -- ponieważ ,,kontynuacja'' jest
+bezsensowna, pobieranie nie zachodzi.
+ 
+Z drugiej strony, przy stosowaniu @samp{-c}, każdy plik, który jest większy
+na serwerze niż lokalnie będzie uważany za nie w pełni ściągnięty.
+Wówczas pobranych i doczepionych na koniec pliku lokalnego zostanie tylko
+@code{(length(zdalny) - length(lokalny))} bajtów.  W pewnych przypadkach
+takie zachowanie jest pożądane -- na przykład, można skorzystać z @samp{wget -c}
+do ściągnięcia tylko nowej porcji danych, dopisanej na końcu zbioru danych czy
+pliku dziennika.
+
+Jednakże, jeśli plik na serwerze jest większy dlatego, że został @emph{zmieniony},
+a nie tylko @emph{doklejono} do niego dane, to w efekcie otrzymamy
+zniekształcony plik.  Wget w żaden sposób nie może sprawdzić, czy lokalny plik
+jest poprawną częścią początkową zdalnego.  Należy na to szczególnie uważać
+stosując @samp{-c} w połączeniu z @samp{-r}, gdyż każdy plik będzie uważany
+za kandydata na "nieukończone ściąganie".
+
+Inną sytuacja, w której przy korzystaniu z @samp{-c} uzyskuje się
+zniekształcony plik, zachodzi, gdy mamy do czynienia z ułomnym proxy @sc{http},
+wstawiającym łańcuch ,,transfer interrupted'' do lokalnego pliku.
+W przyszłości będzie może dodana opcja ,,rollback'', obsługująca ten
+przypadek.
+
+Zauważ, że @samp{-c} działa tylko z serwerami @sc{ftp} i @sc{http}, które
+obsługują nagłówek @code{Range}.
+
+@cindex kropki, style wizualizacji pobierania
+@cindex styl wizualizacji pobierania
+@cindex wskaźnik postępu
+@item --progress=@var{typ}
+Umożliwia wskazanie typu wskaźnika postępu. Dozwolonymi rodzajami wskaźnika
+są ,,dot'' (kropka) i ,,bar'' (pasek).
+
+Domyślnie stosowany jest wskaźnik ,,bar''.  Rysowany jest wówczas pasek
+postępu złożony ze znaków graficznych ASCII (zwany czasem wskaźnikiem
+,,termometrowym''), wskazujący stan pobierania. Jeżeli wyjściem programu
+nie jest TTY, to domyślnie zostanie użyty wskaźnik typu ,,dot''.
+
+W celu przełączenia na wyświetlanie kropek należy użyć @samp{--progress=dot}.
+Postępy ściągania pokazują wtedy wypisywane na ekranie kropki, z których
+każda symbolizuje ustaloną ilość pobranych danych.
+
+Przy korzystaniu z tego wskaźnika, można także ustalić @dfn{styl}. Wykonuje
+się to podając typ wskaźnika w postaci @samp{dot:@var{styl}}. W różnych
+stylach pojedynczej kropce przypisuje się różne znaczenie.
+W stylu @code{default} każda kropka oznacza 1K, grupa liczy dziesięć kropek,
+a wiersz 50 kropek.  Styl @code{binary} jest bardziej ,,komputerowy'' --
+8K dla skropki, 16-kropkowe grupy i 48 kropek w wierszu (co daje 384K
+na wiersz). Przy pobieraniu bardzo dużych plików odpowiedni jest styl
+@code{mega} -- każda kropka symbolizuje pobrane 64K, w grupie jest osiem
+kropek, a w wierszu 48 (więc każdy wiersz zawiera 3M).
+
+Warto zauważyć, że domyślny rodzaj wskaźnika postępu możemy ustalić
+umieszczając w pliku @file{.wgetrc} polecenie @code{progress}. Takie
+ustawienie jest przesłaniane przez opcję podaną w wierszu poleceń.
+Wyjątek stanowi sytuacja, kiedy wyjściem nie jest TTY -- wówczas typ
+,,dot'' będzie miał pierwszeństwo nad ,,bar''. Da się jednak wymusić
+wskaźnik w postaci paska, stosując @samp{--progress=bar:force}.
+
+@item -N
+@itemx --timestamping
+Włącza stosowanie znaczników czasu (time-stamping).
+@xref{Znaczniki czasu}, gdzie podano szczegóły.
+
+@cindex odpowiedzi serwera, wypisywanie
+@item -S
+@itemx --server-response
+Wypisuje nagłówki wysyłane przez serwery @sc{http} i odpowiedzi wysyłane
+przez serwery @sc{ftp}.
+
+@cindex Wget jako pająk sieciowy
+@cindex pająk
+@cindex spider
+@item --spider
+Wywołąny z tą opcją, Wget będzie zachowywał się jak sieciowy @dfn{pająk}
+(Web spider), to znaczy, że nie będzie pobierał stron, a jedynie
+sprawdzał, czy tam są.  Można to wykorzystać to sprawdzenia zakładek
+(bookmarks), na przykład tak:
+
+@example
+wget --spider --force-html -i bookmarks.html
+@end example
+
+Ta funkcja wymaga jeszcze wiele pracy, by Wget osiągnął możliwości
+zbliżone do prawdziwych pająków @sc{www}.
+
+@cindex timeout
+@cindex limit czasu
+@item -T seconds
+@itemx --timeout=@var{sekundy}
+Ustawia limit czasu czytania na podaną liczbę @var{sekund}.  Przy każdym
+odczycie sieciowym sprawdzana jest dla deskryptora pliku ewentualność
+przekroczenia limitu czasu, ponieważ bez tego mogło by dojść do
+nieprzerwanego czytania (zostawienia zawieszonego połączenia).
+Domyślny limit to 900 sekund (piętnaście minut).  Ustawienie limitu na 0
+wyłącza sprawdzanie.
+
+Proszę nie obniżać domyślnej wartości limitu czasu tą opcją, chyba że
+z pełną świadomością skutków.
+
+@cindex pasmo, limit
+@cindex szybkość, limit
+@cindex ograniczanie pasma
+@cindex ograniczanie prędkości
+@item --limit-rate=@var{wielkość}
+Ogranicza prędkości pobierania do @var{wielkość} bajtów na sekundę.
+Wielkość tę można wyrazić w bajtach, kilobajtach (przyrostkiem @samp{k})
+lub megabajtach (przyrostkiem @samp{m}) na sekundę. Na przykład
+@samp{--limit-rate=20k} ograniczy prędkość ściągania do 20KB/s.
+Taka rzecz przydaje się, gdy z jakiegoś powodu nie chcemy, żeby Wget
+zajął całą dostępną szerokość pasma.
+
+Należy zauważyć, że Wget realizuje to w ten sposób, że po stwierdzeniu,
+iż odczyt z sieci zabrał mniej czasu, niż wynika to z podanej prędkości,
+przez odpowiedni czas wstrzymuje się od działania (zasypia). Końcowym
+efektem takiej strategii jest spowolnienie transferu TCP mniej więcej
+do podanej prędkości. Niemniej jednak, na osiągnięcie tej równowagi
+potrzeba trochę czasu, więc nie bądźcie zaskoczeni, jeśli ograniczenie
+szybkości nie działa dla bardzo małych plików. Tak samo, strategia
+"zasypiania" nie zda egzaminu, jeśli poda się zbyt małe pasmo, dajmy
+na to mniejsze niż 1,5KB/s.
+
+@cindex pauza
+@cindex czekanie
+@item -w @var{sekundy}
+@itemx --wait=@var{sekundy}
+Odczekuje zadaną liczbę sekund pomiędzy kolejnymi pobraniami.
+Zaleca się używanie tej opcji, gdyż zmniejsza obciążenie serwera dzięki
+rzadszym żądaniom.  Czas, zamiast w sekundach, można podać w minutach
+dodając przyrostek @code{m}, w godzinach - dodając @code{h} lub w dniach
+- dodając @code{d}.
+
+Określanie dużej wartości tej opcji przydaje się jeśli sieć lub maszyna
+docelowa są wyłączone.  Wówczas Wget może odczekać wystarczająco długo, by
+@c     reasonably expect
+rozsądnie spodziewać się, że przed ponowną próbą błąd sieci został naprawiony.
+
+@cindex ponowienia, czekanie pomiędzy
+@cindex czekanie pomiędzy ponowieniami
+@item --waitretry=@var{sekundy}
+Opcję tę stosujemy jeśli nie chcemy, by Wget czekał pomiędzy @emph{każdym}
+pobraniem, a tylko pomiędzy ponawianymi próbami nieudanych pobrań.
+Wget zastosuje @dfn{odczekiwanie liniowe} (@dfn{linear backoff}), czekając
+1 sekundę po pierwszym niepowodzeniu z danym plikiem, następnie 2 sekundy
+po drugim niepowodzeniu z tym plikiem, aż do maksymalnej liczby @var{sekund},
+jaką podano.  Zatem, wartość 10 faktycznie spowoduje, że Wget będzie
+odczekiwał łącznie do (1 + 2 + ... + 10) = 55 sekund na każdy plik.
+
+Zauważ, że w ogólnosystemowym pliku @file{wgetrc} ta opcja jest domyślnie
+włączona.
+
+@cindex czekanie, losowe
+@cindex losowe czekanie
+@itemx --random-wait
+W niektórych z ośrodków wykonywana jest analiza plików dziennikowych
+(tzw. logów), która ma na celu zidentyfikowanie programów do pobierania,
+takich jak Wget. Polega ona na wyszukiwaniu statystycznie znaczących
+podobieństw między różnicami czasu, jaki upłynął pomiędzy kolejnymi
+żądaniami.
+Ta opcja powoduje, że dla zamaskowania przed takimi analizami obecności
+Wgeta czas pomiędzy żądaniami będzie się wahać od 0 do 2 * @var{sekundy},
+gdzie @var{sekundy} podano opcją  @samp{--wait} (@samp{-w}).
+
+W jednym z ostatnich artykułów w pewnej publikacji poświęconej rozwijaniu
+oprogramowania na popularnych platformach klienckich podano kod wykonujący
+taką analizę na bieżąco. Autor sugerował blokowanie na poziomie adresu
+klasy C, co ma gwarantować, że programy pobierające zostaną zablokowane
+niezależnie od zmiany adresów przedzielanych przez DHCP.
+
+Opcja @samp{--random-wait} powstała z powodu tej właśnie nierozważnej
+porady, zalecającej blokowanie wielu postronnych użytkowników ośrodka
+z powodu działań jednego z nich.
+
+@cindex proxy
+@item -Y on/off
+@itemx --proxy=on/off
+Włącza/wyłącza używanie proxy. Domyślnie używanie proxy jest włączone
+jeśli jest zdefiniowana odpowiednia zmienna środowiskowa.
+
+@cindex quota
+@item -Q @var{wielkość}
+@itemx --quota=@var{wielkość}
+Określa ograniczenie wielkości pobieranych danych przy ściąganiu
+automatycznym. Limit podawany jest w bajtach (domyślnie), kilobajtach
+(z przyrostkiem @samp{k}) lub megabajtach (z przyrostkiem @samp{m}).
+
+Warto pamiętać, że ograniczenie to nigdy nie dotyczy pobierania
+pojedynczego pliku. Tak więc, jeśli podamy
+@samp{wget -Q10k ftp://wuarchive.wustl.edu/ls-lR.gz}, to zostanie ściągnięty
+cały plik @file{ls-lR.gz}. Tak samo dzieje się nawet wówczas, gdy w wierszu
+poleceń zostanie wyszczególnionych kilka @sc{url}-i. Ograniczenie wielkości
+jest jednak przestrzegane podczas pobierania rekurencyjnego lub według
+pliku wejściowego. Zatem, można spokojnie napisać @samp{wget -Q2m -i witryny}
+-- po przekroczeniu ograniczenia ściąganie zostanie przerwane.
+
+Ustawienie limitu na 0 lub na @samp{inf} znosi ograniczenie pobierania.
+@end table
+
+@node Opcje katalogów, Opcje HTTP, Opcje ściągania, Wywołanie
+@section Opcje katalogów
+
+@table @samp
+@item -nd
+@itemx --no-directories
+Nie tworzy hierarchii katalogów przy pobieraniu rekurencyjnym.
+Po włączeniu tej opcji wszystkie pliki będą zapisywane do bieżącego
+katalogu bez przebijania (jeśli nazwa pojawi się więcej niż raz, nazwy
+plików otrzymają rozszerzenie @samp{.n}).
+
+@item -x
+@itemx --force-directories
+Przeciwieństwo @samp{-nd}. Wymusza utworzenie hierarchii katalogów nawet
+jeśli nie miałaby być stworzona.
+Np. @samp{wget -x http://fly.srk.fer.hr/robots.txt} zapisze ściągnięty plik
+jako @file{fly.srk.fer.hr/robots.txt}.
+
+@item -nH
+@itemx --no-host-directories
+Wyłącza tworzenie katalogów z nazwą hosta jako przedrostkiem. Domyślnie,
+@samp{-r http://fly.srk.fer.hr/} spowoduje stworzenie struktury katalogów
+zaczynającej się od @file{fly.srk.fer.hr/}, gdzie trafi cała reszta.
+Ta opcja wyłącza takie zachowanie.
+
+@cindex obcinanie katalogów
+@cindex katalogi, obcinanie
+@item --cut-dirs=@var{liczba}
+Ignoruje podaną @var{liczbę} składowych katalogu.  Przydatne do precyzyjnego
+sterowania katalogami, w których będą składowane pliki z pobierania
+rekurencyjnego.
+
+Weźmy, na przykład, katalog @samp{ftp://ftp.xemacs.org/pub/xemacs/}.
+Jeżeli pobierzemy go z @samp{-r}, to lokalnie zostanie zachowany jako
+@file{ftp.xemacs.org/pub/xemacs/}.  Mimo że opcja @samp{-nH} pozwala
+na usunięcie części @file{ftp.xemacs.org/}, nadal utkniemy
+z @file{pub/xemacs}.  Tu właśnie z pomocą przychodzi @samp{--cut-dirs}.
+Powoduje, że Wget ``nie widzi'' zadanej @var{liczby} składowych zdalnego
+katalogu.
+Oto kilka przykładów pokazujących, jak działa opcja @samp{--cut-dirs}.
+
+@example
+@group
+No options        -> ftp.xemacs.org/pub/xemacs/
+-nH               -> pub/xemacs/
+-nH --cut-dirs=1  -> xemacs/
+-nH --cut-dirs=2  -> .
+
+--cut-dirs=1      -> ftp.xemacs.org/xemacs/
+...
+@end group
+@end example
+
+Jeśli chcemy po prostu pozbyć się struktury katalogów, to opcja ta jest
+podobna do kombinacji  @samp{-nd} i @samp{-P}. Jednak @samp{--cut-dirs},
+w przeciwieństwie do @samp{-nd}, nie pozbywa się podkatalogów -- na przykład,
+przy @samp{-nH --cut-dirs=1}, podkatalog @file{beta/} będzie, zgodnie
+z oczekiwaniami, umieszczony w @file{xemacs/beta}.
+
+@cindex przedrostek katalogów
+@cindex katalogi, przedrostek
+@item -P @var{prefiks}
+@itemx --directory-prefix=@var{prefiks}
+Ustawia przedrostek, prefiks katalogów na @var{prefiks}.
+@var{Przedrostek katalogów} oznacza katalog, zostaną zapisane wszystkie inne
+pliki i katalogi, tzn. wierzchołek drzewa pobierania.
+Domyślnym przedrostkiem jest @samp{.}, katalog bieżący.
+@end table
+
+@node Opcje HTTP, Opcje FTP, Opcje katalogów, Wywołanie
+@section Opcje HTTP
+
+@table @samp
+@cindex .html rozszerzenie
+@item -E
+@itemx --html-extension
+Jeśli pobierany jest plik typu @samp{text/html} a jego @sc{url} nie kończy
+się wyrażeniem regularnym @samp{\.[Hh][Tt][Mm][Ll]?}, to opcja ta spowoduje
+dodanie przyrostka @samp{.html} do lokalnej nazwy pliku.  Przydatne,
+na przykład, gdy tworzymy kopię lustrzaną witryny, która używa stron
+@samp{.asp}, ale chcemy, by pozyskane strony dawały się przeglądać za pomocą
+@c   to be viewable on your stock Apache server
+własnego serwera Apache.  Innym dobrym zastosowaniem jest pobieranie wyjścia
+generowanego przez skrypty CGI.  @sc{url} typu
+@samp{http://site.com/article.cgi?25} zostanie zachowany jako
+@file{article.cgi?25.html}.
+
+Zauważ, że pliki o zmienionych w ten sposób nazwach będą ponownie pobierane
+za każdym razem gdy będziemy odświeżać kopię lustrzaną witryny. Dzieje się
+tak, ponieważ Wget nie potrafi stwierdzić, że lokalny plik @file{@var{X}.html}
+odpowiada zdalnemu @sc{url}-owi @samp{@var{X}} (gdyż nie wie, że ten @sc{url}
+tworzy wyjście typu @samp{text/html}).  Chcąc uniknąć ponownego pobierania,
+trzeba użyć @samp{-k} i @samp{-K}, tak by oryginalna wersja pliku została
+zachowana jako @file{@var{X}.orig} (@pxref{Opcje pobierania rekurencyjnego}).
+
+@cindex http, użytkownik
+@cindex http, hasło
+@cindex uwierzytelnianie
+@item --http-user=@var{użytkownik}
+@itemx --http-passwd=@var{hasło}
+Określają nazwę użytkownika i hasło, które Wget prześle serwerowi @sc{http}.
+W zależności od rodzaju protokołu wezwanie-odpowiedź, Wget koduje je stosując
+albo uwierzytelnianie podstawowe (@code{basic}, niechronione) albo w oparciu
+o skrót (@code{digest}).
+
+Inną metodę podania nazwy i hasła użytkownika jest wyszczególnienie ich
+w samym @sc{url}-u (@pxref{Format URL}).
+Obie te metody ujawniają hasło każdemu, kto zechce uruchomić @code{ps}.
+Żeby uchronić hasła przed podpatrzeniem, należy przechowywać je w pliku
+@file{.wgetrc} lub @file{.netrc} i, za pomocą @code{chmod}, zapewnić
+tym plikom ochronę przed innymi użytkownikami. Jeżeli hasła są naprawdę
+ważne, w tych plikach też nie trzymajcie ich na stałe -- usuńcie je
+z plików zaraz po rozpoczęciu przez Wgeta pobierania.
+Dokładniejsze omówienie kwestii bezpieczeństwa w pracy z Wget,
+@xref{Zagadnienia bezpieczeństwa}.
+
+@cindex proxy
+@cindex cache
+@cindex bufor
+@item -C on/off
+@itemx --cache=on/off
+Jeśli ustawione na @samp{off}, wyłącza buforowanie po stronie serwera.
+W takim przypadku Wget wysyła zdalnemu serwerowi odpowiednią komendę
+(@samp{Pragma: no-cache}), dzięki której plik zostanie pobrany z usługi
+zdalnej, a nie zwrócona wersja buforowana.  Jest to szczególnie przydatne
+do pobierania i wymiatania przeterminowanych dokumentów z serwerów proxy.
+
+Domyślnie, buforowanie jest dozwolone.
+
+@cindex cookies
+@cindex ciasteczka
+@item --cookies=on/off
+Ustawione na off wyłącza używanie ciasteczek (cookies).  Ciasteczka są
+mechanizmem do przechowywania stanu po stronie serwera.  Serwer przesyła
+klientowi ciasteczko stosując nagłówek @code{Set-Cookie}, a klient przy
+późniejszych żądaniach odpowiada tym samym ciasteczkiem.  Ponieważ ciasteczka
+umożliwiają właścicielom serwera prowadzenie rejestrów gości i wymianę się tymi
+informacjami z innymi ośrodkami, niektórzy uważają je za pogwałcenie prywatności.
+Domyślnie cookies są używane, jednak ich @emph{zapisywanie} nie jest domyślnie
+włączone.
+ 
+@cindex wczytywanie cookies
+@cindex wczytywanie ciasteczek
+@cindex cookies, wczytywanie
+@cindex ciasteczka, wczytywanie
+@item --load-cookies @var{plik}
+Przed pierwszym pobraniem HTTP wczytuje ciasteczka z @var{pliku}.
+@var{Pliku} jest plikiem tekstowym w formacie, jaki pierwotnie
+zastosowano dla pliku @file{cookies.txt} przeglądarki Netscape.
+
+Na ogół korzysta się z tej opcji przy tworzeniu kopii lustrzanych tych
+ośrodków, które do skorzystania z części lub całości zasobów wymagają
+zalogowania się. Proces logowania się zwykle polega na tym, że po otrzymaniu
+od nas informacji uwierzytelniającej i jej zweryfikowaniu serwer @sc{www}
+wysyła ciasteczko @sc{http}. Następnie, gdy przeglądarka sięga do zasobów,
+odsyła serwerowi otrzymane ciasteczko, potwierdzając w ten sposób naszą
+tożsamość.
+
+Utworzenie kopii tego rodzaju witryny wymaga wysyłania przez Wget
+takich samych ciasteczek, jakie podczas komunikowania się z tym ośrodkiem
+przesyła nasza przeglądarka. Osiąga się to za pomocą @samp{--load-cookies}
+-- wystarczy wskazać programowi lokalizację pliku @file{cookies.txt}, a on
+wyśle te same ciasteczka, które w tej samej sytuacji wysłałaby przyglądarka.
+
+Różne przeglądarki trzymają tekstowe pliki ciasteczek w różnych miejscach:
+
+@table @asis
+@item Netscape 4.x
+Ciasteczka są w @file{~/.netscape/cookies.txt}.
+
+@item Mozilla i Netscape 6.x
+Plik ciasteczek Mozilli nazywa się również @file{cookies.txt}, jest
+położony gdzieś w @file{~/.mozilla}, w katalogu właściwym dla profilu
+użytkownika. Pełna ścieżka zazwyczaj kończy się czymś w rodzaju
+@file{~/.mozilla/default/@var{coś-dziwnego}/cookies.txt}.
+
+@item Internet Explorer
+Ciasteczko, jakiego mógłby użyć Wget, można utworzyć korzystając z menu
+"Plik" i opcji "Importuj i Eksportuj", "Eksportuj pliki cookie".
+Zostało to przetestowane z Internet Explorerem 5 -- nie ma gwarancji,
+że będzie działać z wcześniejszymi wersjami.
+
+@item inne przeglądarki
+Jeżeli do tworzenia ciasteczek korzystacie z innej przeglądarki,
+@samp{--load-cookies} będzie działać tylko wtedy, gdy uda wam się
+zlokalizować lub utworzyć plik ciasteczek w formacie Netscape,
+jakiego oczekuje Wget.
+@end table
+
+Jeśli nie możecie skorzystać z @samp{--load-cookies}, jest jeszcze inna
+możliwość. Jeśli używana przez was przeglądarka udostępnia ,,menedżera
+plików cookie'', skorzystajcie z niego, żeby podglądnąć ciasteczka,
+jakie zostały wykorzystane podczas uzyskiwania dostępu do witryny,
+której kopię chcecie utworzyć. Zapiszcie nazwę i wartość ciasteczka,
+a następnie ręcznie nakażcie Wgetowi wysłanie ciasteczka o zadanej
+postaci, obchodząc równocześnie ,,oficjalny'' kodu odpowiedzialny
+za obsługę ciasteczek:
+
+@example
+wget --cookies=off --header "Cookie: @var{nazwa}=@var{wartość}"
+@end example
+ 
+@cindex zapisywanie cookies
+@cindex zapisywanie ciasteczek
+@cindex cookies, zapisywanie
+@cindex ciasteczka, zapisywanie
+@item --save-cookies @var{plik}
+Na koniec sesji zapisuje ciasteczka do @var{pliku}.  Ciasteczka, dla których
+nie określono daty ważności lub które już wygasły, nie są zapisywane.
+
+@cindex Content-Length, ignorowanie
+@cindex ignorowanie wielkości
+@item --ignore-length
+Niestety, niektóre serwery @sc{http} (dokładniej mówiąc, programy @sc{cgi})
+wysyłają błędne nagłówki @code{Content-Length}, co powoduje, że Wget
+głupieje, sądząc, że nie została pobrana całość dokumentu.  Syndrom ten
+można uchwycić, gdy
+Wget próbuje w kółko pobierać ten sam dokument, za każdym razem twierdząc,
+że (inaczej niż zwykle) połączenie zostało zamknięte na dokładnie tym samym
+bajcie.
+
+Wywołany z tą opcją, Wget będzie ignorował nagłówek @code{Content-Length},
+tak jakby nie istniał.
+
+@cindex nagłówki, dodawanie
+@item --header=@var{dodatkowy-nagłówek}
+Określa @var{dodatkowy-nagłówek} przesyłany serwerom @sc{http}.
+Nagłówki muszą zawierać @samp{:} poprzedzony co najmniej jednym niepustym
+znakiem, i nie mogą zawierać znaków nowej linii.
+
+Możliwe jest określenie więcej niż jednego dodatkowego nagłówka przez
+kilkakrotne podanie opcji @samp{--header}.
+
+@example
+@group
+wget --header='Accept-Charset: iso-8859-2' \
+     --header='Accept-Language: hr'        \
+       http://fly.srk.fer.hr/
+@end group
+@end example
+
+Podanie pustego łańcucha jako nagłówka kasuje wszystkie uprzednio
+zdefiniowane przez użytkownika nagłówki.
+
+@cindex proxy, użytkownik
+@cindex proxy, hasło
+@cindex proxy, uwierzytelnianie
+@cindex uwierzytelnianie proxy
+@item --proxy-user=@var{użytkownik}
+@itemx --proxy-passwd=@var{hasło}
+Określają nazwę użytkownika i hasło, które zostaną użyte do uwierzytelniania
+na serwerze proxy.  Wget koduje je stosując podstawowy (@code{basic}) schemat
+uwierzytelniania.
+
+Odnoszą się do tego podobne zagadnienia związane z bezpieczeństwem,
+jak w przypadku opcji @samp{--http-passwd}.
+
+@cindex http referer
+@cindex referer, http
+@item --referer=@var{url}
+Zamieszcza nagłówek `Referer: @var{url}' w żądaniu HTTP.  Przydatne
+do pobierania dokumentów z takim przetwarzaniem po stronie serwera, które
+zakłada, że są one zawsze pobierane przez interaktywne przeglądarki Sieci
+i uznawane za poprawne tylko wtedy, gdy Refer jest ustawione na jedną
+ze stron, które na nie wskazują.
+
+@cindex odpowiedzi serwera, zachowywanie
+@item -s
+@itemx --save-headers
+Zapisuje nagłówki wysyłane przez serwer @sc{http} do pliku, przed
+właściwą zawartością, z pustą linią jako separatorem.
+
+@cindex user-agent
+@item -U @var{nazwa-agenta}
+@itemx --user-agent=@var{nazwa-agenta}
+Serwerowi @sc{http} przedstawia się jako agent o podanej nazwie.
+
+Protokół @sc{http} pozwala klientom na podanie, za pomocą pola
+@code{User-Agent} nagłówka, swojej tożsamości.
+Umożliwia to rozróżnianie oprogramowania @sc{www}, zwykle do celów
+statystycznych lub śledzenia naruszeń protokołu. Wget normalnie przedstawia
+się jako @samp{Wget/@var{wersja}}, gdzie @var{wersja} jest aktualnym numerem
+wersji programu.
+
+Znane są jednak pewne witryny narzucające politykę przykrawania wyników
+stosownie do informacji dostarczonej im w polu @code{User-Agent}. Mimo iż
+@c            conceptually                              abused
+koncepcyjnie nie jest to taki zły pomysł, zaczął być nadużywany przez serwery
+odmawiające informacji klientom innym niż  @code{Mozilla} lub @code{Internet
+Explorer}. Ta opcja umożliwia zmianę linii @code{User-Agent} wysyłanej przez
+Wget. Nie zachęcamy do używania tej opcji, chyba że z pełną świadomością.
+@end table
+
+@node Opcje FTP, Opcje pobierania rekurencyjnego, Opcje HTTP, Wywołanie
+@section Opcje FTP
+
+@table @samp
+@cindex .listing, usuwanie plików
+@cindex pliki .listing, usuwanie
+@item -nr
+@itemx --dont-remove-listing
+Zakazuje usuwania tymczasowych plików @file{.listing} generowanych przez
+odczyty @sc{ftp}.  Normalnie, pliki te zawierają nieprzetworzone listingi
+katalogów otrzymane z serwerów @sc{ftp}.  Pozostawienie ich może się przydać
+do celów diagnostycznych lub łatwego sprawdzenia zawartości katalogów
+zdalnego serwera (np. do sprawdzenia, że tworzona kopia lustrzana jest
+kompletna).
+
+Zauważ, że, mimo iż Wget zapisuje w tym przypadku do pliku o znanej nazwie,
+nie jest to dziura w zabezpieczeniach w sytuacji, gdy użytkownik stworzy
+@file{.listing} jako dowiązanie symboliczne do @file{/etc/passwd} czy innego
+pliku i poprosi superużytkownika (@code{root}) o uruchomienie Wget w tym
+katalogu.  W zależności od użytych opcji, Wget albo odmówi zapisu
+do @file{.listing} (co spowoduje niepowodzenie operacji na maskach,
+rekurencyjnej czy zależnej od znaczników czasu), albo dowiązanie
+symboliczne zostanie usunięte i zastąpione faktycznym plikiem @file{.listing},
+albo też listing zostanie zapisany do pliku @file{.listing.@var{numer}}.
+
+Choć ta sytuacja nie stwarza kłopotów, jednak @code{root} nie powinien nigdy
+uruchamiać Wget w katalogu niezaufanego użytkownika.  Użytkownik taki mógłby
+na przykład dowiązać @file{index.html} do @file{/etc/passwd} i poprosić
+@code{root}a o uruchomienie Wget z opcjami @samp{-N} lub @samp{-r}, tak że
+plik ten zostałby nadpisany.
+
+@cindex symboliczne dowiązania, pobieranie
+@cindex dowiązania symboliczne, pobieranie
+@item --retr-symlinks
+Zwykle, gdy podczas rekurencyjnego pobierania katalogów @sc{ftp} napotkane
+zostanie dowiązanie symboliczne, to wskazywany przez nie plik nie jest
+ściągany. Zamiast tego w lokalnym systemie plików tworzone jest odpowiadające
+mu dowiązanie symboliczne. Wskazywany przez dowiązanie plik nie zostanie
+ściągnięty, chyba że pobieranie rekurencyjne natknie się nań osobno
+i tak czy owak ściągnie.
+
+Przy podanej opcji @samp{--retr-symlinks}, jednakże, program podąża
+za dowiązaniami symbolicznymi i pobiera wskazywane przez nie pliki.
+Obecnie opcja ta nie spowoduje, by Wget podążał za dowiązaniami do katalogów
+i przetwarzał je rekurencyjnie, ale w przyszłości powinna zostać poszerzona
+tak, by tak się działo.
+
+Zauważ, że przy pobieraniu pliku (nie katalogu) wynikającym z podania go
+w wierszu poleceń, a nie jako w następstwie rekurencji, opcja ta nie działa.
+W tym przypadku Wget zawsze podąża za dowiązaniami.
+
+@cindex maski, przełączanie
+@cindex wzorce nazw, przełączanie
+@item -g on/off
+@itemx --glob=on/off
+Włącza/wyłącza obsługę masek dla @sc{ftp}.
+Obsługa masek oznacza, że można używać znaków specjalnych, @dfn{uogólniających}
+(jokerów), takich jak @samp{*}, @samp{?}, @samp{[} i @samp{]}, do pobrania
+większej liczby plików z tego samego katalogu naraz, np.
+
+@example
+wget ftp://gnjilux.srk.fer.hr/*.msg
+@end example
+
+Domyślnie obsługa masek będzie włączona jeśli @sc{url} zawiera znaki
+uogólniające. Tej opcji można użyć do włączenia bądź wyłączenia obsługi
+masek na stałe.
+
+Może zajść potrzeba ujęcia @sc{url}-a w znaki cudzysłowu, by uchronić go
+przed rozwinięciem przez powłokę. Obsługa masek powoduje, że Wget oczekuje
+listingu katalogu, którego postać jest zależna od systemu. Z tego powodu
+obecnie działa tylko z uniksowymi serwerami @sc{ftp} (i z tymi, które
+potrafią emulować wyjście uniksowego @code{ls}).
+
+@cindex pasywne ftp
+@cindex ftp, pasywne
+@item --passive-ftp
+Powoduje korzystanie z @dfn{pasywnego} schematu pobierania @sc{ftp}, w którym
+klient inicjuje połączenie do przesyłania danych. Jest on czasem wymagany,
+by @sc{ftp} działał za zaporami ogniowymi.
+@end table
+
+@node Opcje pobierania rekurencyjnego, Opcje rekurencyjnego akceptowania/odrzucania, Opcje FTP, Wywołanie
+@section Opcje pobierania rekurencyjnego
+
+@table @samp
+@item -r
+@itemx --recursive
+Włącza pobieranie rekurencyjne.  @xref{Pobieranie rekurencyjne}.
+
+@item -l @var{głębokość}
+@itemx --level=@var{głębokość}
+Podaje maksymalny poziom głębokości rekurencji
+(@pxref{Pobieranie rekurencyjne}).  Domyślnie jest to 5.
+
+@cindex wypełnianie proxy
+@cindex wypełnianie bufora proxy
+@cindex usuwanie po pobraniu
+@item --delete-after
+Ta opcja nakazuje Wget usunięcie każdego z plików, jaki pobiera, @emph{po}
+wykonaniu ściągania.  Jest przydatna do pobierania wstępnego (prefetching)
+popularnych stron poprzez proxy, np.:
+
+@example
+wget -r -nd --delete-after http://whatever.com/~popular/page/
+@end example
+
+Opcja @samp{-r} nakazuje pobieranie rekurencyjne, a @samp{-nd} nietworzenie
+katalogów.
+
+Zauważ, że @samp{--delete-after} usuwa pliki z lokalnego komputera.
+Nie wydaje polecenia @samp{DELE}, na przykład zdalnym ośrodkom FTP.
+Zauważ też, że jeśli podano @samp{--delete-after}, to @samp{--convert-links}
+@c    are simply not created in the first place.
+jest ignorowane, więc przede wszystkim pliki @samp{.orig} po prostu nie
+są tworzone.
+
+@cindex konwersja odnośników
+@cindex odnośniki, konwersja
+@item -k
+@itemx --convert-links
+Po zakończeniu pobierania konwertuje odnośniki w dokumencie tak, by nadawały
+się do lokalnego przeglądania. Dotyczy to nie tylko widzialnych odnośników
+hipertekstowych, ale każdej części dokumentu, która prowadzi do zewnętrznych
+materiałów, jak osadzone obrazki, odnośniki do arkuszy stylów, odnośniki
+hipertekstowe do zawartości innej niż HTML, itp.
+
+Każdy odnośnik będzie zmieniony na jeden z dwu sposobów:
+
+@itemize @bullet
+@item
+Odnośniki do plików, które zostały ściągnięte przez Wget zostaną zmienione
+tak, by odwoływały się do pliku, na jaki wskazują, jako odnośniki względne.
+
+Przykład: jeśli ściągnięty plik @file{/foo/doc.html} jest powiązany z
+z @file{/bar/img.gif}, również ściągniętym, to odnośnik w @file{doc.html}
+zostanie zmieniony tak, by wskazywał na @samp{../bar/img.gif}.  Ten rodzaj
+przekształcenia działa bezproblemowo dla dowolnej kombinacji katalogów.
+
+@item
+Odnośniki do plików, które nie zostały ściągnięte przez Wget zostaną
+zmienione tak, by zawierały nazwę hosta i ścieżkę bezwzględną miejsca,
+na które wskazują.
+
+Przykład: jeśli ściągnięty plik @file{/foo/doc.html} jest powiązany z
+z @file{/bar/img.gif} (lub z @file{../bar/img.gif}), to odnośnik
+w @file{doc.html} zostanie zmieniony tak, by wskazywał na
+@file{http://@var{hostname}/bar/img.gif}.
+@end itemize
+
+Z tego powodu, przeglądanie lokalne działa niezawodnie: jeśli powiązany plik
+był ściągnięty, to odnośnik wskazuje na jego lokalną nazwę, jeśli nie był --
+to na pełny adres internetowy, a nie pojawia się popsuty odnośnik.
+Konwersja pierwotnych odnośników na odnośniki względne zapewnia nam
+możliwość przesuwania pobranej hierarchii katalogów do innego katalogu.
+
+Zauważ, że dopiero na samym końcu pobierania Wget może rozpoznać, które
+odnośniki zostały ściągnięte.  Z tego powodu, opcja @samp{-k} wykonuje swoją
+pracę po zakończeniu wszystkich pobrań.
+
+@cindex kopie bepieczeństwa konwertowanych plików
+@cindex konwertowane pliki, kopie bepieczeństwa
+@item -K
+@itemx --backup-converted
+Podczas konwersji pliku zachowuje kopię zapasową pierwotnej wersji
+z przyrostkiem @samp{.orig}.  Wpływa na zachowanie opcji @samp{-N}
+(@pxref{Wewnętrzne znaczniki czasu HTTP}).
+
+@item -m
+@itemx --mirror
+Włącza opcje odpowiednie do tworzenia kopii lustrzanych.  Ta opcja włącza
+rekurencję, stosowanie znaczników czasu, ustawia nieograniczony poziom
+rekurencji i zachowuje listingi katalogów @sc{ftp}.  Obecnie jest równoważna
+użyciu @samp{-r -N -l inf -nr}.
+
+@item -nr
+@itemx --dont-remove-listing
+Zakazuje usuwania plików tymczasowych @file{.listing} tworzonych przez
+odczyty @sc{ftp}.  Normalnie, pliki te zawierają nieprzetworzone
+listingi katalogów otrzymane z serwerów @sc{ftp}.  Pozostawienie ich
+daje dostęp do pełnej listy zdalnych plików przy prowadzeniu siedziby
+lustrzanej. Przydaje się też do celów diagnostycznych.
+
+@cindex elementy strony
+@cindex potrzebne grafiki, ściąganie
+@item -p
+@itemx --page-requisites
+Ta opcja powoduje, że Wget ściągnie wszystkie pliki niezbędne do poprawnego
+wyświetlenia danej strony HTML.  Obejmuje to takie rzeczy jak grafikę,
+dźwięki i powiązane arkusze stylów.
+
+Przy zwykłym trybie pracy, podczas pobierania pojedynczej strony HTML,
+ewentualne powiązane dokumenty, które mogą być potrzebne do poprawnego
+jej wyświetlenia, nie są pobierane. Pomóc może użycie opcji @samp{-r}
+z @samp{-l}, ale ponieważ Wget normalnie nie odróżnia dokumentów zewnętrznych
+od włączonych, na ogół pozostaje się z ,,oskubanymi dokumentami'', którym
+@c           are missing their requisites
+brakuje potrzebnych elementów towarzyszących.
+
+Na przykład, powiedzmy, że dokument @file{1.html} zawiera znacznik
+@code{<IMG>} odnoszący się do @file{1.gif} i znacznik @code{<A>} wskazujący
+na zewnętrzny dokument @file{2.html}.  Powiedzmy, że @file{2.html} jest
+podobny, tyle, że jego obrazkiem jest @file{2.gif} a odnośnik wskazuje
+na @file{3.html}.  Załóżmy, że kontynuujemy takie zależności aż do jakiejś
+dowolnie dużej liczby.
+
+Jeśli wykona się polecenie:
+
+@example
+wget -r -l 2 http://@var{ośrodek}/1.html
+@end example
+
+to zostaną pobrane @file{1.html}, @file{1.gif}, @file{2.html}, @file{2.gif}
+i @file{3.html}.  Jak widać, @file{3.html} nie posiada towarzyszącego mu
+elementu, gdyż Wget w celu określenia miejsca, gdzie powinien przerwać
+rekurencję po prostu zlicza liczbę skoków (aż do 2) od początkowego
+@file{1.html}.  Jednak przy takim poleceniu:
+
+@example
+wget -r -l 2 -p http://@var{ośrodek}/1.html
+@end example
+
+zostaną ściągnięte wszystkie powyższe pliki @emph{oraz} wymagany przez
+@file{3.html} plik @file{3.gif}.  Podobnie,
+
+@example
+wget -r -l 1 -p http://@var{ośrodek}/1.html
+@end example
+
+spowoduje pobranie @file{1.html}, @file{1.gif}, @file{2.html} i @file{2.gif}.
+Można by sądzić, że:
+
+@example
+wget -r -l 0 -p http://@var{ośrodek}/1.html
+@end example
+
+pobrałoby tylko @file{1.html} i @file{1.gif}, ale niestety tak nie jest, gdyż
+@samp{-l 0} jest równoważnikiem @samp{-l inf} -- czyli nieskończonej
+rekurencji.  Do pobrania pojedynczej strony @sc{html} (lub ich grupy,
+wszystkich podanych w wierszu poleceń lub w pliku wejściowym @sc{url}-i
+@samp{-i}) i towarzyszących jej (lub im) elementów, wystarczy pominąć
+@samp{-r} i @samp{-l}:
+
+@example
+wget -p http://@var{ośrodek}/1.html
+@end example
+
+Zauważ, że Wget zachowa się tak, jakby podano opcję @samp{-r}, ale zostanie
+pobrana tylko pojedyncza strona i jej elementy.  Program nie będzie podążał
+za odnośnikami z tej strony do zewnętrznych dokumentów.  Faktycznie, do
+ściągania pojedynczej strony i wszystkich towarzyszących jej elementów
+(nawet jeśli leżą one na odrębnych serwerach @sc{www}) i upewnienia się, że
+całość lokalnie poprawnie się wyświetla, autor oprócz @samp{-p} korzysta
+z kilku dodatkowych opcji:
+
+@example
+wget -E -H -k -K -p http://@var{ośrodek}/@var{dokument}
+@end example
+
+Kończąc ten temat, warto wiedzieć, że Wget uważa za odnośnik do dokumentu
+zewnętrznego każdy @sc{url} podany w znaczniku @code{<A>}, @code{<AREA>}
+lub @code{<LINK>}, oprócz @code{<LINK REL="stylesheet">}.
+@end table
+
+@node Opcje rekurencyjnego akceptowania/odrzucania,  , Opcje pobierania rekurencyjnego, Wywołanie
+@section Opcje rekurencyjnego akceptowania/odrzucania
+
+@table @samp
+@item -A @var{lista_akc} --accept @var{lista_akc}
+@itemx -R @var{lista_odrz} --reject @var{lista_odrz}
+Podaje listę oddzielonych przecinkami przyrostków nazw plików (rozszerzeń
+plików) lub wzorców nazw, jakie mają być akceptowane lub odrzucane.
+(@pxref{Typy plików}, gdzie opisano szczegóły).
+
+@item -D @var{lista_domen}
+@itemx --domains=@var{lista_domen}
+Ustala domeny, do których program może przechodzić.
+@var{lista_domen} jest listą separowaną przecinkami. Zauważ, że ta opcja
+@emph{nie} włącza @samp{-H}.
+
+@item --exclude-domains @var{lista_domen}
+Podaje domeny, do których program ma @emph{nie} przechodzić.
+(@pxref{Przechodzenie między hostami}).
+
+@cindex podążanie za odnośnikami FTP
+@cindex odnośniki FTP
+@item --follow-ftp
+Podąża za odnośnikami @sc{ftp} z dokumentów @sc{http}.  Bez tej opcji Wget
+będzie ignorował wszelkie odnośniki do @sc{ftp}.
+
+@cindex ograniczenie pobierania rekurencyjnego według znaczników HTML
+@cindex znaczniki HTML, ograniczenie pobierania rekurencyjnego
+@item --follow-tags=@var{lista}
+Wget ma wewnętrzną tablicę par: znacznik @sc{html}/atrybut, którą posługuje
+się przy poszukiwaniu powiązanych dokumentów podczas pobierania
+rekurencyjnego.  Jeśli jednak chcielibyśmy, by brany był pod uwagę tylko
+pewien podzbiór tych znaczników, powinniśmy użyć tej opcji, podając je
+w postaci @var{listy} separowanej przecinkami.
+
+@item -G @var{lista}
+@itemx --ignore-tags=@var{lista}
+Jest to przeciwieństwo opcji @samp{--follow-tags}.  Dzięki podaniu
+@var{listy} rozdzielonych przecinkami znaczników @sc{html} można pominąć
+je podczas rekurencyjnego szukania dokumentów do pobrania.
+
+Niegdyś opcja @samp{-G}, użyta w wierszu poleceń:
+
+@example
+wget -Ga,area -H -k -K -r http://@var{ośrodek}/@var{dokument}
+@end example
+
+była najlepszym wyborem do ściągania pojedynczej strony razem z jej
+elementami.
+
+Jednak autor tej opcji przeszedł przez stronę ze znacznikami typu
+@code{<LINK REL="home" HREF="/">} i uświadomił sobie, że @samp{-G} nie
+wystarcza.  Nie można po prostu nakazać Wget ignorowania @code{<LINK>},
+gdyż wówczas nie będą ściągane arkusze stylów.  Obecnie najlepszym sposobem
+pobierania pojedynczej stony razem z jej elementami jest specjalnie
+przeznaczona do tego opcja @samp{--page-requisites}.
+
+@item -H
+@itemx --span-hosts
+Włącza przechodzenie pomiędzy hostami przy pobieraniu rekurencyjnym
+(@pxref{Przechodzenie między hostami}).
+
+@item -L
+@itemx --relative
+Podąża tylko za odnośnikami względnymi. Przydatne do pobierania konkretnej
+strony bez żadnych odwracających uwagę dodatków, nawet z tego samego hosta.
+(@pxref{Odnośniki względne}).
+
+@item -I @var{lista}
+@itemx --include-directories=@var{lista}
+Określa @var{listę} rozdzielonych przecinkami katalogów, do których ma
+przechodzić program podczas pobierania (@pxref{Ograniczanie katalogów},
+gdzie podano szczegóły.)  Elementy @var{listy} mogą zawierać znaki
+uogólniające.
+
+@item -X @var{lista}
+@itemx --exclude-directories=@var{lista}
+Określa @var{listę} rozdzielonych przecinkami katalogów, które chcemy
+wykluczyć z pobierania (@pxref{Ograniczanie katalogów}, gdzie podano
+szczegóły.)  Elementy @var{listy} mogą zawierać znaki uogólniające.
+
+@item -np
+@item --no-parent
+Powoduje, że Wget przy pobieraniu rekurencyjnym nigdy nie wchodzi do katalogu
+nadrzędnego.  Przydatna opcja, gdyż gwarantuje, że ściągane będą tylko pliki
+@emph{poniżej} pewnego poziomu.
+@xref{Ograniczanie katalogów}, gdzie podano szczegóły.
+@end table
+
+@c man end
+
+@node Pobieranie rekurencyjne, Odnośniki, Wywołanie, Top
+@chapter Pobieranie rekurencyjne
+@cindex rekurencja
+@cindex pobieranie
+@cindex pobieranie rekurencyjne
+
+GNU Wget potrafi przeglądać części Sieci (lub pojedynczy serwer @sc{http}
+czy @sc{ftp}), podążając za odnośnikami i zagłębiając się w strukturę
+katalogów.  Nazywamy to pobieraniem @dfn{rekurencyjnym} lub @dfn{rekurencją}.
+
+Przy @sc{url}-ach typu @sc{http}, Wget pobiera i analizuje kod @sc{html}
+z danego @sc{url}-a, po czym pobiera pliki, na które, między znacznikami
+typu @code{href} czy @code{src}, wskazuje ten dokument.
+Jeśli świeżo pobrany plik jest również typu @code{text/html}, zostanie
+później przeanalizowany i użyty w taki sam sposób.
+
+Rekurencyjne pobieranie @sc{http} i treści @sc{html} odbywa się
+@dfn{najpierw wszerz}. Oznacza to, że Wwget najpierw pobiera żądany dokument
+HTML, następnie dokumenty, do których odwołuje się ten dokument, następnie
+dokumenty przez nie wskazywane i tak dalej. Inaczej mówiąc, Wget w pierwszej
+kolejności pobiera dokumenty z poziomu 1, potem dokumenty z poziomu 2,
+i tak dalej, aż do zadanej maksymalnej głębokości.
+
+Maksymalna @dfn{głębokość}, do jakiej może zejść ściąganie podawana jest
+opcją @samp{-l} (domyślna maksymalna głębokość to pięć poziomów).
+@xref{Pobieranie rekurencyjne}.
+
+Przy rekurencyjnym pobieraniu @sc{url}-a @sc{ftp}, Wget pobierze wszystkie
+dane z zadanego drzewa katalogowego (łącznie z podkatalogami, aż do podanej
+głębokości) na zdalnym serwerze, tworząc lokalnie jego obraz lustrzany.
+Pobieranie @sc{ftp} jest również ograniczone parametrem głębokości
+@code{depth}. W przeciwieństwie do rekurencji przy @sc{http},
+rekurencyjne pobieranie @sc{ftp} wykonywane jest najpierw w głąb.
+
+Domyślnie Wget tworzy lokalne drzewo katalogów odpowiadające drzewu
+znajdującemu się na zdalnym serwerze.
+
+Rekurencyjne pobieranie ma wiele zastosowań, z których najważniejszym jest
+tworzenie kopii lustrzanych.  Przydatne jest też w prezentacjach @sc{www}
+i we wszelkich innych okolicznościach, w których powolne połączenia sieciowe
+powinno się obchodzić przez przechowywanie plików lokalnie.
+
+Ostrzegamy, że pobieranie rekurencyjne może powodować przeciążenia
+zdalnych serwerów. Dlatego wielu administratorów krzywo patrzy na takie
+działania -- mogą zablokować dostęp dla waszego z ośrodka, jeśli wykryją,
+że bardzo szybko pobieracie duże ilości danych. Przy pobieraniu z serwerów
+internetowych powinniście rozważyć użycie opcji @samp{-w}, wprowadzającej
+przerwy pomiędzy kolejnymi żądaniami kierowanymi do serwera. Ściąganie
+potrwa nieco dłużej, ale administratora tej maszyny nie zaalarmuje
+wasze grubiańskie zachowanie.
+
+Oczywiście, rekurencyjne pobieranie może spowodować kłopoty na waszej
+własnej maszynie. Jeśli puści się je bez kontroli, bez trudu zapełni
+cały dysk. Przy ściąganiu z sieci lokalnej może również zająć sporą część
+szerokości pasma systemu, spowodować znaczne obciążenie procesora
+i zużycie pamięci.
+
+Próbujcie podawać takie kryteria, jakie odpowiadają rodzajowi pobrania, który
+usiłujecie uzyskać. Jeżeli chcecie ściągnąć tylko jedną stronę, skorzystajcie
+z @samp{--page-requisites}, bez żadnej dodatkowej rekurencji. Jeśli
+potrzebujecie rzeczy z jednego katalogu, zastosujcie @samp{-np}, żeby uniknąć
+pobierania rzeczy z innych katalogów. Jeśli chcecie pobrać wszystkie pliki
+z jednego katalogu, użyjcie @samp{-l 1}, żeby mieć pewność, że rekurencja
+nie sięgnie głębiej niż do pierwszego poziomu. @pxref{Odnośniki}, gdzie
+opisano ten temat dokładniej.
+  
+Z pobierania rekurencyjnego należy korzystać ostrożnie.
+Nie mówcie, że nikt was nie ostrzegał.
+
+@node Odnośniki, Znaczniki czasu, Pobieranie rekurencyjne, Top
+@chapter Podążanie za odnośnikami
+@cindex odnośniki
+@cindex podążanie za odnośnikami
+
+Podczas pobieranie rekurencyjnego nie życzymy sobie ściągania mnóstwa
+zbędnych danych.  W większości przypadków użytkownicy dokładnie pamiętają
+o tym, co chcą ściągnąć i życzą sobie, by Wget używał tylko konkretnych
+odnośników.
+
+Na przykład, jeśli pragniemy ściągnąć archiwum muzyczne
+z @samp{fly.srk.fer.hr}, to nie chcemy ściągać wszystkich stron głównych,
+do których może prowadzić nieznana część archiwum.
+
+Wget jest wyposażony w kilka mechanizmów umożliwiających precyzyjne
+dobranie odnośników, za którymi powinien podążać.
+
+@menu
+* Przechodzenie między hostami::  (Nie)ograniczone pobieranie wg nazwy hosta.
+* Typy plików::                   Pobieranie tylko niektórych plików.
+* Ograniczanie katalogów::        Pobieranie tylko niektórych katalogów.
+* Odnośniki względne::            Podążanie tylko za odnośnikami względnymi.
+* Odnośniki FTP::                 Podążanie za odnośnikami FTP.
+@end menu
+
+
+@node Przechodzenie między hostami, Typy plików, Odnośniki, Odnośniki
+@section Przechodzenie między hostami
+@cindex przechodzenie między hostami
+@cindex hosty, przechodzenie
+
+Normalnie podczas ściągania rekurencyjnego Wget odmawia odwiedzania
+maszyn innych niż podana przez nas w wierszu poleceń. To rozsądne
+domyślne zachowanie -- bez tego każda sesja pobierania mogłaby
+przemienić naszego Wgeta w małą wersję Google'a.
+ 
+Z drugiej strony, możliwość odwiedzania różnych hostów, @dfn{przechodzenia
+między hostami} czasem się przydaje. Na przykład wtedy, gdy obrazki
+są dostarczane z innego serwera. Albo wówczas, gdy tworzymy kopię lustrzaną
+witryny złożonej z powiązanych ze sobą stron z trzech serwerów. Lub wtedy,
+gdy dany serwer ma dwie równoważne nazwy, a pobierane przez nas strony HTML
+posługują się zamiennie obiema.
+
+@table @asis
+@item Przechodzenie do dowolnego hosta -- @samp{-H}
+
+Opcja @samp{-H} włączenia przechodzenie pomiędzy hostami, pozwalając
+Wgetowi działającemu w trybie rekurencyjnym na odwiedzanie każdej
+maszyny wskazanej odnośnikiem. Takie zewnętrzne, obce hosty będą na ogół
+wskazywać na kolejne komputery, tamte na następne, i tak dalej - póki
+Wget nie skończy zasysając o wiele więcej danych niż zamierzaliśmy,
+chyba że zastosujemy odpowiednie kryteria ograniczające rekurencję
+do poziomu, jaki nam wystarcza.
+  
+@item Przechodzenie ograniczone do określonych domen -- @samp{-D}
+ 
+Opcja @samp{-D} umożliwia wyszczególnienie domen, do których Wget może
+przejść, przez co ograniczamy zasięg rekurencji do tych tylko hostów,
+które należą do wskazanych domen. Naturalnie, ma to sens tylko w połączeniu
+z opcją @samp{-H}. Typowym przykładem jest pobieranie zawartości
+@samp{www.server.com} z równoczesnym dopuszczeniem związanych z tym
+pobrań z @samp{images.server.com} itd.:
+
+@example
+wget -rH -Dserver.com http://www.server.com/
+@end example
+  
+Można podać więcej niż jeden adres, rozdzielając kolejne przecinkami,
+np.  @samp{-Ddomain1.com,domain2.com}.
+
+@item Zakaz pobierania z określonych domen -- @samp{--exclude-domains}
+
+Jeśli są domeny, które chce się specjalnie wyłączyć, można to zrobić opcją
+@samp{--exclude-domains}, która przyjmuje taki sam rodzaj argumentów jak
+@samp{-D}, ale powoduje @emph{pomijanie} wszystkich wymienionych domen.
+Na przykład, jeśli chcemy ściągać z wszystkich hostów z domeny @samp{foo.edu},
+z wyjątkiem @samp{sunsite.foo.edu}, robimy to tak:
+
+@example
+wget -rH -Dfoo.edu --exclude-domains sunsite.foo.edu \
+     http://www.foo.edu/
+@end example
+
+@end table
+
+@node Typy plików, Ograniczanie katalogów, Przechodzenie między hostami, Odnośniki
+@section Typy plików
+@cindex typy plików
+
+Ściągając dane z Sieci często chcemy ograniczyć pobieranie tylko do pewnych
+typów plików.  Jeśli, na przykład, interesuje nas ściągnięcie @sc{gif}-ów,
+nie będziemy zachwyceni otrzymując masę dokumentów PostScriptowych,
+i odwrotnie.
+
+Wget zawiera dwie opcje pozwalające poradzić sobie z tym problemem.
+Oba opisy wymieniają krótką nazwę, długą nazwę i równoważne polecenie
+w pliku @file{.wgetrc}.
+
+@cindex akceptowane maski plików
+@cindex akceptowane przyrostki
+@cindex maski, akceptowane
+@cindex wzorce plików, akceptowane
+@cindex przyrostki, akceptowane
+@table @samp
+@item -A @var{lista_akc}
+@itemx --accept @var{lista_akc}
+@itemx accept = @var{lista_akc}
+Argumentem opcji @samp{--accept} jest lista przyrostków plików lub wzorców
+nazw plików, które Wget ma ściągać podczas pobierania rekurencyjnego.
+Przyrostek jest końcową częścią nazwy pliku i składa się ze ,,zwykłych''
+liter, np. @samp{gif} lub @samp{.jpg}.  Wzorzec dopasowania zawiera znaki
+uogólnienia podobne do stosowanych w powłoce, np. @samp{books*}
+lub @samp{zelazny*196[0-9]*}.
+
+Zatem, podanie @samp{wget -A gif,jpg} spowoduje, że Wget ściągnie wyłącznie
+pliki kończące się na @samp{gif} lub @samp{jpg}, tj. pliki formatów @sc{gif}
+i @sc{jpeg}.  Z kolei @samp{wget -A "zelazny*196[0-9]*"} pobierze tylko pliki
+o nazwach zaczynających się od @samp{zelazny} i zawierających gdzieś w środku
+liczby od 1960 do 1969.  Opis działania dopasowywania wzorców można znaleźć
+w podręczniku systemowym używanej przez siebie powłoki.
+
+Oczywiście, dowolną liczbę przyrostków i wzorców można połączyć w listę
+rozdzielaną przecinkami i podać ją jako argument opcji @samp{-A}.
+
+@cindex odrzucane maski plików
+@cindex odrzucane przyrostki
+@cindex maski, odrzucane
+@cindex wzorce plików, odrzucane
+@cindex przyrostki, odrzucane
+@item -R @var{rejlist}
+@itemx --reject @var{rejlist}
+@itemx reject = @var{rejlist}
+Opcja @samp{--reject} działa w taki sam sposób jak @samp{--accept}, tylko
+ma przeciwne znaczenie.  Wget będzie ściągał wszystkie pliki @emph{oprócz}
+pasujących do przyrostków (lub wzorców) z listy.
+
+@c         cumbersome
+Zatem, jeśli chcemy pobrać całą stronę prócz niewygodnych plików @sc{mpeg}
+i @sc{.au}, stosujemy @samp{wget -R mpg,mpeg,au}.  Analogicznie, do
+ściągnięcia wszystkich plików oprócz zaczynających się od @samp{bjork},
+używamy @samp{wget -R "bjork*"}.  Występujące tu cudzysłowy chronią przed
+rozwinięciem znaku @samp{*} przez powłokę.
+@end table
+
+Opcje @samp{-A} i @samp{-R} można ze sobą łączyć, osiągając znacznie lepsze
+dostrojenie, które pliki pobrać.  Np. @samp{wget -A "*zelazny*" -R .ps}
+pobierze wszystkie pliki, które mają w nazwie @samp{zelazny}, ale @emph{nie}
+są plikami PostScriptu.
+
+Zauważ, że te dwie opcje nie wpływają na ściąganie plików @sc{html}.  Wget
+musi załadować wszystkie @sc{html}-e, by w ogóle wiedzieć, dokąd pójść --
+inaczej pobieranie rekurencyjne nie miałoby sensu.
+
+@node Ograniczanie katalogów, Odnośniki względne, Typy plików, Odnośniki
+@section Ograniczanie katalogów
+@cindex katalogi
+@cindex ograniczenia katalogów
+
+Niezależnie od innych możliwości związanych z podążaniem za odnośnikami,
+często przydaje się nałożenie ograniczenia na pobierane pliki w zależności
+od katalogów, w których są umieszczone.  Powodów może być wiele -- łatwiej
+uporządkować strony główne w rozsądną strukturę katalogów albo też niektóre
+z katalogów mogą zawierać niepotrzebne informacje, np. katalogi
+@file{/cgi-bin} czy @file{/dev}.
+
+Wget zawiera trzy opcje pozwalające poradzić sobie z tym wymaganiem.
+Każdy z opisów opcji wymienia krótką nazwę, długą nazwę i równoważne
+polecenie pliku @file{.wgetrc}.
+
+@cindex katalogi, akceptowane
+@cindex katalogi, włączane
+@cindex włączane katalogi
+@cindex akceptowane katalogi
+@table @samp
+@item -I @var{lista}
+@itemx --include @var{lista}
+@itemx include_directories = @var{lista}
+Opcja @samp{-I} przyjmuje jako argument listę rozdzielonych przecinkami
+@c         included
+katalogów przeznaczonych do pobrania.  Wszelkie inne katalogi będą po prostu
+ignorowane.  Katalogi te są w postaci ścieżek bezwzględnych.
+
+Zatem, jeśli chcemy ściągać pliki z @samp{http://host/ludzie/bozo/} podążając
+tylko za odnośnikami do kolegów bozo w katalogu @file{/ludzie} oraz
+@c       bogus scripts
+do fikcyjnych skryptów w @file{/cgi-bin}, podajemy:
+
+@example
+wget -I /ludzie,/cgi-bin http://host/ludzie/bozo/
+@end example
+
+@cindex katalogi, odrzucane
+@cindex katalogi, wykluczane
+@cindex odrzucane katalogi
+@cindex wykluczane katalogi
+@item -X @var{list}
+@itemx --exclude @var{list}
+@itemx exclude_directories = @var{list}
+Opcja @samp{-X} jest dokładną odwrotnością @samp{-I} -- jest to lista
+katalogów @emph{wykluczonych} ze ściągania.  Jeśli, na przykład, nie chcemy
+pobierać plików z katalogu @file{/cgi-bin}, to podajemy w wierszu poleceń
+@samp{-X /cgi-bin}.
+
+Tak samo jak w przypadku @samp{-A}/@samp{-R}, obie te opcje można łączyć
+w celu precyzyjniejszego dostrojenia pobierania podkatalogów.  Np. jeśli
+chcemy ściągnąć wszystkie pliki z hierarchii @file{/pub} z wyjątkiem leżących
+w @file{/pub/bez-wartosci}, podajemy @samp{-I/pub -X/pub/bez-wartosci}.
+
+@cindex bez nadrzędnych
+@cindex nadrzędny katalog, zakaz wejścia
+@item -np
+@itemx --no-parent
+@itemx no_parent = on
+Najprostszą i często bardzo przydatną metodą ograniczania katalogów jest
+zakaz pobierania odnośników wskazujących na hierarchię @dfn{powyżej}
+katalogu początkowego, tzn. zakaz wspinania się do katalogu/katalogów
+nadrzędnych.
+
+Do takigo przypadku przydaje się opcja @samp{--no-parent} (w krótkiej
+postaci @samp{-np}).
+Użycie jej gwarantuje, że program nigdy nie opuści istniejącej hierarchii
+katalogów.  Załóżmy, że Wget wykonuje się z:
+
+@example
+wget -r --no-parent http://jakishost/~luzer/archiwum/
+@end example
+
+Możemy być spokojni, że program nie podąży za żadnym z odwołań do
+@file{/~strona-jego-dziewczyn/} czy @file{/~luzer/wszystkie-moje-mpeg/}.
+Ściągnięte zostanie tylko interesujące nas archiwum.  Zasadniczo,
+@samp{--no-parent} przypomina @samp{-I/~luzer/archiwum}, tylko
+inteligentniej obsługuje przekierowania.
+@end table
+
+@node Odnośniki względne, Odnośniki FTP, Ograniczanie katalogów, Odnośniki
+@section Odnośniki względne
+@cindex odnośniki względne
+
+Jeśli włączona jest opcja @samp{-L}, to program podąża tylko za odnośnikami
+względnymi. Tutaj odnośniki względne oznaczają te, które nie odnoszą się
+do głównego katalogu serwera www. Na przykład, poniższe odnośniki są względne:
+
+@example
+<a href="foo.gif">
+<a href="foo/bar.gif">
+<a href="../foo/bar.gif">
+@end example
+
+Te odnośniki nie są względne:
+
+@example
+<a href="/foo.gif">
+<a href="/foo/bar.gif">
+<a href="http://www.server.com/foo/bar.gif">
+@end example
+
+Zastosowanie tej opcji gwarantuje, że pobieranie rekurencyjne nie będzie
+sięgać do innych maszyn, nawet bez @samp{-H}.  W prostych przypadkach
+powoduje również, że pobrane strony ,,po prostu działają'', bez potrzeby
+stosowania konwersji odnośników.
+
+Ta opcja nie jest zapewne zbyt przydatna i może zostać usunięta w którejś
+z kolejnych wersji.
+
+@node Odnośniki FTP,  , Odnośniki względne, Odnośniki
+@section Podążanie za odnośnikami FTP
+@cindex podążanie za odnośnikami ftp
+
+Zasady dla @sc{ftp} są w pewnym stopniu specyficzne, ponieważ muszą być
+takie.  Często odnośniki @sc{ftp} umieszczane są w dokumentach @sc{html}
+@c            inconvenient
+w celach referencyjnych i często domyślne ściąganie ich jest niewygodne.
+
+Jeśli chcemy, aby podążać za odnośnikami @sc{ftp} z dokumentów @sc{html},
+powinniśmy podać opcję @samp{--follow-ftp}.  Spowoduje ona, że podążaniu
+za odnośnikami @sc{ftp} będą przeszukiwane także inne hosty, niezależnie
+od ustawienia @samp{-H}.  To logiczne, gdyż odnośniki @sc{ftp} rzadko
+wskazują na tę samą maszynę, na której posadowiony jest serwer @sc{http}.
+Z podobnych powodów, opcja @samp{-L} nie ma wpływu na takie pobieranie.
+Natomiast akceptacja domen (@samp{-D}) i zasady dotyczące przyrostków nazw
+(@samp{-A} i @samp{-R}) stosowane są jak zwykle.
+
+Zauważ też, że program podążając za odnośnikami do katalogów @sc{ftp}
+nie będzie ich następnie pobierał rekurencyjnie.
+
+@node Znaczniki czasu, Plik konfiguracyjny, Odnośniki, Top
+@chapter Znaczniki czasu
+@cindex time-stamping
+@cindex timestamping
+@cindex znaczniki czasu
+@cindex aktualizacja archiwów
+@cindex aktualizacja przyrostowa
+@cindex przyrostowa, aktualizacja
+
+Jednym z najważniejszych aspektów tworzenia kopii lustrzanych informacji
+z Internetu jest aktualizacja własnych archiwów.
+
+Ściąganie wciąż od nowa całego archiwum, tylko po to, by zastąpić kilka
+zmienionych plików jest kosztowne, zarówno jeśli chodzi o marnowanie
+przepustowości i pieniędzy, jak i czasu na wykonanie aktualizacji.
+Dlatego wszystkie narzędzia do tworzenia kopii lustrzanych oferują opcję
+aktualizacji przyrostowej.
+
+Taki mechanizm aktualizacji oznacza, że przegląda się zdalny serwer szukając
+@dfn{nowych} plików.  Ściągane będą wyłącznie te nowe pliki, zastępując stare.
+
+Plik jest uważany za nowy, jeśli spełniony jest jeden z poniższych warunków:
+
+@enumerate
+@item
+Lokalnie nie ma jeszcze pliku o takiej nazwie.
+
+@item
+Plik o tej nazwie istnieje, ale zdalny plik został zmieniony później niż
+lokalny.
+@c       was modified more recently than
+@end enumerate
+
+Aby móc to zrealizować, program musi znać czas ostatniej modyfikacji
+oby plików, zdalnego i lokalnego.  Te informacje nazywa się @dfn{znacznikami
+czasu} (@dfn{time-stamps}).
+
+Korzystanie ze znaczników czasu w Wget włącza się opcją @samp{--timestamping}
+(@samp{-N}) lub za pomocą dyrektywy @code{timestamping = on} umieszczonej
+w pliku @file{.wgetrc}.  Jeśli użyto tej opcji, dla każdego pliku, który ma
+zostać ściągnięty, Wget sprawdzi czy istnieje lokalny plik o tej samej nazwie.
+Jeśli istnieje, a zdalny plik jest starszy, to Wget nie będzie go ściągał.
+
+Jeśli nie ma lokalnego pliku lub gdy oba pliki mają różne rozmiary, Wget
+ściągnie zdalny plik, bez względu na to, co wskazują znaczniki czasu.
+
+@menu
+* Użycie znaczników czasu::
+* Wewnętrzne znaczniki czasu HTTP::
+* Wewnętrzne znaczniki czasu FTP::
+@end menu
+
+@node Użycie znaczników czasu, Wewnętrzne znaczniki czasu HTTP, Znaczniki czasu, Znaczniki czasu
+@section Użycie znaczników czasu
+@cindex time-stamping, sposób użycia
+@cindex znaczniki czasu, sposób użycia
+@cindex sposób użycia, znaczniki czasu
+@cindex sposób użycia, time-stamping
+
+Korzystanie ze znaczników czasu jest proste.  Powiedzmy, że chcielibyśmy
+ściągnąć plik, tak by zachować jego datę modyfikacji.
+
+@example
+wget -S http://www.gnu.ai.mit.edu/
+@end example
+
+Zwykłe @code{ls -l} pokazuje, że zmacznik czasu lokalnego pliku jest równy
+stanowi nagłówka @code{Last-Modified}, zwracanego przez serwer.  Jak widać,
+informacja o znaczniku czasu jest zachowywana lokalnie, nawet bez @samp{-N}
+(przynajmniej dla @sc{http}).
+
+Kilka dni później chcielibyśmy, by Wget sprawdził, czy zdalny plik się
+zmienił, i jeśli tak, to go ściągnął.
+
+@example
+wget -N http://www.gnu.ai.mit.edu/
+@end example
+
+Wget zapyta serwer o datę ostatniej modyfikacji.  Jeśli lokalny plik ma
+ten sam znacznik czasu, co na serwerze, lub nowszy, to zdalny nie będzie
+ponownie pobierany.  Jeśli jednak zdalny plik jest świeższy, Wget przejdzie
+do pobierania go.
+
+Tak samo dzieje się w przypadku @sc{ftp}.  Na przykład:
+
+@example
+wget "ftp://ftp.ifi.uio.no/pub/emacs/gnus/*"
+@end example
+
+(Cudzysłowy wokół URL-a zapobiegają próbie interpretacji @samp{*} przez
+powłokę.)
+
+Po ściąganiu, listing katalogu lokalnego pokaże, że znaczniki czasu nadane
+są zgodnie ze stanem na serwerze zdalnym.  Ponowne wydanie tego polecenia
+z opcją @samp{-N} spowoduje, że Wget ponownie pobierze @emph{tylko} te pliki,
+które zostały zmienione.
+
+Gdybyśmy chcieli tworzyć co tydzień kopię archiwum GNU, użylibyśmy co tydzień
+polecenia:
+
+@example
+wget --timestamping -r ftp://ftp.gnu.org/pub/gnu/
+@end example
+
+Zauważ, że aktualizacja według znaczników czasu będzie działać tylko dla
+plików, dla których serwer daje znaczniki.  W przypadku @sc{http} zależy
+to od otrzymania nagłówka @code{Last-Modified}. W przypadku @sc{ftp} -- od
+otrzymania listingu katalogu z datami w formacie, jaki Wget potrafi
+przetworzyć (@pxref{Wewnętrzne znaczniki czasu FTP}).
+
+@node Wewnętrzne znaczniki czasu HTTP, Wewnętrzne znaczniki czasu FTP, Użycie znaczników czasu, Znaczniki czasu
+@section Wewnętrzne znaczniki czasu HTTP
+@cindex http, znaczniki czasu
+@cindex znaczniki czasu http
+
+Obsługa znaczników czasu w @sc{http} realizowana jest przez sprawdzanie
+nagłówka @code{Last-Modified}.  Jeśli chcemy przez @sc{http} pobrać plik
+@file{foo.html}, Wget sprawdzi czy @file{foo.html} istnieje lokalnie.
+Jeśli nie, to @file{foo.html} zostanie bezwarunkowo pobrany.
+
+Jeśli plik ten istnieje lokalnie, Wget najpierw sprawdzi znacznik czasu
+lokalnego egzemplarza (w podobny sposób, jak czyni to @code{ls -l}),
+a następnie wyśle żądanie @code{HEAD} do serwera zdalnego, domagając się
+informacji o zdalnym pliku.
+
+Program bada otrzymany nagłówek @code{Last-Modified} w celu ustalenia,
+który z plików został później zmieniony (co czyni go świeższym, ,,nowszym'').
+Jeśli zdalny plik jest nowszy, to zostanie ściągnięty.  Jeżeli jest starszy,
+Wget zrezygnuje.@footnote{Wget dokonuje dodatkowej kontroli, przeglądając
+nagłówek @code{Content-Length} i porównując rozmiary; Jeśli nie są takie same,
+zdalny plik zostanie ściągnięty bez względu na to, co wskazują znaczniki
+czasu.}
+
+Jeśli w połączeniu z @samp{-N} podano @samp{--backup-converted} (@samp{-K}),
+to plik @samp{@var{X}} z serwera porównywany jest z lokalnym plikiem
+@samp{@var{X}.orig}, jeśli istnieje, a nie z lokalnym @samp{@var{X}}, który
+będzie zawsze się różnić  jeśli został przekonwertowany przez
+@samp{--convert-links} (@samp{-k}).
+
+Jest kwestią sporną, czy znaczniki czasu @sc{http} nie powinny być wyznaczane
+za pomocą żądania @code{If-Modified-Since}.
+
+@node Wewnętrzne znaczniki czasu FTP,  , Wewnętrzne znaczniki czasu HTTP, Znaczniki czasu
+@section Wewnętrzne znaczniki czasu FTP
+@cindex ftp, znaczniki czasu
+@cindex znaczniki czasu ftp
+
+Teoretycznie, znaczniki czasu w przypadku @sc{ftp} działają prawie tak samo,
+jak w @sc{http}, tyle że w @sc{ftp} nie ma nagłówków -- znaczniki czasu
+@c  ferret
+muszą być wydobyte z listingów katalogów.
+
+Jeśli ściąganie @sc{ftp} jest rekurencyjne lub wykorzystuje maski plików,
+Wget stosuje polecenie @sc{ftp} @code{LIST}, by otrzymać listing katalogu
+zawierającego żądane pliki.  Następnie próbuje przeanalizować listing,
+traktując go jak wyjście z uniksowego @code{ls -l}, i wydzielić zeń
+znaczniki czasu.  Dalsza część jest dokładnie taka sama jak dla @sc{http}.
+Zauważ, że przy pobieraniu z serwera @sc{ftp} pojedynczego pliku bez
+stosowania masek czy rekurencji, listingi plików nie będą ściągane (a więc
+pliki nie otrzymają znaczników czasu), chyba że podano opcję @samp{-N}.
+
+Założenie, że każdy listing katalogu jest listingiem typu uniksowego może
+wydawać się niezwykle ograniczające, ale w praktyce tak nie jest.  Wiele
+nieuniksowych serwerów @sc{ftp} stosuje uniksowaty format listingu, gdyż
+większość (wszystkie?) klienty je rozumieją.  Należy pamiętać, że @sc{rfc959}
+nie definiuje żadnej metody uzyskiwania listy plików, nie mówiąc już
+o znacznikach czasu.  Możemy tylko mieć nadzieję, że przyszły standard to
+zdefiniuje.
+
+Inne niestandardowe rozwiązanie polega na użyciu polecenia @code{MDTM},
+rozpoznawanego przez niektóre serwery @sc{ftp} (łącznie z popularnym
+@code{wu-ftpd}), które zwraca dokładny czas podanego pliku.
+Być może w przyszłości Wget będzie korzystał z tego polecenia.
+
+@node Plik konfiguracyjny, Przykłady, Znaczniki czasu, Top
+@chapter Plik konfiguracyjny
+@cindex plik konfiguracyjny
+@cindex wgetrc
+@cindex .wgetrc
+@cindex inicjowanie
+@cindex konfigurowanie
+@cindex .netrc
+
+Kiedy wiemy już, jak zmieniać domyślne ustawienia programu za pomocą
+argumentów wiersza poleceń, chcielibyśmy zapewne niektóre z nich zachować
+jako ustawienia stałe.  Wygodnym sposobem jest utworzenie pliku startowego
+Wget -- @file{.wgetrc}.
+
+Oprócz @file{.wgetrc}, ,,głównego'' pliku inicjującego, wygodnie jest
+mieć specjalne miejsce do przechowywania haseł.  Z tej przyczyny Wget
+czyta i interpretuje zawartość pliku @file{$HOME/.netrc}, jeśli go znajdzie.
+Format pliku @file{.netrc} można znaleźć w odpowiednim podręczniku systemowym.
+
+Wget odczytuje @file{.wgetrc} podczas uruchamiania, rozpoznając ograniczony
+zestaw poleceń.
+
+@menu
+* Położenie wgetrc::    Położenie różnych plików wgetrc.
+* Składnia wgetrc::     Składnia wgetrc.
+* Polecenia wgetrc::    Lista dostępnych poleceń.
+* Przykładowy wgetrc::  Przykład wgetrc.
+@end menu
+
+@node Położenie wgetrc, Składnia wgetrc, Plik konfiguracyjny, Plik konfiguracyjny
+@section Położenie wgetrc
+@cindex wgetrc, położenie
+@cindex położenie wgetrc
+
+Przy inicjowaniu Wget szuka @dfn{ogólnosystemowego}, globalnego pliku
+konfiguracyjnego, domyślnie @file{/usr/local/etc/wgetrc} (lub z jakimś innym
+niż @file{/usr/local} przedrostkiem, jeśli Wget zainstalowano gdzie indziej)
+i, jeśli takowy istnieje, odczytuje z niego polecenia.
+
+Następnie szuka pliku użytkownika.  Jeśli nadano wartość zmiennej
+środowiskowej @code{WGETRC}, program będzie usiłował załadować plik przez
+nią określony.  Jeżeli się to nie uda, nie będą podejmowane dalsze starania.
+
+Jeśli nie ustawiono @code{WGETRC}, Wget spróbuje załadować
+@file{$HOME/.wgetrc}.
+
+To, iż ustawienia użytkownika są wczytywane po ogólnosystemowych oznacza,
+że w przypadku konfliktu wgetrc należący do użytkownika @emph{przesłania}
+ustawienia ogólnosystemowe (z @file{/usr/local/etc/wgetrc}, domyślnie).
+Precz z faszystowskimi adminami!
+
+@node Składnia wgetrc, Polecenia wgetrc, Położenie wgetrc, Plik konfiguracyjny
+@section Składnia wgetrc
+@cindex wgetrc, składnia
+@cindex składnia wgetrc
+
+Składnia poleceń wgetrc jest prosta:
+
+@example
+zmienna = wartość
+@end example
+
+@dfn{Zmienną} będziemy też nazywać @dfn{poleceniem}.  Poprawne @dfn{wartości}
+są różne dla różnych poleceń.
+
+Polecenia są nie są wrażliwe na wielkość znaków i podkreślenia.
+Tak więc, @samp{DIr__PrefiX} jest tym samym, co @samp{dirprefix}.
+Puste linie, linie zaczynające się od @samp{#} i linie zawierające tylko
+odstępy (białe znaki) są pomijane.
+
+Polecenia, które spodziewają się jako argumentu listy rozdzielanej
+przecinkami, przy pustym poleceniu wymazują listę.  Jeśli zatem chcemy
+wyzerować listę odrzuceń określoną w ogólnosystemowym @file{wgetrc},
+robimy to za pomocą:
+
+@example
+reject =
+@end example
+
+@node Polecenia wgetrc, Przykładowy wgetrc, Składnia wgetrc, Plik konfiguracyjny
+@section Polecenia wgetrc
+@cindex polecenia wgetrc
+@cindex wgetrc, polecenia
+
+Pełny zestaw poleceń spisano poniżej.  Dopuszczalne wartości podano po
+znaku równości @samp{=}.  Zwykłe wartości logiczne nadaje się zmiennym
+stosując @samp{on} i @samp{off} lub @samp{1} i @samp{0}.  Bardziej wymyślnym
+rodzajem zmiennych boolowskich dopuszczalnych w niektórych przypadkach
+są @dfn{zmienne logiczne blokowane}, którym można nadać wartość @samp{on},
+@samp{off}, @samp{always} (zawsze) lub @samp{never} (nigdy).  Jeżeli opcja
+ma wartość @samp{always} lub @samp{never}, to wartość ta jest zablokowana
+podczas wywoływania Wget -- opcje wiersza poleceń jej nie przesłonią.
+
+Niektóre z poleceń pobierają pseudo-dowolne wartości.  Wartościami
+@var{adresu} mogą być nazwy hostów lub adresy IP w postaci czwórek liczb
+rozdzielonych kropkami.  @var{n} może być dowolną liczbą dodatnią lub
+napisem @samp{inf} oznaczającym nieskończoność, gdzie ma to zastosowanie.
+Wartością @dfn{łańcucha} (@var{string}) może być dowolny niepusty łańcuch
+znakowy.
+
+Większość tych poleceń posiada równoważniki używane w wierszu poleceń
+(@pxref{Wywołanie}), choć niektóre z mniej znanych i rzadko używanych nie mają.
+
+@table @asis
+@item accept/reject = @var{łańcuch}
+To samo, co @samp{-A}/@samp{-R} (@pxref{Typy plików}).
+
+@item add_hostdir = on/off
+Włącza/wyłącza nazwy hostów z przedrostkiem. @samp{-nH} wyłącza to.
+
+@item continue = on/off
+Ustawione na @samp{on} wymusza kontynuowanie już istniejących częściowo
+pobranych plików.  Przed nadaniem wartości zobacz opis @samp{-c}.
+
+@item background = on/off
+Włącza/wyłącza przejście do pracy w tle.  To samo co @samp{-b} (które je
+włącza).
+
+@item backup_converted = on/off
+Włącza/wyłącza zachowywanie plików sprzed konwersji z przyrostkiem
+@samp{.orig}.  To samo co @samp{-K} (które je włącza).
+
+@c @item backups = @var{liczba}
+@c #### Document me!
+@c
+@item base = @var{łańcuch}
+Wymusza poprzedzanie zadanym @var{łańcuchem} odnośników względnych
+występujących w plikach wejściowych @sc{url}-i.
+To samo co @samp{-B}.
+
+@item bind_address = @var{adres}
+Wiąże z lokalnym komputerem zadany @var{adres}, tak jak opcja
+@samp{--bind-address}.
+
+@item cache = on/off
+Jeśli ustawione na @samp{off}, wyłącza buforowanie po stronie serwera.
+To samo co @samp{-C}.
+
+@item convert links = on/off
+Konwertuje lokalnie bezwzględne odnośniki na względne.  To samo co @samp{-k}.
+
+@item cookies = on/off
+Ustawione na @samp{off} nie dopuszcza ciasteczek.
+Zobacz opcja @samp{--cookies}.
+
+@item load_cookies = @var{plik}
+Wczytuje ciasteczka z @var{pliku}.  Zobacz @samp{--load-cookies}.
+ 
+@item save_cookies = @var{plik}
+Zapisuje ciasteczka do @var{pliku}.  Zobacz @samp{--save-cookies}.
+
+@item cut_dirs = @var{n}
+Ignoruje @var{n} składowych katalogu zdalnego. To samo co @samp{--cut-dirs}.
+
+@item debug = on/off
+Tryb diagnostyczny.  To samo co @samp{-d}.
+
+@item delete_after = on/off
+Usuwa pliki po ściągnięciu.  To samo co @samp{--delete-after}.
+
+@item dir_prefix = @var{łańcuch}
+Wierzchołek drzewa katalogów.  To samo co @samp{-P}.
+
+@item dirstruct = on/off
+Włącza i wyłącza tworzenie struktury katalogów.  To samo co, odpowiednio,
+@samp{-x} or @samp{-nd}.
+
+@item domains = @var{łańcuch}
+To samo co @samp{-D} (@pxref{Przechodzenie między hostami}).
+
+@item dot_bytes = @var{n}
+Liczba bajtów ,,zawartych'' w kropce widocznej podczas pobierania
+(domyślnie 1024).  Po wartości można dopisać @samp{k} lub @samp{m},
+oznaczające, odpowiednio, kilobajty i megabajty.  Pokazywane podczas
+pobierania kropki można dopasować do swoich potrzeb albo w ten sposób albo
+używając predefiniowanych @dfn{stylów} (@pxref{Opcje ściągania}).
+
+@item dots_in_line = @var{n}
+Liczba kropek w linii, jakie będą wypisywane podczas pobierania
+(domyślnie 50).
+
+@item dot_spacing = @var{n}
+Liczba kropek w pojedynczej grupie (domyślnie 10).
+
+@item exclude_directories = @var{łańcuch}
+Podaje listę oddzielonych przecinkami katalogów, które chcemy wyłączyć
+ze ściągania.  To samo co @samp{-X} (@pxref{Ograniczanie katalogów}).
+
+@item exclude_domains = @var{łańcuch}
+Podaje listę oddzielonych przecinkami domen, które chcemy wyłączyć
+ze ściągania.  To samo co @samp{--exclude-domains}
+(@pxref{Przechodzenie między hostami}).
+
+@item follow_ftp = on/off
+Podąża za odnośnikami @sc{ftp} z dokumentów @sc{html}.
+To samo co @samp{--follow-ftp}.
+
+@item follow_tags = @var{łańcuch}
+Zezwala na podążanie podczas pobierania rekurencyjnego tylko za niektórymi
+znacznikami @sc{html}.  To samo co @samp{--follow-tags}.
+
+@item force_html = on/off
+Jeśli jest włączone, wymusza traktowanie pliku wejściowego jako dokumentu
+@sc{html}.  To samo co @samp{-F}.
+
+@item ftp_proxy = @var{łańcuch}
+Używa @var{łańcucha} jako proxy dla @sc{ftp}, zamiast łańcucha wskazanego
+zmienną środowiskową.
+
+@item glob = on/off
+Włącza/wyłącza obsługę masek dla @sc{ftp}.  To samo co @samp{-g}.
+
+@item header = @var{łańcuch}
+Określa dodatkowy nagłówek.  To samo co @samp{--header}.
+
+@item html_extension = on/off
+Dodaje rozszerzenie @samp{.html} do plików @samp{text/html}, które go nie
+posiadają.  To samo co @samp{-E}.
+
+@item http_passwd = @var{łańcuch}
+Ustawia hasło @sc{http}.
+
+@item http_proxy = @var{łańcuch}
+Używa @var{łańcucha} jako proxy dla @sc{http}, zamiast łańcucha podanego
+zmienną środowiskową.
+
+@item http_user = @var{łańcuch}
+Ustawia użytkownika @sc{http}.
+
+@item ignore_length = on/off
+Ignorowanie nagłówków @code{Content-Length}.
+To samo, co @samp{--ignore-length}.
+
+@item ignore_tags = @var{łańcuch}
+Pomija zadane znaczniki @sc{html} podczas rekurencyjnego szukania
+dokumentów do pobrania.  To samo co @samp{-G} / @samp{--ignore-tags}.
+
+@item include_directories = @var{łańcuch}
+Podaje listę oddzielonych przecinkami katalogów, do których może przechodzić
+program podczas pobierania.  To samo co @samp{-I}.
+
+@item input = @var{łańcuch}
+Nakazuje czytanie @sc{url}-i z podanego pliku.
+To samo co @samp{-i}.
+
+@item kill_longer = on/off
+Dane dłuższe niż określone w nagłówku @code{Content-Length} będą uważane
+za nieważne (i ponownie pobierane). Domyślnym zachowaniem jest zapisanie
+tylu danych, ile pobrano, pod warunkiem, że jest ich przynajmniej tyle,
+na ile wskazywała wartość w @code{Content-Length}.
+
+@item limit_rate = @var{prędkość}
+Ogranicza prędkość pobierania do maksymalnie @var{prędkość} bajtów
+na sekundę. To samo co @samp{--limit-rate}.
+
+@item logfile = @var{łańcuch}
+Ustawia plik dziennika.  To samo co @samp{-o}.
+
+@item login = @var{łańcuch}
+Nazwa użytkownika na zdalnej maszynie, dla @sc{ftp}.
+Domyślnie: @samp{anonymous}.
+
+@item mirror = on/off
+Włącza/wyłącza tworzenie kopii lustrzanych. To samo co @samp{-m}.
+
+@item netrc = on/off
+Włącza/wyłącza czytanie @file{netrc}.
+
+@item noclobber = on/off
+Zakazuje tworzenia wielu wersji pliku.  To samo co @samp{-nc}.
+
+@item no_parent = on/off
+Zabrania pobierania poza hierarchią danego katalogu.
+To samo co @samp{--no-parent} (@pxref{Ograniczanie katalogów}).
+
+@item no_proxy = @var{łańcuch}
+Zamiast kierować się zmienną środowiska, używa @var{łańcucha} jako listy
+rozdzielonych przecinkami domen, których nie należy pobierać przez proxy.
+
+@item output_document = @var{łańcuch}
+Ustawia nazwę pliku wyjściowego.
+To samo co @samp{-O}.
+
+@item page_requisites = on/off
+Ściąga wszystkie pomocnicze dokumenty niezbędne do prawidłowego wyświetlenia
+pojedynczej strony @sc{html}.
+To samo co @samp{-p}.
+
+@item passive_ftp = on/off/always/never
+Ustawia tryb pasywnego @sc{ftp}.  To samo co @samp{--passive-ftp}.
+Niektóre skrypty i pliki @samp{.pm} (moduły Perla) ściągają pliki
+wykorzystując @samp{wget --passive-ftp}.  Jeśli nasza zapora ogniowa na to
+nie pozwala, to można ustawić @samp{passive_ftp = never}, co spowoduje
+ignorowanie ustawienia z wiersza poleceń.
+
+@item passwd = @var{łańcuch}
+Ustawia hasło na zdalnej maszynie dla @sc{ftp}.  Bez tej zmiennej domyślnie
+jest to @samp{username@@hostname.domainname}.
+
+@item progress = @var{string}
+Ustala typ wskaźnika postępu.  Dozwolone typy to ,,dot'' (kropki) i ,,bar''
+(pasek).
+
+@item proxy_user = @var{łańcuch}
+Ustawia nazwę użytkownika do uwierzytelniania przez proxy.
+To samo co @samp{--proxy-user}.
+
+@item proxy_passwd = @var{łańcuch}
+Ustawia hasło do uwierzytelniania przez proxy.
+To samo co @samp{--proxy-passwd}.
+
+@item referer = @var{łańcuch}
+Nadaje wartość nagłówkowi @samp{Referer:} zamieszczanemu w żądaniu @sc{http}.
+To samo co @samp{--referer}.
+(Zauważ, że to faceci, którzy pisali specyfikację @sc{html}-u zrobili błąd
+w pisowni słowa ,,referrer''.)
+
+@item quiet = on/off
+Tryb cichy.  To samo co @samp{-q}.
+
+@item quota = @var{limit}
+Określa ograniczenie wielkości pobieranych danych, co warto wpisać
+do ogólnosystemowego @file{wgetrc}.  Przy ustawionym ograniczeniu ściągania,
+Wget przestanie pobierać w momencie, kiedy suma wielkości plików pobranych
+dotychczas będzie większa niż quota.  Limit podawany jest w bajtach
+(domyślnie), kilobajtach (z przyrostkiem @samp{k}) lub megabajtach
+(z przyrostkiem @samp{m}).  Zatem, @samp{quota = 5m} ustawi quotę na 5
+megabajtów. Zauważ, że ustawienia w pliku użytkownika mają wyższy
+priorytet niż te w pliku systemowym.
+
+@item reclevel = @var{n}
+Poziom rekurencji.  To samo co @samp{-l}.
+
+@item recursive = on/off
+Włącza/wyłącza rekurencję.  To samo co @samp{-r}.
+
+@item relative_only = on/off
+Podąża tylko za odnośnikami względnymi.
+To samo co @samp{-L}. (@pxref{Odnośniki względne}).
+
+@item remove_listing = on/off
+Jeśli jest włączone, ściągnięte przez Wget pliki listingów @sc{ftp}
+są usuwane.  Wyłączenie jest tym samym, co użycie opcji @samp{-nr}.
+
+@item retr_symlinks = on/off
+Jeśli jest włączone, dowiązania symboliczne są pobierane tak, jakby były
+zwykłymi plikami.  To samo co @samp{--retr-symlinks}.
+
+@item robots = on/off
+Określa, czy Wget powinien stosować się do konwencji norobots, domyślnie
+włączone (,,on''). Ten przełącznik odpowiada za opisane w specyfikacji
+konwencje @file{/robots.txt} i @samp{nofollow}. @xref{Wykluczanie robotów},
+gdzie podano szczegóły.
+Nie należy przestawiać go w stan ,,off' bez dobrej znajomości rzeczy.
+
+@item server_response = on/off
+Decyduje o wypisywaniu bądź niewypisywaniu nagłówków odpowiedzi serwerów
+@sc{http} i @sc{ftp}.  To samo co @samp{-S}.
+
+@item span_hosts = on/off
+Włącza/wyłącza przechodzenie pomiędzy hostami przy pobieraniu rekurencyjnym.
+To samo co @samp{-H}.
+
+@item timeout = @var{n}
+Ustawia wartość limitu czasu.
+To samo co @samp{-T}.
+
+@item timestamping = on/off
+Włącza/wyłącza używanie znaczników czasu.
+To samo co @samp{-N} (@pxref{Znaczniki czasu}).
+
+@item tries = @var{n}
+Ustawia liczbę ponowień pobrania pojedynczego @sc{url}-a.
+To samo co @samp{-t}.
+
+@item use_proxy = on/off
+Włącza/wyłącza obsługę serwerów proxy.  To samo co @samp{-Y}.
+
+@item verbose = on/off
+Włącza/wyłącza pełne wyjście.  To samo co @samp{-v}/@samp{-nv}.
+
+@item wait = @var{n}
+Czeka @var{n} sekund między kolejnymi pobraniami.  To samo co @samp{-w}.
+
+@item waitretry = @var{n}
+Czeka do @var{n} sekund tylko pomiędzy ponawianymi próbami nieudanych pobrań.
+To samo co @samp{--waitretry}.  Zauważ, że w ogólnosystemowym pliku
+@file{wgetrc} ta opcja jest domyślnie włączona.
+
+@item randomwait = on/off
+Włącza/wyłącza losowe czasy oczekiwania pomiędzy żądaniami. To samo co
+@samp{--random-wait}.
+@end table
+
+@node Przykładowy wgetrc,  , Polecenia wgetrc, Plik konfiguracyjny
+@section Przykładowy wgetrc
+@cindex przykładowy wgetrc
+@cindex wgetrc, przykładowy
+
+Oto przykładowy plik inicjujący, taki jaki przychodzi w pakiecie
+dystrybucyjnym.  Podzielony jest na dwie sekcje -- jedną do użytku
+ogólnego (nadająca się na ogólnosystemowy plik startowy), a drugą do
+lokalnego (odpowiednia na @file{$HOME/.wgetrc}).
+Uważaj na to, co zmieniasz.
+
+Zauważ, że prawie wszystkie linijki są zakomentowane.  Musisz usunąć
+znak @samp{#} z początku linijki, by dane polecenie zadziałało.
+
+@example
+@include sample.wgetrc.munged_for_texi_inclusion
+@end example
+
+@node Przykłady, Rozmaitości, Plik konfiguracyjny, Top
+@chapter Przykłady
+@cindex przykłady
+
+@c man begin EXAMPLES
+Przykłady podzielono na trzy części, z grubsza według stopnia komplikacji.
+
+@menu
+* Proste zastosowania::               Proste, podstawowe użycie programu.
+* Zaawansowane zastosowania::         Zaawansowane podpowiedzi.
+* Bardzo zaawansowane zastosowania::  Pokręcone różności.
+@end menu
+
+@node Proste zastosowania, Zaawansowane zastosowania, Przykłady, Przykłady
+@section Proste zastosowania
+
+@itemize @bullet
+@item
+Powiedzmy, że chcemy ściągnąć jakiś @sc{url}.  Wystarczy napisać:
+
+@example
+wget http://fly.srk.fer.hr/
+@end example
+
+@item
+Ale co się stanie, jeśli łącze jest powolne, a plik długi?
+Połączenie prawdopodobnie zawiedzie zanim zostanie pobrany cały plik.
+W takiej sytuacji Wget będzie usiłował pobrać plik dopóki nie ściągnie całego
+albo nie przekroczy domyślnej liczby ponawiań (wynoszącą 20).  Można łatwo
+zmienić liczbę prób na 45, by upewnić się, że cały plik dotrze bezpiecznie:
+
+@example
+wget --tries=45 http://fly.srk.fer.hr/jpg/flyweb.jpg
+@end example
+
+@item
+A teraz pozostawmy program Wget pracujący w tle i zapisujący informacje
+o postępach ściągania do pliku dziennika @file{log}.  Wpisywanie
+@samp{--tries} jest męczące, więc użyjemy @samp{-t}:
+
+@example
+wget -t 45 -o log http://fly.srk.fer.hr/jpg/flyweb.jpg &
+@end example
+
+Znak @code{&} na końcu linijki zapewnia, że Wget będzie działać w tle.
+Ograniczenie liczby ponawiań można zlikwidować stosując @samp{-t inf}.
+
+@item
+Sposób użycia @sc{ftp} jest równie prosty.  Wget zajmie się nazwą
+zgłoszeniową (login) i hasłem.
+
+@example
+wget ftp://gnjilux.srk.fer.hr/welcome.msg
+@end example
+
+@item
+Jeśli podamy katalog, to program pobierze jego listing, przetworzy go
+i przekształci na @sc{html}.  Można spróbować:
+
+@example
+wget ftp://prep.ai.mit.edu/pub/gnu/
+links index.html
+@end example
+@end itemize
+
+@node Zaawansowane zastosowania, Bardzo zaawansowane zastosowania, Proste zastosowania, Przykłady
+@section Zaawansowane zastosowania
+
+@itemize @bullet
+@item
+Mamy gotowy plik z listą @sc{url}-i, które chcemy pobrać? Wystarczy
+skorzystać z przełącznika @samp{-i}:
+
+@example
+wget -i @var{plik}
+@end example
+
+Jeśli jako nazwę pliku podamy @samp{-}, to @sc{url}-e będą czytane ze
+standardowego wejścia.
+
+@item
+! Create a five levels deep mirror image of the GNU web site, with the
+! same directory structure the original has, with only one try per
+! document, saving the log of the activities to @file{gnulog}:
+
+Stworzymy sięgający pięciu poziomów obraz lustrzany witryny @sc{www}
+GNU (z tą samą strukturą katalogów, jaką ma oryginał), stosując tylko
+jedną próbę pobierania dla każdego dokumentu i zapisując dziennik pracy
+do @file{gnulog}:
+
+@example
+wget -r http://www.gnu.org/ -o gnulog
+@end example
+
+@item
+To samo co powyżej, ale z konwersją odnośników w plikach @sc{html} tak,
+żeby wskazywały na lokalne pliki, by można było przeglądać dokumenty
+off-line:
+
+@example
+wget --convert-links -r http://www.gnu.org/ -o gnulog
+@end example
+
+@item
+Pobranie tylko jednej strony HTML, ale z upewnieniem się, że wszystkie
+elementy niezbędne do jej wyświetlenia (np. wstawione obrazki i zewnętrzne
+arkusze stylu) również zostaną pobrane. Zapewnia też, że ściągnięta strona
+wskazuje na pobrane odnośniki. Ponadto odnośniki w pobranej stronie powinny
+wskazywać na pobrane kopie elementów.
+
+@example
+wget -p --convert-links http://www.server.com/dir/strona.html
+@end example
+
+Wybrana strona HTML zostanie zapisana do @file{www.server.com/dir/strona.html},
+a obrazki, arkusze stylu itd. gdzieś w katalogu @file{www.server.com/},
+zależnie od tego, gdzie znajdowały się na zdalnym serwerze.
+
+@item
+Tak samo, jak wyżej, ale bez katalogu @file{www.server.com/}. W gruncie
+rzeczy wcale nie chcę tych wszystkich przypadkowych katalogów
+z serwera -- chcę po prostu zapisać @emph{wszystkie} pobrane pliki
+w podkatalogu @file{download/} bieżącego katalogu.
+
+@example
+wget -p --convert-links -nH -nd -Pdownload \
+     http://www.server.com/dir/strona.html
+@end example
+
+@item
+Pobranie index.html z @samp{www.lycos.com}, z pokazaniem oryginalnych,
+odebranych od serwera nagłówków:
+
+@example
+wget -S http://www.lycos.com/
+@end example
+
+@item
+Zapisanie nagłówków serwera w pliku, zapewne do końcowego przetwarzenia:
+@example
+wget -s http://www.lycos.com/
+more index.html
+@end example
+
+@item
+Pobranie pierwszych dwu poziomów @samp{wuarchive.wustl.edu}, z zapisaniem
+ich do @file{/tmp}.
+
+@example
+wget -r -l2 -P/tmp ftp://wuarchive.wustl.edu/
+@end example
+
+@item
+Chcemy ściągnąć wszystkie @sc{gif}-y z pewnego katalogu serwera @sc{http}.
+Próbowaliśmy @samp{wget http://www.server.com/dir/*.gif}, ale nie zadziałało,
+bo pobieranie @sc{http} nie realizuje masek plików.  W takim przypadku
+stosujemy:
+
+@example
+wget -r -l1 --no-parent -A.gif http://www.server.com/dir/
+@end example
+
+Więcej pisaniny, ale skutek jest taki sam.  @samp{-r -l1} oznacza pobieranie
+rekurencyjne (@pxref{Pobieranie rekurencyjne}), z maksymalną głębokością 1.
+@samp{--no-parent} znaczy, że odwołania do katalogu nadrzędnego mają być
+ignorowane (@pxref{Ograniczanie katalogów}), a @samp{-A.gif} oznacza ściąganie
+tylko plików @sc{gif}.  Działałoby też @samp{-A "*.gif"}.
+
+@item
+Załóżmy, że byliśmy w połowie ściągania, gdy nagle przerwano pracę Wget.
+Nie chcielibyśmy teraz nadpisywać już obecnych plików ponownie ściąganymi.
+Napisalibyśmy:
+
+@example
+wget -nc -r http://www.gnu.org/
+@end example
+
+@item
+Do zakodowania swojej nazwy użytkownika i hasła do @sc{http} lub @sc{ftp}
+używamy odpowiedniej składni @sc{url}-a (@pxref{Format URL}).
+
+@example
+wget ftp://hniksic:mojehaslo@@unix.server.com/.emacs
+@end example
+
+Należy jednak zauważyć, że w systemach wielodostępnych taki sposob użycia
+jest niezalecany, ponieważ ujawnia hasło każdemu, kto spojrzy na wynik
+działania @code{ps}.
+
+@cindex przekierowanie wyjścia
+@cindex przeadresowanie wyjścia
+A może chcielibyśmy, żeby dokumenty wynikowe były kierowane na standardowe
+wyjście, a nie zapisywane do plików?
+
+@example
+wget -O - http://jagor.srce.hr/ http://www.srce.hr/
+@end example
+
+Można też łączyć te dwie opcje i tworzyć potoki do pobierania
+dokumentów ze zdalnych list przebojów:
+
+@example
+wget -O - http://cool.list.com/ | wget --force-html -i -
+@end example
+@end itemize
+
+@node Bardzo zaawansowane zastosowania,  , Zaawansowane zastosowania, Przykłady
+@section Bardzo zaawansowane zastosowania
+
+@cindex mirroring
+@cindex kopie lustrzane
+@cindex lustrzane, kopie
+@itemize @bullet
+@item
+Jeśli chcemy, by Wget utrzymywał lustrzaną kopię strony (lub podkatalogów
+@sc{ftp}), stosujemy @samp{--mirror} (@samp{-m}), co jest skróconym zapisem
+dla @samp{-r -l inf -N}.  Umieszczamy Wget w pliku crontab, żądając, by
+w każdą niedzielę ponawiał sprawdzanie ośrodka:
+
+@example
+crontab
+0 0 * * 0 wget --mirror http://www.gnu.org/ -o /home/ja/weeklog
+@end example
+
+@item
+Dodatkowo można zażyczyć sobie konwersji odnośników, tak by całość nadawała
+się do przeglądania lokalnie. Jednak, po przeczytaniu tego podręcznika,
+wiecie już, że taka konwersja nie sprawuje się dobrze, gdy wykorzystujemy
+znaczniki czasu, więc chcemy również, żeby Wget utworzył kopie oryginalnych
+plików HTML przed ich przekształceniem. Odpowiednie Wywołanie wyglądałoby
+tak:
+
+@example
+wget --mirror --convert-links --backup-converted  \
+     http://www.gnu.org/ -o /home/ja/weeklog
+@end example
+
+@item
+Ale zauważyliście też, że lokalne przeglądanie nie działa całkiem
+@c      doesn't work all that well
+poprawnie, jeśli pliki HTML zapisano z innym rozszerzeniem niż @samp{.html},
+na przykład dlatego, że dostarczono je jako @file{index.cgi}. Zatem
+chcielibyśmy, żeby Wget wszystkim plikom przekazanym z nagłówkiem
+content-type równym @samp{text/html} zmienił nazwy
+na @file{@var{nazwa}.html}.
+  
+@example
+wget --mirror --convert-links --backup-converted \
+     --html-extension -o /home/ja/weeklog        \
+     http://www.gnu.org/
+@end example
+
+Lub też, pisząc krócej:
+
+@example
+wget -m -k -K -E http://www.gnu.org/ -o /home/me/weeklog
+@end example
+@end itemize
+@c man end
+
+@node Rozmaitości, Dodatki, Przykłady, Top
+@chapter Rozmaitości
+@cindex rozmaitości
+
+W tym rozdziale umieszczono wszystko, co nie pasowało gdzie indziej.
+
+@menu
+* Serwery proxy::      Obsługa serwerów servers
+* Dystrybucja::        Uzyskiwanie najświeższej wersji.
+* Lista dyskusyjna::   Lista dyskusyjna Wget: ogłoszenia i dyskusje.
+* Zgłaszanie błędów::  Jak i gdzie zgłaszać błędy.
+* Przenośność::        Systemy, na który pracuje Wget.
+* Sygnały::            Obsługa sygnałów wykonywana przez Wget.
+@end menu
+
+@node Serwery proxy, Dystrybucja, Rozmaitości, Rozmaitości
+@section Serwery proxy
+@cindex proxy
+@cindex serwery proxy
+
+Serwery @dfn{proxy} (ang. pośrednik) to specjalizowane serwery @sc{http}
+mające za zadanie przekazywanie danych od zdalnych serwerów do lokalnych
+klientów.  Jednym z typowych zastosowań serwerów proxy jest zmniejszenie
+obciążenia sieci dla użytkowników znajdujących się za powolnym łączem.
+@c           achieved by channeling
+Osiąga się to dzięki kierowaniu wszystkich żądań @sc{http} i @sc{ftp} do
+proxy, który buforuje przesyłane dane.  Gdy przechowywane w buforze zasoby
+są żądane ponownie, proxy zwraca dane z bufora.  Innym zastosowaniem proxy
+jest oddzielanie sieci wewnętrznych firm (z uwagi na bezpieczeństwo) od
+reszty Internetu.  Chcąc uzyskać informacje z Sieci, użytkownicy w firmie
+łączą się i pobierają zdalne dane korzystając z uwierzytelnionego proxy.
+
+Wget potrafi korzystać z serwerów proxy zarówno przy pobraniach @sc{http},
+jak i @sc{ftp}.  Standardowy sposób określania lokalizacji, rozpoznawany
+także przez Wget, korzysta z następujących zmiennych środowiskowych:
+
+@table @code
+@item http_proxy
+Ta zmienna powinna zawierać @sc{url} serwera proxy dla połączeń @sc{http}.
+
+@item ftp_proxy
+Ta zmienna powinna zawierać @sc{url} serwera proxy dla połączeń @sc{ftp}.
+Dość często @sc{http_proxy} i @sc{ftp_proxy} wskazują ten sam @sc{url}.
+
+@item no_proxy
+Ta zmienna powinna zawierać listę separowanych przecinkami rozszerzeń domen,
+dla których @emph{nie} powinno być używane proxy.  Na przykład, jeśli
+wartością @code{no_proxy} jest @samp{.mit.edu}, to do pobierania dokumentów
+z MIT proxy nie będzie używane.
+@end table
+
+Oprócz wykorzystania zmiennych środowiska, można dodatkowo określać
+lokalizację i ustawienia proxy dla samego Wget.
+
+@table @samp
+@item -Y on/off
+@itemx --proxy=on/off
+@itemx proxy = on/off
+Ta opcja służy do włączania i wyłączania korzystania z proxy.
+Obsługa proxy jest domyślnie włączona, pod warunkiem, że ustawione są
+odpowiednie zmienne środowiskowe.
+
+@item http_proxy = @var{URL}
+@itemx ftp_proxy = @var{URL}
+@itemx no_proxy = @var{łańcuch}
+Te zmienne pliku startowego umożliwiają przesłonięcie ustawień proxy
+określonych przez środowisko.
+@end table
+
+Niektóre serwery proxy wymagają uwierzytelnienia, by móc z nich skorzystać.
+Na uwierzytelnianie składa się @dfn{nazwa użytkownika} i @dfn{hasło}, które
+muszą zostać przesłane przez Wget.  Tak jak w przypadku uwierzytelniania
+@sc{http}, istnieje kilka schematów uwierzytelniania.  Obecnie dla
+uwierzytelniania proxy zaimplementowano tylko schemat @code{Basic}.
+
+Można podać nazwę użytkownika i hasło albo w @sc{url}-u proxy albo opcjami
+wiersza poleceń.  Jeśli przyjmiemy, że firmowe proxy jest położone na
+@samp{proxy.firma.com} na porcie 8001, @sc{url} podający lokalizację proxy
+i zawierający dane uwierzytelniające mógłby wyglądać tak:
+
+@example
+http://hniksic:mojehaslo@@proxy.firma.com:8001/
+@end example
+
+Do podania nazwy użytkownika proxy i hasła można też użyć opcji
+@samp{proxy-user} i @samp{proxy-password} lub równoważnych im ustawień
+w pliku @file{.wgetrc}.
+
+@node Dystrybucja, Lista dyskusyjna, Serwery proxy, Rozmaitości
+@section Dystrybucja
+@cindex najświeższa wersja
+@cindex wersja, najświeższa
+
+Podobnie jak wszystkie narzędzia GNU, najświeższą wersję Wget można znaleźć
+w głównym ośrodku archiwum GNU, prep.ai.mit.edu, i jego kopiach lustrzanych.
+Na przykład, Wget @value{VERSION} znajduje się w
+@url{ftp://prep.ai.mit.edu/gnu/wget/wget-@value{VERSION}.tar.gz}
+
+@node Lista dyskusyjna, Zgłaszanie błędów, Dystrybucja, Rozmaitości
+@section Lista dyskusyjna
+@cindex lista dyskusyjna
+@cindex dyskusyjna lista
+@cindex lista
+
+Dzięki Karstenowi Thygesenowi Wget ma swoją własną listę dyskusyjną:
+@email{wget@@sunsite.dk}.  Jest przeznaczona do dyskusji o programie
+i sieci, zgłaszania błędów w Wget (tych, które mogą zainteresować
+subskrybentów) i wysyłania zapowiedzi.  Zachęcamy do prenumeraty.
+Im więcej osób na liście, tym lepiej!
+
+Listę można zasubskrybować wysyłając list do @email{wget-subscribe@@sunsite.dk}.
+z magicznym słowem @samp{subscribe} w wierszu tematu.  Subskrypcję anuluje
+się wysyłając list do @email{wget-unsubscribe@@sunsite.dk}.
+
+Archiwum listy znajduje się na @url{http://fly.srk.fer.hr/archive/wget}.
+Inne archiwum dostępne jest na
+@url{http://www.mail-archive.com/wget%40sunsite.auc.dk/}.
+
+@node Zgłaszanie błędów, Przenośność, Lista dyskusyjna, Rozmaitości
+@section Zgłaszanie błędów
+@cindex bugs
+@cindex zgłaszanie błędów
+@cindex błędy, zgłaszanie
+
+@c man begin BUGS
+Zachęcamy do przesyłania zgłoszeń błędów dotyczących GNU Wget na adres
+@email{bug-wget@@gnu.org}.
+
+Przed faktycznym przedłożeniem zgłoszenia błędu, spróbuj, proszę,
+zastosować się do kilku prostych wskazówek.
+
+@enumerate
+@item
+Spróbuj upewnić się, że obserwowane zachowanie jest rzeczywiście błędem.
+Jeśli Wget się wywala, jest to błąd.  Jeśli nie zachowuje się zgodnie
+z dokumentacją, jest to błąd.  Jeśli coś działa dziwnie, ale nie jesteś
+pewien, w jaki sposób powinno, może to też być błędem.
+
+@item
+Spróbuj, proszę, powtórzyć ten błąd w możliwie najprostszych warunkach.
+Np. jeśli Wget pada podczas ściągania @samp{wget -rl0 -kKE -t5 -Y0
+http://yoyodyne.com -o /tmp/log}, powinieneś spróbować sprawdzić, czy
+to wywalanie się jest powtarzalne i czy pojawia się przy prostszym
+zestawie opcji. Możesz nawet spróbować zacząć pobieranie od strony,
+przy której wystąpiła awaria i sprawdzić, czy to nie ta strona w jakiś
+sposób ją powoduje.
+
+Ponadto, choć co prawda prawdopodobnie będę zainteresowany zawartością
+twojego pliku @file{.wgetrc}, skopiowanie go po prostu do wiadomości
+o błędzie jest raczej złym pomysłem.  Zamiast tego, powinieneś najpierw
+sprawdzić, czy błąd powtarza się przy @file{.wgetrc} przesuniętym na ubocze.
+Prześlij mi odpowiednie fragmenty tego pliku tylko wtedy, gdy okaże się,
+że błąd zależy od ustawień @file{.wgetrc}.
+
+@item
+Uruchom, proszę, Wget z opcją @samp{-d} i prześlij uzyskany protokół
+(lub związane z błędem jego części).  Jeśli Wget został skompilowany bez
+obsługi debugowania, skompiluj go ponownie.  @emph{Dużo} łatwiej jest
+śledzić błędy z udostępnioną diagnostyką.
+
+@item
+jeśli Wget się wywala, spróbuj uruchomić go w debugerze, np.
+@code{gdb `which wget` core} i wpisz @code{where}, by otrzymać stos wywołania
+(backtrace).
+
+@end enumerate
+@c man end
+
+@node Przenośność, Sygnały, Zgłaszanie błędów, Rozmaitości
+@section Przenośność
+@cindex przenośność
+@cindex przenoszenie
+@cindex systemy operacyjne
+
+Ponieważ do budowania i konfigurowania Wget wykorzystywany jest GNU Autoconf
+i unika się stosowania ,,specjalnych'' ultra-mega-cool możliwości jakiegoś
+konkretnego Uniksa, powinien się kompilować (i działać) na wszystkich
+typowych odmianach Uniksów.
+
+Rozmaite wersje Wget skompilowano i przetestowano na wielu rodzajach systemów
+uniksowych, wliczając w to: Solaris, Linux, SunOS, OSF (inaczej Digital Unix),
+Ultrix, *BSD, IRIX i inne.  Wyczerpujące zestawienie znajduje się w pliku
+@file{MACHINES} katalogu dystrybucyjnego.  Jeśli skompilowałeś go na innej
+architekturze niż tam wymieniona, proszę daj mi znać, bym mógł zaktualizować
+listę.
+
+Wget powinien się również poprawnie kompilować na innych systemach uniksowych,
+nie wymienionych w @file{MACHINES}.  Jeśli tak nie jest, powiadom mnie,
+proszę.
+
+Dzięki życzliwym współpracownikom, ta wersja Wget kompiluje się i działa
+na platformach Microsoft Windows 95 i Windows NT.  Została z powodzeniem
+skompilowana za pomocą kompilatorów MS Visual C++ 4.0, Watcom, i Borland C,
+z Winsock jako oprogramowaniem sieciowym.  Naturalnie, pozbawiona jest paru
+możliwości dostępnych w Uniksie, ale powinna działać jako substytut dla
+osób trzymają się Windows.  Zwróć uwagę, że wersja przeniesiona do Windows
+@strong{nie jest ani testowana ani pielęgnowana} przeze mnie -- wszelkie
+pytania i problemy należy zgłaszać na liście dyskusyjnej 
+@email{wget@@sunsite.dk}, gdzie przyjrzą się im opiekunowie tej wersji.
+
+@node Sygnały,  , Przenośność, Rozmaitości
+@section Sygnały
+@cindex sygnały
+@cindex obsługa sygnałów
+@cindex hangup
+
+Ponieważ Wget jest przeznaczony do pracy w tle, łapie sygnał rozłączenia
+(@code{SIGHUP}) i ignoruje go.  Jeśli wyjściem programu było standardowe
+wyjście, to zostanie przekierowane do pliku o nazwie @file{wget-log}.
+W przeciwnym razie, @code{SIGHUP} jest ignorowany.  Jest to wygodne
+gdy chcemy przekierować wyjście programu Wget po jego uruchomieniu.
+
+@example
+$ wget http://www.ifi.uio.no/~larsi/gnus.tar.gz &
+$ kill -HUP %%     # przekierowanie wyjścia do wget-log
+@end example
+
+Wget nie będzie w żaden sposób usiłował ingerować w inne sygnały.
+@kbd{C-c}, @code{kill -TERM} i @code{kill -KILL} powinny go jednakowo ubić.
+
+@node Dodatki, Kopiowanie, Rozmaitości, Top
+@chapter Dodatki
+
+W tym rozdziale zamieściłem kilka, moich zdaniem przydatnych, informacji.
+
+@menu
+* Wykluczanie robotów::        Przestrzeganie RES przez Wgeta.
+* Zagadnienia bezpieczeństwa:: Bezpieczeństwo przy stosowaniu Wget.
+* Współpracownicy::            Ludzie, którzy pomogli.
+@end menu
+
+@node Wykluczanie robotów, Zagadnienia bezpieczeństwa, Dodatki, Dodatki
+@section Wykluczanie robotów
+@cindex wykluczanie robotów
+@cindex robots.txt
+@cindex pielęgnacja serwera
+
+Nadzwyczaj łatwo nakazać Wget, by włóczył się bez celu po ośrodku @sc{www},
+zasysając w trakcie wędrówki wszystkie dostępne dane.
+@samp{wget -r @var{ośrodek}}, i gotowe.  Wspaniałe?  Nie dla administratora
+tego serwera.
+
+Dopóki Wget ściąga tylko strony statyczne, i robi to z rozsądną szybkością
+(zob. opcja @samp{--wait}), nie ma problemu. Kłopot w tym, że Wget nie
+potrafi odróżnić najmniejszej strony statycznej od najbardziej
+wymagającego CGI. Znany mi ośrodek ma część obsługiwaną przez, hmm...
+@c           bitchin'
+@dfn{zarąbisty} skrypt CGI, który konwertuje wszystkie pliki Info na HTML.
+Skrypt jest powolny, ale działa wystarczająco dobrze, jeśli użytkownikami
+są ludzie, sporadycznie przeglądający pliki Info. Jeśli jednak czyjś
+pracujący rekurencyjnie Wget natknie się na stronę skorowidza, wskazującą
+poprzez skrypt na wszystkie znajdujące się tam pliki Info, to powali
+system na kolana, nie dostarczając ściągającemu niczego użytecznego.
+
+Dla uniknięcia tego rodzaju wypadków oraz po to, by zachować prywatność
+dokumentów, które powinny być chronione przed dobrze wychowanymi robotami,
+opracowano koncepcję wykluczania robotów (@dfn{robot exclusion}). Pomysł
+polega na tym, że administratorzy serwerów i autorzy dokumentów mogą
+wskazać, które fragmenty ośrodka chcą chronić przed robotami.
+
+Najpopularniejszym stosowanym w tym celu środkiem, i standardem de facto,
+obsługiwanym przez wszystkie najważniejsze roboty, jest @dfn{Robots
+Exclusion Standard} (RES), napisany przez Martijna Kostera i innych
+w 1994. Określono w nim format pliku tekstowego zawierającego dyrektywy
+instruujące roboty, których ścieżek URL mają unikać. Żeby roboty mogły
+je znaleźć, reguły wykluczeń muszą zostać umieszczone w pliku
+@file{/robots.txt} w głównym katalogu serwera. Roboty powinny ściągać
+i analizować plik.
+
+Chociaż Wget nie jest robotem sieciowym w ścisłym sensie tego słowa,
+potrafi pobierać duże części witryny nie wymagając ingerencji użytkownika
+do pobrania pojedynczej strony. Z tego powodu Wget podczas pobierania
+rekurencyjnego respektuje zasady RES. Na przykład, gdy wydamy polecenie:
+
+@example
+wget -r http://www.server.com/
+@end example
+
+Najpierw ściągnięty zostanie indeks @samp{www.server.com}.  Jeśli Wget
+zauważy, że ma pobrać z tego serwera więcej dokumentów, zażąda od niego
+pliku @samp{http://www.server.com/robots.txt} i, jeśli taki zostanie
+znaleziony, użyje go do kolejnych pobrań.  @file{robots.txt} danego serwera
+jest ładowany tylko raz.
+
+Aż do wersji 1.8 Wget obsługiwał pierwszą wersję omawianego standardu
+wykluczeń, napisaną przez Martijna Kostera w 1994 , a dostępną na
+@url{http://www.robotstxt.org/wc/norobots.html}.
+Od wersji 1.8 Wget rozpoznaje także dodatkowe dyrektywy wyszczególnione
+we wstępnej propozycji @samp{<draft-koster-robots-00.txt>} zatytułowanej
+,,A Method for Web Robots Control''.  Tekst tego szkicu, który, o ile mi
+wiadomo, nigdy nie doprowadził do powstania dokumentu @sc{rfc}, można
+znaleźć na stronie
+@url{http://www.robotstxt.org/wc/norobots-rfc.txt}.
+
+Niniejszy podręcznik nie zawiera już tekstu Robots Exclusion Standard.
+
+Drugim, mniej znany mechanizm kontroli dostępu, pozwala autorowi pojedynczego
+dokumentu wskazać, czy chce, by roboty podążały za odnośnikami zawartymi
+w pliku.  Osiąga się to za pomocą znacznika @code{META}, w ten sposób:
+
+@example
+<meta name="robots" content="nofollow">
+@end example
+
+Szczegółowo objaśniono to na stronie
+@url{http://www.robotstxt.org/wc/meta-user.html}.
+Wget, oprócz zwykłego ograniczania dostępu robotom przez @file{/robots.txt},
+obsługuje dodatkowo także tę metodę.
+
+Jeśli zdajecie sobie sprawę z tego, co robicie, i naprawdę chcecie wyłączyć
+przestrzeganie reguł wykluczających dla robotów, przypiszcie zmiennej
+@code{robots} w pliku @file{.wgetrc} wartość @samp{off}. Ten sam
+efekt można uzyskać korzystając z wiersza poleceń, za pomocą przełącznika
+@code{-e}, np. @samp{wget -e robots=off @var{url}...}.
+  
+@node Zagadnienia bezpieczeństwa, Współpracownicy, Wykluczanie robotów, Dodatki
+@section Zagadnienia bezpieczeństwa
+@cindex bezpieczeństwo
+
+Korzystając z Wget należy mieć świadomość, że przesyła on przez sieć hasła
+w postaci niekodowanej, co może rodzić problemy z bezpieczeństwa.
+Oto główne zagadnienia i niektóre rozwiązania.
+
+@enumerate
+@item
+Przy skorzystaniu z @code{ps} widać hasła podane w wierszu poleceń.
+Najlepszym sposobem na obejście tego efektu jest stosowanie @code{wget -i -}
+i wprowadzanie adresów @sc{url} na standardowe wejście Wgeta, po jednym
+w wierszu, i kończenie listy za pomocą @kbd{C-d}. Inną metodą ominięcia
+jest wykorzystanie do przechowywania haseł pliku @file{.netrc}, chociaż
+przechowywanie niezaszyfrowanych haseł również uważa się za zagrożenie
+dla bezpieczeństwa.
+
+@item
+Przy użyciu niechronionego @dfn{podstawowego} (@dfn{basic}) schematu
+uwierzytelniania, przez rutery i bramki sieci przesyłane są niekodowane hasła.
+
+@item
+Hasła @sc{ftp} również nie są w żaden sposób kodowane.  W tej chwili nie ma
+dobrego rozwiązania tego problemu.
+
+@item
+Pomimo tego, że ,,zwykłe'' wyjście tworzone przez Wget usiłuje ukrywać
+hasła, protokoły diagnostyczne je pokazują, we wszystkich postaciach.
+Kłopotów z tym związanych unika się zachowując ostrożność przy wysyłaniu
+protokołów diagnostycznych (tak, nawet gdy przesyła się je do mnie).
+@end enumerate
+
+@node Współpracownicy,  , Zagadnienia bezpieczeństwa, Dodatki
+@section Współpracownicy
+@cindex współpracownicy
+
+@iftex
+Autorem GNU Wget jest Hrvoje Nik@v{s}i@'{c} @email{hniksic@@arsdigita.com}.
+@end iftex
+@ifinfo
+Autorem GNU Wget jest Hrvoje Niksic @email{hniksic@@arsdigita.com}.
+@end ifinfo
+Jednak rozwój programu nigdy nie zaszedł by tak daleko, gdyby nie pomoc wielu
+ludzi: poprzez zgłoszenia błędów czy propozycje nowych możliwości, łaty
+lub listy mówiące ,,Dzięki!''.
+
+Specjalne podziękowania dla poniższych osób (kolejność przypadkowa):
+
+@itemize @bullet
+@item
+Karsten Thygesen -- ofiarował zasoby systemowe, takie jak lista dyskusyjna,
+miejsce na @sc{www} i @sc{ftp}.  Poświęcił też wiele czasu, by to faktycznie
+działało.
+
+@item
+Shawn McHorse -- zgłoszenia błędów i łaty.
+
+@item
+Kaveh R. Ghazi -- wykonywana w locie @code{ansi2knr}-yzacja kodu.  Mnóstwo
+poprawek związanych z przenośnością.
+
+@item
+Gordon Matzigkeit -- obsługa @file{.netrc}.
+
+@item
+@iftex
+Zlatko @v{C}alu@v{s}i@'{c}, Tomislav Vujec i Dra@v{z}en Ka@v{c}ar --
+sugestie nowych funkcji i ,,filozoficzne'' dyskusje.
+@end iftex
+@ifinfo
+Zlatko Calusic, Tomislav Vujec i Drazen Kacar -- sugestie nowych funkcji
+i ,,filozoficzne'' dyskusje.
+@end ifinfo
+
+@item
+Darko Budor -- początkowe przeniesienie na Windows.
+
+@item
+Antonio Rosella -- pomoc i sugestie, plus tłumaczenie na włoski.
+
+@item
+@iftex
+Tomislav Petrovi@'{c}, Mario Miko@v{c}evi@'{c} -- wiele zgłoszeń błędów
+i sugestii.
+@end iftex
+@ifinfo
+Tomislav Petrovic, Mario Mikocevic -- wiele zgłoszeń błędów i sugestii.
+@end ifinfo
+
+@item
+@iftex
+Fran@,{c}ois Pinard -- wiele dokładnych zgłoszeń błędów i dyskusji.
+@end iftex
+@ifinfo
+Francois Pinard -- wiele dokładnych zgłoszeń błędów i dyskusji.
+@end ifinfo
+
+@item
+Karl Eichwalder -- mnóstwo pomocy przy umiędzynarodowieniu i innych rzeczach.
+
+@item
+@c  donated support for Opie and @sc{http} @code{Digest} authentication.
+Junio Hamano -- ofiarował obsługę Opie i uwierzytelniania @code{Digest}
+w @sc{http}.
+
+@item
+Osoby, które przekazały darowizny na rozwój, wśród nich Brian Gough.
+@end itemize
+
+Poniżsi ludzie przekazali łaty, zgłoszenia błędów i raporty z kompilacji,
+podsunęli przydatne sugestie, zajmowali się beta-testowaniem, przesyłali
+entuzjastyczne listy i robili wszystkie te inne rzeczy, dzięki którym
+pielęgnowanie programu jest tak dobrą zabawą.
+
+Ian Abbott,
+Tim Adam,
+Adrian Aichner,
+Martin Baehr,
+Dieter Baron,
+Roger Beeman,
+Dan Berger,
+T. Bharath,
+Paul Bludov,
+Daniel Bodea,
+Mark Boyns,
+John Burden,
+Wanderlei Cavassin,
+Gilles Cedoc,
+Tim Charron,
+Noel Cragg,
+@iftex
+Kristijan @v{C}onka@v{s},
+@end iftex
+@ifinfo
+Kristijan Conkas,
+@end ifinfo
+John Daily,
+Andrew Davison,
+Andrew Deryabin,
+Ulrich Drepper,
+Marc Duponcheel,
+@iftex
+Damir D@v{z}eko,
+@end iftex
+@ifinfo
+Damir Dzeko,
+@end ifinfo
+Alan Eldridge,
+@iftex
+Aleksandar Erkalovi@'{c},
+@end iftex
+@ifinfo
+Aleksandar Erkalovic,
+@end ifinfo
+Andy Eskilsson,
+Christian Fraenkel,
+Masashi Fujita,
+Howard Gayle,
+Marcel Gerrits,
+Lemble Gregory,
+Hans Grobler,
+Mathieu Guillaume,
+Dan Harkless,
+Herold Heiko,
+Jochen Hein,
+Karl Heuer,
+HIROSE Masaaki,
+Gregor Hoffleit,
+Erik Magnus Hulthen,
+Richard Huveneers,
+Jonas Jensen,
+Simon Josefsson,
+@iftex
+Mario Juri@'{c},
+@end iftex
+@ifinfo
+Mario Juric,
+@end ifinfo
+@iftex
+Hack Kampbj@o rn,
+@end iftex
+@ifinfo
+Hack Kampbjorn,
+@end ifinfo
+Const Kaplinsky,
+@iftex
+Goran Kezunovi@'{c},
+@end iftex
+@ifinfo
+Goran Kezunovic,
+@end ifinfo
+Robert Kleine,
+KOJIMA Haime,
+Fila Kolodny,
+Alexander Kourakos,
+Martin Kraemer,
+@tex
+$\Sigma\acute{\iota}\mu o\varsigma\;
+\Xi\varepsilon\nu\iota\tau\acute{\epsilon}\lambda\lambda\eta\varsigma$
+(Simos KSenitellis),
+@end tex
+@ifinfo
+Simos KSenitellis,
+@end ifinfo
+Hrvoje Lacko,
+Daniel S. Lewart,
+@iftex
+Nicol@'{a}s Lichtmeier,
+@end iftex
+@ifinfo
+Nicolas Lichtmeier,
+@end ifinfo
+Dave Love,
+Alexander V. Lukyanov,
+Jordan Mendelson,
+Lin Zhe Min,
+Tim Mooney,
+Simon Munton,
+Charlie Negyesi,
+R. K. Owen,
+Andrew Pollock,
+Steve Pothier,
+@iftex
+Jan P@v{r}ikryl,
+@end iftex
+@ifinfo
+Jan Prikryl,
+@end ifinfo
+Marin Purgar,
+@iftex
+Csaba R@'{a}duly,
+@end iftex
+@ifinfo
+Csaba Raduly,
+@end ifinfo
+Keith Refson,
+Tyler Riddle,
+Tobias Ringstrom,
+@c Texinfo doesn't grok @'{@i}, so we have to use TeX itself.
+@tex
+Juan Jos\'{e} Rodr\'{\i}gues,
+@end tex
+@ifinfo
+Juan Jose Rodrigues,
+@end ifinfo
+Edward J. Sabol,
+Heinz Salzmann,
+Robert Schmidt,
+Andreas Schwab,
+Chris Seawood,
+Toomas Soome,
+Tage Stabell-Kulo,
+Sven Sternberger,
+Markus Strasser,
+John Summerfield,
+Szakacsits Szabolcs,
+Mike Thomas,
+Philipp Thomas,
+Dave Turner,
+Russell Vincent,
+Charles G Waldman,
+Douglas E. Wegscheid,
+Jasmin Zainul,
+@iftex
+Bojan @v{Z}drnja,
+@end iftex
+@ifinfo
+Bojan Zdrnja,
+@end ifinfo
+Kristijan Zimmer.
+
+Przepraszam tych, których przypadkowo pominąłem i skąłdam gorące
+podziękowania wszystkim subskrybentom listy dyskusyjnej Wget.
+
+@node Kopiowanie, Skorowidz pojęć, Dodatki, Top
+@chapter Kopiowanie
+@cindex kopiowanie
+@cindex GPL
+@cindex GFDL
+@cindex wolne oprogramowanie
+
+GNU Wget jest licencjonowany na GNU GPL, co czyni z niego @dfn{wolne
+oprogramowanie} (@dfn{free software}).
+
+Zwróć uwagę, proszę, że ,,free'' odnosi się do wolności, nie do ceny.
+[tłum.: angielskie "free" znaczy najczęściej "wolny", "swobodny", ale może
+też oznaczać "darmowy"].
+Jak lubią mówić ludzie z projektu GNU, powinniśmy myśleć o ,,wolności
+słowa'', a nie ,,darmowym piwie''.
+Dokładne i wiążące prawne warunki rozpowszechniania przytoczono poniżej,
+ale w skrócie, masz prawo (wolność) uruchamiania i zmieniania Wget
+i przekazywania go innym, a nawet -- jeśli chcesz -- pobierania opłat
+za którąkolwiek z tych czynności.
+Istotnym ograniczeniem jest to, że musisz przyznać swoim odbiorcom te same
+prawa i nałożyć te same ograniczenia.
+
+Ta metoda licencjonowania oprogramowania jest też znana jako
+@dfn{open-source} (otwarte źródła), gdyż, między innymi, zapewnia, że
+wszyscy odbiorcy zawsze otrzymują razem z programem jego kod źródłowy,
+i mają możliwość go usprawniać.  W projekcie GNU preferuje się termin
+``free software'' z powodów naszkicowanych w
+@url{http://www.gnu.org/philosophy/free-software-for-freedom.pl.html}.
+
+Dokładne warunki licencyjne są zdefiniowane przez poniższy akapit
+i Powszechną Licencję Publiczną GNU, na którą się powołuje:
+
+@quotation
+Wget jest wolnym oprogramowaniem; możesz go rozprowadzać dalej
+i/lub modyfikować na warunkach Powszechnej Licencji Publicznej GNU, opublikowanej
+przez Fundację Wolnego Oprogramowania - według wersji 2 tej Licencji
+lub (wedle własnego wyboru) którejś z późniejszych wersji. 
+
+Wget rozpowszechniany jest z nadzieją, iż będzie on użyteczny
+- jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej gwarancji PRZYDATNOŚCI
+HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH ZASTOSOWAŃ.  Bliższe informacje
+znajdziesz w Powszechnej Licencji Publicznej GNU. 
+
+Egzemplarz Powszechnej Licencji Publicznej GNU (GNU General Public License)
+dołączono jako część tego podręcznika; jeśli go nie otrzymałeś,
+Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz 
+Powszechnej Licencji Publicznej GNU (GNU General Public License);
+napisz do Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+USA.
+@end quotation
+
+Ponadto, niniejszy podręcznik jest wolny w tym samym znaczeniu:
+
+@quotation
+Zezwala się na kopiowanie, rozpowszechnianie i/lub modyfikowanie tego
+dokumentu na warunkach Licencji Wolnej Dokumentacji GNU (GNU Free
+Documentation License) w wersji 1.1 lub jakiejkolwiek nowszej wersji
+opublikowanej przez Fundację Wolnego Oprogramowania, przy czym Sekcjami
+niezmiennymi są ,,GNU General Public License'' i ,,GNU Free Documentation
+License'', bez treści przedniej lub tylnej strony okładki.
+Egzemplarz licencji zamieszczono w sekcji zatytułowanej
+,,GNU Free Documentation License''.
+@end quotation
+
+@c #### Maybe we should wrap these licenses in ifinfo?  Stallman says
+@c that the GFDL needs to be present in the manual, and to me it would
+@c suck to include the license for the manual and not the license for
+@c the program.
+
+Pełne teksty Powszechnej Licencji Publicznej GNU i Licencji Wolnej
+Dokumentacji GNU są dostępne poniżej.
+
+@menu
+* GNU General Public License::
+* GNU Free Documentation License::
+@end menu
+
+@include gpl-2.texi
+
+@include fdl-1.1.texi
+
+@node Skorowidz pojęć,  , Kopiowanie, Top
+@unnumbered Skorowidz pojęć
+@printindex cp
+
+@contents
+
+@bye

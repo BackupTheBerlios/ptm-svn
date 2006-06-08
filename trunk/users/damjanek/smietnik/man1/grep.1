@@ -1,0 +1,637 @@
+.\" Tłumaczenie: Gwidon S. Naskrent (naskrent@hoth.amu.edu.pl), IX 1998
+.\" {PTM/GSN/0.5/23-02-1999/"wypisz linie pasujące do wzorca"}
+.\" aktualizacja do 2.4.2 PTM/WK/2001-I
+.if !\n(.g \{\
+.	if !\w|\*(lq| \{\
+.		ds lq ``
+.		if \w'\(lq' .ds lq "\(lq
+.	\}
+.	if !\w|\*(rq| \{\
+.		ds rq ''
+.		if \w'\(rq' .ds rq "\(rq
+.	\}
+.\}
+.de Id
+.ds Dt \\$4
+..
+.Id $Id: grep.1,v 1.6 2001/01/17 19:32:46 wojtek2 Exp $
+.TH GREP 1 \*(Dt "Projekt GNU"
+.SH NAZWA
+grep, egrep, fgrep \- wypisz linie pasujące do wzorca
+.SH SKŁADNIA
+.B grep
+.RI [ opcje ]
+.I wzorzec
+.RI [ plik .\|.\|.]
+.br
+.B grep
+.RI [ opcje ]
+.RB [ \-e
+.I wzorzec
+|
+.B \-f
+.IR plik ]
+.RI [ plik .\|.\|.]
+.SH OPIS
+.PP
+.B grep
+przeszukuje wskazane
+.IR plik i
+wejściowe (lub standardowe wejście jeśli
+nie podano żadnych lub podano nazwę pliku '\-'), szukając linii
+zawierających coś pasującego do podanego
+.IR wzorca .
+Domyślnie,
+.B grep
+wypisuje pasujące linie.
+.PP
+Dodatkowo dostępne są dwa programy wariantowe
+.B egrep
+i
+.BR fgrep .
+.B Egrep
+jest tym samym, co
+.BR "grep\ \-E" .
+.B Fgrep
+jest tym samym, co
+.BR "grep\ \-F" .
+.SH OPCJE
+.TP
+.BI \-A " num" "\fR,\fP \-\^\-after-context=" num
+Wypisuje po pasujących liniach
+.I num
+linii następującego kontekstu.
+.TP
+.BR \-a ", " \-\^\-text
+Przetwarza plik binarny tak, jakby był on tekstowy; jest to równoważnik
+opcji
+.BR \-\^\-binary-fnums=text .
+.TP
+.BI \-B " num" "\fR,\fP \-\^\-before-context=" num
+Wypisuje przed pasującymi liniami
+.I num
+linii poprzedzającego kontekstu.
+.TP
+\fB\-C\fP [\fInum\fP], \fB\-\fP\fInum\fP, \fB\-\^\-context\fP[\fB=\fP\fInum\fP]
+Wypisuje
+.I num
+linii (domyślnie 2) kontekstu w wyjściu.
+.TP
+.BR \-b ", " \-\^\-byte-offset
+Wypisuje przed każdą linią wyjścia jej offset bajtowy w pliku wejściowym.
+.TP
+.BI \-\^\-binary-files= typ
+Jeśli pierwszych kilka bajtów pliku wskazuje, że zawiera on dane binarne, to
+zakładane jest, że jest to plik typu
+.IR typ .
+Domyślnym
+.I typem
+jest binarny
+.RB ( binary ),
+a
+.B grep
+normalnie albo wypisuje jednolinijkowy komunikat mówiący o dopasowaniu
+pliku binarnego, albo nie wypisuje komunikatu, gdy nie znaleziono
+dopasowania.
+Jeżeli
+.I typem
+jest
+.B without-match
+(bez dopasowania), to
+.B grep
+zakłada, że ten plik binarny nie pasuje; jest to równoważne działaniu opcji
+.BR \-I .
+Jeśli
+.I typem
+jest
+.BR text ,
+to
+.B grep
+przetwarza plik binarny tak, jakby był on tekstowy; jest to równoważne opcji
+.BR \-a .
+.I Ostrzeżenie:
+Może się zdarzyć, że wypisane przez
+.B "grep \-\^\-binary-files=text"
+śmiecie binarne dadzą przykre skutki uboczne jeżeli
+wyjściem będzie terminal a jego sterownik zinterpretuje niektóre z nich
+jako swoje polecenia. 
+.TP
+.BR \-c ", " \-\^\-count
+Wyłącza normalne wyjście; zamiast niego dla każdego pliku wejściowego
+wypisuje liczbę pasujących linii.
+Z opcją
+.BR \-v ", " \-\^\-invert-match
+(patrz niżej), liczy linie niepasujące.
+.TP
+.BI \-d " akcja" "\fR,\fP \-\^\-directories=" akcja
+Jeśli plik wejściowy jest katalogiem, stosuje to jego przetworzenia
+.IR akcję .
+Domyślną
+.I akcją
+jest
+.BR read ,
+co znaczy, że katalogi są czytane dokładnie tak samo, jakby były zwykłymi
+plikami.
+Jeśli wartością
+.I akcji
+jest
+.BR skip ,
+to katalogi są milcząco pomijane.
+Jeśli wartością
+.I akcji
+jest
+.BR recurse ,
+to
+.B grep
+czyta wszystkie pliki pod każdym katalogiem, rekurencyjnie;
+jest to równoważne opcji
+.BR \-r .
+.TP
+.BR \-E ", " \-\^\-extended-regexp
+Interpretuje
+.I wzorzec
+jako rozszerzone wyrażenie regularne (patrz niżej).
+.TP
+.BI \-e " wzorzec" "\fR,\fP \-\^\-regexp=" wzorzec
+Używa
+.I wzorca
+jako wzorca; użyteczne do ochronienia wzorów zaczynających się od
+.BR \- .
+.TP
+.BR \-F ", " \-\^\-fixed-strings
+Interpretuje
+.I wzorzec
+jako listę łańcuchów o stałej długości, oddzielonych znakami nowej
+linii, które należy dopasować każdy z osobna.
+.TP
+.BI \-f " plik" "\fR,\fP \-\^\-file=" plik
+Pobiera wzorce z
+.IR plik ,
+po jednym z każdej linii.  Plik pusty zawiera zero wzorców, nie pasując
+do niczego.
+.TP
+.BR \-G ", " \-\^\-basic-regexp
+Interpretuje
+.I wzorzec
+jako podstawowe wyrażenie regularne (zobacz niżej).  Jest to zachowanie
+domyślne.
+.TP
+.BR \-H ", " \-\^\-with-filename
+Dla każdego dopasowania wypisuje nazwę pliku.
+.TP
+.BR \-h ", " \-\^\-no-filename
+.B \-h, --no-filename
+Wyłącza poprzedzanie wyników nazwami plików podczas przeszukiwania
+wielu plików.
+.TP
+.B \-\^\-help
+Wypisuje krótki tekst pomocy.
+.TP
+.BR \-I
+Przetwarza plik binarny tak, jakby nie zawierał on pasujących danych; jest
+to równoważne opcji
+.BR \-\^\-binary-files=without-match .
+.TP
+.BR \-i ", " \-\^\-ignore-case
+Ignoruje rozróżnienia w wielkości liter we
+.I wzorcu
+oraz w plikach wejściowych.
+.TP
+.BR \-L ", " \-\^\-files-without-match
+Wyłącza normalne wyjście; zamiast niego wypisuje nazwę każdego pliku,
+z którego normalnie nie wypisano by żadnego wyjścia.  Przeszukiwanie
+zakończy się na pierwszej pasującej linii.
+.TP
+.BR \-l ", " \-\^\-files-with-matches
+Wyłącza normalne wyjście; zamiast niego wypisuje nazwę każdego pliku,
+z którego normalnie wypisano by jakieś wyjście.  Przeszukiwanie
+zakończy się na pierwszej pasującej linii.
+.TP
+.B \-\^\-mmap
+Jeśli to możliwe, do odczytu wejścia korzysta z funkcji systemowej
+.BR mmap (2)
+zamiast domyślnej
+.BR read (2).
+W pewnych sytuacjach
+.B \-\^\-mmap
+daje lepszą wydajność. Może jednak spowodować niezdefiniowane zachowanie
+(łącznie ze zrzutem rdzenia) jeśli podczas działania
+.B grep
+plik wejściowy się skurczy lub wystąpi błąd wejścia/wyjścia.
+.TP
+.BR \-n ", " \-\^\-line-number
+Poprzedza każdą linię wyjścia numerem linii z odpowiedniego pliku
+wejściowego.
+.TP
+.BR \-q ", " \-\^\-quiet ", " \-\^\-silent
+Po cichu; wyłącza normalne wyjście.  Przeszukiwanie zakończy się na
+pierwszej pasującej linii. Zobacz także poniżej opcje
+.B \-s
+lub
+.BR \-\^\-no-messages .
+.TP
+.BR \-r ", " \-\^\-recursive
+Czyta wszystkie pliki pod każdym katalogiem, rekurencyjnie;
+jest to równoważne opcji
+.BR "\-d recurse" .
+.TP
+.BR \-s ", " \-\^\-no-messages
+Wyłącza komunikaty błędów o plikach nieistniejących lub nie do odczytania.
+Uwaga o przenośności: w przeciwieństwie do \s-1GNU\s0
+.BR grep ,
+tradycyjny
+.B grep
+nie był zgodny z \s-1POSIX.2\s0, gdyż brakowało mu opcji
+.B \-q
+a opcja
+.B \-s
+zachowywała się jak opcja
+.B \-q
+z \s-1GNU\s0
+.BR grep .
+Skrypty powłoki, które mają być przenośne na tradycyjny 
+.B grep
+powinny unikać zarówno
+.BR \-q ,
+jak i
+.B \-s
+i zamiast tego przekierowywać wyjście do /dev/null.
+.TP
+.BR \-U ", " \-\^\-binary
+Traktuje plik jako binarny.  Domyślnie, w DOS-ie i MS Windows,
+.BR grep
+zgaduje typ pliku spoglądając na zawartość pierwszych 32 kB przeczytanych
+z pliku.  Jeśli zdecyduje, że plik jest tekstowy, udziera znaki CR
+z oryginalnej zawartości pliku (po to żeby wyrażenia regularne z
+.B ^
+i
+.B $
+działały poprawnie).  Podanie
+.B \-U
+wyłącza to zgadywanie, powodując, że wszystkie pliki są czytane i
+przekazywane mechanizmowi dopasowywującemu dosłownie; jeśli plik jest
+plikiem tekstowym z parami CR/LF na końcu linii, spowoduje to, że 
+niektóre wyrażenia regularne nie zadziałają.  Opcja ta nie działa
+na platformach innych niż MS-DOS i MS Windows.
+.TP
+.BR \-u ", " \-\^\-unix-byte-offsets
+Raportuje offsety bajtowe w stylu Unixowym.  Przełącznik ten powoduje, że
+.B grep
+raportuje offsety bajtowe tak, jakby plik był plikiem tekstowym typu
+Uniksowego, tj. z udartymi znakami CR.  Da to rezultaty identyczne jak
+uruchomienie 
+.B grepa
+na maszynie Uniksowej.  Opcja ta nie wywołuje żadnego efektu, chyba że użyto
+także opcji
+.BR \-b ;
+nie działa na platformach innych niż MS-DOS i MS Windows.
+.TP
+.BR \-V ", " \-\^\-version
+Wypisuje numer wersji
+.B grepa
+na standardowe wyjście błędów.  Ów numer wersji powinno się załączać
+we wszystkich zgłoszeniach błędów (patrz niżej).
+.TP
+.BR \-v ", " \-\^\-invert-match
+Odwraca sens dopasowania, wybiera linie niepasujące.
+.TP
+.BR \-w ", " \-\^\-word-regexp
+Wybiera tylko te linie, w których dopasowania wzorca tworzą całe słowa.
+Przeprowadzany test polega na tym, że dopasowywany podciąg musi albo 
+znajdować się na początku linii, albo być poprzedzony znakiem nie
+tworzącym słowa.  Podobnie, musi albo znajdować się na końcu linii,
+albo musi następować po nim znak nie tworzący słowa.  Znakami
+tworzącymi słowa są litery, cyfry i znak podkreślenia.
+.TP
+.BR \-x ", " \-\^\-line-regexp
+Wybiera tylko te dopasowania, które dokładnie pasują do całej linii.
+.TP
+.B \-y
+Przestarzały synonim
+.BR \-i .
+.TP
+.BR \-Z ", " \-\^\-null
+Zamiast znaku, który normalnie występuje po nazwie pliku wypisuje bajt
+zerowy ( \s-1ASCII\s0
+.BR NUL ).
+Na przykład,
+.B "grep \-lZ"
+wypisuje po nazwie pliku bajt zerowy, zamiast, jak zwykle, znaku nowej linii.
+Opcja ta powoduje, że wyjście jest jednoznaczne, nawet przy nazwach plików
+zawierających niecodzienne znaki, jak znak nowej linii. Może być
+wykorzystywana z poleceniami typu:
+.BR "find \-print0" ,
+.BR "perl \-0" ,
+.B "sort \-z"
+czy
+.BR "xargs \-0" ,
+umożliwiając przetwarzanie plików o dowolych nazwach, nawet zawierających
+znaki nowej linii.
+.SH "WYRAŻENIA REGULARNE"
+.PP
+Wyrażenie regularne to wzorzec opisujący zbiór łańcuchów.  Wyrażenia
+regularne są zbudowane analogicznie do wyrażeń arytmetycznych, przez
+zastosowanie do połączenia mniejszych wyrażeń rozmaitych operatorów.
+.PP
+.B grep
+rozumie dwie różne wersje składni wyrażeń regularnych: "podstawową"
+i "rozszerzoną".  W \s-1GNU\s0\
+.B grep
+obie te składnie przy użyciu nie różnią się zakresem dostępnych możliwości.
+W innych implementacjach podstawowe wyrażenia regularne są mniej rozbudowane.
+Poniższy opis stosuje się do rozszerzonych wyrażeń regularnych;
+różnice w stosunku do wyrażeń podstawowych podsumowano na końcu.
+.PP
+Fundamentalnymi "cegiełkami" są wyrażenia regularne pasujące do pojedynczego
+znaku.  Większość znaków, w tym wszystkie litery i cyfry, to wyrażenia
+regularne pasujące do samych siebie.  Każdy metaznak mający specjalne
+znaczenie może być cytowany przez poprzedzenie go odwrotnym ukośnikiem.
+.PP
+Lista znaków zawarta między
+.B [
+a
+.B ]
+pasuje do każdego pojedynczego znaku na tej liście; jeśli pierwszym znakiem
+listy jest daszek
+.BR ^ ,
+pasuje wtedy ona do każdego znaku
+.I nie
+znajdującego się na liście.  Dla przykładu, wyrażenie regularne
+.B [0123456789]
+pasuje do każdej pojedynczej cyfry.  Zakres znaków ASCII podać można
+określając znak pierwszy i ostatni, oddzielone myślnikiem.
+I na koniec: predefiniowano pewne nazwane klasy znaków.  Ich nazwy
+mówią same za siebie, i są to:
+.BR [:alnum:] ,
+.BR [:alpha:] ,
+.BR [:cntrl:] ,
+.BR [:digit:] ,
+.BR [:graph:] ,
+.BR [:lower:] ,
+.BR [:print:] ,
+.BR [:punct:] ,
+.BR [:space:] ,
+.BR [:upper:]
+oraz
+.BR [:xdigit:].
+Na przykład
+.B [[:alnum:]]
+oznacza
+.BR [0-9A-Za-z] ,
+z tym wyjątkiem, że ta druga forma zależy od kodowania znaków ASCII
+i ustawień regionalnych \s-1POSIX\s0 (locale), podczas
+gdy pierwsza jest przenośna.
+(Zauważ, że nawiasy kwadratowe w nazwach klas są częścią nazw symbolicznych
+i muszą być umieszczone dodatkowo, oprócz pary nawiasów ograniczającej samą
+listę).
+Większość metaznaków traci swoje szczególne znaczenie wewnątrz list.  Aby
+umieścić tam dosłowny
+.BR ] ,
+umieść go jako pierwszy na liście.  Podobnie, aby umieścić dosłowny
+.BR ^ ,
+umieść go gdziekolwiek poza pierwszym miejscem.  W końcu, aby umieścić
+dosłowny
+.BR \- ,
+umieść go na ostatku.
+.PP
+Kropka
+.B .
+pasuje do każdego pojedynczego znaku.
+Symbol
+.B \ew
+to synonim
+.B [[:alnum:]]
+a
+.B \eW
+to synonim
+.BR [^[:alnum]] .
+.PP
+Daszek
+.B ^
+oraz znak dolara
+.B $
+są metaznakami, które pasują odpowiednio do łańcucha pustego na początku
+i na końcu linii.  Symbole
+.B \e<
+oraz
+.B \e>
+pasują odpowiednio do łańcucha pustego na początku i na końcu słowa.
+Symbol
+.B \eb
+pasuje do łańcucha pustego na krawędzi słowa, zaś
+.B \eB
+pasuje do pustego łańcucha zakładając, że 
+.I nie
+jest on na krawędzi słowa.
+.PP
+Po wyrażeniu regularnym może następować jeden z kilku operatorów
+powtórzenia:
+.PD 0
+.TP
+.B ?
+Poprzedzający element jest opcjonalny i pasuje nie więcej niż raz.
+.TP
+.B *
+Poprzedzający element będzie dopasowany zero lub więcej razy.
+.TP
+.B +
+Poprzedzający element będzie dopasowany jeden lub więcej razy.
+.TP
+.BI { n }
+Poprzedzający element pasuje dokładnie 
+.I n
+razy.
+.TP
+.BI { n ,}
+Poprzedzający element pasuje
+.I n
+lub więcej razy.
+.TP
+.BI {, m }
+Poprzedzający element jest opcjonalny i pasuje co najwyżej
+.I m
+razy.
+.TP
+.BI { n , m }
+Poprzedzający element pasuje co najmniej
+.I n
+razy, ale nie więcej niż
+.I m
+razy.
+.PD
+.PP
+Dwa wyrażenia regularne można ze sobą złączyć (skonkatenować);
+do wynikowego wyrażenia regularnego pasuje każdy ciąg utworzony
+przez złączenie dowolnych dwóch ciągów, które odpowiednio pasują
+do złączonych podwyrażeń.
+.PP
+Dwa wyrażenia regularne można połączyć operatorem infiksowym (wrostkowym)
+.BR | ;
+do wynikowego wyrażenia regularnego pasuje dowolny ciąg pasujący
+do jednego bądź do drugiego z podwyrażeń.
+.PP
+Powtarzanie ma priorytet nad łączeniem, które z kolei bierze
+górę nad alternatywą.  Całe wyrażenie regularne można ująć
+w nawiasy, celem unieważnienia tych reguł priorytetowych.
+.PP
+Wsteczne odniesienie
+.BI \e n\c
+\&, gdzie
+.I n
+jest pojedynczą cyfrą, dopasowuje podciąg poprzednio dopasowany
+.IR n \-tym
+ujętym w nawiasy podwyrażeniem wyrażenia regularnego.
+.PP
+W podstawowych wyrażeniach regularnych metaznaki
+.BR ? ,
+.BR + ,
+.BR { ,
+.BR | ,
+.BR (
+oraz
+.BR )
+tracą swoje szczególne znaczenie; zamiast nich należy użyć wersji
+z odwrotnym ukośnikiem:
+.BR \e? ,
+.BR \e+ ,
+.BR \e{ ,
+.BR \e| ,
+.BR \e(
+oraz
+.BR \e) .
+.PP
+Tradycyjny
+.B egrep
+nie traktuje
+.B {
+jako metaznaku. Niektóre implementacje
+udostępniają zamiast niego
+.BR \e{ ,
+więc przenośne skrypty powinny unikać 
+.B {
+we wzorcach
+.BR egrep ,
+a do dopasowywania dosłownego znaku
+.B {
+stosować
+.BR [{] .
+.PP
+\s-1GNU\s0
+.B egrep
+usiłuje obsługiwać tradycyjny sposób użycia zakładając, że
+.B {
+nie posiada szczególnego znaczenia jeśli byłby on początkiem nieprawidłowego
+określenia liczby powtórzeń. Na przykład, polecenie powłoki
+.B "egrep '{1'"
+szuka dwuznakowego łańcucha
+.BR {1 ,
+zamiast zgłaszać błąd składni w wyrażeniu regularnym.
+\s-1POSIX.2\s0 pozwala na takie zachowanie jako rozszerzenie standardu,
+ale przenośne skrypty powinny go unikać.
+.SH "ZMIENNE ŚRODOWISKA"
+.TP
+.B GREP_OPTIONS
+Ta zmienna określa domyślne opcje, jakie zostaną umieszczone przed 
+wszystkimi opcjami podanymi wprost.  Na przykład, jeśli
+.B GREP_OPTIONS
+jest równe
+.BR "'\-\^\-binary-files=without-match \-\^\-directories=skip'" ,
+to
+.B grep
+zachowa się tak, jakby podano
+.B \-\^\-binary-files=without-match
+i
+.B \-\^\-directories=skip
+przed ewentualnymi jawnymi opcjami.
+Określenia opcji oddziela się białymi znakami.
+Odwrotny ukośnik cytuje następny znak, zatem można go wykorzystać do podania
+opcji zawierającej biały znak lub odwrotny ukośnik.
+.TP
+\fBLC_ALL\fP, \fBLC_MESSAGES\fP, \fBLANG\fP
+Te zmienne podają ustawienie regionalne (locale)
+.BR LC_MESSAGES ,
+określające język, jakiego
+.B grep
+ma użyć w komunikatach.
+Ustawienie locale jest określane przez pierwszą z tych zmiennych, która
+ma nadaną wartość.
+Jeśli nie istnieje żadna z nich, to stosowana jest amerykańska odmiana
+angielskiego. Dzieje się tak również w przypadku, gdy nie zainstalowano
+katalogu z komunikatami lub jeśli
+.B grep
+nie został skompilowany z obsługą języków narodowych (\s-1NLS\s0).
+.TP
+\fBLC_ALL\fP, \fBLC_CTYPE\fP, \fBLANG\fP
+Te zmienne podają ustawienie regionalne (locale)
+.B LC_CTYPE
+określające typ znaków, np. które z nich są białymi znakami.
+Ustawienie locale jest określane przez pierwszą z tych zmiennych, która
+ma nadaną wartość.
+Jeśli nie istnieje żadna z nich, to stosowane jest ustawienie \s-1POSIX\s0.
+Dzieje się tak również w przypadku, gdy nie zainstalowano
+katalogu z komunikatami lub jeśli
+.B grep
+nie został skompilowany z obsługą języków narodowych (\s-1NLS\s0).
+.TP
+.B POSIXLY_CORRECT
+Jeśli jest ustawiona, to
+.B grep
+zachowuje się zgodnie z wymaganiami \s-1POSIX.2\s0; w przeciwnym razie
+.B grep
+zachowuje się bardziej jak inne programy \s-1GNU\s0.
+\s-1POSIX.2\s0 żąda, by opcje, które występują po nazwach plików były
+traktowane jak nazwy plików. Domyślnie zaś, opcje takie są przesuwane
+na początek listy argumentów i traktowane jak opcje.
+Ponadto, \s-1POSIX.2\s0 wymaga, by nierozpoznane opcje były zgłaszane jako
+"nielegalne" ("illegal"), ale ponieważ tak naprawdę nie naruszają
+one prawa, domyślnie zgłaszane są jako "nieprawidłowe" ("invalid").
+.B POSIXLY_CORRECT
+wyłącza także \fB_\fP\fIN\fP\fB_GNU_nonoption_argv_flags_\fP, opisane
+poniżej.
+.TP
+\fB_\fP\fIN\fP\fB_GNU_nonoption_argv_flags_\fP
+(Tu
+.I N
+jest numerycznym identyfikatorem procesu
+.BR grep a).
+Jeśli
+.IR i -tym
+znakiem wartości tej zmiennej środowiska jest
+.BR 1 ,
+to 
+.IR i -ty
+argument przekazany do
+.B grep
+nie jest uważany za opcję, nawet jeśli na nią wygląda.
+Powłoka może umieścić tę zmienną w środowisku dla każdego polecenia,
+jakie uruchamia, podając, które argumenty są wynikiem rozwinięcia nazw
+plików i stąd nie powinny być traktowane jako opcje.
+Zachowanie to jest dostępne tylko z biblioteką \s-1GNU\s0 C i tylko wtedy
+gdy nie ustawiono
+.BR POSIXLY_CORRECT .
+.SH DIAGNOSTYKA
+.PP
+Normalnie status zakończenia równa się 0 jeśli znaleziono dopasowania,
+a 1 jeśli nie znaleziono żadnych.  Opcja
+.B \-v
+odwraca sens statusu zakończenia.  Status zakończenia równa się 2 jeśli
+wystąpiły błędy składniowe we wzorcu, niedostępne pliki wejściowe lub
+inne błędy systemowe.
+.SH BŁĘDY
+.PP
+Zgłoszenia błędów wysyłaj, proszę, do
+.BR bug-gnu-utils@gnu.org .
+Upewnij się, że gdzieś w polu tematu ("Subject:") umieściłeś słowo "grep".
+.PP
+Duże liczniki powtórzeń w konstrukcji
+.BI { m , n }
+mogą spowodować, że grep zużyje mnóstwo pamięci.  Oprócz tego, pewne
+inne niejasne wyrażenia regularne wymagają czasu i przestrzeni
+rosnącej wykładniczo i mogą spowodować, że
+.B grepowi
+zabraknie pamięci.
+.PP
+Wsteczne odwołania są bardzo powolne i mogą wymagać czasu rosnącego
+wykładniczo.
+.\" Work around problems with some troff -man implementations.
+.br

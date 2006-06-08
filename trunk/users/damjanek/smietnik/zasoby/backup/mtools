@@ -1,0 +1,32 @@
+# Lista polskich stron man dla pakietu
+# mtools 3.9.6
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+mattrib.1	man1/mattrib.1
+mbadblocks.1	man1/mbadblocks.1
+mcd.1		man1/mcd.1
+mcopy.1		man1/mcopy.1
+mdel.1		man1/mdel.1
+mdeltree.1	man1/mdeltree.1
+mdir.1		man1/mdir.1
+mdu.1		man1/mdu.1
+mformat.1	man1/mformat.1
+minfo.1		man1/minfo.1
+mkmanifest.1	man1/mkmanifest.1
+mlabel.1	man1/mlabel.1
+mmd.1		man1/mmd.1
+mmount.1	man1/mmount.1
+mmove.1		man1/mmove.1
+mpartition.1	man1/mpartition.1
+mrd.1		man1/mrd.1
+mren.1		man1/mren.1
+mshowfat.1	man1/mshowfat.1
+mtools.1	man1/mtools.1
+mtoolstest.1	man1/mtoolstest.1
+mtype.1		man1/mtype.1
+mzip.1		man1/mzip.1
+mtools.5	man5/mtools.5
+#
+# koniec listy

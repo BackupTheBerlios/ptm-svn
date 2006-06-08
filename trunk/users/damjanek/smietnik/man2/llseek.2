@@ -1,0 +1,78 @@
+.\" Copyright (C) 1995 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Written 10 June 1995 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Thu Oct 31 15:16:23 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Translation (c) 2001 Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"              manpages 1.47
+.\"
+.TH LLSEEK 2 1995-06-10 "Linux 1.2.9" "Podręcznik programisty Linuksa"
+.SH NAZWA
+_llseek \- repozycjonowanie offsetu pliku dla odczytu/zapisu
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.B #include <linux/unistd.h>
+.sp
+.B _syscall5(int, _llseek, uint, fd, ulong, hi, ulong, lo, loff_t *, res, uint, wh);
+.sp
+.BI "int _llseek(unsigned int " fd ", unsigned long " offset_high ,
+.BI "unsigned long " offset_low ", loff_t *" result ", unsigned int " whence );
+.SH OPIS
+Funkcja
+.B _llseek
+repozycjonuje offset deskryptora pliku
+.I fd
+na
+.I (offset_high<<32) | offset_low
+bajtów względem początku pliku, względem bieżącej pozycji w pliku lub względem
+końca pliku, w zależności od tego, czy
+.I  whence
+jest odpowiednio równe
+.BR SEEK_SET ,
+.BR SEEK_CUR ,
+czy
+.BR SEEK_END .
+Funkcja ta zwraca w argumencie
+.I result
+pozycję wynikową.
+
+.SH "WARTOŚĆ ZWRACANA"
+W razie pomyślnego zakończenia,
+.B _llseek
+zwraca 0. W przeciwnym przypadku, zwracana jest wartość \-1 i ustawiane jest
+.I errno
+dla wskazania rodzaju błędu.
+.SH BŁĘDY
+.TP
+.B EBADF
+.I fd
+nie jest deskryptorem otwartego pliku.
+.TP
+.B EINVAL
+.I whence
+jest nieprawidłowe.
+.SH "ZGODNE Z"
+Ta funkcja jest specyficzna dla Linuksa, i nie powinna być używana
+w przenośnych programach.
+.SH "ZOBACZ TAKŻE"
+.BR lseek (2)

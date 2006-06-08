@@ -1,0 +1,55 @@
+.\" {PTM/AB/0.1/20-12-1998/"expm1, log1p - funkcja wykładnicza minus 1, logarytm z 1 plus argument"}
+.\" tłumaczenie Adam Byrtek (abyrtek@priv.onet.pl)
+.\" Aktualizacja do man-pages 1.45 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 1995 Jim Van Zandt <jrv@vanzandt.mv.com>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one.
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" ------------
+.TH EXPM1 3 1995-09-16 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+expm1, log1p \- funkcja wykładnicza minus 1, logarytm z 1 plus argument
+.SH SKŁADNIA
+.nf
+.B #include <math.h>
+.sp
+.BI "double expm1(double " x );
+.sp
+.BI "double log1p(double " x );
+.fi
+.SH OPIS
+Funkcja
+.BI expm1( x )
+zwraca wartość równoważną `exp (\fIx\fP) - 1'. Jest ona obliczana w sposób
+zapewniający dokładność nawet gdy \fIx\fP wynosi prawie zero. W sytuacji
+takiej użycie `exp(\fIx\fP) - 1' prowadziło by do niedokładności, z powodu
+odejmowania dwóch prawie takich samych liczb.
+.PP
+Funkcja
+.BI log1p( x )
+zwraca wartość równoważną `log (1 + \fIx\fP)'. Jest ona obliczana w sposób
+zapewniający dokładność nawet gdy \fIx\fP wynosi prawie zero.
+.SH "ZGODNE Z"
+BSD
+.SH "ZOBACZ TAKŻE"
+.BR exp (3),
+.BR log (3)

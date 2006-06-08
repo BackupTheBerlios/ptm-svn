@@ -1,0 +1,59 @@
+# Lista polskich stron man dla pakietu
+# qmail
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+
+bouncesaying.1		man1/bouncesaying.1
+condredirect.1		man1/condredirect.1
+dot-forward.1		man1/dot-forward.1
+fastforward.1		man1/fastforward.1
+mailsubj.1		man1/mailsubj.1
+newinclude.1		man1/newinclude.1
+preline.1		man1/preline.1
+qbiff.1			man1/qbiff.1
+qforward.1		man1/qforward.1
+qreceipt.1		man1/qreceipt.1
+
+addresses.5		man5/addresses.5
+dot-qmail.5		man5/dot-qmail.5
+envelopes.5		man5/envelopes.5
+maildir.5		man5/maildir.5
+mbox.5			man5/mbox.5
+qmail-log.5		man5/qmail-log.5
+qmail-control.5		man5/qmail-control.5
+
+forgeries.7		man7/forgeries.7
+qmail.7			man7/qmail.7
+qmail-limits.7		man7/qmail-limits.7
+
+ofmipd.8		man8/ofmipd.8
+qmail-clean.8		man8/qmail-clean.8
+qmail-command.8		man8/qmail-command.8
+qmail-getpw.8		man8/qmail-getpw.8
+qmail-inject.8		man8/qmail-inject.8
+qmail-local.8		man8/qmail-local.8
+qmail-lspawn.8		man8/qmail-lspawn.8
+qmail-newmrh.8		man8/qmail-newmrh.8
+qmail-newu.8		man8/qmail-newu.8
+qmail-pop3d.8		man8/qmail-pop3d.8
+qmail-popup.8		man8/qmail-popup.8
+qmail-pw2u.8		man8/qmail-pw2u.8
+qmail-qmqpc.8		man8/qmail-qmqpc.8
+qmail-qmqpd.8		man8/qmail-qmqpd.8
+qmail-qmtpd.8		man8/qmail-qmtpd.8
+qmail-qread.8		man8/qmail-qread.8
+qmail-qstat.8		man8/qmail-qstat.8
+qmail-queue.8		man8/qmail-queue.8
+qmail-remote.8		man8/qmail-remote.8
+qmail-rspawn.8		man8/qmail-rspawn.8
+qmail-send.8		man8/qmail-send.8
+qmail-showctl.8		man8/qmail-showctl.8
+qmail-smtpd.8		man8/qmail-smtpd.8
+qmail-start.8		man8/qmail-start.8
+qmail-tcpok.8		man8/qmail-tcpok.8
+qmail-tcpto.8		man8/qmail-tcpto.8
+qmail-users.5		man8/qmail-users.5
+#
+# koniec listy

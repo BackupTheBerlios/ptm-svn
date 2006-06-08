@@ -1,0 +1,246 @@
+.\" Copyright 2000 Sam Varshavchik <mrsam@courier-mta.com>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References: RFC 2553
+.\"
+.\" Tłumaczenie wersji man-pages 1.55 - maj 2003 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH getipnodebyname 3 2002-04-03 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getipnodebyname, getipnodebyaddr, freehostent \- określenie nazw i adresów sieciowych hosta
+.SH SKŁADNIA
+.nf
+.B #include <sys/types.h>
+.B #include <sys/socket.h>
+.B #include <netdb.h>
+.sp
+.BI "struct hostent *getipnodebyname(const char *" "name" ,
+.BI "                         int " "af" ", int " "flags" ,
+.BI "                         int *" "error_num" );
+.sp
+.BI "struct hostent *getipnodebyaddr(const void *" "addr" ,
+.BI "                         size_t " "len" ", int " "af" ,
+.BI "                         int *" "error_num" );
+.sp
+.BI "void freehostent(struct hostent *" "ip" );
+.fi
+.SH OPIS
+Te funkcje są przestarzałe. Zamiast nich należy używać
+.BR getaddrinfo (3)
+i
+.BR getnameinfo (3).
+.LP
+Funkcje
+.BR getipnodebyname (3)
+i
+.BR getipnodebyaddr (3)
+zwracają nazwy i adresy hosta sieciowego.
+Wynik jest wskaźnikiem do struktury o następującej postaci:
+.sp
+.nf
+.B struct  hostent {
+.BI "        char    *" "h_name" ";"
+.BI "        char    **" "h_aliases" ";"
+.BI "        int     " "h_addrtype" ";"
+.BI "        int     " "h_length" ";"
+.BI "        char    **" "h_addr_list" ";"
+.BI "};"
+.fi
+.PP
+Funkcje te zastąpiły funkcje
+.BR gethostbyname (3)
+i
+.BR gethostbyaddr (3),
+które mogły udostępniać jedynie adresy należące do rodziny adresów sieciowych
+IPv4. Funkcje
+.BR getipnodebyname (3)
+i
+.BR getipnodebyaddr (3)
+mogą udostępniać adresy należące do wielu rodzin adresów sieciowych.
+.PP
+W odróżnieniu od funkcji
+.BR gethostby ,
+funkcje te zwracają wskaźniki do pamięci przydzielonej dynamicznie.
+Funkcja
+.BR freehostent (3)
+służy do zwalniania przydzielonej dynamicznie pamięci, gdy wywołujący już
+nie potrzebuje struktury
+.BR hostent .
+.SS parametry getipnodebyname
+Funkcja
+.BR getipnodebyname (3)
+wyszukuje adresy sieciowe hosta podanego w parametrze
+.IR name .
+Parametr
+.I af
+może zawierać jedną z następujących wartości:
+.TP
+.B AF_INET
+Parametr
+.I name
+wskazuje na adres IPv4 (w postaci czterech rozdzielonych kropkami liczb) lub
+na nazwę hosta sieci IPv4.
+.TP
+.B AF_INET6
+Parametr
+.I name
+wskazuje na adres IPv6 (w postaci szesnastkowej) lub na nazwę hosta
+sieci IPv6.
+.PP
+Parametr
+.I flags
+zawiera dodatkowe opcje.
+Można podać więcej niż jedną opcję poprzez wykonanie na nich logicznego OR.
+.I flags
+powinno być ustawione na 0, gdy żadne opcje nie są potrzebne.
+.TP
+.B AI_V4MAPPED
+Ten znacznik użyty łącznie z
+.B AF_INET6
+określa, że zapytanie ma dotyczyć adresów IPv4, a nie IPv6; adresy IPv4 będą
+odwzorowane na adresy IPv6.
+.TP
+.B AI_ALL
+Ten znacznik użyty łącznie z
+.B AI_V4MAPPED
+określa, że zapytanie ma dotyczyć zarówno adresów IPv4, jak i IPv6.
+Znalezione adresy IPv4 zostaną odwzorowane na adresy IPv6.
+.TP
+.B AI_ADDRCONFIG
+Ten znacznik użyty łącznie z
+.B AF_INET6
+oznacza, że dalsze zapytania dotyczące adresów IPv6 nie powinny być
+wykonywane, jeżeli system nie posiada adresu IPv6 przydzielonego do któregoś
+z interfejsów sieciowych oraz, że dalsze zapytania dotyczące adresów IPv4 nie
+powinny być wykonywane, jeżeli system nie posiada adresu IPv4 przydzielonego
+do któregoś z interfejsów sieciowych.
+Znacznik ten może zostać użyty samodzielnie lub łącznie ze znacznikiem
+.BR AI_V4MAPPED .
+.TP
+.B AI_ALL
+Ten znacznik jest równoważny
+.BR "(AI_ADDRCONFIG | AI_V4MAPPED)" .
+.SS parametry getipnodebyaddr
+Funkcja
+.BR getipnodebyaddr (3)
+poszukuje nazwy hista, którego adres sieciowy jest podany w parametrze
+.IR addr .
+Parametr
+.I af
+może mieć jedną z następujących wartości:
+.TP
+.B AF_INET
+Parametr
+.I addr
+wskazuje na strukturę
+.BR "struct in_addr" ;
+.I len
+musi mieć wówczas wartość
+.BR "sizeof(struct in_addr)" .
+.TP
+.B AF_INET6
+Parametr
+.I addr
+wskazuje na strukturę
+.BR "struct in6_addr" ;
+.I len
+musi mieć wówczas wartość
+.BR "sizeof(struct in6_addr)" .
+.SH "WARTOŚĆ ZWRACANA"
+Gdy wystąpi błąd, zwrócony zostanie wskaźnik NULL a
+.I error_num
+będzie zawierać kod błędu według następującej listy:
+.TP
+.B HOST_NOT_FOUND
+Nie znaleziono nazwy lub adresu sieciowego hosta.
+.TP
+.B NO_ADDRESS
+Serwer DNS rozpoznał adres sieciowy lub nazwę hosta, ale nie zwrócił
+odpowiedzi. Może się to zdarzyć, gdy host posiada jedynie adresy IPv4,
+a zapytanie dotyczyło jedynie informacji o IPv6, lub odwrotnie.
+.TP
+.B NO_RECOVERY
+Serwer DNS zwrócił błąd trwały.
+.TP
+.B TRY_AGAIN
+Serwer DNS zwrócił błąd tymczasowy. Może następnym razem bedzie więcej
+szczęścia.
+.PP
+W przypadku pomyślnego wyniku zapytania zwraca ny jest wskaźnik do struktury
+.B hostent
+zawierającej następujące pola:
+.TP
+.B h_name
+Oficjalna nazwa tego hosta.
+.TP
+.B h_aliases
+Tablica wskaźników do nieoficjalnych aliasów tego samego hosta.
+Tablica jest zakończona wskaźnikiem NULL.
+.TP
+.B h_addrtype
+Kopia parametru
+.I af
+funkcji
+.BR getipnodebyname (3)
+lub
+.BR getipnodebyaddr (3).
+.I h_addrtype
+będzie równe
+.BR AF_INET ,
+gdy parametr
+.I af
+był równy
+.BR AF_INET .
+.I h_addrtype
+będzie równe
+.BR AF_INET6 ,
+gdy parametr
+.I af
+był równy
+.BR AF_INET6 .
+.TP
+.B h_length
+Będzie równe
+.BR "sizeof(struct in_addr)" ,
+gdy
+.I h_addrtype
+jest równe AF_INET a
+.BR "sizeof(struct in6_addr)" ,
+gdy
+.I h_addrtype
+jest równe AF_INET6.
+.TP
+.B h_addr_list
+Tablica zawierająca jeden lub więcej wskaźników do struktur adresów
+sieciowych danego hosta. Tablica jest zakończona wskaźnikiem NULL.
+.SH UWAGI
+Funkcje te były obecne w glibc 2.1.91-95, ale zostały ponownie usunięte.
+Wspierają je niektóre systemy uniksopodobne, lecz wszystkie traktują te
+funkcje jako niezalecane.
+.SH "ZGODNE Z"
+RFC 2553.
+.SH "ZOBACZ TAKŻE"
+.BR getaddrinfo (3),
+.BR getnameinfo (3),
+.BR inet_ntop (3),
+.BR inet_pton (3)

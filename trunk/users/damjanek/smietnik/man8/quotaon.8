@@ -1,0 +1,188 @@
+.\" {PTM/WK/2000-II}
+.\" Last update: Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>, Apr 2002
+.\"              quota 3.04
+.\"
+.TH QUOTAON 8
+.UC 4
+.SH NAZWA
+quotaon, quotaoff - włącza i wyłącza mechanizm udziałów dyskowych systemu plików
+.SH SKŁADNIA
+.B /usr/sbin/quotaon
+[
+.B \-vugfp
+]
+.IR system-plików .\|.\|.
+.br
+.B /usr/sbin/quotaon
+[
+.B \-avugfp
+]
+.LP
+.B /usr/sbin/quotaoff
+[
+.B \-vugp
+]
+.IR systemplików .\|.\|.
+.br
+.B /usr/sbin/quotaoff
+[
+.B \-avugp
+]
+.SH OPIS
+.SS quotaon
+.IX  "quotaon command"  ""  "\fLquotaon\fP \(em turn filesystem quotas on"
+.IX  "user quotas"  "quotaon command"  ""  "\fLquotaon\fP \(em turn filesystem quotas on"
+.IX  "disk quotas"  "quotaon command"  ""  "\fLquotaon\fP \(em turn filesystem quotas on"
+.IX  "quotas"  "quotaon command"  ""  "\fLquotaon\fP \(em turn filesystem quotas on"
+.IX  "filesystem"  "quotaon command"  ""  "\fLquotaon\fP \(em turn filesystem quotas on"
+.LP
+.B quotaon
+wskazuje systemowi, że na podanych systemach plików należy włączyć
+mechanizm kwot dyskowych. W katalogu głównym danego systemu
+plików muszą znajdować się pliki definiujące udziały, noszące nazwy
+.IR aquota.user
+(dla wersji 2 kwot użytkowników),
+.IR quota.user
+(dla wersji 1 kwot użytkowników),
+.IR aquota.group
+(dla wersji 2 kwot grup) lub
+.IR quota.group
+(dla wersji 1 kwot grup).
+.PP
+Specyficznym przypadkiem jest syetem plików XFS - traktuje on informacje
+o kwotach jako metadane systemu plików i korzysta z dziennika aby
+zagwarantować wyższy poziom ich spójności. System kwot dyskowych XFS zawiera
+dwa składniki: zliczanie i wymuszanie ograniczeń. System plików XFS wymaga,
+aby zliczanie kwot było włączane podczas montowania, nie dotyczy to jedynie
+głównego systemu plików. Włączanie i wyłączanie wymuszania ograniczeń jest
+możliwe w każdym systemie plików XFS, w którym jest aktualnie włączone
+zliczanie. Domyślnym zachowaniem jest włączanie zarówno zliczania, jak
+i wymuszania ograniczeń.
+.PP
+Implementacja kwot w XFS nie przechowuje informacji o nich w widocznych
+plikach, lecz przechowuje te informacje wewnętrznie.
+.SS quotaoff
+.IX  "quotaoff command"  ""  "\fLquotaoff\fP \(em turn filesystem quotas off"
+.IX  "user quotas"  "quotaoff command"  ""  "\fLquotaoff\fP \(em turn filesystem quotas off"
+.IX  "disk quotas"  "quotaoff command"  ""  "\fLquotaoff\fP \(em turn filesystem quotas off"
+.IX  "quotas"  "quotaoff command"  ""  "\fLquotaoff\fP \(em turn filesystem quotas off"
+.IX  "filesystem"  "quotaoff command"  ""  "\fLquotaoff\fP \(em turn filesystem quotas off"
+.LP
+.B quotaoff
+wskazuje systemowi, że podane systemy plików powinny mieć wyłączone wszystkie
+mechanizmy kwot dyskowych.
+.SH OPCJE
+.SS quotaon
+.TP
+.B \-a
+Włączenie mechanizmu kwot dyskowych na wszystkich automatycznie montowanych
+(bez opcji
+.BR noauto )
+systemach plików z
+.B /etc/fstab
+oprócz NFS. Opcja ta służy zazwyczaj do włączania kwot podczas startu systemu.
+.TP
+.B \-v
+Wyświetlanie komunikatu dla każdego z systemów plików, dla których włączane są
+kwoty.
+.TP
+.B \-u
+Operowanie na kwotach dyskowych użytkowników. Jest to zachowanie domyślne.
+.TP
+.B \-g
+Operowanie na kwotach dyskowych grup.
+.TP
+.B \-p
+Jedynie wypisywanie stanu kwot (tzn. czy są one włączone, czy wyłączone)
+zamiast ich włączania.
+.TP
+.B \-f
+Spowodowanie takiego zachowania
+.B quotaon
+jak podczas wywoływania go jako
+.BR quotaoff .
+.SS quotaoff
+.TP
+.B \-a
+Wymuszenie wyłączenia mechanizmu kwot dyskowych na wszystkich systemach
+plików wymienionych w
+.BR /etc/fstab .
+.TP
+.B \-v
+Wyświetlanie komunikatu dla każdego z systemów plików, dla którego wyłączane
+są kwoty.
+.TP
+.B \-u
+Operowanie na kwotach dyskowych użytkowników. Jest to zachowanie domyślne.
+.TP
+.B \-g
+Operowanie na kwotach dyskowych grup.
+.TP
+.B \-p
+Jedynie wypisywanie stanu kwot (tzn. czy są one włączone, czy wyłączone)
+zamiast ich wyłączania.
+.TP
+.B \-x delete
+Zwolnienie przestrzeni używanej do przechowywania informacji o kwotach
+(obsługiwane wewnętrznie) w XFS.
+Ta opcja ma zastosowanie jedynie do XFS i jest milcząco ignorowana dla
+pozostałych rodzajów systemów plików.
+Może być zastosowana wyłącznie do systemu plików, dla którego uprzednio
+wyłączono kwoty.
+.TP
+.B \-x enforce
+Wyłączenie wymuszania ograniczeń dla systemów plików XFS (przeprowadzanie
+jedynie zliczania).
+Ta opcja ma zastosowanie jedynie do XFS i jest milcząco ignorowana dla
+pozostałych rodzajów systemów plików.
+.LP
+.SH "PRZYKŁADY DLA XFS"
+.TP 0
+.B "Włączanie kwot dla inego niż główny systemu plików XFS"
+Włączanie zarówno zliczania, jak i wymuszania ograniczeń odbywa się za pomocą
+.IR mount (8)
+lub opcji dotyczących kwot w
+.BR /etc/fstab .
+Nie można stosować w tym celu programu narzędziowego
+.BR quotaon .
+.TP
+.B "Włączanie kwot dla głównego systemu plików XFS"
+Odbywa się za pomocą
+.B "quotaon -v /"
+oraz
+.IR reboot (8).
+Ta procedura powoduje włączenie zarówno zliczania, jak i wymuszania
+ograniczeń.
+.TP
+.B "Wyłączanie wymuszania ograniczeń kwot w dowolnym systemie plików XFS"
+Należy się upewnić za pomocą
+.BR "repquota -s" ,
+że włączone są zarówno zliczanie kwot, jak i wymuszanie ograniczeń.
+Do wyłączenia wymuszania ograniczeń należy wówczas użyć
+.BR "quotaoff -vo" .
+Można to zrobić na zamontowanym systemie plików.
+.TP
+.BR "Włączanie wymuszania ograniczeń kwot w dowolnym systemie plików XFS"
+Należy się upewnić za pomocą
+.BR "repquota -s" ,
+że włączone jest zliczanie kwot, a następnie wydać polecenie
+.BR "quotaon -v" .
+Można to zrobić na zamontowanym systemie plików.
+.SH PLIKI
+.PD 0
+.TP 20
+.BR aquota.user " i " aquota.group
+pliki kwot dyskowych umieszczone w głównym katalogu systemu plików (wersja 2
+kwot, systemy plików inne niż XFS)
+.TP 20
+.BR quota.user " i " quota.group
+pliki kwot dyskowych umieszczone w głównym katalogu systemu plików (wersja 1
+kwot, systemy plików inne niż XFS)
+.TP
+.BR /etc/fstab
+domyślne systemy plików
+.PD
+.SH "ZOBACZ TAKŻE"
+.BR quotactl (2),
+.BR fstab (5),
+.BR repquota (8)

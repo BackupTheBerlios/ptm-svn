@@ -1,0 +1,77 @@
+.\" {PTM/PB/0.1/18-05-1999/"zresetuj częstotliwość samopowtarzania i opóźnienia klawiatury"}
+.\" Copyright 1992, 1994 Rickard E. Faith (faith@cs.unc.edu)
+.\" Aktualizacja do wersji kbd-1.06 - listopad 2001
+.\"              Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" May be distributed under the GNU General Public License
+.\" Updated Wed Jun 22 21:09:43 1994, faith@cs.unc.edu
+.TH KBDRATE 8 "22 Czerwca 1994" "Linux 1.1.19" "Podręcznik programisty linuksowego"
+.SH NAZWA
+kbdrate \- ustawia częstość samopowtarzania i opóźnienia klawiatury
+.SH SKŁADNIA
+.B kbdrate
+.RB [ \-s "] [" \-r
+.IR częstość ]
+.RB [ \-d
+.IR opóźnienie ]
+.SH OPIS
+.B kbdrate
+służy do zmiany częstotliwości samopowtarzania i opóźnienia
+klawiatury. Opóźnienie jest ilością czasu, przez który klawisz musi być
+wciśnięty, nim zacznie się automatycznie powtarzać.
+
+Użycie 
+.B kbdrate
+bez opcji ustawi częstotliwość samopowtarzania na 10,9 znaków na sekundę
+(cps) a opóźnienie na 250 milisekund (ms) dla systemów opartych na
+procesorach Intela i M68K. Są to wartości domyślne IBM. Dla systemów
+SPARC-owych częstotliwość samopowtarzania zostanie ustawiona na 20 cps a
+opóźnienie na 200 ms.
+
+.SH OPCJE
+.TP
+.B \-s
+Cicho. Nie wypisuje żadnych komunikatów.
+.TP
+.BI \-r " częstość"
+Zmienia częstość samopowtarzania na
+.I częstość
+cps. Dla systemów Intel-owskich dopuszczalny zakres mieści się w zakresie od
+2.0 do 30.0 cps. Możliwe są tylko niektóre wartości, a program sam wybierze
+wartość najbliższą podanej. Możliwe wartości, w znakach na sekundę to:
+2.0, 2.1, 2.3, 2.5, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.6,
+5.0, 5.5, 6.0, 6.7, 7.5, 8.0, 8.6, 9.2, 10.0, 10.9, 12.0, 13.3, 15.0, 16.0,
+17.1, 18.5, 20.0, 21.8, 24.0, 26.7, 30.0.
+Dla systemów SPARC-owych dozwolone są wartości od 0 (brak powtarzania do
+50 cps.
+.TP
+.BI \-d " opóźnienie"
+Zmienia opóźnienie na
+.I opóźnienie
+milisekund. Dla systemów Intel-owskich dopuszczalny jest zakres od 250 do
+1000 ms ze skokiem co 250ms. Dla systemów SPARC-owych możliwe są wartości
+pomiędzy 10 ms a 1440 ms, z 10 ms skokiem.
+.TP
+.B \-V
+Wypisuje numer wersji i kończy pracę.
+.SH BŁĘDY
+Nie wszystkie klawiatury obsługują wszystkie częstości.
+.PP
+Nie wszystkie klawiatury mają takie samo odwzorowanie częstości.
+.PP
+Ustawianie częstości powtarzania nie działa na klawiaturze Gateway AnyKey.
+Jeli ktoś z tą klawiaturą wie jak ją programować, to niech wyśle
+wiadomość do util-linux@math.uio.no.
+.PP
+Wszystko bardzo silnie zależy od architektury.
+Obecnie
+.B kbdrate
+najpierw próbuje użyć ioctl-i KDKBDREP i KIOCSRATE.
+(Pierwszy zazwyczaj działa na maszynach m68k, a drugi na SPARC-owych.)
+Gdy użycie tych ioctl-i się nie powiedzie zakłada, że klawiatura korzysta
+z interfejs opartego na portach I/O jak w i386.
+.SH PLIKI
+.I /etc/rc.local
+.br
+.I /dev/port
+.br
+.I /dev/kbd

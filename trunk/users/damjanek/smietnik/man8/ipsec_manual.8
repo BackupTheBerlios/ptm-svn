@@ -1,0 +1,272 @@
+.TH IPSEC_MANUAL 8 "12 grudnia 1999"
+.\" RCSID $Id: ipsec_manual.8,v 1.2 2000/02/12 09:46:23 wojtek2 Exp $
+.\" {PTM/PW/0.1/02-15-2000/"podnoszenie i opuszczanie ręcznie kluczowanych połączeń IPSEC"}
+.\" Translation (c) 2000 Paweł Wilk
+.SH NAZWA
+ipsec manual \- podnoszenie i opuszczanie ręcznie kluczowanych połączeń IPSEC
+.SH SKŁADNIA
+.TP 6
+.B ipsec
+.B manual
+.RB [ \-\-show ]
+.RB [ \-\-showonly ]
+.RB [ \-\-other ]
+.br
+.RB [ \-\-iam
+.IB adres "@" interfejs \fR]\fP
+.RB [ \-\-config
+.IR plik_konf ]
+.br
+.I operacja połączenie
+.sp 0.5
+.TP 6
+.B ipsec
+.B manual
+.RI [ opcje ]
+.B \-\-union
+.I operacja
+.IR część ...
+.SH OPIS
+.I Manual
+manipuluje ręcznie kluczowanymi połączeniami FreeS/WAN IPSEC,
+powodując ich pojawianie się i znikanie,
+bazując na informacji z pliku konfiguracyjnego IPSEC.
+W przypadku normalnego użycia,
+.I połączenie
+jest nazwą połączenia wyspecyfikowanego w pliku konfiguracyjnym;
+.I operacja
+to
+.BR \-\-up ,
+.BR \-\-down ,
+.BR \-\-route ,
+lub
+.BR \-\-unroute .
+.I Manual
+tworzy ustawienia (\c
+.BR \-\-route
+lub
+.BR \-\-up )
+lub też
+porzuca (\c
+.BR \-\-down
+lub
+.BR \-\-unroute )
+za pomocą odpowiednich komend przekazywanych do wykonania powłoce.
+.PP
+Operacja
+.B \-\-up
+ustanawia połączenie, włączając w to ustawienie odpowiedniej
+trasy jeśli jest to konieczne.
+.PP
+Operacja
+.B \-\-route
+tylko ustawia pewną trasę dla połączenia.
+Dopóty, dopóki operacja
+.B \-\-up
+nie jest zakończona pakiety kierowane tą trasą będą gubione.
+.PP
+Operacja
+.B \-\-down
+porzuca wyszczególnione połączenie,
+.I wyłączając
+informacje o trasie (pozostawia trasę na miejscu).
+Dopóty, dopóki nie jest
+zakończona operacja
+.B \-\-unroute
+pakiety kierowane tą trasą są gubione.
+Pozwala to wytwarzać kolejne połączenie do tego samego miejsca
+przeznaczenia bez żadnego ``okna'', przez które pakiety mogą
+przechodzić bez szyfrowania.
+.PP
+Operacja
+.B \-\-unroute
+(i tylko operacja
+.B \-\-unroute
+) kasuje wszelkie trasy ustawione dla połączenia.
+.PP
+W użyciu
+.BR \-\-union ,
+każda
+.I część
+jest nazwą cząstkowej specyfikacji połączenia w pliku konfiguracyjnym,
+i właśnie unia tychże cząstkowych specyfikacji jest używana jako
+pełna specyfikacja połączenia.
+Efekt jest uzyskany z połączenia w całość poszczególnych, częściowych
+specyfikacji;
+ograniczenia wynikające z powielających się łańcuchów, itd.,
+mają oczywiście wpływ na rezultat.
+(Ten sam efekt może teraz być osiągnięty w bardziej 
+wyrafinowany sposób, przy użyciu parametru
+.B also
+w opisach połączeń;
+obejrzyj
+.IR ipsec.conf (5),
+gdzie znajdziesz więcej szczegółów.)
+.PP
+Opcja
+.B \-\-show
+włącza opcję
+.B \-x
+powłoki używanej do wykonywania poleceń,
+więc każda wykonywana komenda jest
+pokazywana.
+.PP
+Opcja
+.B \-\-showonly
+sprawia, że
+.I manual
+pokazuje na standardowym wyjściu
+komendy, które by uruchomił, ale
+nie czyni tego.
+.PP
+Opcja
+.B \-\-other
+sprawia, że
+.I manual
+udaje drugi koniec połączenia.
+Nie jest to zapewne użyteczne,
+chyba że w kombinacji z
+.BR \-\-showonly .
+.PP
+Opcja
+.B \-\-iam
+sprawia, że
+.I manual
+wierzy w to, że jest uruchomiony
+na hoście z podanym 
+.IR adresem 
+IP, a ponadto powinien użyć podanego
+.I interfejsu
+(zwykle wszystko to rozpoznaje automatycznie,
+bazując na informacjach o podniesionych
+interfejsach IPSEC i ich konfiguracji).
+.PP
+Opcja
+.B \-\-config
+określa niestandardową lokalizację pliku konfiguracyjnego
+FreeS/WAN IPSEC
+(domyślnie
+.IR /etc/ipsec.conf ).
+.PP
+W
+.IR ipsec.conf (5)
+znajdziesz szczegóły dotyczące pliku konfiguracyjnego.
+
+Abstrahując od parametrów podstawowych, które określają punkty
+końcowe i trasowanie połączenia
+(\fBleft\fP
+i
+.BR right ,
+plus możliwe
+.BR leftsubnet ,
+.BR leftnexthop ,
+.BR leftfirewall ,
+ich odpowiedniki
+.B right
+i być może
+.BR type ),
+połączenie typu non-\fBpassthrough\fP
+polecenia
+.I manual
+potrzebuje parametru
+.B spi
+lub
+.B spibase
+i innych parametrów określających szyfrowanie, autentykację, albo
+obydwie te rzeczy na raz, najprościej
+.BR esp ,
+.BR espenckey ,
+i
+.BR espauthkey .
+Umiarkowanie bezpieczne klucze mogą być pozyskane
+przy użyciu
+.IR ipsec_ranbits (8).
+Przy wytwarzaniu połączeń ręcznie kluczowanych
+jest bardzo zalecane by klucze były trzymane w oddzielnym
+pliku
+(z prawami
+.BR rw\-\-\-\-\-\-\- )
+używając mechanizmów
+.B include
+i
+.B also
+w pliku konfiguracyjnym (obejrzyj
+.IR ipsec.conf (5)).
+.PP
+Jeśli podano parametr
+.B spi
+to
+.I manual
+używa tej wartości jako numeru SPI dla wszystkich
+SAs (które są i tak w oddzielnych przestrzeniach numeracji).
+Jeśli zamiast tego podano parametr
+.B spibase
+to
+.I manual
+przypisuje wartości SPI zamieniając
+górną cyfrę tej wartości;
+SAs idący od lewej do prawej przyjmuje równe cyfry zaczynające się od 0,
+SAs idący od prawej do lewej przyjmuje cyfry nieparzyste zaczynające się od 1.
+.SH PLIKI
+.ta \w'/var/run/ipsec.nexthop'u+4n
+/etc/ipsec.conf	domyślny plik konfiguracyjny IPSEC
+.br
+/var/run/ipsec.info	informacja \fB%defaultroute\fP
+.SH ZOBACZ TAKŻE
+ipsec.conf(5), ipsec(8), ipsec_spi(8), ipsec_eroute(8), route(8)
+.SH HISTORIA
+Napisano dla projektu FreeS/WAN
+<http://www.xs4all.nl/~freeswan/>
+przez Henry'ego Spencera.
+.SH USTERKI
+Wykrywanie i raportowanie błędów wciąż nie jest takie
+jak być powinno.
+.PP
+Nie jest zbyt dobrze i do końca opracowana
+składnia podsieci, adresów, itd.
+w zwykłych interfejsach użytkownika FreeS/WAN.
+Dla wszystkich adresów musi być używana czteroskładnikowa notacja
+dziesiętno-kropkowa.
+Jednak
+.I jest
+wystarczająco sprawny by przekształcać maski sieci
+w postaci licznika bitów do formy dziesiętno-kropkowej.
+.PP
+Jeśli specyfikacja połączenia zmienia się między
+.B \-\-up
+i następującym później
+.BR \-\-down ,
+to może wystąpić zamęt.
+.PP
+Operacja
+.B \-\-up
+nie jest wystarczająco mądra, by sprawdzać czy połączenie nie jest czasami
+już ustanowione.
+.PP
+.I Manual
+nie jest wystarczająco mądry, by odrzucać niebezpieczne
+kombinacje algorytmów, np. szyfrowanie bez żadnej
+autentykacji.
+.PP
+Każda trasa nie-IPSEC do drugiego końca, która jest zastępowana
+przy użyciu operacji
+.B \-\-up
+lub
+.B \-\-route
+nie będzie ponownie ustanowiona przez
+.BR \-\-unroute .
+Czy to jest udogodnienie czy usterka zależy już od twojego
+punktu widzenia.
+.PP
+Opcjonalne parametry, które
+przesłaniają automatyczne, bazujące na
+.BR spibase
+przypisanie SPI, są całkiem rozpierniczonym kawałkiem kodu
+i możliwe są błędy.
+.PP
+Obsługa ``Road warrior''
+i innych specjalnych form ustawień
+wymagających negocjacji pomiędzy dwiema
+bramami bezpieczeństwa niestety nie może
+być dokonana przez
+.IR manual .

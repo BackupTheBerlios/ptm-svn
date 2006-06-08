@@ -1,0 +1,260 @@
+'\" t
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\" Copyright (c) 2002 by Michael Kerrisk (mtk16@ext.canterbury.ac.nz)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Sat Jul 24 17:34:08 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Jan  7 01:41:27 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sun Apr 14 12:02:29 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sat Nov 13 16:28:23 1999 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified 10 Apr 2002, by Michael Kerrisk (mtk16@ext.canterbury.ac.nz)
+.\" Modified  7 Jun 2002, by Michael Kerrisk (mtk16@ext.canterbury.ac.nz)
+.\"     Added information on real-time signals
+.\" Modified 13 Jun 2002, by Michael Kerrisk (mtk16@ext.canterbury.ac.nz)
+.\"    Noted that SIGSTKFLT is in fact unused
+.\"
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" updated to man-pages-1.55 - April 2003
+.\"                             Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH SIGNAL 7  2002-06-13 "Linux 2.4.18" "Podręcznik programisty Linuksa"
+.SH NAZWA
+signal \- lista dostępnych sygnałów
+.SH OPIS
+Linux wspiera zarówno rzeczywiste sygnały POSIX-owe (zwane dalej "sygnałami
+standardowymi"), jak i sygnały POSIX-owe czasu rzeczywistego.
+.SS "Sygnały standardowe"
+Linux wspiera wymienione poniżej sygnały standardowe. Numery niektórych
+sygnałów zależą od architektury, co pokazano w kolumnie "Wartość".
+(Jeżeli podano trzy wartości, to zazwyczaj pierwsza obowiązuje dla
+architektur alpha i sparc, środkowa dla i386, ppc i sh, a ostatnia dla mips.
+Znak \- oznacza, że sygnał dla danej architektury nie występuje.)
+
+Wpisy w kolumnie "Akcja" tabeli określają domyślną akcję dla danego sygnału,
+jako jedną z następujących:
+.IP Term
+Domyślną akcją jest przerwanie procesu.
+.IP Ign
+Domyślną akcją jest zignorowanie sygnału.
+.IP Core
+Domyślną akcją jest przerwanie procesu i zapisanie obrazu pamięci (core).
+.IP Stop
+Domyślną akcją jest zatrzymanie procesu.
+.PP
+Najpierw sygnały opisane w pierwotnym standardzie POSIX.1.
+.sp
+.PP
+.TS
+l c c l
+____
+lB c c l.
+Sygnał	Wartość	Akcja	Komentarz
+SIGHUP	\01	Term	Zawieszenie wykryte na terminalu kontrolującym
+			lub śmierć procesu kontrolującego
+SIGINT	\02	Term	Przerwanie nakazane z klawiatury
+SIGQUIT	\03	Core	Wyjście nakazane z klawiatury
+SIGILL	\04	Core	Nielegalna instrukcja
+SIGABRT	\06	Core	Sygnał abort od \fIabort\fP(3)
+SIGFPE	\08	Core	Wyjątek zmiennoprzecinkowy
+SIGKILL	\09	Term	Sygnał Kill
+SIGSEGV	11	Core	Nieprawidłowa referencja pamięciowa
+SIGPIPE	13	Term	Uszkodzony potok: zapis do potoku bez odbiorców
+SIGALRM	14	Term	Sygnał timera od \fIalarm\fP(1)
+SIGTERM	15	Term	Sygnał zakończenia pracy
+SIGUSR1	30,10,16	Term	Sygnał 1 użytkownika
+SIGUSR2	31,12,17	Term	Sygnał 2 użytkownika
+SIGCHLD	20,17,18	Ign	Potomek zatrzymał się, lub zakończył pracę
+SIGCONT	19,18,25		Kontynuuj, jeśli zatrzymał się
+SIGSTOP	17,19,23	Stop	Zatrzymaj proces
+SIGTSTP	18,20,24	Stop	Zatrzymanie napisane z tty
+SIGTTIN	21,21,26	Stop	wejście tty dla procesu w tle
+SIGTTOU	22,22,27	Stop	wyjście tty dla procesu w tle
+.TE
+
+Sygnałów
+.B SIGKILL
+oraz
+.B SIGSTOP
+nie można przechwycić, zablokować ani zignorować.
+
+Następnie sygnały nie występujące w standardzie POSIX.1, ale opisane w SUSv2
+lub w SUSv3 / POSIX 1003.1-2001.
+.sp
+.PP
+.TS
+l c c l
+____
+lB c c l.
+Sygnał	Wartość	Akcja	Komentarz
+SIGBUS	10,7,10	Core	Błąd szyny (nieprawidłowy dostęp do pamięci)
+SIGPOLL		Term	Zdarzenie odpytywalne (Sys V). Synonim SIGIO
+SIGPROF	27,27,29	Term	Przeterminowanie zegara profilowego
+SIGSYS	12,\-,12	Core	Niewłaściwy argument funkcji (SVID)
+SIGTRAP	5	Core	Śledzenie/pułapka kontrolna
+SIGURG	16,23,21	Ign	Pilny warunek na gnieździe (BSD 4.2)
+SIGVTALRM	26,26,28	Term	Wirtualny zegar alarmu (BSD 4.2)
+SIGXCPU	24,24,30	Core	Przekroczone ograniczenie czasu CPU (BSD 4.2)
+SIGXFSZ	25,25,31	Core	Przekroczone ograniczenie rozmiaru pliku (BSD 4.2)
+.TE
+
+Do wersji 2.2 Linuksa (włącznie) domyślne zachowanie dla sygnałów
+.BR SIGSYS ", " SIGXCPU ", " SIGXFSZ
+oraz (na architekturach innych niż SPARC i MIPS)
+.B SIGBUS
+polegało na przerwaniu procesu (bez zrzutu pamięci).
+(W niektórych innych Uniksach domyślne zachowanie dla
+.BR SIGXCPU " i " SIGXFSZ
+polega na przerwaniu procesu bez zrzutu pamięci.)
+Linux 2.4 jest zgodny ze wymaganiami standardu POSIX 1003.1-2001
+w zakresie przerywania procesu ze zrzutem pamięci.
+
+A teraz różne inne sygnały.
+.sp
+.PP
+.TS
+l c c l
+____
+lB c c l.
+Sygnał	Wartość	Akcja	Komentarz
+SIGIOT	6	Core	pułapka IOT. Synonim SIGABRT
+SIGEMT	7,\-,7	Term
+SIGSTKFLT	\-,16,\-	Term	Błąd stosu koprocesora (nieużywany)
+SIGIO	23,29,22	Term	I/O teraz możliwe (BSD 4.2)
+SIGCLD	\-,\-,18	Ign	Synonim SIGCHLD
+SIGPWR	29,30,19	Term	Błąd zasilania (System V)
+SIGINFO	29,\-,\-		Synonim SIGPWR
+SIGLOST	\-,\-,\-	Term	Utracono blokadę pliku
+SIGWINCH	28,28,20	Ign	Sygnał zmiany rozmiarów okna (BSD 4.3, Sun)
+SIGUNUSED	\-,31,\-	Term	Nie użyty sygnał (wystąpi SIGSYS)
+.TE
+
+(Sygnał 29 oznacza
+.B SIGINFO
+/
+.B SIGPWR
+na architekturze alpha, lecz
+.B SIGLOST
+na architekturze sparc.)
+
+.B SIGEMT
+nie jest wymieniony w POSIX 1003.1-2001, lecz pomimo to pojawia się w
+większości innych Uniksów. Domyślną akcją dla tego sygnału jest zazwyczaj
+przerwanie procesu ze zrzutem pamięci.
+
+.B SIGPWR
+(nie wymieniony w POSIX 1003.1-2001) jest zazwyczaj domyślnie ignorowany
+w tych Uniksach, w których występuje.
+
+.B SIGIO
+(nie wymieniony w POSIX 1003.1-2001) jest domyślnie ignorowanyw niektórych
+innych Uniksach.
+.SS "Sygnały czasu rzeczywistego"
+Linux wspiera sygnały czasu rzeczywistego zdefiniowane pierwotnie w
+rozszerzeniu dla czasu rzeczywistego POSIX.4 (a obecnie zawarte w POSIX
+1003.1-2001). Linux wspiera 32 sygnały czasu rzeczywistego, o numerach od
+.RB ( SIGRTMIN )
+do 63
+.RB ( SIGRTMAX ).
+(Programy powinny zawsze odwoływać się do sygnałów czasu rzeczywistego używając
+notacji
+.BR SIGRTMIN +n,
+gdyż zakres numerów sygnałów czasu rzeczywistego różni się pomiędzy Uniksami.)
+.PP
+W odróżnieniu od sygnałów standardowych, sygnały czasu rzeczywistego nie
+posiadają predefiniowanego znaczenia:
+można wykorzystywać cały zestaw sygnałów czasu rzeczywistego do celów
+określonych w aplikacji.
+(Należy jednak zauważyć, że implementacja LinuxThreads korzysta z trzech
+pierwszych sygnałów czasu rzeczywistego.)
+.PP
+Domyślą akcją na nieobsłużony sygnał czasu rzeczywistego jest przerwanie
+procesu, który go otrzymał.
+.PP
+Sygnały czasu rzeczywistego są rozpoznawane w następujący sposób:
+.IP 1. 4
+Można kolejkować wiele egzemplarzy sygnału czasu rzeczywistego.
+Dla odróżnienia, jeśli w czasie gdy standardowy sygnał jest blokowany zostanie
+doęczonych wiele egzemplarzy tego sygnału, tylko jeden egzemplarzy trafia do
+kolejki.
+.IP 2. 4
+Jeśli sygnał wysłano korzystając z
+.BR sigqueue (2),
+można wysłać wraz z tym sygnałem wartość towarzyszącą (całkowitą lub
+wskaźnik). Jeśli proces otrzymujący ustanawia funkcję obsługi dla tego
+sygnału za pomocą znacznika
+.B SA_SIGACTION
+funkcji
+.BR sigaction (2),
+to otrzymuje towarzyszącą mu daną za pośrednictwem pola
+.I si_value
+struktury
+.I siginfo_t
+przekazanej jako drugi argument funkcji obsługi.
+Ponadto, pola
+.I si_pid
+oraz
+.I si_uid
+tej struktury mogą służyć do otrzymania PID oraz rzeczywistego ID użytkownika
+procesu wusyłającego sygnał.
+.IP 3. 4
+sygnały czasu rzeczywistego są doręczane w zagwarantowanej kolejności.
+Sygnały czasu rzeczywistego jednego rodzaju są doręczane w takiej kolejności,
+w jakiej zostały wysłane.
+Jeśli do procesu zostaną wysłane różne sygnały czasu rzeczywistego, będą one
+doręczone począwszy od sygnału o najniższym numerze.
+(Tzn., sygnały o niskich numerach mają najwyższy priorytet.)
+.PP
+POSIX nie określa, które z sygnałów powinny zostać doręczone jako pierwsze w
+sytuacji, gdy obsłużenia wymagają zarówno sygnały standardowe, jak i sygnały
+czasu rzeczywistego. Linux, podobnie do innych implementacji, daje w tym
+przypadku pierwszeństwo sygnałom standardowym.
+.PP
+Zgodnie z POSIX, implementacja powinna zazwalać na kolejkowanie do procesu co
+najmniej _POSIX_SIGQUEUE_MAX (32) sygnałów czasu rzeczywistego.
+Jednakże, Linux zamiast określać ogdaniczenie dla procesu, wymusza
+ograniczenie ogólnosystemowe liczby kolejkowanych do wszystkich procesów
+sygnałów czasu rzeczywistego.
+Ograniczenie to możbna zobaczyć a także (przy odpowiednich uprawnieniach)
+zmienić za pośrednictwem pliku
+.IR /proc/sys/kernel/rtsig-max .
+Podobnie, za pośrednictwem pliku
+.I /proc/sys/kernel/rtsig-nr
+można dowiedzieć się ile sygnałów czasu rzeczywistego jest aktualnie w
+kolejce.
+.SH "ZGODNE Z"
+POSIX.1
+.SH BŁĘDY
+.B SIGIO
+i
+.B SIGLOST
+mają tę samą wartość.
+Ten drugi jest zakomentowany w źródłach kernela, lecz proces tworzenia
+niektórych aplikacji wciąż zakłada, że sygnał 29 to
+.BR SIGLOST .
+.SH "ZOBACZ TAKŻE"
+.BR kill (1),
+.BR kill (2),
+.BR setitimer (2),
+.BR sigaction (2),
+.BR signal (2),
+.BR sigprocmask (2),
+.BR sigqueue (2)

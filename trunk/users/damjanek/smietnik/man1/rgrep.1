@@ -1,0 +1,232 @@
+.\" PTM/WK/2001-VI
+.\"===========================================================================
+.\" rgrep ­ a recursive highlighting grep program, this manpage was writen by
+.\" "Boris D. Beletsky" <borik@isracom.co.il> copyright(c) 1996
+.\" This manpage may be freely distrebuted as part of GNU Debian Linux
+.\"===========================================================================
+.TH RGREP 1 "październik 1996" Debian "Podręczniki użytkownika"
+.SH NAZWA
+rgrep \- rekurencyjny, podświetlający program grep
+.SH SKŁADNIA
+.B rgrep 
+.RI [ opcje ]
+.I wzorzec
+.RI [ plik ]...
+.SH OPIS
+.BR rgrep ,
+w przeciwieństwie do
+.BR grep (1) 
+i 
+.BR egrep (1),
+potrafi rekurencyjnie zagłębiać się w podkatalogi. Tradycyjna metoda
+wykonywania tego rodzaju wyszukiwania w systemach uniksowych wykorzystuje
+polecenie
+.BR find (1) 
+w połączeniu z
+.BR grep (1). 
+Skutkuje to jednak bardzo kiepską wydajnością.
+.SH PARAMETRY WIERSZA POLECEŃ
+.LP
+.B -?
+.RS
+Dodatkowa pomoc (na niektórych systemach należy użyć
+.BR '-?' ,
+by uniknąć interpretacji pytajnika przez powłokę).
+.RE
+.B -c
+.RS
+Zlicza dopasowania.
+.RE
+.B -h
+.RS
+Podświetla dopasowania (przyjmuje się terminal zgodny z ANSI).
+.RE
+.B -H
+.RS
+Wypisuje dopasowanie, a nie całą linijkę je zawierającą.
+.RE
+.B -i
+.RS
+Ignoruje wielkości liter.
+.RE
+.B -l
+.RS 
+Podaje tylko nazwy plików.
+.RE
+.B -n
+.RS
+Wypisuje numer linii, w której występuje dopasowanie.
+.RE
+.B -F
+.RS
+Podąża za dowiązaniami.
+.RE
+.B -r
+.RS
+Rekurencyjnie przegląda drzewo katalogów.
+.RE
+.B -N
+.RS
+Wyszukuje BEZ rekurencji.
+.RE
+.BI -R " wzorzec "
+.RS
+Jak \fB-r\fP, z wyjątkiem tego, że sprawdzane są tylko pliki pasujące
+do \fIwzorca\fP.
+.RE
+.B -v
+.RS
+Wypisuje tylko te linie, które NIE pasują do zadanego wzorca.
+.RE
+.BI -x " ext"
+.RS
+Sprawdza tylko pliki o rozszerzeniu \fIext\fP.
+.RE
+.B -D
+.RS
+Wypisuje wszystkie katalogi, jakie będą przeszukiwane. Ta opcja służy tylko
+do celów diagnostycznych. Jeśli jest użyta, to nie są przeglądane żadne pliki.
+.RE
+.BI -W " dług"
+.RS
+Linie mają długość \fIdług\fP znaków (nie są zakończone znakiem nowej linii).
+.RE
+.LP
+.SH ROZPOZNAWANE WYRAŻENIA REGULARNE:
+.LP
+.B .
+.RS
+dopasowuje dowolny znak oprócz znaku nowej linii
+.RE
+.B \ed
+.RS
+dopasowuje dowolną cyfrę
+.RE
+.B \ee
+.RS
+dopasowuje znak ESC
+.RE
+.B *
+.RS
+dopasowuje zero lub więcej wystąpień poprzedzającego wyrażenia regularnego
+.RE
+.B +
+.RS
+dopasowuje co najmniej jedno wystąpienie poprzedzającego wyrażenia
+regularnego
+.RE
+.B ?
+.RS
+dopasowuje zero wystąpień lub jedno wystąpienie poprzedzającego wyrażenia
+regularnego
+.RE
+.B ^
+.RS
+dopasowuje początek linii
+.RE
+.B $
+.RS
+dopasowuje koniec linii
+.RE
+.BI [ ... ]            
+.RS
+dopasowuje dowolny pojedynczy znak spośród umieszczonych w nawiasach.
+Na przykład, 
+.B [-02468] 
+dopasowuje
+.RB ' - ' 
+lub dowolną cyfrę parzystą, a
+.B [-0-9a-z] 
+dopasowuje
+.RB ' - ' ,
+dowolną cyfrę od
+.B 0 
+do 
+.B 9
+lub literę od
+.B a 
+do
+.BR z .
+.RE
+.LP
+.BI \e{ ... \e}
+.LP
+.BI \e( ... \e)
+.LP
+.BI "\e1, \e2, " ... ", \e9"
+.RS
+dopasowuje podłańcuch poprzednio dopasowany n-tym ujętym w nawiasy
+podwyrażeniem
+.BI \e( ... \e)
+wyrażenia regularnego.
+.br
+Na przykład,
+.B \\\\([\ \\\\t][a-zA-Z]+\\\\)\\\\1[\ \\\\t]
+dopasowuje każde słowo kolejno powtórzone.
+.RE
+.LP
+.SH PRZYKŁADY
+.TP 3
+o
+Szukanie we wszystkich plikach z rozszerzeniem 'c' w bieżącym katalogu
+i jego podkatalogach dopasowań napisu 'int ' na początku linii,
+z wypisywaniem pasujących linii wraz z ich numerami (dwie metody):
+.RS
+.RS 4
+.PP
+.B rgrep -n -R '*.c' '^int ' .
+.br
+.B rgrep -n -x c '^int ' .
+.RE
+.RE
+.TP 3
+o
+Podświetlanie wszystkich wystąpień powtórzonych słów w pliku 'strona.tex':
+.RS
+.B rgrep -h 
+.B '[\ \\\\t]\\\\([a-zA-Z]+\\\\)[\ \\\\t]+\\\\1[\ \\\\t\\\\n]' strona.tex
+.br
+.B rgrep -h '^\\\\([a-zA-Z]+\\\\)[\ \\\\t]+\\\\1[\ \\\\t\\\\n]' strona.tex
+.PP
+Zauważ, że ta wersja programu rgrep wymaga w tym przypadku dwu przebiegów.
+.RE
+.TP 3
+o
+Przeglądanie, w katalogu /usr/src/linux i niżej, wszystkich plików OPRÓCZ
+mających rozszerzenie '.o' lub '.a' w poszukiwaniu łańcucha 'mouse', bez
+uwzględniania wielkości liter:
+.RS
+.RS 4
+.PP
+.B rgrep -i -R '*.[^ao]' mouse /usr/src/linux
+.RE
+.RE
+.TP 3
+o
+Przeszukiwanie w pliku 'plik.fits', o stałej długości rekordów, słowa
+kluczowego EXTNAME:
+.RS
+.RS 4
+.PP
+.B rgrep -W80 ^EXTNAME plik.fits
+.PP
+.RE
+Zauważ, że wyrażenie regularne
+.RB ' ^[A-Z]+ ' 
+wypisze wszystkie nagłówki formatu FITS.
+.br
+[tłum.: FITS, Flexible Image Transport System - opracowany przez NASA format
+do międzyplatformowej wymiany danych astronomicznych, głównie grafiki, ale
+również tablic czy macierzy.]
+.RE
+.SH AUTOR
+.LP
+.RS
+.I \
+"""John E. Davis""" <davis@space.mit.edu>
+.RE
+.PP
+Tę stronę podręcznika systemowego przełożył na troff
+.PP
+"Boris D. Beletsky"
+<borik@isracom.co.il>

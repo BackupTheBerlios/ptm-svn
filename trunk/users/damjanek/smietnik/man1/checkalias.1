@@ -1,0 +1,40 @@
+.\" {PTM/PB/0.1/28-09-1998/"sprawdź czy alias nie jest już zdefiniowany"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.if n \{\
+.	ds ct "
+.\}
+.if t \{\
+.	ds ct \\(co
+.\}
+.TH CHECKALIAS 1L "Elm, wersja  2.4" "USENET Community Trust"
+.SH NAZWA
+checkalias - sprawdź, czy alias nie jest już zdefiniowany.
+.SH SKŁADNIA
+.B checkalias
+alias, alias, ...
+.SH OPIS
+.I Checkalias
+sprawdza wpierw plik użytkownika, a potem systemowy plik aliasowy, próbując
+znaleźć podany alias. Jeśli znajdzie, wartość aliasu zostanie
+wydrukowania. W przeciwym wypadku wygenerowany zostanie błąd.
+.P
+Zauważ: Jest to w rzeczywistości jednolinijkowy skrypt powłoki;
+.nf
+
+	elm -c $*
+.fi
+.SH AUTOR
+Grupa Rozwijająca Elm
+.SH ZOBACZ TAKŻE
+elm(1L), elmalias(1L), newalias(1L), mail(1), mailx(1)
+.SH BŁĘDY
+Zauważ, że priorytet dla aliasów ma plik użytkownika, nie systemowy. Znaczy
+to, że użytkownik może przesłonić alias przez zdefiniowanie własnego. Nie
+powinno to być problemem, lecz jest czymś, o czym administrator powinien
+pamiętać gdy tworzy systemowy plik aliasów.
+.SH BŁĘDY ZGŁASZAĆ DO
+Syd Weinstein	elm@DSI.COM	(dsinc!elm)
+.SH KOPIOWANIE
+\fB\*(ct\fRCopyright 1988-1992 by The USENET Community Trust
+.br
+Wyprowadzone z Elma 2.0, \fB\*(ct\fR Copyright 1986, 1987 by Dave Taylor

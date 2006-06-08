@@ -1,0 +1,18 @@
+# Lista polskich stron man dla pakietu
+# iproute2
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+ip.8		man8/ip.8
+tc-cbq.8	man8/tc-cbq.8
+tc-htb.8	man8/tc-htb.8
+tc-pbfifo.8	man8/tc-pbfifo.8
+tc-pfifo_fast.8	man8/tc-pfifo_fast.8
+tc-prio.8	man8/tc-prio.8
+tc-red.8	man8/tc-red.8
+tc-sfq.8	man8/tc-sfq.8
+tc-tbf.8	man8/tc-tbf.8
+tc.8		man8/tc.8
+#
+# koniec listy

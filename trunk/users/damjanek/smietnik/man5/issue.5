@@ -1,0 +1,43 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sun Jul 25 11:06:22 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Mon Oct 21 17:47:19 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Translation (c) 1998 "Wiktor J. Lukasik" <wiktorlu@technologist.com>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Mar 2002,
+.\"              manpages 1.48
+.\"
+.TH CZĘŚĆ 5 1993-07-24 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+issue \- plik identyfikujący system, wyświetlany przed zalogowaniem
+.SH OPIS
+Plik \fB/etc/issue\fP jest plikiem tekstowym, zawierającym komunikat lub
+tekst identyfikacyjny systemu, który ma być wypisany przed tekstem zachęty
+do zalogowania. Jeżeli jest on obsługiwany przez
+.BR getty (1),
+to może zawierać różne sekwencje typu \fB@\fP\fIznak\fP i \fB\e\fP\fIznak\fP.
+.BR getty (1).
+.SH PLIKI
+/etc/issue
+.SH "ZOBACZ TAKŻE"
+.BR getty (1),
+.BR motd (5)

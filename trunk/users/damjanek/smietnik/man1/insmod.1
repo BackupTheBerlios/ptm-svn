@@ -1,0 +1,101 @@
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory.
+.\" $Id: insmod.1,v 1.3 2000/09/30 17:08:37 wojtek2 Exp $
+.\"
+.\" {PTM/MM/0.1/18-11-1998/"insmod.1 - instaluje ładowalny moduł jądra"
+.TH INSMOD 1 "26 Dec 1996" Linux "Linux Module Support"
+.SH NAZWA
+insmod \- instaluje ładowalny moduł jądra
+.SH SKŁADNIA
+.B insmod
+[ \-fkmpsxXv ] [ \-o nazwa_modułu ] plik_modułu [ symbol=wartość ... ]
+.SH OPIS
+.B Insmod
+instaluje ładowalny moduł w pracującym jądrze.
+.PP
+.B Insmod
+próbuje dołączyć moduł do uruchomionego jądra systemu przez
+rozwiązanie wszystkich symboli z tabeli symboli jądra.
+.PP
+Jeśli nazwa pliku modułu, podana jest bez rozszerzenia,
+.B insmod
+będzie szukał modułu w kilku standardowych katalogach. Zmienna środowiskowa
+MODPATH może zostać użyta aby zmienić zachowanie standardowe.
+.SS OPCJE
+.TP
+.I \-f
+Usiłuje załadować moduł nawet jeśli wersja uruchomionego jądra i jądra dla
+którego moduł został skompilowany nie zgadza się.
+.TP
+.I \-k
+Ustawia atrybut auto-usuwania na danym module. 
+\fBkerneld\fP(8) usunie każdy moduł z tą flagą, jeśli nie będzie on używany
+przez pewien okres czasu
+\(em zazwyczaj jedną minutę.
+.TP
+.I \-m
+Wyświetla mapę ładowanych symboli, która może pomóc w odszukaniu usterki w przypadku 
+wystąpienia błędu jądra (kernel panic).
+.TP
+.I \-o
+Podanie dokładnej nazwy modułu, zamiast zmuszenia programu dochodzenia tej
+nazwy z nazwy pliku z modułem.
+.TP
+.I \-p
+Sprawdź czy moduł może być załadowany bez kłopotów. Sprawdzenie to dokonuje
+znalezienia modułu w ścieżce wyszukiwań modułów, sprawdzanie numerów wersji
+i analizę symboli. 
+.TP
+.I \-s
+Przekaż całe wyjście do \fBsyslog\fP(3) zamiast na terminal.
+.TP
+.I \-v
+Opcja włączająca wyświetlanie dużej ilości informacji.
+.TP
+.I "\-X, -x"
+Eksportuj lub nie, kolejno wszystkie symbole zewnętrzne modułów.
+Standardowo symbole są eksportowane. Ta opcja daje jakikolwiek wynik jeśli 
+moduł sam wyraźnie nie eksportuje jego własnej tabeli symbolów i dlatego
+jest unikana.
+.SS "PARAMETRY MODUŁÓW"
+Niektóre z modułów akceptują podawanie im parametrów w czasie ładowania w
+celu dostosowania ich do określonych warunków.
+Te parametry to najczęściej adresy portów I/O i numery przerwań, które
+zmieniają się w zależności od sprzętu na jakim uruchamiany jest moduł, a
+które nie mogą być określone automagiczne.
+.PP
+W modułach zbudowanych dla jąder seri 2.0, jakikolwiek symbol będący
+wskaźnikiem do typu całkowitego lub znakowego
+może być potraktowany jako parametr i zmodyfikowany. Poczynając od
+jąder 2.1, symbole są wyraźnie zaznaczane jako parametry aby tylko określone
+parametry mogły być modyfikowane. Co więcej, podawana jest informacja o typie
+parametru aby przy ładowaniu można było ją wyegzekwować.
+.PP
+W przypadku wartości całkowitych, wszystkie wartości mogą zostać podane
+dziesiętnie, ósemkowo lub szenastkowo np.: 17, 021 lub 0x11.
+Tablice wartości podajemy elementami oddzielonymi przecinkami; nie wszystkie 
+elementy muszą być podane i w tym przypadku po prostu pomijamy je.
+.PP
+W modułach serii 2.0, wartości które nie zaczynają się od cyfry traktowane
+są jako łańcuchy. Poczynając od jąder 2.1, informacja o typie parametru
+wskazuje jak ma być interpretowany typ podanego parametru.
+Jeśli wartość zaczyna się od cudzysłowia, łańcuch jest
+interpretowany jak w C, sekwencje escapujące.
+Zauważ, że podając parametry z promptu powłoki,
+znaki cudzysłowia mogą być potrzebne aby uniknąć interpretacji przez powłokę.
+.SH ZOBACZ TAKŻE
+\fBrmmod\fP(1), \fBmodprobe\fP(1), \fBdepmod\fP(1), \fBlsmod\fP(1),
+\fBksyms\fP(1), \fBmodules\fP(2), \fBgenksyms\fP(8), \fBkerneld\fP(8).
+.SH HISTORIA
+Wsparcie dla modułów zapoczątkowane przez Anonima
+.br
+Pierwsza wersja Linuksowa przygotowana przez Bas Laarhoven <bas@vimec.nl>
+.br
+Wersja 0.99.14 przygotowana przez Jon Tombs <jon@gtex02.us.es>
+.br
+Rozbudowana przez Bjorn Ekwall <bj0rn@blox.se>
+.br
+Originial ELF help from Eric Youngdale <eric@aib.com>
+.br
+Aktualizowna do 2.1.17 przez Richard Henderson <rth@tamu.edu>

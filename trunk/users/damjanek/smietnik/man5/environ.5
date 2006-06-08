@@ -1,0 +1,230 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"   Fri Apr  2 11:32:09 MET DST 1993
+.\" and Andries Brouwer (aeb@cwi.nl), Fri Feb 14 21:47:50 1997.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sun Jul 25 10:45:30 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Jul 21 21:25:26 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Mon Oct 21 17:47:19 1996 by Eric S. Raymond (esr@thyrsus.com)
+.\" Modified Wed Aug 27 20:28:58 1997 by Nicolás Lichtmaier (nick@debian.org)
+.\" Modified Mon Sep 21 00:00:26 1998 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Wed Jan 24 06:37:24 2001 by Eric S. Raymond (esr@thyrsus.com)
+.\" Modified Thu Dec 13 23:53:27 2001 by Martin Schulze <joey@infodrom.org>
+.\"
+.\" Polish Translation nov.1996 piotr.pogorzelski@ippt.gov.pl
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Mar 2002,
+.\"              manpages 1.48
+.\"
+.TH ENVIRON 5 2001-12-14 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+environ \- środowisko użytkownika
+.SH SKŁADNIA
+.ad l
+.nf
+.B extern char **environ;
+.br
+.fi
+.ad b
+.SH OPIS
+Zmienna
+.I environ
+wskazuje na tablicę łańcuchów zwaną ,,środowiskiem''.
+(Zmienna ta musi być zdefiniowana w programie użytkownika, jednakże jest ona
+zadeklarowana w pliku nagłówkowym
+.IR unistd.h ,
+w przypadku gdy plik ten pochodzi z libc4 lub libc5 oraz w przypadku gdy
+pochodzi on z glibc a zdefiniowano
+.BR _GNU_SOURCE .
+Ta tablica łańcuchów udostępniana jest procesowi przez funkcję
+.BR exec (3)
+podczas jego uruchamiania. Zgodnie z konwencją łańcuchy znaków mają
+postać ,,\fInazwa\fP\fB=\fP\fIwartość\fP''. Typowe przykłady to: 
+.TP
+.B USER
+Nazwa zalogowanego użytkownika (wykorzystywana przez niektóre programy
+wywodzące się z BSD).
+.TP
+.B LOGNAME
+Nazwa zalogowanego użytkownika (wykorzystywana przez niektóre programy
+wywodzące się z Systemu V).
+.TP
+.B HOME
+Katalog domowy użytkownika, zmienna ustawiana przez program
+.BR login (1)
+na podstawie informacji z pliku
+.BR passwd (5).
+.TP
+.B LANG
+Nazwa lokalizacji jaka ma być stosowana dla wszystkich kategorii lokalizacji,
+jeśli lokalizacja nie została narzucona przez zmienną \fBLC_ALL\fP lub inne
+bardziej szczegółowe zmienne, jak \fBLC_COLLATE\fP, \fBLC_CTYPE\fP,
+\fBLC_MESSAGES\fP, \fBLC_MONETARY\fP, \fBLC_NUMERIC\fP, \fBLC_TIME\fP, por.
+.BR locale (5).
+.TP
+.B PATH
+Ciąg katalogów które \fBsh\fP(1) oraz wiele innych programów przeszukuje
+w poszukiwaniu plików, których nazwa nie zawiera pełnej ścieżki dostępu.
+Poszczególne katalogi są rozdzielane znakiem ,,\fB:\fP''.
+(Podobnie, \fBCDPATH\fP jest używane przez niektóre powłoki do poszukiwania
+katalogu docelowego dla polecenia zmiany katalogu, a \fBMANPATH\fP jest
+używane przez \fBman\fP(1) do poszukiwania stron podręcznika, itd.)
+.TP
+.B PWD
+Aktualny katalog roboczy. Ustawiane przez niektóre powłoki.
+.TP
+.B SHELL
+Nazwa powłoki zgłoszeniowej użytkownika.
+.TP
+.B TERM
+Rodzaj terminala dla którego system ma przygotowywać wyjście.
+.TP
+.B PAGER
+Wybrane przez użytkownika narzędzie do wyświetlania plików tekstowych.
+.TP
+.BR EDITOR / VISUAL
+Wybrane przez użytkownika narzędzie do edycji plików tekstowych.
+.TP
+.B BROWSER
+Wybrane przez użytkownika narzędzie do sprawdzania adresów URL. Jest to ciąg
+rozdzielonych dwukropkami poleceń wywołujących przegladarki. Zobacz
+http://www.tuxedo.org/~esr/BROWSER/ .
+.PP
+Dalsze nazwy mogą być umieszczane w środowisku za pomocą polecenia 
+\fBexport\fP i ,,nazwa=wartość'' w przypadku stosowania powłoki typu
+.BR sh (1)
+lub polecenia \fBsetenv\fP w przypadku powłoki typu
+.BR csh (1).
+W środowisku mogą być również umieszczane argumenty w momencie wykonywania
+funkcji
+.BR exec (3).
+Program napisany w C może manipulować środowiskiem za pomocą funkcji
+.BR getenv (3),
+.BR putenv (3),
+.BR setenv (3)
+i
+.BR unsetenv (3).
+
+Trzeba zauważyć, że obecność lub wartości pewnych zmiennych środowiska mają
+wpływ na zachowanie wielu programów i funkcji bibliotecznych.
+Przypadkowy zbiór:
+.LP
+Zmienne
+.BR LANG ", " LANGUAGE ", " NLSPATH ", " LOCPATH ", " LC_ALL ", " LC_MESSAGES ", "
+itd. wpływają na obsługę lokalizacji, por.
+.BR locale (5).
+.LP
+.B TMPDIR
+wpływa na prefiks ścieżki w nazwach tworzonych przez \fBtmpnam(3)\fP i inne
+funkcje, katalog tymczasowy wykorzystywany przez \fBsort\fP(1) i inne
+programy, itd.
+.LP
+.BR LD_LIBRARY_PATH ", " LD_PRELOAD
+i inne zienne LD_* wpływają na zachowanie programu ładującego/konsolidatora
+bibliotek dynamicznych.
+.LP
+.B POSIXLY_CORRECT
+powoduje, że niektóre programy i funkcje biblioteczne przestrzegają zaleceń
+POSIX.
+.LP
+Na zachowanie \fBmalloc\fP(3) wpływają zmienne MALLOC_*.
+.LP
+Zmienna
+.B HOSTALIASES
+określa nazwę pliku zawierającego aliasy, z których ma korzystać
+\fBgethostbyname\fP(3).
+.LP
+.BR TZ " i " TZDIR
+podają informacje o strefie czasowej wykorzystywaną przez
+.BR tzset (3)
+i przez funkcje takie jak
+.IR ctime (),
+.IR localtime (),
+.IR mktime (),
+.IR strftime ().
+Zobacz także
+.BR tzselect (1).
+.LP
+.B TERMCAP
+podaje informacje o tym, jak adresować określony terminal (lub podaje nazwę
+pliku zawierającego te informacje).
+.LP
+.BR COLUMNS " i " LINES
+mówią aplikacjom o rozmiarze okna, ewentualnie narzucając wartości inne niż
+rzeczywiste rozmiary.
+.LP
+.BR PRINTER " lub " LPDEST
+mogą określać drukarkę, która powinna być używana. Zobacz
+.BR lpr (1).
+.LP
+Itd.
+.SH BŁĘDY
+Oczywiści istnieje tu ryzyko naruszenia bezpieczeństwa. Wiele poleceń
+systemowych zostało oszukanych w celu wyrządzenia szkody przez użytkownika,
+który nadał nietypowe wartości zmiennym
+.BR IFS " lub " LD_LIBRARY_PATH .
+
+Istnieje również ryzyko skażenia przestrzeni nazw.
+Programy takie, jak
+.I make
+i
+.I autoconf
+pozwalają na nadpisywanie domyślnych nazw programów narzędziowych poprzez
+środowisko zawierające zmienne o nazwach podobnych do nazw tych programów,
+ale składających sie wyłącznie z wielkich liter.
+Zatem użuwa się
+.B CC
+Do określenia pożądanego kompilatora C (i podobnie
+.BR MAKE ,
+.BR AR ,
+.BR AS ,
+.BR FC ,
+.BR LD ,
+.BR LEX ,
+.BR RM ,
+.BR YACC ,
+itd.).
+Jednakże, w niektórych tradycyjnych zastosowaniach takie zmienne środowiskowe
+podają opcje dla programów zamiast ścieżki.
+Zatem mamy
+.BR MORE ,
+.B LESS
+i
+.BR GZIP .
+Takie zastosowanie jest traktowane jako błędne i należy go unikać w nowych
+programach. Autorzy programu
+.I gzip
+powinni rozważyć zmianę nazwy swojej opcji na
+.BR GZIP_OPT .
+.SH "ZOBACZ TAKŻE"
+.BR login (1),
+.BR sh (1),
+.BR bash (1),
+.BR csh (1),
+.BR tcsh (1),
+.BR execve (2),
+.BR exec (3),
+.BR getenv (3),
+.BR putenv (3),
+.BR setenv (3),
+.BR clearenv (3),
+.BR unsetenv (3),
+.BR locale (5)

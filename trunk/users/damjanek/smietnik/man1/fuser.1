@@ -1,0 +1,148 @@
+.\" 1999 PTM Przemek Borys
+.\" Translation update: Robert Luberda <robert@debian.org>, May 2003, psmisc 21.2
+.\" $Id: fuser.1,v 1.3 2003/07/28 08:57:13 robert Exp $
+.\"
+.TH FUSER 1 "1 października 1999" "Linux" "Komendy użytkownika"
+.SH NAZWA
+fuser \- podaje procesy korzystające z plików lub soketów
+.SH SKŁADNIA
+.ad l
+.B fuser
+.RB [ \-a | \-s ]
+.RB [ \-4 | \-6 ]
+.RB [ \-n\ \fIprzestrzeń_nazw ]
+.RB [ \-\fIsygnał\fB ]
+.RB [ \-kimuv ]
+.I nazwa_pliku ...
+.br
+.B fuser
+.RB \-l
+.br
+.B fuser
+.RB \-V
+.ad b
+.SH OPIS
+.B fuser
+wyświetla PID-y procesów, które korzystają z podanych plików lub systemów
+plików. W domyślnym trybie wyświetlania po każdej nazwie pliku występuje
+litera, oznaczająca rodzaj dostępu:
+.RS
+.IP \fBc\fP
+bieżący katalog.
+.IP \fBe\fP
+uruchomiony plik wykonywalny.
+.IP \fBf\fP
+otwarty plik. \fBf\fP jest pomijane w domyślnym trybie wyświetlania.
+.IP \fBr\fP
+katalog główny.
+.IP \fBm\fP
+mmap-owany plik lub biblioteka dzielona.
+.RE
+.LP
+\fBfuser\fP zwraca niezerowy kod, jeśli nie można było dostać się do żadnego
+z plików lub po błędzie krytycznym. Jeśli udał się dostęp do choćby jednego
+pliku, \fBfuser\fP zwraca zero.
+.PP
+Aby móc wyszukać procesy używające soketów TCP lub UDP, trzeba za pomocą
+opcji \fB-n\fP wybrać odpowiednią przestrzeń nazw. Domyślnie, \fBfuser\fP
+będzie szukał zarówno soketów IPv6, jak i soketów IPv4. Aby to zmienić, należy
+użyć opcji \fB-4\fP i \fB-6\fP. Soket(y) może (mogą) być określony(-ne)
+przez podanie portów lokalnego i zdalnego oraz zdalnego adresu. Wszystkie
+pola są nieobowiązkowe, trzeba jednak podać przecinki poprzedzające opuszczone
+pola:
+
+.RB \fB[\fP\fIport_lokalny\fP\fB][\fP,\fB[\fP\fIzdalny_komp\fP\fB][\fP,\fB[\fIport_zdalny\fP\fB]]]
+
+Adresy IP oraz numery portów mogą być podane albo w postaci symbolicznej,
+albo jako numery.
+.SH OPCJE
+.IP \fB\-a\fP
+Pokazuje wszystkie pliki, podane w linii komend. Domyślnie pokazywane są tylko
+pliki, do których dostęp uzyskał przynajmniej jeden proces.
+.IP \fB\-k\fP
+Ubija procesy korzystające z pliku. Jeśli nie jest użyta opcja
+\fB-\fP\fIsygnał\fP, wysyłany jest SIGKILL. Proces \fBfuser\fP nigdy sam siebie
+nie ubije, lecz może ubić inne procesy \fBfuser\fP. Przed próbą ubicia
+efektywny ID użytkownika procesu jest ustawiany na rzeczywisty.
+.IP \fB\-i\fP
+Przed ubiciem procesu, prosi użytkownika o potwierdzenie. Opcja ta jest
+ignorowana, jeżeli nie podano opcji \fB-k\fP.
+.IP \fB\-l\fP
+Wyświetla wszystkie znane nazwy sygnałów.
+.IP \fB\-m\ \fInazwa_pliku\fP
+Podaje plik na zamontowanym systemie plików lub
+zamontowane urządzenie blokowe. Wszystkie korzystające z niego procesy
+zostaną wymienione. Jeśli podany plik jest katalogiem, to zmieniany jest
+automatycznie na \fInazwę_pliku\fP/. , aby używać dowolnego systemu plików,
+który mógłby być zamontowany w tym katalogu.
+.IP \fB\-n\ \fIprzestrzeń_nazw\fP
+Wybiera inną przestrzeń nazw. Dostępne są następujące przestrzenie nazw:
+\fBfile\fP (nazwy plików, ustawienie domyślne), \fBudp\fP (lokalne porty UDP)
+i \fBtcp\fP (lokalne porty TCP). Porty mogą być podane w postaci nazw symbolicznych
+albo jako numery. Jeżeli nie spowoduje to dwuznaczności, można użyć skróconej
+notacji \fInazwa\fB/\fIprzestrzeń_nazw\fP (np. \fInazwa\fB/\fIprotokół\fP).
+.IP \fB\-s\fP
+Ciche działanie.  \fB\-u\fP i \fB\-v\fP są w tym trybie ignorowane.
+\fB\-a\fP nie może być użyta z \fB\-s\fP.
+.IP \fB\-\fIsygnał\fP
+zamiast SIGKILL używaj określonego sygnału. Sygnały można podawać według
+nazw (np. \fB\-HUP\fP) lub przez liczbę
+(np. \fB\-1\fP).
+.IP \fB\-u\fP
+Do każdego PID-a dodaj nazwę użytkownika, który jest jego właścicielem.
+.IP \fB\-v\fP
+Tryb gadatliwy. Procesy są pokazywane w stylu \fBps\fP(1). Pola PID, USER i
+COMMAND są podobne do tych w \fBps\fP.  ACCESS pokazuje sposób dostępu do pliku.
+Jeżeli plik jest używany przez jądro systemu (np. w wypadku punktu montowania,
+pliku wymiany itp.), wartością tego pola jest \fBkernel\fP.
+.IP \fB\-V\fP
+Wyświetla informację o wersji.
+.IP \fB\-4\fP
+Wyszukuje tylko sokety IPv4. Ta opcja nie może być używana łącznie z opcją
+\fB-6\fP, a używanie jej ma efekt tylko z przestrzeniami nazw tcp i udp.
+.IP \fB\-6\fP
+Wyszukuje tylko sokety IPv6. Ta opcja nie może być używana łącznie z opcją
+\fB-4\fP, a używanie jej ma efekt tylko z przestrzeniami nazw tcp i udp.
+.IP \fB\-\fP
+Resetuj wszystkie opcje i ustaw sygnał z powrotem na SIGKILL.
+.SH PLIKI
+.nf
+/proc	miejsce znajdowania się systemu plików proc
+.fi
+.SH PRZYKŁADY
+\fBfuser -km /home\fP ubija wszystkie procesy, które  w jakikolwiek
+sposób korzystają z systemu plików /home.
+.LP
+\fBif fuser -s /dev/ttyS1; then :; else \fIcoś\fP; fi\fR wywołuje
+\fIcoś\fP, jeśli żaden inny proces nie używa /dev/ttyS1.
+.LP
+\fBfuser telnet/tcp\fP pokazuje wszystkie procesy nasłuchujące
+na (lokalnym) porcie TELNET.
+.SH OGRANICZENIA
+Procesy, korzystające z tych samych plików lub systemu plików kilkukrotnie,
+są wyświetlane tylko raz.
+.PP
+\fBfuser\fP jest w stanie uzyskać tylko częściowe dane, chyba że pracujesz z
+odpowiednimi uprawnieniami. W wyniku tego, otwarte pliki, należące do innych
+użytkowników mogą nie być wymienione, a pliki wykonywalne mogą być
+sklasyfikowane jako tylko zmapowane.
+.PP
+Instalowanie \fBfuser\fP z SUID root zapobiegłoby problemom z częściowymi
+danymi, lecz mogłoby być niepożądane z przyczyn bezpieczeństwa.
+.PP
+Przestrzenie nazw \fBudp\fP i \fBtcp\fP oraz sokety domeny UNIX nie
+mogą być wyszukiwane, jeżeli wersja jądra jest mniejsza niż 1.3.78.
+.PP
+Obecnie \fBudp\fP i \fBtcp\fP działają z IPv6 i IPv4, ale jako adresy są
+wyświetlane tylko adresy IPv4.
+.PP
+Informacje o tym, że to jądro systemu używa jakiegoś pliku, są wyświetlane
+tylko wtedy, gdy podano opcję \fB-v\fP.
+.PP
+Opcja \fB-k\fP dotyczy tylko procesów. Jeżeli dany system plików używany
+jest przez jądro systemu, to \fBfuser\fP wypisze ostrzeżenia, ale nie
+podejmie żadnej akcji.
+.SH AUTOR
+Werner Almesberger <Werner.Almesberger@epfl.ch>
+.SH "ZOBACZ TAKŻE"
+kill(1), killall(1), lsof(8), ps(1), kill(2)

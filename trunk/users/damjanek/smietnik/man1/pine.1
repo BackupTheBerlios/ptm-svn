@@ -1,0 +1,324 @@
+.\" {PTM/LK/0.1/30-01-1999/"program do czytania poczty"}
+.\" Tłumaczenie: 30-01-1999 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH pine 1 "Wersja 4.04"
+.SH NAZWA
+pine \- program do czytania grup dyskusyjnych i poczty elektronicznej
+.SH SKŁADNIA
+
+.B pine
+[
+.I opcje
+] [
+.I adres
+,
+.I adres
+] 
+
+.B pinef
+[
+.I opcje
+] [
+.I adres
+,
+.I adres
+]
+.SH OPIS
+
+Pine jest pełnoekranowym programem do czytania wiadomości. W swojej
+domyślnej konfiguracji Pine prezentuje celowo ograniczony zestaw opcji
+przeznaczony dla początkującego użytkownika. Istnieje jednak wciąż rosnąca
+lista opcjonalnych możliwości przeznaczonych dla zaawansowanych użytkowników.
+.I pinef 
+jest wersją programu Pine używającym klawiszy funkcyjnych zamiast
+jednoliterowych poleceń.
+W podstawowym zestawie poleceń znajdują się następujące opcje:
+.IP
+View (przeglądanie), Save (zapis), Export (zapis do pliku), 
+Delete (usuwanie), Print (drukowanie), Reply (odpowiadanie) i 
+Forward (dalsze przesyłanie wiadomości).
+.IP
+Tworzenie wiadomości w prostym edytorze (Pico) z automatycznym łamaniem
+linii i kontrolą pisowni. Edycja wiadomości może być odkładana do
+późniejszej kontynuacji.
+.IP
+Pełnoekranowy wybór i zarządzanie folderami.
+.IP
+Książka adresowa, w której znajdują się często używane lub po prostu długie
+adresy. Można definiować własne listy dystrybucyjne. Adresy mogą być
+pobierane z otrzymywanych wiadomości bez potrzeby odpowiadania na nie.
+.IP
+Sprawdzanie, czy otrzymano nowe wiadomości jest wykonywane co 2.5 minuty
+oraz po pewnych poleceniach, np. odświeżaniu ekranu (Ctrl-L).
+.IP
+Kontekstowa pomoc.
+.PP
+Pine obsługuje MIME (Multipurpose Internet Mail Extensions), internetowy
+standard reprezentacji wieloczęściowych i multimedialnych danych w
+wiadomościach. Pine pozwala na zapis obiektów MIME do plików i w pewnych
+sytuacjach może uruchomić odpowiedni program do oglądania takich wiadomości.
+Pine używa systemowego pliku konfiguracyjnego 
+.I mailcap 
+by uruchomić właściwy program do obsługi poszczególnych obiektów MIME.
+Wbudowany program do tworzenia wiadomości nie posiada właściwości
+multimedialnych, lecz dowolny typ danych - włącznie z multimedialnymi - 
+może zostać umieszczony w wiadomości jako załącznik. Pozwala to posiadaczom
+programów pocztowych zgodnych z MIME na wymianę sformatowanych dokumentów,
+arkuszy kalkulacyjnych, plików graficznych etc. przez pocztę elektroniczną.
+.PP
+Do obsługi lokalnych i zdalnych folderów pocztowych Pine używa interfejsu
+.I c-client
+(c-client messaging API).
+Ta biblioteka pozwala na wykonywanie wielu niskopoziomowych funkcji obsługi
+poczty, włączając w to funkcje obsługi wielu formatów pocztowych, protokołu
+IMAP (Internet Message
+Access Protocol) oraz NNTP (Network News Transport Protocol). Poczta
+wychodząca jest zazwyczaj przekazywana programowi 
+.IR sendmail ,
+ale może być wysyłana bezpośrednio przez SMTP (Simple Mail Transfer Protocol).
+.SH OPCJE
+.if n .ta 2.8i
+.if t .ta 2.1i
+Pine rozpoznaje następujące opcje linii poleceń:
+.IP \fIadres\fR 20
+Wysłanie wiadomości na podany adres e-mailowy. Pine uruchomi się w trybie tworzenia
+wiadomości.
+.IP \fB-a\fR 20
+Specjalny anonimowy tryb działania dla UWIN* (* patrz niżej)
+.IP \fB-c\ \fInumer_kontekstu\fR 20
+mumer_kontekstu jest numerem odnoszącym się do kolekcji folderów, do którego
+powinien zostać zastosowany argument
+.I -f
+linii poleceń. Domyślnie opcja
+.I -f
+jest stosowana do pierwszej zdefiniowanej kolekcji folderów.
+.IP \fB-d\ \fIpoziom_diagnostyki\fR 20
+Wypisywanie informacji diagnostycznych na poziomie 
+.I poziom_diagnostyki
+(0-9) do bieżącego pliku
+.IR .pine-debug[1-4] .
+Wartość 0 wyłącza informacje diagnostyczne i wstrzymuje tworzenie pliku
+.IR .pine-debug .
+
+.IP \fB-d\ \fIklucz[=wartość]\fR 20
+Szczegółowy opis tworzenia informacji diagnostycznych; "flush"
+powoduje zapisywanie plików diagnostycznych bez buforowania, "timestamp"
+dołącza do każdego komunikatu czas jego wygenerowania, "imap=n" (gdzie n
+przybiera wartości od 0 do 4) powoduje dołączanie telemetrii (ang.
+telemetry) IMAP na podanym poziomie, "numfiles=n" (gdzie n przybiera
+wartość od 0 do 31) opisuje ilość tworzonych plików diagnostycznych i
+wreszcie "verbose=n" (gdzie n przybiera wartości od 0 do 9) jest odwrotnym
+progiem poziomu generowania ogólnych wiadomości o działaniu programu.
+.IP \fB-f\ \fIfolder\fR 20
+Otwarcie folderu (w pierwszej zdefiniowanej kolekcji folderów) zamiast INBOX.
+.IP \fB-F\ \fIplik\fR 20
+Otwarcie podanego pliku tekstowego w przeglądarce programu Pine.
+.IP \fB-h\fR 20
+Pomoc: lista rozpoznawanych opcji linii poleceń.
+.IP \fB-i\fR 20
+Otwarcie indeksu folderów po uruchomieniu programu.
+.IP \fB-I\ \fIklawisze\fR 20
+Lista klawiszy (rozdzielona przecinkami), których naciśnięcie Pine powinien
+zasymulować zaraz po uruchomieniu.
+.IP \fB-k\fR 20
+Wywoływanie poleceń klawiszami funkcyjnymi. Identyczne działanie ma
+uruchomienie programu pinef.
+.IP \fB-n\ \fInumer\fR 20
+Uruchomienie programu z automatycznym otworzeniem wiadomości o podanym
+numerze.
+.IP \fB-nr\fR 20
+Specjalny tryb dla UWIN*
+.IP \fB-o\fR 20
+Otwarcie pierwszego folderu w trybie tylko do odczytu.
+.IP \fB-p\ \fIplik_konfiguracyjny\fR 20
+Użycie podanego pliku w charakterze pliku konfiguracyjnego zamiast
+domyślnego .pinerc.
+.IP \fB-P\ \fIplik_konfiguracyjny\fR 20
+Użycie podanego pliku w charakterze pliku konfiguracyjnego zamiast
+domyślnego pliku systemowego
+.IR pine.conf .
+.IP \fB-r\fR 20
+Uruchomienie w trybie demonstracyjnym o ograniczonej funkcjonalności. 
+.I Pine
+będzie wysyłał pocztę tylko do siebie samego, a funkcje typu save i export
+nie będą działały.
+.IP \fB-z\fR 20
+Udostępnienie możliwości przeniesienia programu Pine do tła klawiszem ^Z lub
+sygnałem SIGTSTP.
+.IP \fB-conf\fR 20
+Utworzenie wzorcowego pliku jako szablonu dla systemowego pliku
+konfiguracyjnego
+.I pine.conf
+na standardowym wyjściu. Jest to inny plik niż indywidualny dla każdego
+użytkownika 
+.IR .pinerc .
+.IP \fB-create_lu\ \fIksiążka_adresowa\ \fIporządek_sortowania\fR 20
+Utworzenie dodatkowego indeksu dla książki adresowej o podanej nazwie i
+posortowanie jej w podanym porządku. Możliwe wartości dla porządku
+sortowania, to
+.IR "dont-sort (brak sortowania)" ,
+.IR "nickname (skrót nazwy adresata)" ,
+.IR "fullname (pełna nazwa adresata)" ,
+.IR "nickname-with-lists-last (skrót nazwy, ale listy na końcu)" ,
+or
+.IR "fullname-with-lists-last (pełna nazwa, ale listy na końcu)" .
+
+Jest to użyteczne do tworzenia globalnych lub dzielonych książek adresowych.
+Po utworzeniu w ten sposób indeksu, plik powinien zostać przeniesiony lub
+skopiowany w taki sposób, by zmianie nie uległ czas modyfikacji. Czas
+modyfikacji książki adresowej jest zachowywany w nowotworzonym pliku z
+indeksem i przy każdym uruchomieniu programu sprawdzany. Jeżeli czas
+modyfikacji książki adresowej ulegnie zmianie, pine utworzy indeks od nowa.
+Innymi słowy, po utworzeniu indeksu za pomocą opisywanej opcji, nie kopiuj
+książki adresowej do jej docelowego położenia w taki sposób, który zmieni
+jej czas modyfikacji.
+.IP \fB-pinerc\ \fIplik\fR 20
+Zapisanie bieżącej konfiguracji programu do podanego pliku.
+.IP \fB-sort\ \fIporządek_sortowania\fR
+Posortowanie ekranu FOLDER INDEX w jednej z następujących kolejności:
+.I arrival (czas nadejścia), subject (temat), from (pole from), date (data),
+.I size (rozmiar), orderedsubj (pseudo wątek)
+lub
+.I reverse (odwrotna kolejność). Arrival
+jest domyślnym porządkiem sortowania. Porządek OrderedSubj symuluje
+sortowanie pod kątem wątków. Każdy porządek sortowania może zostać odwrócony
+przez dodanie do niego 
+.IR /reverse .
+
+.I Reverse
+bez dodatkowych opcji działa jak
+.IR arrival/reverse .
+.IP \fI-option\=\fIwartość\fR 20
+Nadanie opcji konfiguracyjnej podanej wartości. Np. 
+-signature-file=sig1 lub -feature-list=signature-at-bottom
+(Uwaga: wartości opcji feature-list są addytywne)
+.PP
+* UWIN = University of Washington Information Navigator
+.SH KONFIGURACJA
+
+Istnieje kilka poziomów konfiguracji programu Pine. Wartości konfiguracyjne
+na danym poziomie mają wyższy priorytet niż te wartości na niższych poziomach.
+W porządku rosnącego priorytetu:
+
+ o wbudowane wartości domyślne.
+.br
+ o plik
+.I pine.conf
+dla całego systemu.
+.br
+ o osobisty plik
+.I .pinerc 
+każdego użytkownika (wartości w nim można ustawiać za pomocą menu
+Setup/Config).
+.br
+ o opcje linii poleceń
+.br
+ o plik
+.I pine.conf.fixed
+dla całego systemu.
+
+Istnieje wyjątek od zasady, w myśl której wartości konfiguracyjne są
+zastępowane przez wartości tych samych opcji o wyższym priorytecie: 
+wartości nadawane zmiennej feature-list są addytywne, lecz mogą być
+zanegowane dołączeniem "no-" na początku danej wartości dla tej zmiennej.
+Pine w systemie Unix używa następujących zmiennych środowiskowych.
+
+  TERM
+.br
+  DISPLAY     (określa, czy Pine może wyświetlać załączniki typu IMAGE).
+.br
+  SHELL       (domyślną wartością jest /bin/sh, jeżeli ta zmienna nie jest
+ustawiona).
+.br
+  MAILCAPS    (lista ścieżek do plików mailcap rozdzielonych średnikami).
+  
+.SH PLIKI
+.if n .ta 2.8i
+.if t .ta 2.1i
+
+/var/spool/mail/xxxx	Domyślny folder dla przychodzącej poczty.
+.br
+~/mail	Domyślny katalog dla folderów.
+.br
+~/.addressbook	Domyślna nazwa pliku z książką adresową.
+.br
+~/.addressbook.lu	Domyślna nazwa pliku z indeksem książki adresowej.
+.br
+~/.pine-debug[1-4]	Pliki, do których zapisywane są komunikaty diagnostyczne.
+.br
+~/.pinerc	Osobisty plik konfiguracyjny.
+.br
+~/.newsrc	Opis stanu subskrybowanych grup dyskusyjnych.
+.br
+~/.signature	Domyślna nazwa pliku z sygnaturą.
+.br
+~/.mailcap	Osobisty plik mailcap (man mailcap(4))
+.br
+~/.mime.types	Osobiste rozszerzenie rozpoznawanych typów MIME
+.br
+/etc/mailcap	Systemowy plik mailcap (man mailcap(4))
+.br
+/etc/mime.types	Systemowe opis rozpoznawanych typów MIME
+.br
+/usr/lib/pine.info	Lokalny wskaźnik do administratora systemu
+.br
+/usr/lib/pine.conf	Systemowy plik konfiguracyjny
+.br
+/usr/lib/pine.conf.fixed	 Plik konfiguracyjny, którego ustawienia nie mogą być zmieniane
+.br
+/tmp/.\\var\\spool\\mail\\xxxx	Pliki blokujące dla każdego folderu
+.br
+~/.pine-interrupted-mail	Wiadomość, której tworzenie zostało przerwane
+.br
+~/mail/postponed-msgs	Wiadomość, której tworzenie zostało odłożone na później
+.br
+~/mail/sent-mail	Archiwum wysłanych wiadomości
+.br
+~/mail/saved-messages	Domyślny folder na zapisywane wiadomości
+.SH "ZOBACZ TAKŻE"
+
+pico(1), binmail(1), aliases(5), mailaddr(7), sendmail(8), spell(1), imapd(8)
+
+.br
+Grupa dyskusyjna:  comp.mail.pine
+.br
+Pine Information Center:  http://www.washington.edu/pine
+.br
+Dystrybucja źródłowa:  ftp://ftp.cac.washington.edu/pine/pine.tar.Z
+.br
+Pine Technical Notes (informacje techniczne), zawarte w dystrybucji źródłowej
+.br
+Interfejs (API) biblioteki przesyłania wiadomościC-Client, zawarty w
+dytrybucji źródłowej.
+.SH PODZIĘKOWANIA
+.na 
+.nf
+
+Zespół rozwoju programu Pine (część UW Office 
+of Computing & Communications) na Uniwersytecie w Waszyngtonie
+(University of Washington):
+
+.\" celowo nie przetłumaczone
+
+ Project Leader:           Mike Seibel.
+ Principal authors:        Mike Seibel, Steve Hubert, Laurence Lundblade.
+ C-Client library & IMAPd: Mark Crispin.
+ Pico, the PIne COmposer:  Mike Seibel.
+ Bug triage, user support: David Miller.
+ Port integration:         David Miller.
+ Documentation:            David Miller, Stefan Kramer, Kathryn Sharpe.
+ PC-Pine for DOS:          Mike Seibel.
+ PC-Pine for Windows:      Tom Unger.
+ Project oversight:        Terry Gray.
+ Principal Patrons:        Ron Johnson, Mike Bryant.
+ Additional support:       NorthWestNet.
+ Initial Pine code base:   Elm, by Dave Taylor & USENET Community Trust.
+ Initial Pico code base:   MicroEmacs 3.6, by Dave G. Conroy.
+ User Interface design:    Inspired by UCLA's "Ben" mailer for MVS.
+ Suggestions/fixes/ports:  Folks from all over!
+
+.\"Copyright 1989-1996 by the University of Washington.
+.\"Pine and Pico are trademarks of the University of Washington.
+Copyright 1989-1996 by the University of Washington.
+Pine i Pico są zastrzeżonymi znakami handlowymi Uniwersytetu w Waszyngtonie
+
+98.05.06

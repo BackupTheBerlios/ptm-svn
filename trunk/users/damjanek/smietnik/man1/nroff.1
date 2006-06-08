@@ -1,0 +1,86 @@
+.\" {PTM/PB/0.1/09-05-1999/"emulacja komend nroff przy użyciu groff"}
+.ig \"-*- nroff -*-
+Copyright (C) 1989-1995 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be included in
+translations approved by the Free Software Foundation instead of in
+the original English.
+..
+.TH NROFF 1 "26 czerwca 1995" "Groff wersja 1.10"
+.SH NAZWA
+nroff \- emulacja komend nroff przy użyciu groffa
+.SH SKŁADNIA
+.B nroff
+[
+.B \-h
+]
+[
+.B \-i
+]
+[
+.BI \-m nazwa
+]
+[
+.BI \-n num
+]
+[
+.BI \-o lista
+]
+[
+.BI \-r cn
+]
+[
+.BI \-T nazwa
+]
+[
+.I plik\|.\|.\|.
+]
+.SH OPIS
+Skrypt
+.B nroff
+emuluje komendę
+.B nroff
+przy użyciu groffa.
+Opcja 
+.B \-T
+z argumetem innym niż
+.B ascii
+i
+.B latin1
+jest ignorowana.
+Opcja
+.B \-h
+jest równoważna opcji
+.B \-h
+.B grotty
+Opcje
+.BR \-i ,
+.BR \-n ,
+.BR \-m ,
+.B \-o
+i
+.B \-r
+są opisane w
+.BR troff (1).
+Dodatkowo
+.B nroff
+po cichu ignoruje opcje
+.BR \-e ,
+.B \-q
+lub
+.BR \-s .
+.SH "ZOBACZ TAKŻE"
+.BR groff (1),
+.BR troff (1),
+.BR grotty (1)

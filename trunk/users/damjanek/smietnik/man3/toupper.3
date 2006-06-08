@@ -1,0 +1,72 @@
+.\" Tłumaczenie wersji man-pages 1.39 - wrzesień 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Sat Jul 24 17:45:39 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 2000-02-13 by Nicolás Lichtmaier <nick@debian.org>
+.\" --------
+.TH TOUPPER 3 1993-04-04 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+toupper, tolower \- przekształca literę na wielką lub małą
+.SH SKŁADNIA
+.nf
+.B #include <ctype.h>
+.sp
+.BI "int toupper(int " "c" );
+.nl
+.BI "int tolower(int " "c" );
+.fi
+.SH OPIS
+.B toupper()
+przekształca literę
+.I c
+na wielką literę, o ile to możliwe.
+.PP
+.B tolower()
+przekształca literę
+.I c
+na małą literę, o ile to możliwe.
+.PP
+Jeśli
+.I c
+nie jest wartością unsigned char lub ma wartość EOF, zachowanie tych funkcji
+jest nieokreślone.
+.SH "WARTOŚĆ ZWRACANA"
+Zwracana jest wartość przekształconej litery, lub
+.I c
+gdy przekształcenie nie jest możliwe.
+.SH "ZGODNE Z"
+ANSI C, BSD 4.3
+.SH BŁĘDY
+Co dokładnie stanowi wielkie i małe litery zależy od ustawień bieżącego
+locale. Na przykład domyślne locale
+.B """C"""
+nie zna umlautów, więc nie jest wykonywane ich przekształcenie.
+.PP
+W niektórych nieangielskich locale występują małe litery bez odpowiadających im
+liter wielkich; niemieckie ostre s jest jednym z przykładów.
+.SH "ZOBACZ TAKŻE"
+.BR isalpha (3),
+.BR setlocale (3),
+.BR locale (7)

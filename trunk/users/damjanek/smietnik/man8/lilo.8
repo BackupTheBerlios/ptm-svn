@@ -1,0 +1,419 @@
+.\" {PTM/AB/0.1/25-07-1999/"lilo - instalacja boot loadera"}
+.\" translated by Adam Byrtek <alpha@irc.pl>
+.\" Updated 2002 Grzegorz Goławski <grzegol@pld.org.pl>
+.\" ------------
+.\" @(#)lilo.8 1.0 950728 aeb
+.\" This page is based on the lilo docs, which carry the following
+.\" COPYING condition:
+.\" 
+.\" LILO program code, documentation and auxiliary programs are
+.\" Copyright 1992-1994 Werner Almesberger.
+.\" All rights reserved.
+.\" 
+.\" Redistribution and use in source and binary forms of parts of or the
+.\" whole original or derived work are permitted provided that the
+.\" original work is properly attributed to the author. The name of the
+.\" author may not be used to endorse or promote products derived from
+.\" this software without specific prior written permission. This work
+.\" is provided "as is" and without any express or implied warranties.
+.\" 
+.\" Original version, Andries Brouwer (aeb@cwi.nl), 950728
+.\" Added t directive, as Daniel Quinlan asked, 950824
+.\" 
+.\" ------------
+.TH "LILO" "8" "09 Czerwiec 2002" "" ""
+.SH "NAZWA"
+lilo \- instalacja boot loadera
+.SH "SKŁADNIA"
+Podstawowe zastosowanie:
+.LP 
+.B " /sbin/lilo"
+\- instaluj boot loadera
+.LP 
+Dodatkowe zastosowania:
+.LP 
+.B " /sbin/lilo \-q"
+\- wyświetl mapę
+.br 
+.B " /sbin/lilo \-T"
+\- powiedz więcej o podanym zagadnieniu
+.br 
+.B " /sbin/lilo \-R"
+\- ustaw domyślną linię poleceń przy starcie systemu
+.br 
+.B " /sbin/lilo \-A"
+\- aktywuj/pokaż aktywną partycję
+.br 
+.B " /sbin/lilo \-E"
+\- edytuj nagłówek lub aktualizuj plik mapy bitowej
+.br 
+.B " /sbin/lilo \-M "
+\- zapisz Master Boot Record na urządzeniu
+.br 
+.B " /sbin/lilo \-I"
+\- wyświetl ścieżkę do bieżącego jądra
+.br 
+.B " /sbin/lilo {\-u|\-U}"
+\- deinstalacja lilo
+.SH "OPIS"
+.LP 
+.B lilo
+instaluje boot loadera który zostanie uaktywniony przy następnym uruchomieniu
+komputera. 
+.B lilo 
+posiada wiele opcji.
+.LP 
+.TP 
+.BI "\-\^A " "główne\-urządzenie [ N ]"
+Wyświetl aktywną partycję na urządzeniu
+.IR główne\-urządzenie ;
+np. "/dev/hda". Gdy podany zostanie numer od 1 do 4, to na głównym urządzeniu
+aktywowana będzie podana partycja.
+.TP 
+.BI "\-\^b " bootdev
+Ustala urządzenie startowe (boot device); przykładowo, gdzie boot loader
+będzie zainstalowany.
+"\-b /dev/hda" ustala Master Boot Record; "\-b /dev/sdb5" ustala pierwszą
+rozszerzoną partycję na drugim dysku SCSI.
+.TP 
+.BI "\-\^B " plik\-mapy\-bitowej
+Ustala plik mapy bitowej z graficznym ekranem wykorzystywanym w czasie
+uruchamiania systemu.
+.TP 
+.B "\-\^c"
+Włączenie kompresji mapy. Ta opcja połączy żądania odczytu z sąsiednich
+sektorów. Przyspiesza to startowanie (szczególnie z dyskietki).
+.TP 
+.BI "\-\^C " plik\-konfiguracyjny
+.B lilo
+odczytuje informacje o plikach do mapowania z pliku konfiguracyjnego,
+domyślnie
+.IR "/etc/lilo.conf" .
+Ta opcja wyznacza inny plik konfiguracyjny.
+.TP 
+.BI "\-\^d " opóźnienie
+Ustala opóźnienie w dziesiętnych częściach sekundy (20 = 2 sek.) przed
+automatycznym uruchomieniem pierwszego obrazu. To daje czas na przerwanie
+automatycznego procesu startu klawiszem Shift, Alt, Ctrl, ScrollLock lub
+CapsLock. Po takim przerwaniu wyświetlona zostanie zachęta 'boot:'. Ta flaga
+zostanie nadpisana, gdy w pliku konfiguracyjnym znajduje się
+.IR prompt .
+.TP 
+.BI "\-\^D " etykieta
+Użycie jądra o podanej etykiecie, zamiast pierwszego na liście, jako
+domyślnego jądra do wystartowania.
+.TP 
+.BI "\-\^E " nazwa_pliku.ext 
+Gdy \fB.ext\fP to \fB.bmp\fP, zakłada się, że plik ten jest plikiem
+graficznym do użycia w konfiguracyjnej dyrektywie "bitmap=". Uruchom
+interaktywny edytor aby utworzyć lub zmienić kolor/informacje o położeniu nagłówku LILO pliku z mapą bitową.
+
+Gdy \fB.ext\fP to \fB.dat\fP, zakłada się, że plik ten jest plikiem
+konfiguracyjnym z podanymi parametrami graficznej mapy bitowej, które
+zamieniane są na nagłówek LILO w pliku z mapą bitową o takiej samej nazwie.
+.TP 
+.BI "\-\^f " tablica\-dysku
+Ustala plik z parametrami geometrii dysku (domyślnym jest
+.IR /etc/disktab ).
+.TP 
+.BI "\-\^F"
+Unieważnia sprawdzanie sektora startowego dla systemów plików (np. swap,
+XFS, ...), które mogą być zniszczone przez instalację sektora startowego
+LILO na pierwszym sektorze partycji. Te systemy plików używają pierwszego
+sektora jako superbloku.
+
+Porównaj z "\-P ignore", które obchodzi sprawdzenie danej partycji.
+.TP 
+.BI "\-\^g"
+Generuje adresy cylinder/głowica/sektor (geometryczny) dysku.
+Jest to ograniczone do 1023 cylindrów. Wymusza kompatybilność ze starszymji
+wersjami LILO.
+.TP 
+.BI "\-\^i " boot\-loader
+Wyznaczenie pliku używanego jako nowy boot loader (domyślnym jest
+.IR /boot/boot.b ).
+.TP 
+.BI "\-\^I " "etykieta"
+Etykietę aktualnego jądra po uruchomieniu można odnaleźć w zmiennej
+środowiskowej BOOT_IMAGE lub w pseudo\-pliku `/proc/cmdline'. Ta opcja
+wyświetli odpowiadającą etykiecie nazwę pliku jądra, pliku tablicy klawiszy
+(keytable) lub któregokolwiek początkowego. pliku z ramdysku (opcja "i", "k"
+lub "r").
+.TP 
+.BI "\-\^l"
+Generuje 24\-bitowe liniowe adresy sektorów, zamiast adresów
+cylindrów/głowic/sektorów.
+.TP 
+.BI "\-\^L"
+Generuje 32\-bitowe Logiczne Adresy Bloków (Logical Block Addresses), zamiast
+adresów cylindrów/głowic/sektorów. Pozwala to na dostęp do wszystkich
+partycji na dyskach mających więcej niż 1024 cylindry.
+.TP 
+.BI "\-\^m " plik\-mapy
+Użycie podanego pliku mapy zamiast domyślnego.
+.TP 
+.BI "\-\^M " "główne\-urządzenie [ plik\-mbr ]"
+Instaluje Master Boot Record na urządzeniu podanym jako
+.IR główne\-urządzenie .
+Nowy MBR domyślnie kopiowany jest z "mbr.b", które wbudowane jest w
+.I /sbin/lilo
+(wersja 22.3), chyba że podana jest inna nazwa pliku jako drugi argument.
+Podstawowa tablica partycji na
+.I główne\-urządzenie
+pozostaje w nienaruszonym stanie. Gdy numer seryjny urządzenia nie jest
+obecny, generowany jest nowy i zapisywany w MBR.
+.TP 
+.BI "\-\^p"
+Wymaga interaktywnego wpisania wszystkich haseł podanych w pliku
+konfiguracyjnym jako
+.BR """""" .
+.TP 
+.BI "\-\^P " "{fix|ignore}"
+Naprawienie lub zignorowanie błędnych tablic partycji, tzn. tablicy
+partycji z nie pasującymi adresami sektora/głowicy/cylindra.
+Zawsze najpierw spróbuj użyć
+.I \-P ignore
+gdyż
+.I \-P fix
+nadpisze tablicę partycji, być może niszcząc wszystkie partycje na dysku.
+
+.I \-P ignore
+jest używane także po to aby obejść sprawdzanie tablicy partycji w
+poszukiwaniu typów partycji, które mogą nie pozwalać na instalację sektora
+startowego LILO. Porównaj z opcją "\-F", która unieważnia sprawdzanie
+aktualnego sektora startowego.
+.TP 
+.B \-\^q
+Wyświetla aktualnie mapowane pliki.
+.B lilo
+tworzy plik, domyślnie
+.IR "/boot/map" ,
+zawierający nazwę i lokalizację jąder startowych. Ta opcja wyświetli te nazwy.
+Używaj wraz z opcją \fB\-v\fP aby uzyskać bardziej szczegółową informację
+na temat zainstalowanych boot loaderów.
+.TP 
+.BI "\-\^r " główny\-katalog
+Wykonaj \fIchroot\fP do podanego katalogu przed podjęciem jakiegokolwiek
+działania. Nowy katalog główny musi zawierać katalog
+.I /dev
+i może potrzebować katalogu
+.IR /boot .
+Może być także potrzebny plik
+.IR /etc/lilo.conf .
+
+Wykorzystywane przez skrypt powłoki
+.I mkbootdisk
+do tworzenia dyskietki startowej.
+.TP 
+.BI "\-\^R " "linia poleceń"
+Ta opcja zmienia domyślną linię poleceń dla boot loadera podczas jego
+następnego uruchomienia. Potem linia ta zostanie usunięta, jest ona tylko
+jednorazowa. Na ogół jest to wykorzystywane w skryptach zamykania
+systemu, zaraz przed wywołaniem `shutdown \-r'. Użyte bez żadnego argumentu
+anuluje \fIzablokowaną\fP lub \fIprzywróci\fP linię komend.
+.TP 
+.BI "\-\^s " plik
+Gdy
+.B lilo
+nadpisuje boot sektor, zachowuje jego starą zawartość w pliku, domyślnie
+jest to
+.I /boot/boot.NNNN
+gdzie NNNN zależy od urządzenia. Ta opcja wyznacza inny plik dla boot
+sektora (lub, razem z opcją \fB\-u\fP, wyznacza skąd odtworzyć boot sektor).
+.TP 
+.BI "\-\^S " plik
+Normalnie
+.B lilo
+nie nadpisze istniejącego zapisanego pliku. Ta opcja mówi, że nadpisywanie
+jest dozwolone.
+.TP 
+.BI "\-\^t "
+Test. Nic nie jest zapisywane do boot sektora ani do pliku mapy. Użyte razem
+z opcją \fB\-v\fP wyświetla co
+.B lilo
+ma zamiar robić.
+.TP 
+.BI "\-\^T " opcja
+Wypisuje informacje systemową, z której część pochodzi z biosu. Jest to
+wygodniejsze od uruchamiania diagnostycznej dyskietki LILO.
+.I opcja
+może być każdą z podanych:
+.IP 
+.nf 
+   help  \- wypisuje listę dostępnych diagnostyk
+   ChRul \- wypisuje typy partycji podlegające Zasadom\-Zmian
+           (Change\-Rules)
+   EBDA  \- wypisuje informacje o Rozszerzonum Obszarze Danych
+           BIOSU (Extended BIOS Data Area)
+   geom=<dysk> wypisuje geometrię dysku np. geom=0x80
+   geom  \- wypisuje geometrię dla wszystkich dysków
+   table=<dysk> wypisuje podstawową tablicę partycji;
+           np. table=/dev/sda
+   video \- wypisuje dostępne tryby graficzne boot loadera
+.fi 
+.TP 
+.BI "\-\^u " [nazwa\-urządzenia]
+Deinstalacja \fIlilo\fP, poprzez powrotne skopiowanie zapisanego wcześniej
+boot sektora. Wraz z tą opcją użyte mogą być parametry '\-s' i '\-C'.
+\fInazwa\-urządzenia\fP jest opcjonalna. Sprawdzany jest czas i data pliku.
+.TP 
+.BI "\-\^U " [nazwa\-urządzenia]
+Tak jak powyżej, ale bez sprawdzenia czasu i daty.
+.TP 
+.B \-\^v
+Zwiększenie poziomu komunikatów. Podanie od jednej do pięciu opcji \fB\-v\fP
+sprawi, że lilo wyświetli więcej komunikatów. Możesz użyć także
+\fB\-v\fP \fIn\fP (n=1..5) aby ustawić poziom komunikatów na '\fIn\fP'.
+.TP 
+.B "\-\^V"
+Wyświetla numer wersji.
+.TP 
+.B "\-\^w"
+Wyłącza ostrzeżenia.
+.TP 
+.BI "\-\^x " opcja
+Tylko dla instalacji RAID. Opcja może być każdym ze słów kluczowych
+.IR none ,
+.IR auto ,
+.IR mbr\-only ,
+lub oddzieloną przecinkami listą dodatkowych urządzeń startowych (lista nie
+może zawierać spacji).
+.TP 
+.BI "\-\^X"
+Zarezerwowane do wewnętrznego użycia przez LILO. Może dawać różne wyniki dla
+różnych wersji LILO. Linia zaczynająca się od
+"CFLAGS=" zawiera opcje kompilatora użyte do utworzenia tej wersji LILO.
+.TP 
+.B "\-\^z"
+Gdy użyte z opcją \-M, czyści numer seryjny urządzenia. Przeważnie opcja ta
+używana jest w następującej sekwencji do wygenerowania nowego numeru
+seryjnego urządzenia:
+.nf 
+     lilo \-z \-M /dev/hda
+     lilo \-M /dev/hda
+.fi 
+.br 
+.LP 
+Powyższe opcje linii poleceń odpowiadają podanym poniżej słowom kluczowym w
+pliku konfiguracyjnym.
+.IP 
+.TS
+l l.
+\-b bootdev	boot=bootdev
+\-B plik.bmp	bitmap=plik.bmp
+\-c	compact
+\-d dsek	delay=dsek
+\-D etykieta	default=etykieta
+\-i boot\-loader	install=boot\-loader
+\-f plik	disktab=plik
+\-g	geometric
+\-l	linear
+\-L	lba32
+\-m plik\-mapy	map=plik\-mapy
+\-P fix	fix\-table
+\-P ignore	ignore\-table
+\-s plik	backup=plik
+\-S plik	force\-backup=plik
+\-v [N]	verbose=N
+\-w	nowarn
+\-x opcja	raid\-extra\-boot=opcja
+.TE
+.SH "OPCJE ŁADOWANIA SYSTEMU"
+Opcje podane tutaj mogą być podane z linii komend gdy ładowany jest obraz
+jądra. Opcje te są przetwarzane przez LILO i usuwane z linii komend
+przekazywanej do jądra, chyba że zaznaczono inaczej.
+.LP 
+.TP 
+.BI lock
+Blokuje linię komend, tak jakby 'lock' był podany w pliku 'lilo.conf'.
+.TP 
+.BI "mem=###[,K,M]"
+Ustala maksymalną ilość pamięci w systemie w bajtach, kilobajtach lub
+megabajtach.
+Ta opcja nie jest usuwana z linii komend i jest zawsze przekazywana do jądra.
+.TP 
+.BI nobd
+Wyłącza pobieranie danych z BIOSu. Opcja ta jest zarezerwowana do użytku z
+BIOSami nie kompatybilnymi z IBM, które zawieszają się na liniach:
+.sp
+.nf 
+     Loading...............
+     BIOS data check 
+.fi 
+.TP 
+.BI "vga=[ASK,EXT,EXTENDED,NORMAL]"
+Pozwala unieważnić domyślny tryb wideo podczas startu jądra.
+.br 
+.SH "BŁĘDY ŁADOWANIA SYSTEMU"
+Proces ładowania systemu dzieli się na dwa etapy. Loader pierwszego stopnia
+jest pojedynczym sektorem i ładowany jest przez BIOS lub przez loader do MBR.
+Ładuje on wielo\-sektorowy loader drugiego stopnia, lecz jest bardzo
+ograniczonej wielkości. Gdy loader pierwszego stopnia przejmuje kontrolę,
+wypisuje literę "L"; gdy jest gotowy przekazać kontrolę loaderowi drugiego
+stopnia wypisuje literę "I". Gdy wystąpi jakikolwiek błąd, np. błąd odczytu
+z dysku, wypisany będzie szesnastkowy kod błędu i operacja zostanie
+powtórzona. Wszystkie szesnastkowe kody błędów są wartościami zwracanymi
+przez BIOS, z wyjątkiem wartości 40, 99 i 9A, które są generowane przez lilo.
+A oto częściowa lista kodów błędów:
+.br 
+.IP 
+.TS
+l l.
+00  brak błędu
+01  błędna komenda dyskowa (disc command)
+0A  zła flaga sektora
+0B  zła flaga ścieżki (track flag)
+20  błąd kontrolera
+40  błąd szukania (seek failure) (BIOS)
+40  cylinder>1023 (LILO)
+99  błędny sektor indeksu drugiego stopnia (LILO)
+9A  brak sygnatury loadera drugiego stopnia (LILO)
+AA  dysk nie jest gotowy
+FF  błąd operacji odczytu elektrycznego (sense operation)
+.TE
+.br 
+.LP 
+Kod błędu nr 40 jest generowany przez BIOS lub przez LILO podczas konwersji
+liniowego (24\-bitowego) adresu dyskowego na adres geometryczny (C:H:S). Błąd
+ten może być wywołany także na starszych systemach, które nie obsługują
+adresowania lba32 (32\-bitowego). Błędy 99 oraz 9A najczęściej oznaczają, że
+nie da się odczytać pliku mapy (\-m lub map=), np. gdy LILO nie zostało
+uruchomione po jakiejś zmianie systemowej, lub jest nieścisłość pomiędzy tym,
+czego użyło LILO (lilo \-v3 aby wyświetlić), a tym co jest aktualnie używane
+przez BIOS (do zdiagnozowania tego problemu może być potrzebna jedna z
+dyskietek diagnostycznych, dostępnych w źródłowej dystrybucji).
+
+Gdy loader drugiego stopnia otrzyma kontrolę od loadera pierwszego stopnia,
+wypisuje literę "L", a po zainicjowaniu się, włączając weryfikację "Tablicy
+Deskryptorów" \- listy jąder/innych do załadowania \- wypisze literę "O",
+formując całe słowo "LILO" pisane wielkimi literami.
+
+Wszystkie błędy loadera drugiego stopnia są wiadomościami w języku angielskim
+i próbują wskazać, mniej lub bardziej udanie, istotę błędu.
+.br 
+.SH "NIEKOMPATYBILNOŚCI"
+Znanym problemem
+.B lilo
+jest problem z 
+.I reiserfs
+wprowadzonym w jądrach 2.2.x, chyba że system jest montowany z opcją 'notail'.
+Ta niekompatybilność zastała rozwiązana w reiserfs 3.6.18 i w lilo 21.6.
+.sp
+Zaczynając od wersji 22.0, instalacje RAID zapisują boot record na partycji
+RAID. Warunkowe zapisywanie MBRu może pomóc w ustawieniu RAIDa jako ładujący
+(bootable) podczas odzyskiwania, lecz wszystkie domyślne działania mogą
+zostać unieważnione. Działanie podobne do poprzedniej wersji jest osiągnięte
+dzięki opcji `\-x mbr\-only'.
+.SH "BŁĘDY"
+Opcje pliku konfiguracyjnego `backup' i `force\-backup' nie są jeszcze dobrze
+zaimplementowane dla instalacji RAID. Dobrze wydaje się działać domyślny
+mechanizm kopii zapasowych boot rekordu, i on powinien być używany.
+.SH "ZOBACZ TAKŻE"
+fdisk(8), lilo.conf(5), mkrescue(8), mkinitrd(8).
+.sp
+Dystrybucja lilo posiada bardzo rozbudowaną dokumentację.
+(lilo 21)
+.SH "AUTORZY"
+Werner Almesberger <almesber@lrc.epfl.ch> (wersje od 0 do 21)
+.br 
+John Coffman <johninsd@san.rr.com> (21.2 do teraz)

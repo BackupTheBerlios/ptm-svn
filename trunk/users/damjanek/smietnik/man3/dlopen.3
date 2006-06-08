@@ -1,0 +1,214 @@
+.\" -*- nroff -*-
+.\"
+.\" {PTM/PB/0.1/21-06-1999/"interfejs programisty dynamicznie linkującego loadera"}
+.\" Aktualizacja do man-pages 1.54 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.\" Copyright 1995 Yggdrasil Computing, Incorporated.
+.\" written by Adam J. Richter (adam@yggdrasil.com),
+.\" with typesetting help from Daniel Quinlan (quinlan@yggdrasil.com).
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.TH DLOPEN 3 2001-12-14 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+dlclose, dlerror, dlopen, dlsym \- interfejs programisty dla dynamicznie
+konsolidującego loadera
+.SH SKŁADNIA
+.B #include <dlfcn.h>
+.sp
+.BI "void *dlopen(const char *" filename ", int " flag );
+.br
+.BI "const char *dlerror(void);"
+.br
+.BI "void *dlsym(void *" handle ", char *" symbol );
+.br
+.BI "int dlclose(void *" handle );
+.sp
+Symbole specjalne:
+.BR "_init" ", " "_fini" .
+.SH OPIS
+.B dlopen
+ładuje bibliotekę dynamiczną z pliku, o nazwie zawartej w zakończonym znakiem
+NUL łańcuchu
+.I filename
+i zwraca nieprzezroczysty "uchwyt" dla tej biblioteki dynamicznej.
+Jeśli
+.I filename
+nie jest ścieżką absolutną (np. nie rozpoczyna się od "/"), to plik jest
+poszukiwany w następujących miejscach:
+.RS
+.PP
+Rozdzielonej dwukropkami liście katalogów, zdefiniowanej w zmiennej
+środowiskowej \fBLD_LIBRARY_PATH\fP.
+.PP
+Liście bibliotek podanej w \fI/etc/ld.so.cache\fP.
+.PP
+\fI/lib\fP, a potem w \fI/usr/lib\fP.
+.RE
+.PP
+Jeśli
+.I filename
+jest wskaźnikiem NULL, to zwracany uchwyt wskazuje na program główny.
+.PP
+Zewnętrzne odniesienia biblioteki są rozstrzygane przy użyciu bibliotek z
+listy zależności danej biblioteki, oraz przy użyciu wszystkich innych
+bibliotek, otwartych wcześniej ze znacznikiem
+.BR RTLD_GLOBAL .
+Jeśli plik wykonywalny był skonsolidowany z opcją "-rdynamic", to globalne
+symbole pliku wykonywalnego będą także używane do rozstrzygania odniesień
+dynamicznie załadowanych bibliotek.
+.PP
+.I flag
+powinna być albo
+.BR RTLD_LAZY ,
+oznaczającym rozwiązywanie niezdefiniowanych symboli podczas wywoływania
+biblioteki dynamicznej, albo
+.BR RTLD_NOW ,
+oznaczającym rozwiązanie wszystkich niezdefiniowanych symboli zanim
+.B dlopen
+powróci i nie powiedzie się, jeśli nie można tego dokonać.
+Ewentualnie można wykonać operację OR na parametrze
+.IR flag,
+i symbolu
+.BR RTLD_GLOBAL ,
+oznaczającym, że symbole zewnętrzne, zdefiniowane w bibliotece będą
+udostępniane kolejno ładowanym bibliotekom.
+.PP
+Jeśli biblioteka eksportuje funkcję o nazwie
+.BR _init ,
+to jej kod jest wykonywany przed powrotem dlopen. Jeśli ta sama biblioteka
+jest załadowana przez
+.BR dlopen()
+dwukrotnie, to zwracany jest ten sam uchwyt. Biblioteka dl obsługuje
+liczniki dowiązań dla uchwytów plików dynamicznych, tak więc biblioteka
+dynamiczna nie będzie zdealokowana nim tylokrotnie nie zostanie wywołana
+funkcja
+.BR dlclose , 
+ilokrotnie użyto
+.BR dlopen .
+.PP
+Jeśli
+.B dlopen
+z jakiejś przyczyny zawiedzie, to zwraca NULL.
+Czytelny dla człowieka napis, zawierający opis ostatniego błędu, który
+pojawił się w którejś z funkcji dl (dlopen, dlsym lub dlclose), można
+wyciągnąć przy użyciu
+.BR dlerror() .
+.B dlerror
+zwraca NULL, jeśli od czasu inicjalizacji lub poprzedniego wywołania
+.B dlerror
+nie wystąpił błąd. (Wywołanie
+.B dlerror()
+dwa razy pod rząd zawsze spowoduje, że drugie wywołanie zwróci NULL.)
+
+.B dlsym
+pobiera "uchwyt" biblioteki dynamicznej, zwrócony przez dlopen i zakończoną
+znakiem NUL nazwę symbolu. Zwraca adres, pod którym załadowany jest ten
+symbol. Jeśli symbol nie zostanie znaleziony, to
+.B dlsym
+zwraca NULL; jednak prawidłowym sposobem sprawdzenia czy podczas wykonania
+.B dlsym
+wystąpił błąd, jest zapisanie wyniku
+.B dlerror
+do zmiennej i sprawdzenie, czy wartość ta nie jest równa NULL.
+Jest tak dlatego, że wartość symbolu może w rzeczywistości wynosić NULL.
+Konieczne jest też zachowywanie wyników
+.BR dlerror ,
+gdyż ponowne wywołanie
+.B dlerror
+zwróci NULL.
+.PP
+Istnieją dwa specialne pseudo-uchwyty:
+.B RTLD_DEFAULT
+i
+.BR RTLD_NEXT .
+Pierwszy z nich znajdzie pierwsze wystąpienie żądanego symbolu korzystając
+z domyślnego dla biblioteki kolejności poszukiwania. Drugi z nich, przydatny
+tylko wewnątrz bibliotek dynamicznych, znajdzie następne wystąpienie funkcji
+dla kolejności poszukiwania obowiązującej po załadowaniu bieżącej biblioteki.
+Pozwala to zastąpienie funkcji w innej bibliotece dzielonej.
+.PP
+.B dlclose
+zmniejsza o jeden licznik odniesień w uchwycie bibliotek dynamicznych
+.IR handle .
+Jeśli licznik spada do zera a inne załadowane biblioteki nie używają jej
+symboli, to biblioteka dynamiczna jest zwalniana. Jeśli biblioteka dynamiczna
+eksportuje funkcję o nazwie
+.BR _fini ,
+to jest ona wykonywana bezpośrednio przed zwolnieniem tej biblioteki.
+.SH "WARTOŚĆ ZWRACANA"
+.B dlclose
+zwraca 0 przy pomyślnym zakończeniu, z wartość niezerową w przypadku błędu.
+.SH PRZYKŁAD
+.B Załadowanie biblioteki matematycznej i wypisanie cosinusa liczby 2.0:
+.RS
+.nf
+.if t .ft CW
+#include <stdio.h>
+#include <dlfcn.h>
+
+int main(int argc, char **argv) {
+    void *handle;
+    double (*cosine)(double);
+    char *error;
+
+    handle = dlopen ("libm.so", RTLD_LAZY);
+    if (!handle) {
+        fprintf(stderr, "%s\en", dlerror());
+        exit(1);
+    }
+
+    cosine = dlsym(handle, "cos");
+    if ((error = dlerror()) != NULL)  {
+        fprintf (stderr, "%s\en", error);
+        exit(1);
+    }
+
+    printf ("%f\\n", (*cosine)(2.0));
+    dlclose(handle);
+    return 0;
+}
+.if t .ft P
+.fi
+.RE
+.PP
+Gdyby ten program znajdował się w pliku o nazwie "foo.c", można by go
+zbudować za pomocą następującego polecenia:
+.RS
+.LP
+gcc -rdynamic -o foo foo.c -ldl
+.RE
+.SH UWAGI
+Symbole RTLD_DEFAULT i RTLD_NEXT są zdefiniowane w
+.I <dlfcn.h>
+tylko wtedy, gdy _GNU_SOURCE było zdefiniowane przed jego włączeniem.
+Standard interfejsu dlopen pochodzi z SunOS.
+.\" .SH PODZIĘKOWANIA
+.\" Linuksowa implementacja dlopen była początkowo napisana przez
+.\" Erica Youngdale'a z pomocą Mitcha D'Souzy, Davida Engela,
+.\" Hongjiu Lu, Andreasa Schwaba i innych.
+.\" Strona podręcznika została napisana przez Adama Richtera.
+.SH "ZOBACZ TAKŻE"
+.BR ld (1),
+.BR ld.so (8),
+.BR ldconfig (8),
+.BR ldd (1),
+.B ld.so.info

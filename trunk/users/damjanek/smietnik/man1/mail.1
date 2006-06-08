@@ -1,0 +1,925 @@
+.\" {PTM/AB/0.2/12-12-1998/"mail - wysyłanie i odbieranie poczty"}
+.\" translated by Adam Byrtek <alpha@irc.pl>
+.\" ------------
+.\"	$OpenBSD: mail.1,v 1.5 1994/06/29 05:09:32 deraadt Exp $
+.\" Copyright (c) 1980, 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	from: @(#)mail.1	8.2 (Berkeley) 12/30/93
+.\" ------------
+.Dd 30 grudnia 1993
+.Dt MAIL 1
+.Os BSD 4
+.Sh NAZWA
+.Nm mail
+.Nd wysyłanie i odbieranie poczty
+.Sh SKŁADNIA
+.Nm mail
+.Op Fl iInv
+.Op Fl s Ar temat
+.Op Fl c Ar adres-cc
+.Op Fl b Ar adres-bcc
+.Ar adres-docelowy...
+.br
+.Nm mail
+.Op Fl iInNv
+.Fl f
+.Op Ar plik
+.br
+.Nm mail
+.Op Fl iInNv
+.Op Fl u Ar użytkownik
+.Sh WPROWADZENIE
+.Nm Mail
+to inteligentny system przetwarzania poczty, który korzysta
+ze składni linii poleceń przypominającej
+.Xr \&ed 1 ,
+operując jednak na wiadomościach, a nie na liniach tekstu.
+.Pp
+.Bl -tag -width flag
+.It Fl v
+Tryb verbose.
+Szczegółowe informacje dotyczące wysyłki są
+wyświetlane na terminalu użytkownika.
+.It Fl i
+Ignoruje sygnały przerwania od tty.
+Ta opcja jest bardzo użyteczna podczas korzystania z
+.Nm mail
+poprzez linie telefoniczne z dużą liczbą zakłóceń.
+.It Fl I
+Zmusza mail do pracy w trybie interaktywnym, nawet
+jeśli wejściem nie jest terminal.
+W szczególności znak specjalny 
+.Sq Ic \&~
+podczas wysyłania poczty jest aktywny tylko w trybie
+interaktywnym.
+.It Fl n
+Zakazuje czytania
+.Pa /etc/mail.rc
+po uruchomieniu programu.
+.It Fl N
+Zakazuje wyświetlania na początku nagłówków wiadomości
+w czasie czytania poczty czy edycji foldera pocztowego.
+.It Fl s
+Ustala temat z poziomu linii poleceń
+(tylko pierwszy argument po opcji
+.Fl s
+jest uznawany za temat; pamiętaj, aby objąć cudzysłowami
+tematy zawierające spacje).
+.It Fl c
+Wysyła kopie do
+.Ar listy
+użytkowników.
+.It Fl b
+Wysyła ukryte kopie do
+.Ar listy .
+Lista to adresy oddzielone przecinkami.
+.It Fl f
+Czyta zawartość twojego pliku 
+.Ar mbox
+(lub innego podanego pliku) do obróbki. Gdy wyjdziesz,
+.Nm mail
+zapisuje nieskasowane wiadomości z powrotem do tego pliku.
+.It Fl u
+Równoważna z:
+.Pp
+.Dl mail -f /var/spool/mail/użytkownik
+.El
+.Ss Wysyłanie poczty
+Aby wysłać pocztę do jednej lub kilku osób, 
+.Nm mail
+może zostać wywołany z adresami docelowymi jako parametrami.
+Program następnie spodziewa się, że wpiszesz swoją wiadomość,
+zakończoną
+.Sq Li control\-D
+na początku nowej linii.
+Sekcja
+.Ar Odpowiadanie na listy
+położona poniżej, opisuje pewne cechy 
+.Nm mail
+ułatwiające tworzenie listu.
+.Pp
+.Ss Czytanie poczty
+Standardowe polecenie
+.Nm mail
+bez żadnych parametrów sprawdza twoją pocztę, a następnie
+wypisuje nagłówek każdej znalezionej wiadomości.
+Początkowo aktywna jest pierwsza wiadomość (nr 1) i może
+ona zostać pokazana za pomocą polecenia
+.Ic print
+(które może zostać skrócone do
+.Ql Ic p ) .
+Możesz poruszać się po wiadomościach tak, jak poruszasz się
+pomiędzy liniami w programie
+.Xr \&ed 1 ,
+za pomocą poleceń
+.Ql Ic \&+
+i
+.Ql Ic \&\-
+wybierających poprzednią i następną wiadomość, oraz
+numerów wiadomości.
+.Pp
+.Ss Kasowanie poczty
+Po obejrzeniu wiadomości możesz ją skasować
+za pomocą polecenia
+.Ic delete
+.Ql Ic d
+lub odpowiedzieć na nią używając
+.Ic reply
+.Ql Ic r .
+Skasowanie powoduje, że program
+.Nm mail
+zapomina o tej wiadomości.
+Proces ten nie jest nieodwracalny, taka wiadomość
+może zostać odzyskana poleceniem
+.Ic undeleted
+.Ql Ic u
+podając jej numer, lub przez przerwanie pracy programu
+.Nm mail
+za pomocą polecenia
+.Ic exit
+.Ql Ic x .
+Najczęściej jednak skasowane wiadomości po prostu znikną,
+aby już ich nigdy nie obejrzeć.
+.Pp
+.Ss Wyszczególnianie wiadomości
+Komendy takie jak
+.Ic print
+czy
+.Ic delete
+mogą zawierać jako argument listę numerów wiadomości, których
+dotyczy dana komenda.
+Tak więc
+.Dq Li delete 1 2
+kasuje wiadomości 1 i 2, podczas gdy
+.Dq Li delete 1\-5
+kasuje wiadomości od 1 do 5.
+Specjalny znak
+.Ql Li \&*
+dotyczy wszystkich wiadomości, a
+.Ql Li \&$
+wskazuje na ostatnią wiadomość. Tak więc polecenie
+.Ic top
+które wyświetla kilka pierwszych linii widomości może
+zostać użyte jako
+.Dq Li top \&*
+aby wyświetlić pierwsze kilka linii wszystkich wiadomości.
+.Pp
+.Ss Odpowiadanie na listy
+Możesz użyć komendy
+.Ic reply
+aby odpowiedzieć na wiadomość, odsyłając ją z powrotem
+do nadawcy. Tekst który następnie wpiszesz, aż do znaku
+końca pliku, będzie traktowany jako zawartość wiadomości.
+Podczas wpisywania wiadomości
+.Nm mail
+traktuje specjalnie linie zaczynające się znakiem
+.Ql Ic \&~ .
+Na przykład wpisanie
+.Ql Ic \&~m
+(samego w linii) umieści kopię wiadomości na którą odpowiadasz
+przesuwając ją o tabulator w prawo.
+(patrz zmienna
+.Em indentprefix
+poniżej).
+Pozostałe opcje ustawiają pole tematu, dodają lub usuwają adresatów
+wiadomości czy pozwalają ci wywołać edytor lub powłokę, aby
+wykonać jakieś polecenia.
+(Te opcje są podane w podsumowaniu poniżej).
+.Pp
+.Ss Kończenie sesji
+Możesz zakończyć pracę z programem
+.Nm mail
+za pomocą polecenia
+.Ic quit
+.Ql Ic q .
+Przeglądnięte wiadomości są umieszczane w pliku
+.Ar mbox
+chyba że zostały usunięte, w takim razie zostają skasowane.
+Nieprzeczytane wiadomości wracają do skrzynki pocztowej.
+(Patrz opcja
+.Fl f
+powyżej).
+.Pp
+.Ss Osobiste i systemowe listy dystrybucyjne
+Możliwe jest także tworzenie osobistych list dystrybucyjnych,
+tak, aby poczta wysłana do na przykład pod adres
+.Dq Li cohorts
+trafiła do grupy ludzi
+Takie listy definiuje się przez dodanie linii takiej jak
+.Pp
+.Dl alias cohorts bill ozalp jkf mark kridle@ucbcory
+.Pp
+do pliku
+.Pa \&.mailrc
+w twoim katalogu domowym.
+Aktualna lista takich aliasów może być wyświetlona poleceniem
+.Ic alias
+w programie
+.Nm mail .
+Systemowe listy dystrybucyjne tworzy się przez edycję pliku
+.Pa /etc/aliases ,
+patrz także
+.Xr aliases 5
+i
+.Xr sendmail 8 .
+Mają one nieco odmienną składnię.
+W wysyłanej poczcie, aliasy osobiste zostaną rozszerzone,
+tak, aby można było odpowiedzieć nadawcy.
+Systemowe
+.Ic aliasy
+nie są rozszerzane podczas wysyłania poczty, ale
+każda odpowiedz która powróci do tego komputera
+zostanie rozszerzona podczas przechodzenia przez program
+.Xr sendmail .
+.Pp
+.Ss Poczta sieciowa (ARPA, UUCP, Berknet)
+Opisu adresów sieciowych szukaj w
+.Xr mailaddr 7 .
+.Pp
+.Nm Mail
+ma wiele opcji, które mogą być ustawione w pliku
+.Pa .mailrc ,
+aby wpłynąć na zachowanie programów, tak więc
+.Dq Li set askcc
+uaktywnia opcję
+.Ar askcc .
+(Podsumowanie tych opcji znajduje się poniżej).
+.Sh PODSUMOWANIE 
+(Zaadaptowane z `Mail Reference Manual')
+.Pp
+Każde polecenie jest wpisywane w osobnej linii i może
+posiadać argumenty. Komenda nie musi zostać podana w całości,
+używana pierwsza komenda pasująca do podanego przedrostka.
+Jeśli nie podano żadnego argumentu dla komend, które wymagają
+listy wiadomości jako argumentu, to domyślnie przyjmowana
+jest następna wiadomość która spełniająca warunki komendy.
+Jeśli nie istnieją żadne następne wiadomości, to przeszukiwanie
+odbywa się w przeciwnym kierunku, a jeśli nie istnieje żadna
+pasująca wiadomość,
+.Nm mail
+wyświetla komunikat
+.Dq Li \&No applicable messages
+i przerywa wykonywanie polecenia.
+.Bl -tag -width delete
+.It Ic \&\-
+Wyświetla poprzednią wiadomość. Jeśli podano liczbowy argument
+.Ar n ,
+to wyświetla wiadomość odległą o
+.Ar n
+do tyłu w stosunku do aktualnej.
+.It Ic \&?
+Wyświetla małe podsumowanie komend.
+.It Ic \&!
+Wywołuje komendę powłoki
+(patrz także
+.Xr sh 1
+i
+.Xr csh 1 )
+podaną jako argument.
+.It Ic Print
+.Pq Ic P
+To samo co
+.Ic print ,
+ale dodatkowo wyświetla ignorowane pola nagłówka.
+Patrz także
+.Ic print ,
+.Ic ignore
+i
+.Ic retain .
+.It Ic Reply
+.Pq Ic R
+Wysyła odpowiedź nadawcy. Nie wysyła odpowiedzi
+pozostałym adresatom.
+.It Ic Type
+.Pq Ic T
+To samo co komenda
+.Ic Print .
+.It Ic alias
+.Pq Ic a
+Jeśli bez argumentów, wyświetla wszystkie zdefiniowane aliasy.
+Jeśli jeden argument, wyświetla tylko ten alias.
+Jeśli więcej argumentów, tworzy nowy alias lub zmienia stary.
+.It Ic alternates
+.Pq Ic alt
+Komenda
+.Ic alternates
+jest użyteczna, jeśli posiadasz konta na kilku komputerach.
+Może być ona używana do poinformowania programu
+.Nm mail ,
+że podany adres jest faktycznie twój.
+Gdy odpowiadasz na wiadomości,
+.Nm mail
+nie wyśle kopii listu na inne adresy podane w liście
+.Ic alternates .
+Jeśli komenda
+.Ic alternates
+została wywołana bez argumentów, wyświetla aktualną listę
+adresów alternatywnych.
+.It Ic chdir
+.Pq Ic c
+Zmienia aktualny katalog na podany. Jeśli nie podano katalogu,
+to przechodzi do katalogu domowego użytkownika.
+.It Ic copy
+.Pq Ic co
+Komenda
+.Ic copy
+robi to samo, co
+.Ic save ,
+z wyjątkiem tego, że nie zaznacza zapisywanej wiadomości
+jako usuniętej.
+.It Ic delete
+.Pq Ic d
+Zaznaczas wiadomości podane w argumencie jako usunięte.
+Usunięte wiadomości nie zostaną zapisane w
+.Ar mbox ,
+ani nie będą dostępne dla większości innych komend.
+.It Ic dp
+(także
+.Ic dt )
+Kasuje aktualną wiadomość i wyświetla kolejną. Jeśli nie
+ma kolejnej wiadomości,
+.Nm mail
+wyświetli komunikat
+.Dq Li "at EOF" .
+.It Ic edit
+.Pq Ic e
+Wywołuje edytor tekstowy po kolei dla każdej wiadomości podanej
+jako parametr. Po powrocie z wiadomość jest ponownie odczytywana.
+.It Ic exit
+.Pf ( Ic ex
+lub
+.Ic x )
+Powoduje natychmiastowy powrót do powłoki bez modyfikacji
+skrzynki pocztowej, pliku
+.Ar mbox
+lub pliku podanego za pomocą parametru
+.Fl f  .
+.It Ic file
+.Pq Ic fi
+To samo co
+.Ic folder  .
+.It Ic folders
+Wyświetla nazwy folderów pocztowych.
+.It Ic folder
+.Pq Ic fo
+Komenda
+.Ic folder
+przełącza program na nowy plik lub folder pocztowy.
+Gdy bez argumentów, wyświetla nazwę pliku, z którego
+aktualnie korzystamy. Jeśli podasz argument, program zapisze
+wszystkie zmiany (takie jak skasowane wiadomości) których
+dokonałeś w aktualnym pliku i odczyta nowy plik.
+Występują pewne specjalne znaki, oznaczające pewne pliki.
+# oznacza poprzedni plik, % systemową skrzynkę pocztową,
+%użytkownik oznacza systemową skrzynkę pocztową dla danego
+użytkownika, & oznacza twój plik
+.Ar mbox
+a
+\&+\&folder oznacza plik w twoim katalogu folderów.
+.It Ic from
+.Pq Ic f
+Wypisuje nagłówki podanych wiadomości.
+.It Ic headers
+.Pq Ic h
+Wyświetla nagłówki 18 wiadomości, jeśli podano argument
+.Ql \&+ ,
+to wyświetlane jest następne 18 nagłówków, a jeśli podano argument
+.Ql \&\- ,
+to 18 poprzednich.
+.It Ic help
+To samo co
+.Ic \&?
+.It Ic hold
+.Pf ( Ic ho ,
+także
+.Ic preserve )
+Zaznacza podane wiadomości do pozostawienia w systemowej
+skrzynce pocztowej, zamiast przeniesienia do
+.Ar mbox .
+Nie anuluje komendy
+.Ic delete .
+.It Ic ignore
+Dodaje listę pól nagłówka do
+.Ar listy ignorowania .
+Pola nagłówka na liście ignorowania nie zostaną
+pokazane na terminalu gdy wyświetlisz wiadomość.
+Ta komenda jest bardzo użyteczna do ignorowania pewnych
+pól nagłówka generowanych przez komputer.
+Komendy
+.Ic Type
+oraz
+.Ic Print
+mogą zostać użyte do wyświetlenia wiadomości w całości,
+włączając w to pola ignorowane.
+Jeśli 
+.Ic ignore
+zostanie wywołany bez parametrów,
+to wyświetla aktualną listę ignorowanych pól.
+.It Ic mail
+.Pq Ic m
+Wysyła list do adresów i list dystrybucyjnych podanych
+w argumencie.
+.It Ic mbox
+Zaznacza wiadomości, które zostaną przeniesione do
+.Ic mbox
+gdy zakończysz pracę. Dzieje się tak z wiadomościami,
+którym
+.Em nie
+mają ustawionej opcji
+.Ic hold .
+.It Ic next
+.Pq Ic n
+Podobne do
+.Ic \&+
+i
+.Tn CR .
+Przechodzi do następnej wiadomości i wyświetla ją. Gdy podano
+argument, przechodzi do następnej pasującej wiadomości.
+.It Ic preserve
+.Pq Ic pre
+To samo, co
+.Ic hold .
+.It Ic print
+.Pq Ic p
+Wyświetla na terminalu każdą podaną w argumencie wiadomość.
+.It Ic quit
+.Pq Ic q
+Kończy pracę, zapisuje wszystkie nieskasowane, niezapisane
+wiadomości w pliku
+.Ar mbox
+w katalogu domowym użytkownika, pozostawiając wszystkie
+wiadomości zaznaczone poleceniem
+.Ic hold
+czy
+.Ic preserve
+lub do których nigdy się nie odwoływano w systemowej
+skrzynce pocztowej i usuwa wszystkie pozostałe wiadomości
+z systemowej skrzynki pocztowej. Jeśli podczas tej sesji
+pojawiła się nowa poczta, to zostanie wyświetlony komunikat
+.Dq Li "You have new mail" .
+Jeśli uruchomiono program z opcją
+.Fl f ,
+to edytowany plik zostanie ponownie zapisany.
+Program zwraca kontrolę do powłoki, chyba że zapis edytowanego
+pliku nie powiedzie się, w tej sytuacji użytkownik może
+wyjść za pomocą komendy
+.Ic exit .
+.It Ic reply
+.Pq Ic r
+Wysyła odpowiedzi do nadawcy i wszystkich adresatów podanych
+wiadomości. Wiadomość nie może być skasowana.
+.It Ic respond
+To samo, co
+.Ic reply  .
+.It Ic retain
+Dodaje podane pola nagłówka do
+.Ar listy zatrzymanych
+Podczas wyświetlania wiadomości na terminalu
+zostaną pokazane tylko pola nagłówka znajdujące się
+na liście zatrzymanych. Wszystkie inne pola zostają ukryte.
+Komendy
+.Ic Type
+i
+.Ic Print
+mogą zostać użyte do wyświetlenia całej wiadomości.
+Jeśli
+.Ic retain
+zostanie wywołane bez argumentów, to wyświetla aktualną
+listę zatrzymanych pól.
+.It Ic save
+.Pq Ic s
+Dopisuje podane wiadomości na koniec podanego jako drugi
+argument pliku. Nazwa pliku, ilość linii oraz liczba znaków
+jest wyświetlana na terminalu.
+.It Ic set
+.Pq Ic se
+Gdy bez argumentów, wyświetla wartości wszystkich zmiennych.
+W innym przypadku ustawia opcje. Argumenty są w postaci
+.Ar opcja=wartość
+(bez spacji przed lub za =) lub
+.Ar opcja .
+Argument może zostać ujęty w cudzysłowy, aby zamaskować
+spacje, tabulatory, np.
+.Dq Li "set indentprefix=\*q->\*q"
+.It Ic saveignore
+Powoduje, że podane wiadomości zapisywane za pomocą
+.Ic save
+lub podczas automatycznego zapisu do
+.Ar mbox
+nie będą zawierały pól nagłówka z listy pól ignorowanych.
+.It Ic saveretain
+Powoduje, że w czasie zapisu podanych wiadomości za pomocą
+.Ic save
+lub podczas automatycznego zapisu do
+.Ar mbox
+dołączane są jedynie pola nagłówka znajdujące się na
+liście zatrzymanych pól. Wywołanie
+.Ic Saveretain
+automatycznie anuluje
+.Ic saveignore .
+.It Ic shell
+.Pq Ic sh
+Wywołuje interaktywną wersję powłoki.
+.It Ic size
+Wyświetla ilość znaków dla każdej z podanych wiadomości.
+.It Ic source
+Ładuje komendy z pliku.
+.It Ic top
+Wyświetla kilka pierwszych linii podanych wiadomości.
+Ilość wyświetlanych linii zależy od zmiennej
+.Ic toplines ,
+wartością domyślną jest pięć.
+.It Ic type
+.Pq Ic t
+To samo co
+.Ic print  .
+.It Ic unalias
+Usuwa grupy adresów zdefiniowane przez komendę
+.Ic alias .
+Od teraz nazwa grupy nie ma już żadnego szczególnego znaczenia.
+.It Ic undelete
+.Pq Ic u
+Zaznacza podane wiadomości jako
+.Ic nie
+usunięte.
+.It Ic unread
+.Pq Ic U
+Zaznacza podane wiadomości jako
+.Ic nie
+przeczytane.
+.It Ic unset
+Wyłącza podane opcji, przeciwieństwo komendy
+.Ic set .
+.It Ic visual
+.Pq Ic v
+Wywołuje pełnoekranowy edytor dla każdej podanej wiadomości.
+.It Ic write
+.Pq Ic w
+Podobne do
+.Ic save ,
+jednak zapisywana jest
+.Ic tylko
+sama treść wiadomości
+.Pq Ar bez
+nagłówka). Użyteczne w celach takich, jak na przykład 
+przesyłanie kodów źródłowych poprzez pocztę.
+.It Ic xit
+.Pq Ic x
+To samo, co
+.Ic exit .
+.It Ic z
+.Nm Mail
+wyświetla nagłówki wiadomości tak, jak to
+opisano przy poleceniu
+.Ic headers .
+Możesz przenieść się do następnego ekranu za pomocą polecenia
+.Ic \&z .
+Możesz także przenieść się do poprzedniego ekranu używając
+.Ic \&z\&\- .
+.El
+.Ss Komendy z tyldą
+.Pp
+Poniżej znajduje się podsumowanie komend z tyldą, które
+używane są podczas pisania wiadomości. Komendy z tyldą są
+rozpoznawane tylko wtedy, gdy znajdują się na początku linii.
+The name
+.Dq Em tilde\ escape
+is somewhat of a misnomer since the actual escape
+character can be set by the option
+.Ic escape .
+.Bl -tag -width Ds
+.It Ic \&~! Ns Ar komenda
+Wywołuje podaną komendę powłoki, a następnie wraca do
+edycji wiadomości.
+.It Ic \&~b Ns Ar adres ...
+Dodaje podane adresy do listy kopii wiadomości, ale nie
+ujawnia ich w polu Cc: nagłówka (ukryta kopia).
+.It Ic \&~c Ns Ar adres ...
+Dodaje podane adresy do listy kopii wiadomości.
+.It Ic \&~d
+Dołącza zawartość pliku
+.Dq Pa dead.letter
+z katalogu domowego do edytowanej wiadomości.
+.It Ic \&~e
+Wywołuje edytor tekstowy z napisaną dotychczas wiadomością.
+Po zakończeniu sesji możesz kontynuować dodawanie tekstu
+do wiadomości.
+.It Ic \&~f Ns Ar wiadomości
+Dodaje podane wiadomości do edytowanej wiadomości.
+Gdy nie podano argumentu, dodaje aktualną wiadomość.
+Pola nagłówka ignorowane (za pomocą komendy
+.Ic ignore
+lub
+.Ic retain )
+nie zostają dołączone.
+.It Ic \&~F Ns Ar wiadomości
+To samo, co
+.Ic \&~f ,
+jednak dołącza wszystkie nagłówki wiadomości.
+.It Ic \&~h
+Pozwala na edycję nagłówka wiadomości. Wyświetla po kolei
+zawartość poszczególnych pól nagłówka i pozwala na ich modyfikację.
+.It Ic \&~m Ns Ar wiadomości
+Dodaje podane wiadomości do edytowanej wiadomości, przesunięte
+o tabulator, lub z dodaną wartością zmiennej
+.Ar indentprefix .
+Gdy nie podano argumentów, dodaje aktualną wiadomość.
+Pola nagłówka ignorowane (za pomocą komendy
+.Ic ignore
+lub
+.Ic retain )
+nie zostają dołączone.
+.It Ic \&~M Ns Ar wiadomości
+To samo, co
+.Ic \&~m ,
+ale dołączane są wszystkie pola nagłówka.
+.It Ic \&~p
+Wyświetla całość edytowanej wiadomości, poprzedzoną
+zawartością pól nagłówka.
+.It Ic \&~q
+Anuluje edytowaną wiadomość, a następnie, jeśli włączona
+jest opcja
+.Ic save ,
+kopiuje ją do pliku
+.Dq Pa dead.letter
+w twoim katalogu domowym.
+.It Ic \&~r Ns Ar plik
+Dodaje zawartość podanego pliku do edytowanej wiadomości.
+.It Ic \&~s Ns Ar tekst
+Zmienia temat wiadomości na podany tekst.
+.It Ic \&~\&t Ns Ar adres ...
+Dodaje podane adresy do listy adresatów.
+.It Ic \&~\&v
+Wywołuje alternatywny edytor tekstów (określony przez zmienną
+.Ev VISUAL )
+dla edytowanej wiadomości. Zazwyczaj alternatywnym edytorem
+jest edytor ekranowy. Po wyjściu z edytora możesz kontynuować
+edycję wiadomości.
+.It Ic \&~w Ns Ar plik
+Zapisuje wiadomość do podanego pliku.
+.It Ic \&~\&| Ns Ar komenda
+Wysyła wiadomość poprzez strumień do podanego polecenia.
+Jeśli komenda nie zwróci nic na standardowym wyjściu lub
+zakończy pracę z błędem, oryginalna wiadomość zostanie
+zachowana. Często używanym poleceniem jest
+.Xr fmt 1
+służący do wyjustowania wiadomości.
+.It Ic \&~: Ns Ar komenda-mail
+Wykonuje podaną komendę programu mail. Nie wszystkie polecenia
+są jednak dozwolone.
+.It Ic \&~~ Ns Ar tekst
+Dodaje do wiadomości podany tekst, poprzedzony znakiem ~.
+Jeśli znak escape został zmieniony, powinieneś wpisać go
+dwukrotnie aby został on dodany do wiadomości.
+.El
+.Ss Opcje programu mail
+Opcje są ustawiane poprzez polecenia
+.Ic set
+oraz
+.Ic unset .
+Opcje mogą być binarne, w tej sytuacji istotne jest tylko
+czy są ustawione czy nie, albo tekstowe, w tej sytuacji istotna
+jest wartość danej opcji. Opcje binarne to:
+.Bl -tag -width append
+.It Ar append
+Powoduje, że wiadomości zapisane w
+.Ar mbox
+zostaną dopisane na końcu, zamiast zastępować dotychczasową
+zawartość pliku. Ta opcja powinna być zawsze włączona
+(najlepiej w pliku
+.Pa /etc/mail.rc ) .
+.It Ar ask, asksub
+Powoduje, że 
+.Nm mail
+zawsze zapyta o temat wysyłanej wiadomości. Jeśli podasz
+jedynie pustą linię, nie będzie pola tematu.
+.It Ar askcc
+Powoduje, że pod koniec edycji wiadomości jesteś pytany o
+dodatkowych adresatów kopii. Podanie pustej linii oznacza,
+że dotychczasowa lista kopii jest wystarczająca.
+.It Ar askbcc
+Powoduje, że pod koniec edycji wiadomości jesteś pytany o
+dodatkowych adresatów ukrytych kopii. Podanie pustej linii oznacza,
+że dotychczasowa lista ukrytych kopii jest wystarczająca.
+.It Ar autoprint
+Powoduje, że komenda
+.Ic delete
+zachowuje się tak jak
+.Ic dp .
+Oznacza to, że po skasowaniu wiadomości, następna zostanie
+wyświetlona automatycznie.
+.It Ar debug
+Ustawienie opcji
+.Ar debug
+działa tak samo, jak podanie
+.Fl d
+w linii poleceń i powoduje, że
+.Nm mail
+wyświetla wszystkie informacje przydatne przy
+debugowaniu programu.
+.It Ar dot
+Opcja
+.Ar dot
+powoduje, że
+.Nm mail
+interpretuje pojedynczą kropkę w pustej linii jako
+koniec edytowanej wiadomości.
+.It Ar hold
+Ta opcja powoduje, że wiadomości zawsze są
+zatrzymywane w skrzynce pocztowej.
+.It Ar ignore
+Powoduje, że sygnały przerwania z terminalu zostają ignorowane
+i wyświetlone jako znak @.
+.It Ar ignoreeof
+Opcja ta jest powiązana z
+.Ar dot
+i powoduje, że
+.Nm mail
+nie uznaje control-d jako końca wiadomości
+.Ar Ignoreeof
+dotyczy także wiersza poleceń
+.Nm mail .
+.It Ar metoo
+Zazwyczaj gdy w grupie znajduje się nadawca, jest on usuwany
+z pola adresatów. Ustawienie tej opcji powoduje dodanie
+nadawcy do pola adresatów.
+.It Ar noheader
+Ustawienie opcji
+.Ar noheader
+powoduje to samo, co wywołanie programu z parametrem
+.Fl N .
+.It Ar nosave
+Standardowo, gdy przerwiesz edycję wiadomości, zostanie
+ona zapisana do pliku
+.Dq Pa dead.letter
+w twoim katalogu domowym. Ustawienie opcji
+.Ar nosave
+zapobiega temu.
+.It Ar Replyall
+Zamienia znaczenie komend
+.Ic reply
+i
+.Ic Reply .
+.It Ar quiet
+Zapobiega wyświetlaniu wersji po uruchomieniu programu.
+.It Ar searchheaders
+Jeśli ta opcja jest ustawiona, to lista wiadomości podana
+w postaci ``/x:y'' zostanie zamieniona na listę wszystkich
+wiadomości zawierających tekst ``y'' w polu nagłówka ``x''.
+Wielkość liter nie jest istotna.
+.It Ar verbose
+Ustawienie opcji
+.Ar verbose
+daje takie same efekty, jak użycie opcji
+.Fl v
+w linii poleceń. Gdy mail pracuje w trybie verbose, na
+terminalu wyświetlane są szczegóły dotyczące dostarczania
+wiadomości do adresata.
+.El
+.Ss Opcje tekstowe
+.Bl -tag -width Va
+.It Ev EDITOR
+Ścieżka do edytora tekstowego używanego po wydaniu komendy
+.Ic edit
+lub
+.Ic \&~e .
+Jeśli nie zdefiniowana, używany jest domyślny edytor.
+.It Ev LISTER
+Ścieżka do programu wyświetlającego katalogi wykorzystywanego
+przez komendę
+.Ic folders .
+Domyślna wartość to
+.Pa /bin/ls .
+.It Ev PAGER
+Ścieżka do programu używanego przez komendę
+.Ic more
+lub gdy ustawiona jest opcja
+.Ic crt .
+Jeśli opcja nie została zdefiniowana, używana jest
+domyślna przeglądarka
+.Xr more 1 .
+.It Ev SHELL
+Ścieżka do powłoki używana przez komendę
+.Ic \&!
+i
+.Ic \&~! .
+Jeśli opcja nie została zdefiniowana, używana
+jest domyślna powłoka.
+.It Ev VISUAL
+Ścieżka do edytora tekstów używanego przez komendę
+.Ic visual
+i
+.Ic \&~v .
+.It Va crt
+Wartość tej opcji ustala, jak długa musi być wiadomość,
+aby program
+.Ev PAGER
+musiał zostać wykorzystany do jej obejrzenia. Jeśli opcja
+.Va crt
+ma pustą wartość, to używana jest liczba linii terminala
+(patrz też
+.Xr stty 1 ) .
+.It Ar escape
+Jeśli zdefiniowana, pierwszy znak tej opcji ustala znak
+używany zamiast ~.
+.It Ar folder
+Nazwa katalogu, w którym przechowywane są foldery
+wiadomości. Jeśli nazwa zaczyna się od `/',
+.Nm mail
+uznaje ją za ścieżkę absolutną, w innym przypadku jest
+to ścieżka względem twojego katalogu domowego.
+.It Ev MBOX
+Nazwa pliku
+.Ar mbox .
+Może to być nazwa foldera. Domyślną nazwą jest
+.Dq Li mbox
+w katalogu domowym użytkownika.
+.It Ar record
+Jeśli zdefiniowana, oznacza nazwę pliku, do którego zapisywana
+jest każda wysyłana wiadomość. Jeśli niezdefiniowana, to
+wysyłane wiadomości nie są zapisywane.
+.It Ar indentprefix
+Tekst używany przez komendę ``~m'' do oznaczania wiadomości,
+zamiast domyślnego znaku tabulacji (^I). Pamiętaj, aby objąć
+wartość cudzysłowami jeśli zawiera spacje lub tabulatory.
+.It Ar toplines
+Jeśli zdefiniowana, ustala liczbę linii wyświetlanych przez
+komendę
+.Ic top .
+Domyślnie wyświetlanych jest pierwszych pięć linii.
+.El
+.Sh ŚRODOWISKO
+.Nm Mail
+korzysta ze zmiennych środowiskowych
+.Ev HOME
+oraz
+.Ev USER .
+.Sh PLIKI
+.Bl -tag -width /usr/lib/mail.*help -compact
+.It Pa /var/spool/mail/*
+Skrzynka pocztowa.
+.It ~/mbox
+Przeczytana poczta użytkownika.
+.It ~/.mailrc
+Plik zawierający początkowe komendy mail.
+.It Pa /tmp/R*
+Pliki tymczasowe.
+.It Pa /usr/lib/mail.*help
+Pliki pomocy.
+.It Pa /etc/mail.rc
+Systemowy plik inicjalizacji.
+.El
+.Sh PATRZ TAKŻE
+.Xr fmt 1 ,
+.Xr newaliases 1 ,
+.Xr vacation 1 ,
+.Xr aliases 5 ,
+.Xr mailaddr 7 ,
+.Xr sendmail 8
+oraz
+.Rs
+.%T "The Mail Reference Manual" .
+.Re
+.Sh HISTORIA
+Komenda
+.Nm mail
+pojawiła się w
+.At v6 .
+Ta strona man pochodzi z dokumentu
+.%T "The Mail Reference Manual" ,
+którego autorem jest Kurt Shoens.
+.Sh BŁĘDY
+Istnieją opcje nie opisane w tym dokumencie. Większość z
+nich nie jest użyteczna dla zwykłego użytkownika.
+.Pp
+.\" This bug is not the case in this particular distribution.
+.\" Usually, .Nm mail is just a link to .Nm Mail, which can be confusing.

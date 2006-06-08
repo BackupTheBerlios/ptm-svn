@@ -1,0 +1,129 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 21:46:57 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 961109, aeb
+.\"
+.\" Tłumaczenie wersji man-pages 1.50 - czerwiec 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH GETMNTENT 3 1993-06-27 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getmntent, setmntent, addmntent, endmntent, hasmntopt \- odczytanie wpisu
+z pliku deskryptorów systemów plików
+.SH SKŁADNIA
+.nf
+.B #include <stdio.h>
+.B #include <mntent.h>
+.sp
+.BI "FILE *setmntent(const char *" filename ", const char *" type );
+.sp
+.BI "struct mntent *getmntent(FILE *" filep );
+.sp
+.BI "int addmntent(FILE *" filep ", const struct mntent *" mnt );
+.sp
+.BI "int endmntent(FILE *" filep );
+.sp
+.BI "char *hasmntopt(const struct mntent *" mnt ", const char *" opt );
+.fi
+.SH OPIS
+Funkcje te służą do udostępniania informacji z pliku opisującego systemy
+plików \fI/etc/fstab\fP oraz z pliku opisującego zamontowane systemy plików
+\fI/etc/mtab\fP.
+.PP
+Funkcja \fBsetmntent()\fP otwiera plik opisujący systemy plików, \fIfilep\fP,
+i zwraca wskaźnik do pliku, którym może się posłużyć \fBgetmntent()\fP.
+Argument \fItype\fP jest żądanym rodzajem dostępu i może przyjmować takie
+same wartości, jak argument \fImode\fP funkcji
+.BR fopen (3).
+.PP
+Funkcja \fBgetmntent()\fP odczytuje następną linię z pliku \fIfilep\fP,
+opisującego systemy plików i zwraca wskaźnik do struktury zawierajacej
+pola powstałe z rozłożenia linii pliku. Wskaźnik ten jest wskaźnikiem do
+statycznego obszaru pamięci, który jest nadpisywany podczas następnego
+wywołania \fBgetmntent()\fP.
+.PP
+Funkcja \fBaddmntent()\fP dodaje strukturę mntent \fImnt\fP na końcu
+otwartego pliku \fIfilep\fP.
+.PP
+Funkcja \fBendmntent()\fP zamyka plik \fIfilep\fP, opisujący systemy plików.
+.PP
+Funkcja \fBhasmntopt()\fP przegląda pole \fImnt_opts\fP (zobacz poniżej)
+struktury mntent \fImnt\fP w poszukiwaniu podłańcuchów pasujących do
+\fIopt\fP. Prawidłowe opcje montowania opisane są w \fI<mntent.h>\fP.
+.PP
+Struktura \fImntent\fP jest zdefiniowana w \fI<mntent.h>\fP następująco:
+.sp
+.RS
+.nf
+.ne 8
+.ta 8n 16n 32n
+struct mntent {
+	char 	*mnt_fsname;	/* nazwa zamontowanego systemu
+			   plików */
+	char	*mnt_dir;	/* prefiks ścieżki systemu
+			   plików */
+	char	*mnt_type;	/* rodzaj montowania
+			   (zobacz mntent.h) */
+	char	*mnt_opts;	/* opcje montowania
+			   (zobacz mntent.h) */
+	int	mnt_freq;	/* częstotliwość zrzucania
+			   w dniach */
+	int	mnt_passno;	/* numer przebiegu dla fsck */
+};
+.ta
+.fi
+.RE
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBgetmntent()\fP zwraca wskaźnik do struktury mntent albo NULL
+w przypadku błędu.
+.PP
+Funkcja \fBaddmntent()\fP zwraca 0 po pomyślnym zakończeniu, a 1 w przypadku
+błędu.
+.PP
+Funkcja \fBendmntent()\fP zawsze zwraca 1.
+.PP
+Funkcja \fBhasmntopt()\fP zwraca adres podłańcucha, gdy zostanie on
+znaleziony, a NULL w przeciwnym przypadku.
+.SH PLIKI
+.nf
+/etc/fstab          plik opisujący systemy plików
+/etc/mtab           plik opisujący zamontowane systemy plików
+.fi
+.SH "ZGODNE Z"
+SunOS 4.1.3.
+.SH UWAGI
+SysV również zawiera funkcję \fBgetmntent()\fP, ale inna jest sekwencja
+wywołująca
+.\" calling sequence ???
+i zwraca ona inną strukturę. Pod SysV używa się
+.IR /etc/mnttab .
+BSD 4.4 i Digital Unix zawierają funkcję \fBgetmntinfo()\fP,
+otulającą funkcję systemową \fBgetfsstat()\fP.
+.\" wrappera dla ... ???
+.SH "ZOBACZ TAKŻE"
+.BR fopen (3),
+.BR fstab (5)

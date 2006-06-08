@@ -1,0 +1,27 @@
+.\" {PTM/WK/0.1/15-07-1999/"wyświetla miejsce zajmowane przez katalog DOS"}
+.TH mdu 1 "15 lipca 1999" mtools-3.9.6
+.SH NAZWA
+mdu - wyświetla ilość miejsca zajmowanego przez katalog DOS
+.SH SKŁADNIA
+.BR mdu " [" \-as ]
+.RI [ plikiDOS ...]
+.SH OPIS
+\fBmdu\fR podaje obszar zajmowany przez katalog, jego podkatalogi i pliki.
+Podobne jest do unixowego polecenia \fBdu\fR. Rozmiar klastra można ustalić
+przy pomocy polecenia \fBminfo\fR.
+.SH OPCJE
+.TP
+.B \-a
+Wszystkie pliki. Pokaż również obszar zajmowany przez pojedyncze pliki.
+.TP
+.B \-s 
+Pokaż tylko obszar całkowity, nie wyświetlaj szczegółów dla każdego
+podkatalogu.
+.RE
+.SH UWAGI
+Niniejsza, polska wersja dokumentacji, powstała jako tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. W stosunku do automatycznie generowanej
+z Textinfo dokumentacji oryginalnej dokonano przesunięcia sekcji opisującej
+konwersję dokumentacji do \fBmtools\fR(1). Tam też znajdziesz notę prawną
+dotyczącą rozpowszechniania, modyfikacji i tłumaczenia dokumentacji pakietu
+mtools

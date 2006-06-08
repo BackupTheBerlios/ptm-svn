@@ -1,0 +1,163 @@
+.\" 2000 PTM Przemek Borys
+.TH lspci 8 "20 May 2000" "pciutils-2.1.8" "Linuksowe narzędzia PCI"
+.IX lspci
+.SH NAZWA
+lspci \- wymień wszystkie urządzenia PCI
+.SH SKŁADNIA
+.B lspci
+.RB [ opcje ]
+.SH OPIS
+.B lspci
+jest narzędziem do wyświetlania informacji o wszystkich szynach PCI systemu
+i podączonych do nich urządzeniach.
+
+Aby korzystać z nowych właściwości tego programu, potrzebujesz jądra
+Linuksowego 2.1.82 lub nowszego, wspierającego interfejs /proc/bus/pci.
+W przypadku starszych jąder, narzędzia PCI będą musiały używać
+bezpośredniego dostępu do sprzętu, który jest możliwy tylko z poziomu roota
+i powoduje niezliczone sytuacje wyścigów i inne problemy.
+
+Jeśli chcesz zgłaszać błędy o sterownikach PCI lub o samym
+.BR lspci ,
+to proszę załącz wynik wywołania "lspic -vvx".
+
+.SH OPCJE
+.TP
+.B -v
+Nakazuje
+.B lspci
+bycie gadatliwym i wyświetlanie szczegółowych informacji o wszystkich
+urządzeniach.
+.TP
+.B -vv
+Nakazuje
+.B lspci
+bycie bardzo gadatliwym i wyświetlanie jeszcze więcej informacji (właściwie
+wszystkich, które można zdobyć od urządzenia PCI). Dokładne znaczenie tych
+danych nie jest wyjaśnione w tym podręczniku; jeśli potrzebujesz wiedzieć
+więcej, zobacz
+.I /usr/include/linux/pci.h
+lub specyfikacje PCI.
+.TP
+.B -n
+Pokazuje dystrybutora PCI oraz kody urządzenia jako numerki, bez rozwijania ich
+w bazie danych ID PCI.
+.TP
+.B -x
+Pokazuje szesnastkowy zrzut pierwszych 64 bajtów przestrzeni konfiguracyjnej
+PCI (standardowy nagłówek). Przydatne do debuggowania sterowników i samego
+.BR lspci . 
+.TP
+.B -xxx
+Pokazuje szesnastkowy zrzut całej przestrzeni konfiguracyjnej PCI. Dostępne
+tylko dla roota, gdyż część urządzeń PCI
+.B załamuje się
+gdy próbujesz odczytać niezdefiniowane obszary przestrzeni konfiguracyjnej
+(zachowanie to prawdopodobnie nie narusza standardu PCI, lecz jest
+co najmniej bardzo głupie).
+.TP
+.B -b
+Widok szynocentryczny. Pokazuje wszystkie numery IRQ i adresy widziane przez
+karty na szynie PCI, zamiast punktu widzenia jądra.
+.TP
+.B -t
+Pokazuje drzewiasty diagram zawierający wszystkie szyny, mosty, urządzenia i
+połączenia między nimi.
+.TP
+.RI "\fB-s\fR [[" szyna ]\fB:\fR][ slot ][\fB.\fR[ funkcja ]]
+Pokazuje urządzenia tylko w określonej szynie, slocie i funkcji. Każdy
+komponent adresu urządzenia można pominąć lub oznaczyć gwiazdką, co oznacza
+dowolną wartość. Wszystkie numerki są szesnastkowe. Np. "0:" oznacza
+wszystkie urządzenia na szynie 0, "0" oznacza wszystkie funkcje urządzenia
+na dowolnej szynie, "0.3" wybiera trzecią funkcję urządzenia 0 na wszystkich
+szynach, a ".4" pokazuje czwartą funkcję każdego urządzenia.
+.TP
+.RI "\fB-d\fR [" vendor ]\fB:\fR[ device ]
+Pokazuje tylko urządzenia o określonym ID urządzenia i dystrybutora. Obydwa ID
+są podawane szesnastkowo i mogą być pominięte lub określone jako "*"
+(dowolne).
+.TP
+.BI -i " plik "
+używa
+.I pliku
+jako bazy ID PCI zamiast /usr/share/pci.ids.
+.TP
+.BI -p " katalog"
+Używa
+.I katalogu
+jako katalogu zawierającego informacje o szynie PCI zamiast /proc/bus/pci.
+.TP
+.B -m
+Wyrzuca dane o urządzeniu PCI w formacie odczytywalnym przez maszynę
+(obsługiwany jest zarówno format normalny jak i gadatliwy). Opcja stworzona
+do łatwego prztwarzania danych przez skrypty.
+.TP
+.B -M
+Wywołuje tryb mapowania szyny, który skanuje szczegółowo szynę aby znaleźć
+wszystkie urządzenia (nawet te spoza źle skonfigurowanych mostów itp.).
+Zauważ, że jest to przeznaczone tylko do diagnostyki i może załamać maszynę
+(tylko w wypadku błędogennych urządzeń, lecz niestety takie istnieją).
+Możliwość ta jest dostępna tylko dla roota. Używanie -M w metodach dostępu
+PCI, które nie dotykają bezpośrednio sprzętu nie ma sensu, gdyż rezultaty są
+take same jak w zwykłych trybach listowania.
+.TP
+.B --version
+Pokazuje wersję
+.BR lspci .
+Opcja ta powinna być używana samodzielnie.
+
+.SH OPCJE PCILIB
+Narzędzia PCI używają PCILIB (przenośnej biblioteki, dającej niezależne od
+platformy funkcje dostępu do obszaru konfiguracyjnego PCI) do rozmawiania z
+kartami PCI. Następujące opcje sterują parametrami biblioteki, szczególnie
+jej metodami dostępu. Domyślnie PCILIB używa pierwszej dostępnej metody
+dostępu i nie wyświetla danych debuggowych. Każdemu przełącznikowi
+towarzyszy lista konfiguracji sprzętowych/programowych, w których jest
+obsługiwany.
+
+.TP
+.BI -P " katalog"
+Używa dostępu konfiguracyjnego w stylu Linuksa 2.1 do katalogu
+.I katalog
+zamiast do /proc/bus/pci.
+(tylko Linux 2.1 lub nowsze)
+.TP
+.B -H1
+Używa bezpośredniego dostępu do sprzętu poprzez mechanizm 1 konfiguracji
+Intela. (tylko dla i386 i kompatybilnych)
+.TP
+.B -H2
+Używa bezpośredniego dostępu do sprzętu poprzez mechanizm 2 konfiguracji
+Intela. Uwaga: mechanizm ten jest w stanie zaadresować jedynie pierwszych 16
+urządzeń szyny i wydaje się być bardzo niewiarygodny w niektórych
+przypadkach. (tylko dla i386 i kompatybilnych)
+.TP
+.B -S
+Używa wywołań systemowych dostępu do PCI. (tylko Linux na Alfie i
+UltraSparku)
+.TP
+.BI -F " plik"
+Wyciąga wszystkie informacje z podanego pliku zawierającego wyjście lspci
+-x. Jest to przydatne do analizowania przekazanych przez użytkowników
+raportów o błędach, gdyż można wyświetlić konfigurację sprzętową w dowolnym
+stylu bez męczenia użytkownika o nowe zrzuty. (wszystkie systemy).
+.TP
+.B -G
+Zwiększa w bibliotece poziom debugowania. (wszystkie systemy)
+
+.SH PLIKI
+.TP
+.B /usr/share/pci.ids
+Lista znanych ID PCI (dystrybutorzy, urządzenia, klasy i podklasy).
+.TP
+.B /proc/bus/pci
+Interfejs do przestrzeni konfiguracyjnej szyny PCI udostępniony w jądrach
+Linuksa po wersji 2.1.82. Zawiera podkatalogi wg szyn z plikami przestrzeni
+konfiguracyjnej kart i plikami urządzeń zawierającymi listy wszystkich
+urządzeń PCI.
+
+.SH ZOBACZ TAKŻE
+.BR setpci (8)
+
+.SH AUTOR
+Narzędziami opiekuje się Martin Mares <mj@suse.cz>.

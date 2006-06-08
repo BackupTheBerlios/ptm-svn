@@ -1,0 +1,118 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:19:11 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Wed Oct 18 20:23:54 1995 by Martin Schulze <joey@infodrom.north.de>
+.\" Modified Mon Apr 22 01:50:54 1996 by Martin Schulze <joey@infodrom.north.de>
+.\" 2001-07-25 added a clause about NULL proto (Martin Michlmayr or David N. Welton)
+.\"
+.\" Tłumaczenie wersji man-pages 1.50 - czerwiec 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH GETSERVENT 3 2001-07-25 "BSD" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getservent, getservbyname, getservbyport, setservent, endservent \-
+odczytanie wpisu dotyczącego usługi
+.SH SKŁADNIA
+.nf
+.B #include <netdb.h>
+.sp
+.B struct servent *getservent(void);
+.sp
+.BI "struct servent *getservbyname(const char *" name ", const char *" proto );
+.sp
+.BI "struct servent *getservbyport(int " port ", const char *" proto );
+.sp
+.BI "void setservent(int " stayopen );
+.sp
+.B void endservent(void);
+.fi
+.SH OPIS
+Funkcja \fBgetservent()\fP odczytuje następną linię z pliku 
+\fI/etc/services\fP i zwraca strukturę \fIservent\fP zawierającą pola powstałe
+z rozłożenia linii pliku. Plik \fI/etc/services\fP jest otwierany, jeśli jest
+to potrzebne.
+.PP
+Funkcja \fBgetservbyname()\fP zwraca strukturę \fIservent\fP zawierającą
+wartości z tej linii pliku \fI/etc/services\fP, która odpowiada usłudze
+\fIname\fP korzystającej z protokołu \fIproto\fP. Jeśli \fIproto\fP jest równe
+NULL, to pasował będzie dowolny protokół.
+.PP
+Funkcja \fBgetservbyport()\fP zwraca strukturę \fIservent\fP zawierającą
+wartości z tej linii pliku, która odpowiada portowi \fIport\fP, podanemu
+w sieciowej kolejności bajtów, dla protokołu \fIproto\fP. Jeśli \fIproto\fP
+jest równe NULL, to pasował będzie dowolny protokół.
+.PP
+Funkcja \fBsetservent()\fP otwiera plik fI/etc/services\fP i ustawia wskaźnik
+pliku na jego początku. Jeśli \fIstayopen\fP jest prawdziwe (1), to plik nie
+będzie zamykany pomiędzy wywołaniami \fBgetservbyname()\fP
+i \fBgetservbyport()\fP.
+.PP
+Funkcja \fBendservent()\fP zamyka \fI/etc/services\fP.
+.PP
+Struktura \fIservent\fP jest zdefiniowana w \fI<netdb.h>\fP następująco:
+.sp
+.RS
+.nf
+.ne 6
+.ta 8n 16n 32n
+struct servent {
+	char	*s_name;		/* oficjalna nazwa usługi */
+	char	**s_aliases;		/* lista aliasów */
+	int	s_port;			/* numer portu */
+	char	*s_proto;		/* używany protokół */
+}
+.ta
+.fi
+.RE
+.PP
+Polami struktury \fIservent\fP są:
+.TP
+.I s_name
+Oficjalna nazwa usługi.
+.TP
+.I s_aliases
+Zakończona zarem lista alternatywnych nazw tej usługi.
+.TP
+.I s_port
+Numer portu tej usługi podany w sieciowej kolejności bajtów.
+.TP
+.I s_proto
+Nazwa protokołu z którego korzysta dana usługa.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcje \fBgetservent()\fP, \fBgetservbyname()\fP i \fBgetservbyport()\fP
+zwracają strukturę \fIservent\fP, lub wskaźnik NULL gdy wystąpi błąd lub
+napotkany zostanie koniec pliku.
+.SH PLIKI
+.TP
+.I /etc/services
+plik bazy danych o usługach
+.SH "ZGODNE Z"
+BSD 4.3
+.SH "ZOBACZ TAKŻE"
+.BR getprotoent (3),
+.BR getnetent (3),
+.BR services (5)

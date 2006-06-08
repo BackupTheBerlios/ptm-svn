@@ -1,0 +1,31 @@
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory
+.\" $Id: lsmod.1,v 1.2 2000/09/30 17:08:37 wojtek2 Exp $
+.\"
+.\" {PTM/MM/0.1/18-11-1998/"lsmod.1 - wyświetla załadowne moduły"
+.TH LSMOD 1 "26 Dec 1996" Linux "Linux Module Support"
+.SH NAZWA
+lsmod \- wyświetla załadowne moduły
+.SH SKŁADNIA
+.B lsmod
+.SH OPIS
+.B lsmod
+wyświetla informację o wszystkich załadowanych modułach.
+.PP
+Informacja podawana jest w następującym formacie: nazwa, rozmiar, licznik
+użycia, lista odwołujących się do niego modułów. 
+Podawana informacja jest identyczna z tą, która jest dostępna poprzez 
+/proc/modules.
+.SH ZOBACZ TAKŻE
+insmod(1), modprobe(1), depmod(1), rmmod(1), ksyms(1), modules(2)
+.SH HISTORIA
+Wsparcie dla modułów zapoczątkowane przez Anonima
+.br
+Pierwsza wersja Linuksowa przygotowana przez Basa Laarhovena <bas@vimec.nl>
+.br
+Wersja 0.99.14 przygotowana przez Jona Tombsa <jon@gtex02.us.es>
+.br
+Rozbudowana przez Bjorna Ekwalla <bj0rn@blox.se>
+.br
+Aktualizowna do 2.1.17 przez Richarda Hendersona <rth@tamu.edu>

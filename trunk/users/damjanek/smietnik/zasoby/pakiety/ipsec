@@ -1,0 +1,48 @@
+# Lista polskich stron man dla pakietu
+# FreeS WAN (IPsec)
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+ipsec_addrtoa.3		man3/ipsec_addrtoa.3
+ipsec_atoaddr.3		man3/ipsec_atoaddr.3
+ipsec_atoasr.3		man3/ipsec_atoasr.3
+ipsec_atobytes.3	man3/ipsec_atobytes.3
+ipsec_atodata.3		man3/ipsec_atodata.3
+ipsec_atosa.3		man3/ipsec_atosa.3
+ipsec_atosubnet.3	man3/ipsec_atosubnet.3
+ipsec_atoul.3		man3/ipsec_atoul.3
+ipsec_bitstomask.3	man3/ipsec_bitstomask.3
+ipsec_broadcastof.3	man3/ipsec_broadcastof.3
+ipsec_bytestoa.3	man3/ipsec_bytestoa.3
+ipsec_datatoa.3		man3/ipsec_datatoa.3
+ipsec_goodmask.3	man3/ipsec_goodmask.3
+ipsec_hostof.3		man3/ipsec_hostof.3
+ipsec_masktobits.3	man3/ipsec_masktobits.3
+ipsec_optionsfrom.3	man3/ipsec_optionsfrom.3
+ipsec_rangetoa.3	man3/ipsec_rangetoa.3
+ipsec_satoa.3		man3/ipsec_satoa.3
+ipsec_subnetof.3	man3/ipsec_subnetof.3
+ipsec_subnettoa.3	man3/ipsec_subnettoa.3
+ipsec_ultoa.3		man3/ipsec_ultoa.3
+ipsec.conf.5		man5/ipsec.conf.5
+ipsec.secrets.5		man5/ipsec.secrets.5
+ipsec.8			man8/ipsec.8
+ipsec_auto.8		man8/ipsec_auto.8
+ipsec_barf.8		man8/ipsec_barf.8
+ipsec_eroute.8		man8/ipsec_eroute.8
+ipsec_klipsdebug.8	man8/ipsec_klipsdebug.8
+ipsec_look.8		man8/ipsec_look.8
+ipsec_manual.8		man8/ipsec_manual.8
+ipsec_pluto.8		man8/ipsec_pluto.8
+ipsec_ranbits.8		man8/ipsec_ranbits.8
+ipsec_setup.8		man8/ipsec_setup.8
+ipsec_spi.8		man8/ipsec_spi.8
+ipsec_spigrp.8		man8/ipsec_spigrp.8
+ipsec_tncfg.8		man8/ipsec_tncfg.8
+ipsec_whack.8		man8/ipsec_whack.8
+ipsec_klipsdebug.8	man8/ipsec_klipsdebug.8
+ipsec_look.8		man8/ipsec_look.8
+ipsec_whack.8		man8/ipsec_whack.8
+#
+# koniec listy

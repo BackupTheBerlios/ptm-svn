@@ -1,0 +1,62 @@
+.\" 1999 PTM Przemek Borys
+.\" Aktualizacja do man-pages 1.48 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Mon Mar 29 22:47:58 1993, David Metcalfe
+.\" Modified Sat Jul 24 18:41:27 1993, Rik Faith (faith@cs.unc.edu)
+.\" --------
+.TH QSORT 3 1993-03-29 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+qsort \- sortuje tablicę
+.SH SKŁADNIA
+.nf
+.B #include <stdlib.h>
+.sp
+.BI "void qsort(void *" base ", size_t " nmemb ", size_t " size ,
+.in +\w'void qsort('u
+.BI "int(*" compar ")(const void *, const void *));"
+.in
+.fi
+.SH OPIS
+Funkcja \fBqsort()\fP sortuje tablicę \fInmemb\fP elementów o rozmiarze
+\fIsize\fP. Argument \fIbase\fP wskazuje na początek tablicy.
+.PP
+Zawartość tablicy jest sortowana w porządku rosnącym, zgodnie z funkcją
+porównawczą, określoną przez wskaźnik \fIcompar\fP. Funkcja ta jest wołana
+z dwoma argumentami, które wskazują na porównywane obiekty.
+.PP
+Funkcja porównująca musi zwracać liczbę całkowitą, która jest mniejsza, równa,
+lub większa od zera. Oznacza to wtedy, odpowiednio, że pierwszy argument jest
+mniejszy, równy, lub większy od drugiego. Jeśli oba porównywane elementy są
+jednakowe, to ich kolejność w posortowanej tablicy jest nieokreślona.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBqsort()\fP nic nie zwraca.
+.SH "ZGODNE Z"
+SVID 3, POSIX, BSD 4.3, ISO 9899
+.SH "ZOBACZ TAKŻE"
+.BR sort (1)

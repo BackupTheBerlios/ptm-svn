@@ -1,0 +1,42 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl> 
+.TH pbmtoascii 1 "20 marca 1992"
+.SH NAZWA
+pbmtoascii - przekształć mapę bitową w grafikę ASCII
+.SH SKŁADNIA
+.B pbmtoascii
+.RB [ -1x2 | -2x4 ]
+.RI [ plikpbm ]
+.SH OPIS
+Odczytuje jako wejście przenośną mapę bitową. Na wyjściu daje przybliżenie w
+grafice ASCII.
+.PP
+Zauważ, że nie istnieje narzędzie asciitopbm - informacja ta jest
+jednokierunkowa.
+.SH OPCJE
+Flagi
+.B -1x2
+i
+.B -2x4
+dają dwa sposoby mapowania bitów na znaki.
+Domyślne
+.BR 1x2 
+powoduje, że każdy znak reprezentuje w poprzek jeden bit, a w pionie 2.
+.BR -2x4
+wymusza reprezentację dwóch bitów w poziomie i 4 w pionie. w trybie
+1x2 można zobaczyć poszczególne bity, więc jest przydatny dla niegraficznych
+terminali, na których można tak oglądać małe bitmapy.
+Tryb 2x4 umożliwia wyświetlanie na standardowym wyświetlaczu 80-kolumnowym
+większych bitmap, lecz niszczy detale bitowe.
+Tryb 2x4 nadaje się też do wyświetlania map szarości -
+"pnmscale -width 158 | pgmnorm | pgmtopbm -thresh"
+powinno dać dobre wyniki.
+.SH "ZOBACZ TAKŻE"
+pbm(5)
+.SH AUTOR
+Copyright (C) 1988, 1992 by Jef Poskanzer.
+.\" Permission to use, copy, modify, and distribute this software and its
+.\" documentation for any purpose and without fee is hereby granted, provided
+.\" that the above copyright notice appear in all copies and that both that
+.\" copyright notice and this permission notice appear in supporting
+.\" documentation.  This software is provided "as is" without express or
+.\" implied warranty.

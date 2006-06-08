@@ -1,0 +1,116 @@
+.\" 1999 PTM Przemek Borys
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\"
+.\" Copyright (C) 1995 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Written 11 June 1995 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified 22 July 1995 by Michael Chastain <mec@duracef.shout.net>:
+.\"   In 1.3.X, returns only one entry each time; return value is different.
+.TH READDIR 2 1995-07-22 "Linux 1.3.6" "Podręcznik programisty Linuksa"
+.SH NAZWA
+readdir \- odczytanie wpisu w katalogu
+.SH SKŁADNIA
+.nf
+.B #include <unistd.h>
+.B #include <linux/dirent.h>
+.B #include <linux/unistd.h>
+.sp
+.B _syscall3(int, readdir, uint, fd, struct dirent *, dirp, uint, count);
+.sp
+.BI "int readdir(unsigned int " fd ", struct dirent *" dirp ", unsigned int " count );
+.fi
+.SH OPIS
+Nie jest to funkcja, która cię interesuje. Opis implementacji interfejsu
+zgodnego z POSIX w bibliotece C znajduje się w
+.BR readdir (3).
+Niniejsza strona opisuje goły interfejs wywołania systemowego, który może
+ulec zmianie i który został zastąpiony przez
+.BR getdents (2).
+.PP
+.B readdir
+odczytuje do wskazywanego przez
+.I dirp
+obszaru pamięci jedną strukturę
+.I dirent
+z katalogu, na który wskazuje
+.IR fd .
+Parametr
+.I count
+jest ignorowany; odczytywana jest co najwyżej jedna struktura.
+.PP
+Struktura
+.I dirent
+jest zadeklarowana następująco:
+.PP
+.RS
+.nf
+struct dirent
+{
+    long d_ino;                 /* numer i-węzła */
+    off_t d_off;                /* offset do tego \fIdirent\fP */
+    unsigned short d_reclen;    /* długość tego \fId_name\fP */
+    char d_name [NAME_MAX+1];   /* nazwa pliku (zakończona znakiem NUL) */
+}
+.fi
+.RE
+.PP
+.I d_ino
+jest numerem i-węzła.
+.I d_off
+jest odległością od początku katalogu do tego wpisu
+.IR dirent .
+.I d_reclen
+jest rozmiarem
+.IR d_name,
+nie licząc kończącego znaku NUL.
+.I d_name
+jest zakończoną znakiem NUL nazwą pliku.
+.PP
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracane jest 1.
+Po natrafieniu na koniec katalogu zwracane jest 0.
+Po błędzie zwracane jest \-1 i odpowiednio ustawiane
+.IR errno .
+.SH "BŁĘDY"
+.TP
+.B EBADF
+Nieprawidłowy deskryptor
+.IR fd .
+.TP
+.B EFAULT
+Argument wskazuje poza przestrzeń adresową wywołującego procesu.
+.TP
+.B EINVAL
+Bufor na wynik jest za mały.
+.TP
+.B ENOENT
+Nie ma takiego katalogu.
+.TP
+.B ENOTDIR
+Deksryptor pliku nie odnosi się do katalogu.
+.SH "ZGODNE Z"
+Tp wywołanie systemowe jest specyficzne dla Linuksa.
+.SH "ZOBACZ TAKŻE"
+.BR getdents (2),
+.BR readdir (3)

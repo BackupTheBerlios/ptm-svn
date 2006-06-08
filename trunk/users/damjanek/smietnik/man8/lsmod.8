@@ -1,0 +1,50 @@
+.\" Aktualizacja do wersji z modutils-2.4.10 - październik 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@green.mif.pg.gda.pl>
+.\" Translation update: Robert Luberda <robert@debian.org>, Oct 2004, modutils 2.4.26
+.\"
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory
+.\" $Id: lsmod.8 1.3 Sun, 06 May 2001 14:52:26 +1000 kaos $
+.\"
+.\" {PTM/MM/0.1/18-11-1998/"lsmod.8 - pokazuje załadowane moduły"
+.TH LSMOD 8 "4 lutego 2002" Linux "Wsparcie dla modułów"
+.SH NAZWA
+lsmod \- pokazuje załadowane moduły
+.SH SKŁADNIA
+.B lsmod
+[-hV]
+.SH OPIS
+.B lsmod
+wyświetla informację o wszystkich załadowanych modułach.
+.PP
+Informacja podawana jest w następującym formacie: nazwa, rozmiar, licznik
+użycia, lista odwołujących się do niego modułów. 
+Podawana informacja jest identyczna z tą, która jest dostępna poprzez 
+/proc/modules.
+.PP 
+Jeżeli moduł może usunąć się za pomocą funkcji
+.IR can_unload ,
+to lsmod w polu licznik użycia wyświetla zawsze -1, niezależnie od rzeczywistej
+wartość licznika,
+.SH OPCJE
+.TP
+.BR \-h ", " \-\-help
+Wyświetla podsumowanie opcji i kończy działanie.
+.TP
+.BR \-V ", " \-\-version
+Wyświetla wersję programu \fBlsmod\fR i kończy działanie.
+.SH "ZOBACZ TAKŻE"
+insmod(8), modprobe(8), depmod(8), rmmod(8), ksyms(8)
+.SH HISTORIA
+Wsparcie dla modułów zostało zapoczątkowane przez Anonima
+.br
+Pierwsza wersja linuksowa przygotowana przez Basa Laarhovena <bas@vimec.nl>
+.br
+Wersja 0.99.14 przygotowana przez Jona Tombsa <jon@gtex02.us.es>
+.br
+Rozbudowana przez Bjorna Ekwalla <bj0rn@blox.se>
+.br
+Aktualizowana do 2.1.17 przez Richarda Hendersona <rth@tamu.edu>
+.br
+Aktualizowana przez Bjorna Ekwalla <bj0rn@blox.se> w marcu 1999

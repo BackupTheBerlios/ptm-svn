@@ -1,0 +1,91 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl>
+.TH ppm 5 "27 września 1991"
+.SH NAZWA
+ppm - przenośny format pixmap
+.SH OPIS
+Jest to prosty format pixmapowy, przeznaczony dla obrazów kolorowych.
+.IX "Format pliku PPM"
+Definicja jest następująca:
+.IP - 2
+"Numer magiczny", określający rodzaj pliku. Numerem magicznym ppm są dwa
+znaki, "P3".
+.IX "Numery magiczne"
+.IP - 2
+Biała spacja (spacje, tabulacje, CR, LF).
+.IP - 2
+Szerokość, sformatowana jako dziesiętne znaki ASCII.
+.IP - 2
+Biała sapcja.
+.IP - 2
+Wysokość, sformatowana jako dziesiętne znaki ASCII.
+.IP - 2
+Biała spacja.
+.IP - 2
+Maksymalna wartość komponentu kolorowego, znów jako dziesiętne ASCII.
+.IP - 2
+Biała spacja.
+.IP - 2
+Szerokość * wysokość pikseli, z których każdy składa się z trzech wartości
+dziesiętnych ASCII od 0 do podanej wartości, rozpoczynając od lewego górnego
+rogu pixmapy, postępując dalej w kierunku czytania. Trzy wartości piksela
+odpowiadają odpowiednio kolorowi czerwonemu, zielonemu, niebieskiemu.
+Wartość 0 oznacza wyłączenie koloru, wartość maksymalna oznacza jego
+maksymalizację.
+.IP - 2
+Znaki od "#" do końca linii są ignorowane (komentarze).
+.IP - 2
+Linia nie powinna być dłuższa niż 70 znaków.
+.PP
+Oto przykład pixmapy w tym formacie:
+.nf
+P3
+# feep.ppm
+4 4
+15
+ 0  0  0    0  0  0    0  0  0   15  0 15
+ 0  0  0    0 15  7    0  0  0    0  0  0
+ 0  0  0    0  0  0    0 15  7    0  0  0
+15  0 15    0  0  0    0  0  0    0  0  0
+.fi
+.PP
+Programy, które odczytują ten format, powinny być jak najwyrozumialsze,
+przyjmując wszystko, co z daleka wygląda na pixmapę.
+.PP
+Istnieje wariant tego formatu, dostępny po ustawieniu podczas kompilacji
+opcji RAWBITS. Wariant ten różni się następująco:
+.IX RAWBITS
+.IP - 2
+"Magiczny numer" to "P6" zamiast "P3".
+.IP - 2
+Wartości pikseli są zapisywane jako bajty, zamiast dziesiętnych ASCII.
+.IP - 2
+W obszarze pikseli nie są dozwolone białe spacje, a za maksymalną wartością
+koloru dozwolony jest tylko jeden znak białej spacji (zwykle nowa linia).
+.IP - 2
+Pliki te są mniejsze i dużo szybsze od formatu podstawowego.
+.PP
+Zauważ, że format raw może być używany tylko dla wartości kolorów mniejszych
+niż 255 (maksymalnie kolor 24-bitowy).
+Jeśli używasz biblioteki
+.I ppm 
+i próbujesz zapisać plik o większej wartości koloru, biblioteka przełączy
+się na wersję podstawową formatu.
+.SH "ZOBACZ TAKŻE"
+giftoppm(1), gouldtoppm(1), ilbmtoppm(1), imgtoppm(1), mtvtoppm(1),
+pcxtoppm(1), pgmtoppm(1), pi1toppm(1), picttoppm(1), pjtoppm(1), qrttoppm(1),
+rawtoppm(1), rgb3toppm(1), sldtoppm(1), spctoppm(1), sputoppm(1), tgatoppm(1),
+ximtoppm(1), xpmtoppm(1), yuvtoppm(1),
+ppmtoacad(1), ppmtogif(1), ppmtoicr(1), ppmtoilbm(1), ppmtopcx(1), ppmtopgm(1),
+ppmtopi1(1), ppmtopict(1), ppmtopj(1), ppmtopuzz(1), ppmtorgb3(1),
+ppmtosixel(1), ppmtotga(1), ppmtouil(1), ppmtoxpm(1), ppmtoyuv(1),
+ppmdither(1), ppmforge(1), ppmhist(1), ppmmake(1), ppmpat(1), ppmquant(1),
+ppmquantall(1), ppmrelief(1),
+pnm(5), pgm(5), pbm(5)
+.SH AUTOR
+Copyright (C) 1989, 1991 Jef Poskanzer.
+.\" Permission to use, copy, modify, and distribute this software and its
+.\" documentation for any purpose and without fee is hereby granted, provided
+.\" that the above copyright notice appear in all copies and that both that
+.\" copyright notice and this permission notice appear in supporting
+.\" documentation.  This software is provided "as is" without express or
+.\" implied warranty.

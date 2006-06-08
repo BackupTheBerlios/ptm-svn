@@ -1,0 +1,123 @@
+.\" {PTM/PB/0.1/18-05-1999/"stwórz bazy map dla sendmaila"}
+.\" Copyright (c) 1988, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)makemap.8	8.3 (Berkeley) 7/24/94
+.\"
+.Dd November 16, 1992
+.Dt MAKEMAP 8
+.Os BSD 4.4
+.Sh NAZWA
+.Nm makemap
+.Nd utwórz bazy map dla sendmaila
+.Sh SKŁADNIA
+.Nm
+.Op Fl N
+.Op Fl d
+.Op Fl f
+.Op Fl o
+.Op Fl r
+.Op Fl v
+.Ar maptype
+.Ar mapname
+.Sh OPIS
+.Nm
+tworzy bazę map, używaną podczas kluczowych podglądów map (keyed map
+lookups) w
+.Xr sendmail 8 .
+Odczytuje on wejście ze standardowego wejścia i wypuszcza wyjście do bazy
+wskazanej przez
+.Ar mapname .
+.Pp
+Zależnie od sposobu skompilowania
+.Nm
+obsługuje do trzech różnych formatów baz danych, wybieranych przy użyciu
+parametru
+.Ar maptype
+\fR.
+Mogą to być
+.Bl -tag -width Fl
+.It Li btree
+mapy formatu B-Tree.
+Wymaga to nowej biblioteki
+.Xr db 3
+z Berkeley.
+.It Li hash
+Mapy formatu hash.
+Również wymagają biblioteki
+.Xr db 3
+\fR.
+.El
+.Pp
+We wszystkich wypadkach,
+.Nm
+odczytuje ze standardowego wejścia linie, składające się z dwóch,
+oddzielonych spacją słów. Pierwsze jest kluczem bazy, a drugie wartością.
+Wartość może zawierać napisy
+``%\fIn\fP''
+dla wskazanych substytucji parametrów.
+Literalne wtrącenia powinny być podwojone
+(``%%'').
+Puste linie i linie rozpoczynające się od ``#'' są ignorowane.
+.Ss Flagi
+.Bl -tag -width Fl
+.It Fl N
+Włącz bajt null, który kończy napisy w mapie.
+Musi to odpowiadać fladze \-N w linii ``K'' sendmail.cf.
+.It Fl d
+Dopuść podwójne klucze w mapie.
+Jest to dozwolone tylko w mapach formatu B-Tree.
+Jeśli odczytane zostaną dwa identyczne klucze, oba zostaną włączone w mapę.
+.It Fl f
+Normalnie wszystkie litery klucza są zmieniane na małe litery. Flaga ta temu
+przeciwdziała.
+Jest to przeznaczone do związku z flagą
+\-f w linii
+\fBK\fP
+sendmail.cf.
+.It Fl o
+Dopisz do starego pliku.
+Umożliwia to powiększanie starego pliku.
+.It Fl r
+Zezwól na podmienianie istniejących kluczy.
+Normalnie
+.Nm
+narzeka jeśli powtórzysz klucz i nie wstawia go.
+.It Fl v
+Gadatliwie opisuj co się dzieje.
+.El
+.Sh ZOBACZ TAKŻE
+.Xr sendmail 8
+.Sh HISTORIA
+Komenda
+.Nm
+pojawiła się w
+.Bx 4.4 .

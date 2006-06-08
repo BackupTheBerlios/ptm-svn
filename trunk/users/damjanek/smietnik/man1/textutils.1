@@ -1,0 +1,714 @@
+.\" {PTM/WK/2000-V}
+.ig
+Transl.note: based on GNU textutils.info
+FSF notice for tekstutils docs follows:
+ 
+Copyright 1994, 95, 96, 1999 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+..
+.TH TEXTUTILS "1" FSF "sierpień 1999" "Narzędzia tekstowe GNU 2.0"
+.SH NAZWA
+textutils - opis pakietu narzędzi tekstowych GNU
+.SH OD TŁUMACZA
+Podręczniki man dla narzędzi tekstowych GNU nie są już rozwijane.
+Niniejsza strona podręcznika powstała jako tłumaczenie, używanej
+przez twórców jako podstawowej, dokumentacji formatu info.
+W pliku, który czytasz umieszczono część dokumentacji dotyczącą wspólnych
+cech i opcji programów oraz informacje, które z różnych przyczyn nie znalazły
+się na stronach opisujących poszczególne polecenia pakietu.
+Szczegółowe opisy samych poleceń znajdziesz we właściwych, osobnych
+stronach podręcznika.
+.SH WSTĘP
+Niniejszy podręcznik opisuje zestaw narzędzi tekstowych GNU w wersji 2.0.
+
+Jak i inne podręczniki pakietu, i ten nie jest wyczerpujący: nie usiłowano
+wyjaśnić podstawowych pojęć w sposób odpowiedni dla nowicjuszy. Zatem, jeśli
+jesteś zainteresowany, włącz się, proszę, w udoskonalanie go. Skorzysta
+na tym cała wspólnota GNU.
+
+Narzędzia tekstowe GNU są w większości zgodne ze standardem POSIX.2.
+
+Błędy proszę zgłaszać, w jęz.angielskim, do <bug-fileutils@gnu.org>. Pamiętaj,
+by zamieścić numer wersji, architekturę maszyny, pliki wejściowe i inne
+informacje potrzebne do powielenia błędu: wprowadzane znaki, czego się
+spodziewałeś, co otrzymałeś i dlaczego jest to źle. Pliki diff są mile
+widziane, ale proszę dołączyć również opis problemu, gdyż czasem ciężko
+jest wyciągnąć wnioski.
+
+Podręcznik ten powstał pierwotnie na bazie uniksowych stron man napisanych
+przez Davida MacKenzie i aktualizowanych przez Jima Meyeringa. Autorytatywną
+dokumentacją jest obecnie dokumentacja w formacie info; strony man nie są
+już rozwijane i aktualizowane.
+Franc,ois Pinard wykonał wstępną konwersję do formatu Texinfo. Karl
+Berry wykonał indeksy, trochę reorganizacji i edycji wyników.
+Richard Stallman wniósł swój zwykły nieoceniony wgląd w całość procesu.
+.SH ZAWARTOŚĆ PAKIETU
+Obecnie pakiet narzędzi tekstowych GNU zawiera dwadzieścia kilka programów:
+.SS Wypisywanie całości plików
+.RS 4
+.nf
+cat         łączenie i wypisywanie plików
+tac         łączenie i wypisywanie odwróconych plików
+nl          numerowanie linii i wypisywanie plików
+od          wypisywanie plików w formacie ósemkowym i innych
+.fi
+.RE
+.SS Formatowanie zawartości plików
+.RS 4
+.nf
+fmt         reformatowanie akapitów tekstu
+pr          stronicowanie i kolumnowanie plików do wydruku
+fold        zawijanie linii wejściowych do zadanej szerokości 
+.fi
+.RE
+.SS Wypisywanie części plików
+.RS 4
+.nf
+head        wypisywanie początku plików
+tail        wypisywanie końcówki plików
+split       podział pliku na części stałej wielkości
+csplit      podział pliku na części zależne od kontekstu
+.fi
+.RE
+.SS Podsumowywanie plików
+.RS 4
+.nf
+wc          wypisywanie liczby bajtów, słów i linii
+sum         wypisywanie sumy kontrolnej i liczby bloków
+csum        wypisywanie sumy CRC liczby bloków
+md5sum      wypisywanie lub sprawdzanie skrótu danych
+.fi
+.RE
+.SS Sortowanie i działania na plikach posortowanych
+.RS 4
+.nf
+sort        sortowanie plików tekstowych
+uniq        pozostawianie unikalnych linii w pliku
+comm        porównywanie dwu posortowanych plików liniami
+ptx         tworzenie indeksu permutacyjnego zawartości pliku
+tsort       sortowanie topologiczne
+.fi
+.RE
+.SS Działania na polach wewnątrz linii
+.RS 4
+.nf
+cut         wypisywanie wybranych części linii
+paste       zlepianie linii plików
+join        łączenie linii według wspólnego pola
+.fi
+.RE
+.SS Działania na znakach
+.RS 4
+.nf
+tr          zamiana, ściskanie, usuwanie znaków
+expand      zamiana tabulacji na spacje
+unexpand    zamiana spacji na tabulacje
+.fi
+.RE
+.SH OPCJE WSPÓLNE
+Pewne opcje dostępne są we wszystkich opisywanych programach (naprawdę
+powinien je przyjmować każdy z programów GNU).
+.TP
+.B --help
+Wyświetla informację o stosowaniu programu i listę wszystkich dostępnych opcji,
+pomyślnie kończy pracę.
+.TP
+.B --version
+Wyświetla numer wersji programu i pomyślnie kończy pracę.
+.SH Otwarcie skrzynki narzędziowej z programami
+.\" Opening the software toolbox
+Ten rozdział pierwotnie pojawił się w 'Linux Journal', volume 1, nr 2,
+na kolumnie `What's GNU?'. Został napisany przez Arnolda Robbinsa.
+.SS Wprowadzenie
+W tym miesiącu artykuł jest tylko ubocznie związany z Projektem GNU,
+gdyż opisuje kilka narzędzi GNU obecnych w systemie Linux i sposoby,
+na jakie możesz z nich korzystać. Faktycznie artykuł jest o filozofii
+"Narzędzi programowych" w rozwijaniu i wykorzystywaniu programów.
+
+Filozofia narzędzi programowych była ważnym i integralnym pojęciem
+w początkowym projekcie i rozwoju Uniksa (którego Linux i GNU są zasadniczo
+klonami). Niestety, przy współczesnym nacisku intersieci i błyskotliwych GUI,
+wydaje się, że idea ta spadła na pobocze. To wstyd, ponieważ zapewnia ona
+potężny model myślowy do rozwiązywania wielu rodzajów problemów.
+
+Sporo ludzi nosi w kieszeniach spodni szwajcarski scyzoryk. Scyzoryk jest
+wygodnym narzędziem: ma kilka ostrzy, śrubokręt, pincetę, wykałaczkę, zestaw
+gwoździ, korkociąg i może kilka innych rzeczy. Do codziennych drobnych,
+różnorodnych zadań, gdzie potrzebujesz prostego narzędzia ogólnego
+zastosowania, jest właśnie tym, o co chodzi.
+
+Z drugiej strony, doświadczony cieśla nie buduje domu scyzorykiem.
+Zamiast tego ma skrzynkę wypchaną specjalizowanymi narzędziami -- jest tam
+piła, młotek, śrubokręt, strug i tak dalej. I dokładnie wie kiedy i gdzie
+użyć każdego z narzędzi. Nie przyłapałbyś go na wbijaniu gwoździ rękojeścią
+śrubokrętu.
+
+Konstruktorzy Uniksa w Bell Labs byli całkiem zawodowymi programistami
+i wyszkolonymi naukowcami komputerowymi. Zauważyli, że choć rozwiązanie
+wszystko-w-jednym może przyciągać użytkownika, gdyż ma on tylko jeden program
+do korzystania, w praktyce programy takie są
+
+a. trudne do napisania,
+
+b. trudne w konserwacji i usuwaniu błędów, oraz
+
+c. trudne do rozbudowy, przystosowania do nowych sytuacji.
+
+Uważali, że zamiast tego, programy powinny być specjalizowanymi narzędziami.
+Krótko mówiąc, każdy program "powinien robić jedną rzecz dobrze". Nie więcej
+i nie mniej. Takie programy są łatwiejsze do zaprojektowania, napisania
+i zrozumienia -- robią tylko jedną rzecz.
+
+Ponadto zauważyli, że przy odpowiednim mechanizmie łączenia programów
+całość jest większa od sumy składowych. Wiążąc kilka specjalizowanych programów
+możesz zrealizować konkretne zadanie, do którego żaden z nich nie był
+projektowany i osiągnąć to dużo szybciej i łatwiej niż pisząc dla niego
+specjalizowany program. W dalszej części artykułu zobaczymy kilka (klasycznych)
+tego przykładów. Ważnym dodatkowym punktem było to, że jeśli jest to niezbędne,
+należy najpierw zrobić narzędzia, które będą potrzebne, jeżeli nie ma się
+jeszcze odpowiednich w skrzynce narzędziowej.
+.SS Przekierowanie wejścia/wyjścia
+Mam nadzieję, że jesteś obeznany z podstawami przekierowywania wejścia/wyjścia
+w powłoce, w szczególności z pojęciami "standardowego wejścia", "standardowego
+wyjścia" i "standardowego wyjścia błędów (diagnostycznego)". Zwięźle:
+"standardowe wejście" jest źródłem danych, skąd pochodzą dane. Program nie musi
+wiedzieć ani dbać o to, czy źródłem danych jest plik dyskowy, klawiatura,
+taśma magnetyczna czy nawet czytnik kart perforowanych. Podobnie, "standardowe
+wyjście" jest odpływem danych, dokąd dane spływają. Program nie powinien ani
+wiedzieć ani dbać o to, gdzie to może być. Programy, które tylko czytają swoje
+standardowe wejście, robią coś z tymi danymi i wysyłają je na standardowe
+wyjście, nazywane są "filtrami", przez analogię do filtrów w wodociągach.
+
+W powłoce uniksowej bardzo łatwo jest zestawić potoki danych:
+[tłum.: ang.'pipeline' to 'rurociąg' lub, w informatyce, 'potok']
+.nf
+
+    program_tworzacy_dane | filtr1 | .... | filtrN > koncowe.dane
+
+.fi
+Zaczynamy od utworzenia surowych danych pierwotnych. Każdy z filtrów stosuje
+pewne kolejne przekształcenie danych, aż wychodząc z potoku będą one mieć
+pożądaną postać.
+
+To jest eleganckie i dobre dla standardowego wejścia i standardowego wyjścia.
+A gdzie się tu pojawia standardowe wyjście błędów? Cóż, pomyślmy o 'filtr1'
+w powyższym potoku. Co się stanie, jeśli napotka on błąd w przyjmowanych
+danych? Jeżeli wypisze komunikat o błędzie na standardowe wyjście, to po prostu
+zniknie on w potoku wejścia do 'filtr2' a użytkownik zapewne nigdy go
+nie zobaczy. Zatem programiści potrzebują miejsca, gdzie mogliby wysyłać
+komunikaty o błędach, tak by użytkownik je zauważył. Jest to standardowe
+wyjście diagnostyczne i zwykle związane jest z twoją konsolą lub oknem,
+nawet jeśli przekierowałeś standardowe wyjście programu gdzieś poza ekran.
+
+Aby programy filtrujące mogły współdziałać, musi zostać uzgodniony format
+danych. Najprostszym i najłatwiejszym w wykorzystaniu formatem są zwykłe
+wiersze tekstu. Uniksowe pliki danych są zazwyczaj po prostu strumieniami
+bajtów, o wierszach zakończonych znakiem LF ASCII (Line Feed - wysuw linii),
+konwencjonalnie w literaturze dotyczącej Uniksa nazywanym "znakiem nowej linii"
+(newline). (Jest to '\\n' jeśli programujesz w C.) To format stosowany przez
+wszystkie tradycyjne programy filtrujące. (Wiele wcześniejszych systemów
+operacyjnych wypracowało środki i specjalizowane programy do obsługi danych
+binarnych. Unix zawsze wystrzegał się takich rzeczy, zgodnie z filozofią,
+że najłatwiej jest móc przeglądać i modyfikować dane po prostu edytorem
+tekstu.)
+
+Dobrze, starczy wprowadzenia. Przyjrzyjmy się niektórym narzędziom,
+a wtedy zobaczymy jak wiązać je ze sobą na ciekawe sposoby. W dalszych
+rozważaniach pokażemy tylko te opcje wiersza poleceń, które nas interesują.
+Tak jak zawsze powinieneś, dwukrotnie sprawdź dokumentację systemową.
+Znajdziesz tam pełne opisy.
+.SS Polecenie 'who'
+Pierwszym programem jest polecenie 'who'. Samodzielne, tworzy listę aktualnie
+zalogowanych użytkowników. Mimo, że piszę to w systemie jednoużytkownikowym,
+będziemy udawać, że zalogowanych jest kilka osób:
+.nf
+
+     $ who
+     arnold   console Jan 22 19:57
+     miriam   ttyp0   Jan 23 14:19(:0.0)
+     bill     ttyp1   Jan 21 09:32(:0.0)
+     arnold   ttyp2   Jan 23 20:48(:0.0)
+
+.fi
+Znak '$' jest tu zwyczajową zachętą powłoki, po której napisałem 'who'.
+Zalogowane są trzy osoby, w tym ja dwukrotnie. W tradycyjnych systemach Unix
+nazwy użytkowników nigdy nie mają więcej niż osiem znaków. Ta mała ciekawostka
+przyda się później. Wyjście z 'who' wygląda ładnie, ale dane nie są aż tak
+pasjonujące.
+.SS Polecenie 'cut'
+Następnym programem, któremu się przyglądniemy jest polecenie 'cut' (wytnij).
+Wycina ono kolumny lub pola z danych wejściowych. Na przykład, możemy nakazać
+mu wypisanie tylko nazwy zgłoszeniowej i nazwiska z pliku /etc/passwd.
+Plik posiada siedem pól, rozdzielonych dwukropkami:
+.nf
+
+     arnold:xyzzy:2076:10:Arnold D. Robbins:/home/arnold:/bin/ksh
+
+.fi
+Do pobrania pierwszego i piątego pola, użylibyśmy takiego wycinania:
+.nf
+
+     $ cut -d: -f1,5 /etc/passwd
+     root:Operator
+     ...
+     arnold:Arnold D. Robbins
+     miriam:Miriam A. Robbins
+     ...
+
+.fi
+Z opcją '-c', 'cut' wycina konkretne znaki (tj. kolumny) wierszy wejściowych.
+To polecenie wygląda na przydatne do filtrowania danych.
+.SS Polecenie 'sort'
+Następnie przyjrzymy się 'sort'. To jedno z najpotężniejszych
+poleceń w systemie typu uniksowego. Często będziesz go używał przy
+konstruowaniu różnych wymyślnych rurociągów. 'sort' czyta i sortuje każdy
+z podanych w wierszu poleceń plików. Następnie scala uporządkowane dane
+i wypisuje na standardowe wyjście. Jeśli w wierszu poleceń nie poda się
+żadnych nazw plików to czyta standardowe wejście (w ten sposób robimy zeń
+filtr). Sortowanie oparte jest na leksykograficznym porządku znaków lub
+kryteriach porządkowania zadanych przez użytkownika.
+.SS Polecenie `uniq'
+Na koniec (przynajmniej na razie), przyglądniemy się programowi 'uniq'.
+Przy sortowaniu danych często uzyskasz powtórzone wiersze, wiersze,
+które są identyczne. Zazwyczaj potrzebujesz tylko jednego wystąpienia każdego
+z nich. Tu właśnie pojawia się 'uniq'. Czyta on ze swego standardowego wejścia,
+spodziewając się, że jest ono posortowane. Wypisuje tylko jeden egzemplarz
+każdego zduplikowanego wiersza. 'uniq' ma kilka opcji. W dalszym ciągu
+wykorzystamy opcję '-c', wypisującą przed niepowtarzalnym wierszem
+ile razy wystąpił on w danych wejściowych.
+.SS Łączenie narzędzi
+Załóżmy teraz, że mamy system BBS z zalogowanymi dziesiątkami
+użytkowników. Zarządzający chcą, by operator systemu (SysOp) napisał
+program tworzący posortowaną listę zalogowanych użytkowników.
+Co więcej, nawet jeśli użytkownik jest zalogowany wielokrotnie, jego nazwa
+powinna w wyniku pojawić się tylko raz.
+
+SysOp mógłby siąść z dokumentacją systemową i napisać program w C, który
+by to robił. Kosztowałoby to pewnie kilkaset linii kodu i około dwu godzin
+pisania, testowania i usuwania błędów. Jednak, znając narzędzia programowe,
+SysOp może zamiast tego zacząć od utworzenia tylko listy zalogowanych
+użytkowników:
+.nf
+
+     $ who | cut -c1-8
+     arnold
+     miriam
+     bill
+     arnold
+
+.fi
+Następnie, posortować listę:
+.nf
+
+     $ who | cut -c1-8 | sort
+     arnold
+     arnold
+     bill
+     miriam
+
+.fi
+Na koniec, przepuścić posortowaną listę przez 'uniq', by wypielić duplikaty:
+.nf
+
+     $ who | cut -c1-8 | sort | uniq
+     arnold
+     bill
+     miriam
+
+.fi
+Polecenie 'sort' faktycznie posiada opcję '-u', która robi to, co 'uniq'.
+Jednak 'uniq' ma inne zastosowania, w których nie można go zastąpić
+przez 'sort -u'.
+
+SysOp umieszcza ten potok w skrypcie powłoki i udostępnia go wszystkim
+użytkownikom systemu:
+.nf
+
+     # cat > /usr/local/bin/listusers
+     who | cut -c1-8 | sort | uniq
+     ^D
+     # chmod +x /usr/local/bin/listusers
+
+.fi
+Warto tu zauważyć cztery zalety. Po pierwsze, przy pomocy zaledwie
+czterech programów, w jednej linii poleceń, SysOp mógł oszczędzić około
+dwu godzin pracy. Co więcej, potok powłoki jest prawie tak samo wydajny,
+jak byłby program w C, a o wiele bardziej efektywny jeśli chodzi o czas
+programisty. Czas ludzki jest o wiele kosztowniejszy niż czas komputera,
+a w naszym współczesnym społeczeństwie, gdzie "nigdy nie ma dość czasu by
+wszystko zrobić", zaoszczędzenie dwu godzin czasu programisty jest
+nie byle jakim wyczynem.
+
+Po drugie, równie istotne jest podkreślenie, że przy pomocy _połączenia_
+narzędzi możliwe jest wykonanie specyficznego zadania, nigdy
+nie przewidywanego przez autorów pojedynczych programów.
+
+Po trzecie, wartościowe jest też stopniowe budowanie potoku, jak to
+zrobiliśmy. Pozwala ono na przyglądnięcie się danym na każdym etapie
+przebiegu potoku, co pomaga uzyskać pewność, że rzeczywiście poprawnie
+używasz narzędzi.
+
+Na koniec, dzięki zapakowaniu potoku w skrypt powłoki, inni użytkownicy mogą
+korzystać z twojego polecenia, nie musząc pamiętać o zawartości tego
+wymyślnego opakowania. Z punktu widzenia sposobu uruchamiania, skrypty powłoki
+i skompilowane programy są nierozróżnialne.
+
+Po uprzedniej rozgrzewce, przypatrzymy się dwu kolejnym, bardziej
+skomplikowanym potokom.
+Potrzebujemy dla nich wprowadzić jeszcze dwa narzędzia.
+
+Pierwszym jest polecenie 'tr', oznaczające "transliterację".
+Polecenie 'tr' wymienia znaki, działając na zasadzie znak-na-znak.
+Zwykle stosowane jest do takich rzeczy jak odwzorowanie dużych liter
+na małe.
+.nf
+
+     $ echo ThIs ExAmPlE HaS MIXED case! | tr '[A-Z]' '[a-z]'
+     this example has mixed case!
+
+.fi
+Interesuje nas kilka opcji:
+.TP
+\-c
+działa na dopełnieniu wskazanych znaków, tj. działania odnoszą się
+do znaków spoza zadanego zestawu
+.TP
+\-d
+usuwa z wyniku znaki określone w pierwszym zestawie
+.TP
+\-s
+ściska w wyniku powtórzone znaki w pojedynczy znak.
+.PP
+Za chwilę będziemy korzystać ze wszystkich trzech opcji.
+
+Innym poleceniem, któremu się przyjrzymy jest 'comm'. Pobiera ono dwa
+posortowane pliki jako dane wejściowe i wypisuje ich wiersze w trzech
+kolumnach. Kolumny wynikowe są unikalnymi wierszami z pierwszego pliku,
+unikalnymi wierszami z drugiego pliku i wierszami danych wspólnymi dla obu.
+Opcje '1', '-2' i '3' pomijają odpowiednie kolumny. Nie jest to intuicyjne
+i wymaga pewnego przywyknięcia. Na przykład:
+.nf
+
+     $ cat f1
+     11111
+     22222
+     33333
+     44444
+     $ cat f2
+     00000
+     22222
+     33333
+     55555
+     $ comm f1 f2
+             00000
+     11111
+                     22222
+                     33333
+     44444
+             55555
+
+.fi
+Pojedyncza kreska jako nazwa pliku nakazuje 'comm' czytanie standardowego
+wejścia zamiast zwykłego pliku.
+
+Jesteśmy teraz gotowi do skonstruowania wymyślnego potoku.
+Pierwszym zastosowaniem jest licznik częstości słów. Pomaga autorowi
+stwierdzić, czy nie nadużywa on pewnych słów.
+
+Pierwszym krokiem jest zmiana wielkości wszystkich liter z pliku wejściowego
+na jedną wielkość. "to" i "To" przy zliczaniu są tym samym słowem.
+.nf
+
+     $ tr '[A-Z]' '[a-z]' < whats.gnu | ...
+
+.fi
+[tłum.: zauważ, że dla języka polskiego, podobnie jak w następnym kroku,
+należy uwzględnić dodatkowo nasze znaki diakrytyczne. Można dołączyć je
+do podanego zakresu lub, lepiej, posłużyć się klasą znaków i ustawieniami
+narodowymi - zobacz \fBtr\fP(1).]
+.br
+Następnym krokiem jest pozbycie się znaków przestankowych. Słowa cytowane
+i niecytowane powinny być traktowane identycznie; najłatwiej będzie po prostu
+wyrzucić zawadzającą interpunkcję.
+.nf
+
+     $ tr '[A-Z]' '[a-z]' < whats.gnu | tr -cd '[A-Za-z0-9_ \012]' | ...
+
+.fi
+Drugie polecenie 'tr' działa na dopełnieniu podanych znaków, którymi są
+litery, cyfry, podkreślenie i odstęp. '\012' oznacza znak nowej linii,
+należy go pozostawić. Dla dobrego pomiaru w działającym skrypcie
+powinien być też zawarty znak tabulacji (ASCII tab).
+
+Na tym etapie, mamy dane składające się ze słów rozdzielonych odstępami.
+Słowa zawierają wyłącznie znaki alfanumeryczne i znak podkreślenia.
+Następnym krokiem jest rozbicie danych na części tak, byśmy mieli po jednym
+słowie w wierszu. Jak wkrótce zobaczymy, znacznie ułatwia to zliczanie.
+.nf
+
+     $ tr '[A-Z]' '[a-z]' < whats.gnu | tr -cd '[A-Za-z0-9_ \012]' |
+     > tr -s '[ ]' '\012' | ...
+
+.fi
+To polecenie zamienia odstępy w znaki nowej linii. Opcja '-s' ściska
+wielokrotne znaki nowej linii wyniku w pojedynczy. Pomaga nam to uniknąć
+pustych wierszy. (Znak '>' jest tu wtórnym znakiem zachęty powłoki. Powłoka
+wypisuje go, gdy zauważy, że nie zakończyłeś wpisywania całego polecenia.)
+
+Teraz mamy dane składające się z jednego słowa w każdym wierszu, bez znaków
+interpunkcyjnych, wszystkie pisane jedną wielkością.
+Jesteśmy gotowi do zliczania każdego z nich:
+.nf
+
+     $ tr '[A-Z]' '[a-z]' < whats.gnu | tr -cd '[A-Za-z0-9_ \012]' |
+     > tr -s '[ ]' '\012' | sort | uniq -c | ...
+
+.fi
+Na tym etapie, dane mogą wyglądać jakoś tak:
+.nf
+
+       60 a
+        2 able
+        6 about
+        1 above
+        2 accomplish
+        1 acquire
+        1 actually
+        2 additional
+
+.fi
+Wynik jest posortowany według słów, nie według liczby wystąpień!
+Chcielibyśmy natomiast mieć jako pierwsze najczęściej używane słowa.
+Na szczęście, łatwo to osiągnąć przy pomocy dwu dodatkowych opcji 'sort':
+.TP
+\-n
+wykonuje sortowanie liczbowe, a nie tekstowe
+.TP
+\-r
+odwraca kolejność sortowania
+.PP
+Ostateczny potok wygląda tak:
+.nf
+
+     $ tr '[A-Z]' '[a-z]' < whats.gnu | tr -cd '[A-Za-z0-9_ \012]' |
+     > tr -s '[ ]' '\012' | sort | uniq -c | sort -nr
+      156 the
+       60 a
+       58 to
+       51 of
+       51 and
+      ...
+
+.fi
+No, no! Sporo do opowiadania. Nadal jednak obowiązują te same zasady.
+Przy pomocy sześciu poleceń, w dwu wierszach (faktycznie jednej długiej linii
+podzielonej dla wygody), stworzyliśmy program, który robi coś ciekawego
+i pożytecznego, w dużo krótszym czasie niż moglibyśmy napisać program w C
+robiący to samo.
+
+Niewielkie zmiany w powyższym potoku mogą nam dać prosty korektor pisowni!
+Do stwierdzenia, czy napisałeś poprawnie jakieś słowo wystarczy, że
+poszukasz go w słowniku. Jeśli w nim nie występuje, to możliwe, że twoja
+pisownia jest nieprawidłowa. Tak więc, potrzebujemy słownika. Jeżeli masz
+dystrybucję Slackware Linux, to plik '/usr/lib/ispell/ispell.words' jest
+posortowanym, zawierającym 38.400 słów, słownikiem.
+
+Zatem, jak porównać nasz plik ze słownikiem? Jak poprzednio, utworzymy
+posortowaną listę słów, po jednym w wierszu:
+.nf
+
+     $ tr '[A-Z]' '[a-z]' < whats.gnu | tr -cd '[A-Za-z0-9_ \012]' |
+     > tr -s '[ ]' '\012' | sort -u | ...
+
+.fi
+Teraz potrzebujemy tylko listy słów, których NIE MA w słowniku.
+Tu właśnie pojawia się polecenie 'comm'.
+.nf
+
+     $ tr '[A-Z]' '[a-z]' < whats.gnu | tr -cd '[A-Za-z0-9_ \012]' |
+     > tr -s '[ ]' '\012' | sort -u |
+     > comm -23 - /usr/lib/ispell/ispell.words
+
+.fi
+Opcje '-2' i '-3' likwidują wiersze występujące tylko słowniku (drugi plik),
+i występujące w obu plikach. Wiersze obecne tylko w pierwszym pliku
+(standardowe wejście, nasz strumień słów), są słowami, których nie ma
+w słowniku. Są to prawdopodobne błędy pisowni.
+Taki potok był pierwszym etapem budowy korektora pisowni w Uniksie.
+
+Istnieje jeszcze kilka innych narzędzi wymagających krótkiej wzmianki.
+.TP
+grep
+szuka w plikach tekstu pasującego do wyrażenia regularnego
+.TP
+egrep
+jak 'grep', ale z bardziej rozbudowanymi wyrażeniami regularnymi
+.TP
+wc
+zlicza wiersze, słowa, znaki
+.TP
+tee
+kopiuje dane do plików i na standardowe wyjście;
+działa jak T-kształtka w rurociągu danych
+.TP
+sed
+edytor strumieniowy, zaawansowane narzędzie
+.TP
+awk
+język manipulacji danymi, kolejne zaawansowane narzędzie
+.PP
+Filozofia narzędzi programowych daje też następującą radę: "Niech ktoś
+inny zrobi trudną część pracy".
+To znaczy, weź coś, co zaspokoi większość twoich potrzeb, a następnie
+przekształcaj dalej, aż uzyskasz pożądaną postać.
+
+Podsumowując:
+.IP 1.
+Każdy program powinien robić jedną rzecz, ale dobrze. Nie więcej, nie mniej.
+.IP 2.
+Łączenie programów w odpowiedni sposób prowadzi do rezultatu, gdzie
+całość jest większa od sumy części. Prowadzi też do nowatorskich
+zastosowań programów, których ich autorzy nawet sobie nie wyobrażali.
+.IP 3.
+Programy nigdy nie powinny wypisywać dodatkowych danych nagłówkowych
+czy kończących, gdyż mogłyby one zostać przesłane potokiem.
+(Cecha, o której wcześniej nie wspominaliśmy).
+.IP 4.
+Niech ktoś inny wykona trudną część roboty.
+.IP 5.
+Znaj swoje narzędzia! Każdego programu używaj we właściwy sposób.
+Jeżeli nie masz odpowiedniego narzędzia - zrób je.
+.PP
+W chwili powstania tego artykułu, wszystkie omawiane programy były dostępne
+przez anonimowe ftp z \fBprep.ai.mit.edu\fP jako
+\fI/pub/gnu/textutils-1.9.tar.gz\fP.
+Wersja 1.9 była wówczas bieżącą. Sprawdź w najbliższym archiwum GNU jaka
+wersja jest aktualnie bieżąca.
+Główną siedzibą archiwum jest obecnie \fBftp.gnu.org\fP.
+
+Nic z tego, co przedstawiłem w tym artykule nie jest nowe. Filozofia Narzędzi
+Programowych została po raz pierwszy wprowadzona w książce 'Software Tools',
+Briana Kernighana i P.J. Plaugera (Addison-Wesley, ISBN 0-201-03669-X).
+Książka ta pokazywała jak pisać i wykorzystywać narzędzia programowe.
+Została napisana w 1976, korzystając z preprocesora FORTRAN-u o nazwie 'ratfor'
+(RATional FORtran). Wówczas C nie był tak wszechobecny jak dziś. FORTRAN był.
+Ostatni rozdział przedstawiał 'ratfor' dla procesora FORTRAN-u, napisany w
+'ratforze'. 'ratfor' wygląda bardzo podobnie do C -- jeśli znasz C,
+nie będziesz mieć żadnych kłopotów ze zrozumieniem kodu.
+
+W 1981 książka ta została zaktualizowana i udostępniona jako 'Software Tools
+in Pascal' (Addison-Wesley, ISBN 0-201-10342-7). Obie książki są nadal
+drukowane i są rzeczywiście warte przeczytania jeśli jesteś programistą.
+Z pewnością bardzo zmieniły mój punkt widzenia na programowanie.
+
+Początkowo programy z obu książek były dostępne (na 9-calowej taśmie)
+z Addison-Wesley. Niestety, już tak nie jest, mimo że możesz znaleźć kopie
+rozproszone w Internecie. Przez wiele lat działała Software Tools Users Group
+\- Grupa Użytkowników Narzędzi Programowych, której członkowie przenieśli
+pierwotne programy 'ratforu' na niemal każdy system komputerowy z kompilatorem
+FORTRAN-u. Popularność grupy zanikła w połowie lat 80-tych, gdy Unix zaczął
+rozpowszechniać się poza uniwersytetami.
+
+Przy obecnym rozmnożeniu kodu GNU i innych klonów programów uniksowych,
+programom tym poświęca się teraz niewiele uwagi. Współczesne wersje C
+są o wiele wydajniejsze i robią więcej niż te programy. Niemniej jednak,
+książki te są niezrównane jako opis dobrego stylu programowania, głosząc
+wciąż cenną filozofię. Gorąco je polecam.
+
+Podziękowania: chciałbym wyrazić swą wdzięczność Brianowi Kernighanowi
+z Bell Labs, pierwszemu Kowalowi Narzędzi Programowych, za przejrzenie tego
+artykułu.
+
+.SH ZOBACZ TAKŻE
+.TP 12
+.BR cat (1)
+łączenie i wypisywanie plików
+.TP 12
+.BR comm (1)
+porównywanie dwu posortowanych plików liniami
+.TP 12
+.BR csplit (1)
+podział pliku na części zależne od kontekstu
+.TP 12
+.BR csum (1)
+wypisywanie sumy CRC liczby bloków
+.TP 12
+.BR cut (1)
+wypisywanie wybranych części linii
+.TP 12
+.BR expand (1)
+zamiana tabulacji na spacje
+.TP 12
+.BR fmt (1)
+reformatowanie akapitów tekstu
+.TP 12
+.BR fold (1)
+zawijanie linii wejściowych do zadanej szerokości 
+.TP 12
+.BR head (1)
+wypisywanie początku plików
+.TP 12
+.BR join (1)
+łączenie linii według wspólnego pola
+.TP 12
+.BR md5sum (1)
+wypisywanie lub sprawdzanie skrótu danych
+.TP 12
+.BR nl (1)
+numerowanie linii i wypisywanie plików
+.TP 12
+.BR od (1)
+wypisywanie plików w formacie ósemkowym i innych
+.TP 12
+.BR paste (1)
+zlepianie linii plików
+.TP 12
+.BR pr (1)
+stronicowanie i kolumnowanie plików do wydruku
+.TP 12
+.BR ptx (1)
+tworzenie indeksu permutacyjnego zawartości pliku
+.TP 12
+.BR sort (1)
+sortowanie plików tekstowych
+.TP 12
+.BR split (1)
+podział pliku na części stałej wielkości
+.TP 12
+.BR sum (1)
+wypisywanie sumy kontrolnej i liczby bloków
+.TP 12
+.BR tac (1)
+łączenie i wypisywanie odwróconych plików
+.TP 12
+.BR tail (1)
+wypisywanie końcówki plików
+.TP 12
+.BR tr (1)
+zamiana, ściskanie, usuwanie znaków
+.TP 12
+.BR tsort (1)
+sortowanie topologiczne
+.TP 12
+.BR unexpand (1)
+zamiana spacji na tabulacje
+.TP 12
+.BR uniq (1)
+pozostawianie unikalnych linii w pliku
+.TP 12
+.BR wc (1)
+wypisywanie liczby bajtów, słów i linii
+.PP

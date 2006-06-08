@@ -1,0 +1,292 @@
+.\" 1999 PTM Przemek Borys
+.\" Aktualizacja do man-pages 1.47 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright (c) 1990, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the American National Standards Committee X3, on Information
+.\" Processing Systems.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)stdarg.3	6.8 (Berkeley) 6/29/91
+.\"
+.\" Converted for Linux, Mon Nov 29 15:11:11 1993, faith@cs.unc.edu
+.\" Additions, 2001-10-14, aeb
+.\" --------
+.TH STDARG 3 2001-10-14 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+stdarg \- listy zmiennych argumentów
+.SH SKŁADNIA
+.B #include <stdarg.h>
+.sp
+.BI "void va_start(va_list " ap ", " last );
+.br
+.BI "" type " va_arg(va_list " ap ", " type );
+.br
+.BI "void va_end(va_list " ap );
+.br
+.BI "void va_copy(va_list " dest ", va_list " src );
+.SH OPIS
+Funkcję można wołać z różną liczbą argumentów, różnych typów. Plik
+nagłówkowy
+.I stdarg.h
+deklaruje typ
+.B va_list
+i definiuje trzy makra, iterujące poprzez listę argumentów, których liczba i
+typy nie są znane wywołanej funkcji.
+.PP
+Wywołana funkcja musi zadeklarować obiekt typu
+.BR va_list ,
+który jest używany przez makra
+.BR va_start ,
+.BR va_arg 
+i
+.BR va_end .
+.SS va_start
+Makro
+.B va_start
+inicjuje
+.I ap
+do dalszego użytku przez
+.B va_arg
+i
+.BR va_end ,
+i musi być wywołane jako pierwsze.
+.PP
+Parametr
+.I last
+jest nazwą ostatniego parametru przed zmienną listą argumentów, czyli ostatnim
+parametrem, którego typ był funkcji znany.
+.PP
+Ponieważ adres tego parametru jest używany w makrze
+.BR va_start ,
+nie powinien on być deklarowany jako zmienna rejestrowa, funkcja czy typ
+tablicowy.
+.SS va_arg
+Makro
+.B va_arg
+rozwija się do wyrażenia, które ma typ i wartość następnego argumentu w
+wywołaniu. Parametr
+.I ap
+to
+.B va_list
+.I ap
+zainicjowany przez
+.BR va_start .
+Każde wywołanie
+.B va_arg
+zmienia
+.I ap
+tak, że następne wywołanie zwraca następny argument. Parametr
+.I type
+Jest nazwą typu, podaną tak że typ wskaźnika do obiektu, który ma podany typ
+można uzyskać przez dodanie * do
+.IR type .
+.PP
+Pierwsze użycie makra
+.B va_arg
+po
+.B va_start
+zwraca argument za
+.IR last (ostatnim).
+Kolejne wywołania zwracają wartości pozostałych argumentów.
+.PP
+Jeśli nie ma następnego argumentu lub jeśli
+.I type
+nie jest zgodny z rzeczywistym typem następnego argumentu, pojawią się
+losowe błędy.
+.PP
+Jeśli
+.I ap
+zostanie przekazane do funkcji używającej
+.BI va_arg( ap , type )\fP,
+to wartość
+.I ap
+po zakończeniu tej funkcji będzie nieokreślona.
+.SS va_end
+Każdemu wywołaniu
+.B va_start
+musi odpowiadać wywołanie
+.B va_end
+w obrębie tej samej funkcji. Po wywołaniu
+.BI va_end( ap )
+wartość
+.I ap
+będzie nieokreślona. Lista może być przetwarzana wielokrotnie, przy czym
+.\" transversal of the list  ->  przetworzenie listy ?
+każde przetworzenie musi być zawarte pomiędzy
+.B va_start
+a
+.BR va_end .
+.B va_end
+może być zarówno makrem, jak i funkcją.
+.SS va_copy
+.\" Proposal from clive@demon.net, 1997-02-28
+Oczywista implementacja zawierałaby wskaźnik
+.B va_list
+do ramki stosu funkcji o zmiennej liczbie argumentów.
+Przy takiej konfiguracji (jak dotąd, najpowszechniejszej) nie ma żadnych
+przeciwskazań wobec podstawienia
+.RS
+.nf
+        va_list aq = ap;
+.fi
+.RE
+Niestety, są również systemy, które robią to poprzez tablicę wskaźników
+(o długości 1) i wtedy niezbędne jest
+.RS
+.nf
+        va_list aq;
+        *aq = *ap;
+.fi
+.RE
+Wreszcie, w systemach, które przekazują parametry w rejestrach, może okazać
+się koniecznym przydzielenie pamięci przez
+.BR va_start ,
+przechowanie tam parametrów, jak też wskazań, który parametr jest następny,
+tak aby
+.B va_arg
+mogło przejść całą listę. Wówczas
+.B va_end
+może wreszcie zwolnić przydzieloną w tym celu pamięć.
+Aby dostosować się do tej sytuacji, C99 dodaje makro
+.BR va_copy ,
+tak aby powyższe przypisanie mogło byc zastąpione przez
+.RS
+.nf
+        va_list aq;
+        va_copy(aq, ap);
+        ...
+        va_end(aq);
+.fi
+.RE
+Każdemu wywołaniu
+.B va_copy
+musi odpowiadać wywołanie
+.B va_end
+w obrębie tej samej funkcji.
+Niektóre systemy nie udostępniające
+.B va_copy
+posiadają zamiast tego
+.BR __va_copy ,
+gdyż ta nazwa była używana w szkicowej propozycji standardu.
+.SH PRZYKŁADY
+Funkcja
+.I foo
+pobiera łańcuch znaków formatujących i wypisuje argumenty z nimi związane
+w oparciu o typ argumentu. 
+.RS
+.nf
+#include <stdio.h>
+#include <stdarg.h>
+
+void foo(char *fmt, ...) {
+	va_list ap;
+	int d;
+	char c, *p, *s;
+
+	va_start(ap, fmt);
+	while (*fmt)
+		switch(*fmt++) {
+		case 's':			/* napis */
+			s = va_arg(ap, char *);
+			printf("string %s\en", s);
+			break;
+		case 'd':			/* int */
+			d = va_arg(ap, int);
+			printf("int %d\en", d);
+			break;
+		case 'c':			/* char */
+                        /* występuje tu potrzeba rzutowania, gdyż va_arg
+                           pobiera w pełni awansowane typy */
+.\" W oryginale: fully promoted types
+			c = (char) va_arg(ap, int);
+			printf("char %c\en", c);
+			break;
+		}
+	va_end(ap);
+}
+.fi
+.RE
+.SH "ZGODNE Z"
+Makra
+.BR va_start ,
+.BR va_arg ,
+i
+.B va_end
+są zgodne z ANSI X3.159-1989 (``C89'').
+C99 definiuje makro
+.BR va_copy .
+.SH KOMPATYBILNOŚĆ
+Makra te
+.I nie
+są zgodne z historycznymi makrami, które zastąpiły. Zgodna wstecznie wersja
+znajduje się w pliku nagłówkowym
+.IR varargs.h .
+.SH PORÓWNANIE
+Historyczna konfiguracja to:
+.RS
+.nf
+#include <varargs.h>
+
+void foo(va_alist) va_dcl {
+        va_list ap;
+
+        va_start(ap);
+        while(...) {
+                ...
+                x = va_arg(ap, type);
+                ...
+        }
+        va_end(ap);
+}
+.fi
+.RE
+W niektórych systemach,
+.I va_end
+zawiera zamykający '}' odpowiadający '{' w
+.IR va_start ,
+tak żeby obydwa makra musiały wystąpić w tej samej funkcji w dozwolony sposób.
+.SH USTERKI
+W przeciwieństwie do makr
+.BR varargs ,
+makra
+.B stdarg
+nie zezwalają programistom na tworzenie funkcji bez ustalonych argumentów.
+Problem ten powoduje utrudnienia podczas konwersji kodu 
+.B varargs
+na kod
+.BR stdarg ,
+a także utrudnia tworzenie funkcji, które mają za zadanie jedynie przekazać
+wszystkie swoje argumenty do funkcji pobierającej argument
+.BR va_list ,
+takiej jak
+.BR vfprintf (3).

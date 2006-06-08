@@ -1,0 +1,34 @@
+.\" Translation: Robert Luberda <robert@debian.org>, Oct 2003, manpages 1.60
+.\" $Id: getrpcport.3,v 1.3 2004/10/09 14:51:29 robert Exp $
+.\"
+.\" @(#)getrpcport.3r	2.2 88/08/02 4.0 RPCSRC; from 1.12 88/02/26 SMI
+.TH GETRPCPORT 3R 1987-10-06 
+.SH NAZWA
+getrpcport \- zwraca numer portu RPC
+.SH SKŁADNIA
+.ft B
+.nf
+int getrpcport(host, prognum, versnum, proto)
+	char *host;
+	int prognum, versnum, proto;
+.fi
+.SH OPIS
+.B getrpcport()
+zwraca numer portu dla wersji
+.I versnum
+programu RPC
+.IR prognum ,
+działającego na komputerze
+.IR host ,
+używającego protokołu
+.IR proto .
+Funkcja zwraca 0, jeżeli nie może skontaktować się z portmapperem
+albo jeżeli program
+.I prognum
+nie jest zarejestrowany. Jeżeli
+.I prognum
+został zarejestrowany, ale nie w wersji
+.IR versnum ,
+funkcja wciąż zwróci numer portu (jakiejś innej wersji programu),
+sygnalizując, że program jest zarejestrowany.
+Niedopasowanie wersji zostanie wykryte przy pierwszym odwołaniu do serwisu.

@@ -1,0 +1,27 @@
+.\" {PTM/WK/0.1/15-07-1999/"mren - zmień nazwę istniejącego pliku MSDOS"}
+.TH mren 1 "15 lipca 1999" mtools-3.9.6
+.SH NAZWA
+mren - zmień nazwę istniejącego pliku MSDOS
+.SH SKŁADNIA
+.BR mren " [" -voOsSrRA ]
+.I plikźródłowy plikdocelowy
+.SH OPIS
+Przy pomocy polecenia \fBmren\fR można zmienić nazwę lub przesunąć 
+istniejący plik lub katalog w systemie plikowym MS-DOS.
+.PP
+W trybie wyświetlania szczegółów (verbose), \fBmren\fR wyświetla nową nazwę
+pliku, gdy podano niepoprawną nazwę pliku. 
+.PP
+Gdy podano tylko jeden plik źródłowy zaś nazwa
+celu nie zawiera ukośników ani dwukropków, nastąpi zmiana nazwy pliku
+(lub podkatalogu) w tym samym katalogu, zamiast przesunięcia do bieżącego
+katalogu \fBmcd\fR, jak stałoby się to w przypadku \fBmmove\fR.
+W przeciwieństwie do polecenia \fBREN\fR DOSu, przy pomocy \fBmren\fR można
+zmieniać nazwy katalogów.
+.SH UWAGI
+Niniejsza, polska wersja dokumentacji, powstała jako tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. W stosunku do automatycznie generowanej
+z Textinfo dokumentacji oryginalnej dokonano przesunięcia sekcji opisującej
+konwersję dokumentacji do \fBmtools\fR(1). Tam też znajdziesz notę prawną
+dotyczącą rozpowszechniania, modyfikacji i tłumaczenia dokumentacji pakietu
+mtools

@@ -1,0 +1,44 @@
+.\" {PTM/LK/0.1/28-09-1998/"xwdtopnm - konwersja .xwd do .p?m"}
+.\" Tłumaczenie: 28-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH xwdtopnm 1 "11 stycznia 1991"
+.IX xwdtopnm
+.SH NAZWA
+xwdtopnm \- utwórz przenośną mapę (.p?m) z pliku .xwd w wersji X10 lub X11
+.SH SKŁADNIA
+.B xwdtopnm
+.RI [ plik_xwd ]
+.SH OPIS
+Odczytuje plik .xwd (X window dump file) w wersji X10 lub X11. Następnie
+zapisuje na standardowe wyjście przenośną mapę (.p?m). Rodzaj pliku
+wyjściowego zależy od typu pliku wejściowego. Jeżeli plik wejściowy jest
+czarno-biały, tworzony jest plik
+.IR pbm ", "
+jeżeli plik wejściowy jest w skali szarości, tworzony jest plik
+.IR pgm ", "
+w pozostałych przypadkach tworzony jest plik
+.IR ppm .
+Program informuje użytkownika, jaki rodzaj pliku jest tworzony.
+.PP
+Używając tego programu możez stworzyć przenośną mapę ze wszystkiego, co
+widzisz na ekranie stacji roboczej. Wystarczy wyświetlić cokolwiek,
+uruchomić program
+.IR xwd ", "
+dokonać konwersji pliku wyjściowego za pomocą
+.IR xwdtopnm ", "
+a następnie użyć programu
+.IR pnmcut ", "
+by wybrać interesujący cię fragment obrazu.
+.SH PROBLEMY
+Nie przeprowadziłem testów tego programu w zbyt wielu konfiguracjach, więc
+prawdopodobnie zawiera on błędy. Poinformuj mnie, jeżeli napotkasz jakieś
+problemy.
+.SH "ZOBACZ TAKŻE"
+pnmtoxwd(1), pnm(5), xwd(1)
+.SH AUTOR
+Copyright (C) 1989, 1991 by Jef Poskanzer.
+.\" Permission to use, copy, modify, and distribute this software and its
+.\" documentation for any purpose and without fee is hereby granted, provided
+.\" that the above copyright notice appear in all copies and that both that
+.\" copyright notice and this permission notice appear in supporting
+.\" documentation.  This software is provided "as is" without express or
+.\" implied warranty.

@@ -1,0 +1,66 @@
+.\" Tłumaczenie na podstawie wersji man-pages 1.45 
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification
+.\"      http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.\" Modified Tue Oct 16 23:18:40 BST 2001 by John Levon <moz@compsoc.man.ac.uk>
+.TH FGETWC 3  1999-07-25 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fgetwc, getwc \- odczytuje szeroki znak ze strumienia FILE
+.SH SKŁADNIA
+.nf
+.B #include <stdio.h>
+.br
+.B #include <wchar.h>
+.sp
+.BI "wint_t fgetwc(FILE *" stream );
+.BI "wint_t getwc(FILE *" stream );
+.fi
+.SH OPIS
+Funkcja \fBfgetwc\fP jest szerokoznakowym odpowiednikiem funkcji \fBfgetc\fP.
+Wczytuje ona szeroki znak ze \fIstream\fP i zwraca go. W razie natrafienia
+na koniec strumienia lub gdy \fIferror(stream)\fP stanie się prawdziwe,
+zwraca WEOF. Jeśli wystąpi błąd konwersji znaku, ustawia ona \fBerrno\fP na
+\fBEILSEQ\fP i również zwraca WEOF.
+.PP
+Funkcja lub makro \fBgetwc\fP zachowuje się identycznie jak \fBfgetwc\fP.
+Gdy \fBgetwc\fP jest zaimplementowane jako makro, może wskutek tego rozwijać
+swój argument więcej niż raz. Nie ma żadnego powodu, aby tej funkcji/makra
+używać.
+.PP
+Informacje o nieblokujących odpowiednikach znajdują się w
+.BR unlocked_stdio (3).
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBfgetwc\fP zwraca następny szeroki znak pobrany ze strumienia lub
+WEOF.
+.SH BŁĘDY
+Oprócz zwykłych jest jeszcze
+.TP
+.B EILSEQ
+Dane otrzymane ze strumienia wejściowego nie tworzą prawidłowego znaku.
+.SH "ZGODNE Z"
+ISO/ANSI C, UNIX98
+.SH UWAGI
+Zachowanie \fBfgetwc\fP zależy od ustawienia kategorii LC_CTYPE aktualnego
+locale.
+.PP
+W przypadku nieprzekazania dodatkowych informacji przy wywołaniu fopen,
+rozsądne jest oczekiwanie, że \fBfgetwc\fP faktycznie odczyta wielobajtowy
+łańcuch ze strumienia i przetworzy go na szeroki znak.
+.SH "ZOBACZ TAKŻE"
+.BR fputwc (3),
+.BR fgetws (3),
+.BR ungetwc (3),
+.BR unlocked_stdio (3)

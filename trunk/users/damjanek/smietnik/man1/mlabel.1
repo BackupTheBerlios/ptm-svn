@@ -1,0 +1,36 @@
+.\" {PTM/WK/0.1/15-07-1999/"nadaj etykietę dysku MSDOS"}
+.TH mlabel 1 "15 lipca 1999" mtools-3.9.6
+.SH NAZWA
+mlabel - nadaj etykietę dysku MSDOS
+.SH SKŁADNIA
+.BR mlabel " [" \-vcs "] " napęd :[\fInowa_etykieta\fR]
+.SH OPIS
+.PP
+Polecenie \fBmlabel\fR nadaje etykietę dyskowi DOS. Jeśli istnieje etykieta
+dysku, to jest ona wyświetlana. Gdy nie podano \fInowej_etykiety\fR ani opcji
+\fB\-c\fR ani \fB-s\fR, użytkownik proszony jest o podanie nowej.
+W celu usunięcia istniejącej etykiety należy nacisnąć samo return
+w odpowiedzi i potwierdzić decyzję.
+.PP
+Polecenie stara się utworzyć prawidłową etykietę. W przypadku podania
+nieprawidłowej etykiety, \fBmlabel\fR zmienia ją (i wyświetla nową etykietę,
+jeśli użyty jest tryb wyświetlania szczegółów). Tryb i reguły zmian są
+podobne do używanych przy kolizji nazw plików (patrz \fBKolizje nazw\fR w
+\fBmtools\fR(1)).
+\fBmlabel\fR zwraca 0 w przypadku powodzenia lub 1 w przypadku błędu.
+.SH OPCJE
+\fBmlabel\fR posiada następujące opcje:
+.TP
+.B \-c 
+Wymazuje istniejącą etykietę, bez pytania użytkownika.
+.TP
+.B \-s
+Pokazuje istniejącą etykietę, bez pytania użytkownika.
+.RE
+.SH UWAGI
+Niniejsza, polska wersja dokumentacji, powstała jako tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. W stosunku do automatycznie generowanej
+z Textinfo dokumentacji oryginalnej dokonano przesunięcia sekcji opisującej
+konwersję dokumentacji do \fBmtools\fR(1). Tam też znajdziesz notę prawną
+dotyczącą rozpowszechniania, modyfikacji i tłumaczenia dokumentacji pakietu
+mtools

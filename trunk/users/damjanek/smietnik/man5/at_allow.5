@@ -1,0 +1,47 @@
+.\" {PTM/WK/2000-I}
+.Id $Id: at_allow.5,v 1.1 2000/02/05 10:18:03 wojtek2 Exp $
+.TH AT_ACCESS 5 "sierpień 1997" "" "Podręcznik programisty linuksowego"
+.SH NAZWA
+at.access, at.deny \- określ, kto może przekazywać zadania do at lub batch
+.SH OPIS
+Pliki
+.I /etc/at/at.access
+i
+.I /etc/at/at.deny
+decydują o tym, którzy użytkownicy mogą przekazywać polecenia do późniejszego
+wykonania za pośrednictwem
+.BR at (1)
+lub
+.BR batch (1).
+.PP
+Pliki te stanowią listy nazw użytkowników, po jednej w wierszu. Odstępy
+(spacja, tabulator) nie są dozwolone.
+.PP
+Obowiązują następujące reguły ograniczające dostęp do poleceń at i batch:
+.IP
+Superużytkownik zawsze może się nimi posługiwać.
+.IP
+Jeśli istnieje plik
+.IR /etc/at/at.allow ,
+to zezwala się na używanie at wyłącznie użytkownikom w nim wymienionym.
+Osoby spoza tej listy nie mogą uruchamiać ani at ani batch.
+.IP
+Jeżeli nie istnieje
+.IR /etc/at/at.allow ,
+to sprawdzany jest
+.IR /etc/at/at.deny .
+Użytkownicy w nim wymienieni mają zakaz dostępu do at.
+Wszyscy pozostali mogą korzystać z omawianych poleceń.
+.br
+W szczególności, jeśli istnieje
+.IR /etc/at/at.deny ,
+ale jest on pusty, to dostęp do at mają wszyscy użytkownicy systemu.
+.IP
+Jeśli nie istnieje żaden z plików kontrolujących dostęp do at, to korzystać
+z nich może wyłącznie superużytkownik.
+.SH "ZOBACZ TAKŻE"
+.BR at (1),
+.BR atrun (1),
+.BR cron (8),
+.BR crontab (1),
+.BR atd (8).

@@ -1,0 +1,86 @@
+.\" {PTM/PB/0.1/25-12-1998/"drukuj kolejkę poczty"}
+.\" Copyright (c) 1985, 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)mailq.1	8.4 (Berkeley) 2/22/94
+.\" 1998 translation by Przemek Borys <pborys@dione.ids.pl>
+.\"
+.Dd February 22, 1994
+.Dt MAILQ 1
+.Os BSD 4
+.Sh NAZWA
+.Nm mailq
+.Nd drukuj kolejkę poczty
+.Sh SKŁADNIA
+.Nm mailq
+.Op Fl v
+.Sh OPIS
+.Nm Mailq
+wypisuje skolejkowane wiadomości pocztowe, przeznaczone do przyszłego
+dostarczenia.
+.Pp
+Pierwsza linia, wypisywana dla każdej wiadomości, pokazuje wewnętrzny
+identyfikator używany na tym hoście dla danej wiadomości, rozmiar w bajtach,
+oraz datę i czas przyjęcia wiadomości do kolejki, a także kopertę nadawcy
+wiadomości.
+Następna linia pokazuje informację o błędzie, który spowodował wrzucenie
+wiadomości do kolejki; nie będzie jej, jeśli wiadomość jest przetwarzana po
+raz pierwszy.
+Następne linijki pokazują odbiorców wiadomości, po jednym w linii.
+.Pp
+.Nm Mailq
+jest identyczne z
+.Dq Li "sendmail -bp" .
+.Pp
+Opcje są następujące:
+.Bl -tag -width Ds
+.It Fl v
+Wypisuje informacje interaktywne.
+Dodatkowo w pierwszej linii wiadomości
+pokazywany jest priorytet wiadomości oraz pojedynczy wskaźnik
+znakowy (,,+'' lub puste pole) wskazujący, czy wysłano wiadomość ostrzegającą.
+Pomiędzy linie opisujące odbiorców mogą być wplecione dodatkowe linie,
+zawierające informacje dotyczące ,,użytkownika kontrolującego''. Pokazują
+one, kto jest właścicielem programów, które są wywoływane na rzecz tej
+wiadomości oraz nazwę aliasu, z którego rozwinięto to polecenie, jeśli taki
+istniał.
+.El
+.Pp
+Narzędzie
+.Nm mailq
+kończy z kodem zero, albo >0 kiedy pojawi się błąd.
+.Sh ZOBACZ TAKŻE
+.Xr sendmail 8
+.Sh HISTORIA
+Polecenie
+.Nm mailq
+pojawiło się w
+.Bx 4.0 .

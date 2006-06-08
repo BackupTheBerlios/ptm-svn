@@ -1,0 +1,73 @@
+.\" 1999 PTM Przemek Borys
+.TH MINGETTY 8 "6 kwietnia 1996" "Debian-Local" "Podręcznik programisty linuksowego"
+.SH NAZWA
+mingetty \- minimalne getty dla konsol
+.SH SKŁADNIA
+.B mingetty
+[\-\-noclear] [\-\-long\-hostname]
+.I tty
+.PP
+.SH OPIS
+.B mingetty 
+jest minimalnym getty dla użytku na wirtualnych konsolach.
+W przeciwieństwie do
+.BR agetty (8),
+.B mingetty
+nie nadaje się do obsługi linii szeregowych.
+Dla tego celu polecam używać
+.BR mgetty (8).
+.PP
+.SH OPCJE
+.TP
+.B \-\-noclear
+Nie czyść ekranu przed poproszeniem o nazwę użytkownika (normalnie ekran
+jest czyszczony).
+.TP
+.B \-\-long\-hostname
+Domyślnie nazwa hosta jest drukowana tylko do pierwszej kropki. Po włączeniu
+tej opcji, pokazywany jest pełny tekst gethostname(2).
+.PP
+.SH "ISSUE ESCAPES"
+.B mingetty 
+rozpoznaje następujące sekwencje specjalne, które można osadzić w pliku
+.IR /etc/issue :
+.IP \fB\ed\fP
+wstaw bieżący dzień (czas lokalny),
+.IP \fB\el\fP
+wstaw linię na której działa
+.BR mingetty ,
+.IP \fB\em\fP
+wstawia architekturę maszyny (uname -m),
+.IP \fB\en\fP
+wstawia sieciową nazwę węzła maszyny (uname -n),
+.IP \fB\eo\fP
+wstawia nazwę domeny,
+.IP \fB\er\fP
+wstawia wydanie systemu operacyjnego (uname -r),
+.IP \fB\et\fP
+wstawia czas bieżący (lokalny),
+.IP \fB\es\fP
+wstawia nazwę systemu operacyjnego,
+.IP "\fB\eu\fP oraz \fB\eU\fP"
+liczba użytkowników, którzy są aktualnie zalogowani.
+\\U wstawia "\fIn\fP users", podczas gdy \\u wstawia tylko "\fIn\fP".
+.IP \fB\ev\fP
+wstawia wersję systemu operacyjnego (uname -v).
+.PP
+.SH PRZYKŁAD
+Tekst "\fBLinux\ eos\ i386\ #1\ Tue\ Mar\ 19\ 21:54:09\ MET\ 1996\fP" można
+stworzyć, wstawiając do \fI/etc/issue\fR "\fB\\s\ \\n\ \\m\ \\v\fP".
+.PP
+.SH PLIKI
+.IR /etc/issue ,
+.IR /var/run/utmpx .
+.PP
+.SH "ZOBACZ TAKŻE"
+.BR mgetty (8),
+.BR agetty (8).
+.PP
+.SH AUTOR
+Copyright \(co 1996 Florian La Roche <florian@suse.de> 
+lub <florian@jurix.jura.uni\-sb.de>.
+Strona podręcznika napisana przez Davida Frey'a <David.Frey@eos.lugs.ch> i
+Floriana La Roche.

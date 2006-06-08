@@ -1,0 +1,32 @@
+.\" {PTM/LK/0.1/27-09-1998/"yuvtoppm - konwersja wartości YUV do formatu .ppm"}
+.\" Tłumaczenie: 27-09-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.TH yuvtoppm 1 "25 marca 91"
+.IX yuvtoppm
+.SH NAZWA
+yuvtoppm \- konwersja danych Abekas YUV do formatu .ppm
+.SH SKŁADNIA
+.B yuvtoppm
+.I szerokość wysokość
+.RI [ dane_obrazu ]
+.SH OPIS
+.I yuvtoppm
+czyta dane w formacie Abekas YUV. Następnie zapisuje na standardowe wyjście
+plik w formacie .ppm (przenośna pixmapa). Plik wejściowy stanowi po prostu
+ciąg danych YUV bez nagłówka, dlatego w linii poleceń należy podać
+szerokość i wysokość obrazu. Maksymalną wartością (maxval) jest 255.
+.SH "ZOBACZ TAKŻE"
+ppmtoyuv(1), ppm(5)
+.SH AUTOR
+Marc Boucher <marc@PostImage.COM>,
+na podstawie Example Conversion Program, A60/A64 Digital Video Interface
+Manual, strona 69.
+.PP
+Copyright (C) 1991 by DHD PostImage Inc.
+.PP
+Copyright (C) 1987 by Abekas Video Systems Inc.
+." Permission to use, copy, modify, and distribute this software and its
+." documentation for any purpose and without fee is hereby granted, provided
+." that the above copyright notice appear in all copies and that both that
+." copyright notice and this permission notice appear in supporting
+." documentation. This software is provided "as is" without express or
+." implied warranty.

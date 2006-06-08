@@ -1,0 +1,77 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl>
+.TH PSRESIZE 1 "PSUtils Wydanie 1 Łata 17"
+.SH NAZWA
+psresize \- wiele stron na arkuszu
+.SH SKŁADNIA 
+.B psresize
+[
+.B \-w\fIszerokość\fR
+] [
+.B \-h\fIwysokość\fR
+] [
+.B \-p\fIpapier\fR
+] [
+.B \-W\fIszerokość\fR
+] [
+.B \-H\fIwysokość\fR
+] [
+.B \-P\fIpapier\fR
+] [
+.B \-q
+] [
+.I plik_we
+[
+.I plik_wy
+] ]
+.SH OPIS
+.I Psresize
+skaluje i centruje dokument w innym rozmiarze papieru. Plik wejściowy musi
+być zgodny z konwencjami strukturyzacji dokumentu Adobe (DSC).
+.PP
+Opcja
+.I \-w
+przekazuje szerokość wyjściowego arukusza, a
+.I \-h
+jego wysokość. Jednostkami są
+.B "cm"
+lub
+.B "in"
+(cale). Brak jednostki oznacza punkty postscriptowe o wymiarze 1/72 cala.
+Alternatywnym sposobem przekazania rozmiaru papieru jest opcja
+.IR \-p ,
+ustawiająca rozmiar na
+.B a3, a4, a5, b5, letter, legal, tabloid, statement, executive, folio, quarto
+lub
+.B 10x14.
+Domyślnym rozmiarem jest
+.B a4.
+.PP
+Opcja
+.I \-W
+podaje szerokość papieru wejściowego, a
+.I \-H
+jego wysokość.
+Alternatywnym sposobem przekazania rozmiaru papieru wejściowego jest opcja
+.IR \-P ,
+ustawiająca rozmiar papieru. Domyślną wartością jest
+.B a4.
+.PP
+.I Psresize
+normalnie drukuje na wyjściu numery stron; opcja
+.I \-q
+powstrzymuje to działanie.
+.SH PRZYKŁADY
+Następująca komenda konwertuja dokument A4 na rozmiar letter:
+.sp
+psresize -PA4 -pletter in.ps out.ps
+.sp
+.SH AUTOR
+Copyright (C) Angus J. C. Duggan 1991-1995
+.SH "ZOBACZ TAKŻE"
+psbook(1), psselect(1), pstops(1), epsffit(1), psnup(1), psresize(1), psmerge(1), fixscribeps(1), getafm(1), fixdlsrps(1), fixfmps(1), fixmacps(1), fixpsditps(1), fixpspps(1), fixtpps(1), fixwfwps(1), fixwpps(1), fixwwps(1), extractres(1), includeres(1)
+.SH ZNAKI TOWAROWE
+.B PostScript
+jest znakiem towarowym Adobe Systems Incorporated.
+.SH BŁĘDY
+.I Psresize
+nie przyjmuje wszystkich komentarzy DSC.

@@ -1,0 +1,158 @@
+.\" {PTM/AB/0.1/15-12-1998/"crypt - szyfrowanie danych i haseł"}
+.\" tłumaczenie Adam Byrtek <abyrtek@priv.onet.pl>
+.\" Aktualizacja do man-pages 1.47 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Michael Haardt (michael@cantor.informatik.rwth.aachen.de) Sat Sep  3 22:00:30 MET DST 1994
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Sun Feb 19 21:32:25 1995, faith@cs.unc.edu edited details away
+.\"
+.\" TO DO: This manual page should go more into detail how DES is perturbed, 
+.\" which string will be encrypted, and what determines the repetition factor.
+.\" Is a simple repetition using ECB used, or something more advanced?  I hope
+.\" the presented explanations are at least better than nothing, but by no
+.\" means enough.
+.\"
+.\" added _XOPEN_SOURCE, aeb, 970705
+.\" added GNU MD5 stuff, aeb, 011223
+.\" ------------
+.TH CRYPT 3 2001-12-23 "" "Funkcje biblioteczne"
+.SH NAZWA
+crypt \- szyfrowanie danych i haseł
+.SH SKŁADNIA
+.B #define _XOPEN_SOURCE
+.br
+.B #include <unistd.h>
+.sp
+.BI "char *crypt(const char *" key ", const char *" salt );
+.SH OPIS
+.B crypt
+to funkcja szyfrująca hasła. Opiera się ona na algorytmie Data
+Encryption Standard, z pewnymi modyfikacjami mającymi (między innymi)
+zapobiec próbom sprzętowego złamania klucza.
+.PP
+Argument
+.I key
+to hasło wpisane przez użytkownika.
+.PP
+Argument
+.I salt
+to łańcuch dwóch znaków z zestawu
+[\fBa\fP\(en\fBzA\fP\(en\fBZ0\fP\(en\fB9./\fP].
+Ten łańcuch umożliwia kodowanie jednego hasła na 4096 różnych sposobów.
+.PP
+Poprzez pobranie 7 najmniej znaczących bitów pierwszych ośmiu znaków łańcucha
+.I key
+tworzony jest 56-bitowy klucz. Ten klucz jest używany do zakodowania z góry
+ustalonego łańucha znaków (zwykle jest to łańcuch składający się z samych
+zer). Zwracana wartość wskazuje na zaszyfrowane hasło, serię 13 znaków ASCII
+(pierwsze dwa znaki reprezentują argument salt). Zwracana wartość
+wskazuje na statyczną daną, która jest nadpisywana przy każdym wywołaniu
+funkcji.
+.PP
+Uwaga: Istnieje 
+.if t 2\s-2\u56\s0\d
+.if n 2**56 ,
+czyli 7.2e16, możliwych wartości. Możliwe jest przeszukiwanie przestrzeni
+kluczy z użyciem komputerów z przetwarzaniem równoległym. Dostępne są
+programy, takie jak
+.BR crack (1),
+przeszukujące obszar kluczy, które są
+często wykorzystywane przez ludzi jako hasła. Tak więc hasło nie powinno
+zawierać powszechnych wyrazów i nazw. Zalecane jest używanie programu
+.BR passwd (1),
+który podczas zmiany lub wyboru hasła sprawdza, czy nie jest łatwe do
+złamania.
+.PP
+Sam algorytm DES ma kilka wad, dlatego
+.BR crypt (3)
+jest złym rozwiązaniem dla zastosowań innych niż autoryzacja za pomocą hasła.
+Jeśli planujesz wykorzystać
+.BR crypt (3)
+dla celów kryptograficznych, nie rób tego. Zdobądź dobrą książkę o szyfrowaniu
+i jedną z ogólnodostępnych bibliotek DES.
+.SH "WARTOŚĆ ZWRACANA"
+Zwracany jest wskaźnik do zaszyfrowanego hasła.
+W przypadku wywstąpienia błędu, zwracana jest wartość NULL.
+.SH BŁĘDY
+.TP
+.B ENOSYS
+Funkcja
+.B crypt
+nie została zaimplementowana, prawdopodobnie ze względu na ograniczenia
+eksportowe Stanów Zjednoczonych.
+.\" This level of detail is not necessary in this man page. . .
+.\" .PP
+.\" When encrypting a plain text P using DES with the key K results in the
+.\" encrypted text C, then the complementary plain text P' being encrypted
+.\" using the complementary key K' will result in the complementary encrypted
+.\" text C'.
+.\" .PP
+.\" Weak keys are keys which stay invariant under the DES key transformation.
+.\" The four known weak keys 0101010101010101, fefefefefefefefe,
+.\" 1f1f1f1f0e0e0e0e and e0e0e0e0f1f1f1f1 must be avoided.
+.\" .PP
+.\" There are six known half weak key pairs, which keys lead to the same
+.\" encrypted data.  Keys which are part of such key clusters should be
+.\" avoided.
+.\" Sorry, I could not find out what they are.
+.\""
+.\" .PP
+.\" Heavily redundant data causes trouble with DES encryption, when used in the
+.\" .I codebook
+.\" mode that
+.\" .BR crypt (3)
+.\" implements.  The
+.\" .BR crypt (3)
+.\" interface should be used only for its intended purpose of password
+.\" verification, and should not be used as part of a data encryption tool.
+.\" .PP
+.\" The first and last three output bits of the fourth S-box can be
+.\" represented as function of their input bits.  Empiric studies have
+.\" shown that S-boxes partially compute the same output for similar input.
+.\" It is suspected that this may contain a back door which could allow the
+.\" NSA to decrypt DES encrypted data.
+.\" .PP
+.\" Making encrypted data computed using crypt() publically available has
+.\" to be considered insecure for the given reasons.
+.SH "ROZSZERZENIE GNU"
+Wersja tej funkcji zawarta w glibc2 posiada następujące dodatkowe własności.
+Jeśli
+.I salt
+jest łańcuchem znaków rozpoczynającym się od znaków "$1$", po których
+następuje co najwyżej osiem znaków i, opcjonalnie, zakończonym "$",
+to zamiast używać maszyny DES, funkcja crypt zawarta w glibc używa
+algorytmu opartego na MD5, wyprowadzając do 34 bajtów w postaci
+"$1$<łańcuch>$", gdzie "<łańcuch>" składa się z wspomnianych wcześniej nie
+więcej niż 8 znaków występujących po "$1$" w salt, po których następują 22
+znaki należące do zbioru [\fBa\fP\(en\fBzA\fP\(en\fBZ0\fP\(en\fB9./\fP].
+Cały klucz jest tu znaczący (zamiast tylko pierwszych 8 bajtów).
+.LP
+Programy korzystające z tej funkcji muszą być konsolidowane z -lcrypt.
+.SH "ZGODNE Z"
+SVID, X/OPEN, BSD 4.3, POSIX 1003.1-2001
+.SH "ZOBACZ TAKŻE"
+.BR login (1),
+.BR passwd (1),
+.BR encrypt (3),
+.BR getpass (3),
+.BR passwd (5)

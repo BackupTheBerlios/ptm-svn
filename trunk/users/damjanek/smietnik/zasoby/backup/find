@@ -1,0 +1,13 @@
+# Lista polskich stron man dla pakietu
+# find
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+find.1		man1/find.1
+locate.1	man1/locate.1
+locatedb.5	man5/locatedb.5
+updatedb.1	man1/updatedb.1
+xargs.1		man1/xargs.1
+#
+# koniec listy

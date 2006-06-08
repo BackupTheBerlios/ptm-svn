@@ -1,0 +1,93 @@
+.\" -*- nroff -*-
+.\" 
+.\" {PTM/AB/0.1/11-09-1999/"sysinfo - zwraca informacje statystyczne systemu"}
+.\" translated by Adam Byrtek <alpha@irc.pl>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Mar 2002,
+.\"              manpages 1.48
+.\" 
+.\" (C)opyright 1993 by Dan Miner (dminer@nyx.cs.du.edu)
+.\" 
+.\"  Permission is granted to freely distribute or modify this file
+.\"  for the purpose of improving Linux or its documentation efforts.
+.\"  If you modify this file, please put a date stamp and HOW you
+.\"  changed this file.  Thanks.   -DM
+.\" 
+.\" Modified Sat Jul 24 12:35:12 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 22:29:51 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Mon Aug 25 16:06:11 1997 by Nicolás Lichtmaier <nick@debian.org>
+.\"
+.TH SYSINFO 2 1997-08-25 "Linux 2.0" "Podręcznik programisty Linuksa"
+.SH NAZWA
+sysinfo \- zwraca informacje statystyczne dotyczące całego systemu
+.SH SKŁADNIA
+.B #include <sys/sysinfo.h>
+.sp
+.BI "int sysinfo(struct sysinfo *" info );
+.SH OPIS
+Aż do Linuksa 2.3.16
+.B sysinfo
+zwracało informacje w następującej strukturze:
+
+.RS
+.nf
+struct sysinfo {
+	long uptime;             /* ilość sekund od startu systemu */
+	unsigned long loads[3];  /* średnie obciążenie w ciągu 1, 5 i 15min.*/
+	unsigned long totalram;  /* ilość pamięci */
+	unsigned long freeram;   /* ilość wolnej pamięci */
+	unsigned long sharedram; /* ilość pamięci wspólnej */
+	unsigned long bufferram; /* pamięć wykorzystywana przez bufory */
+	unsigned long totalswap; /* ilość pamięci wymiany */
+	unsigned long freeswap;  /* ilość wolnej pamięci wymiany */
+	unsigned short procs;    /* ilość procesów */
+	char _f[22];             /* dopełnienie do 64 bajtów */
+};
+.fi
+.RE
+
+i rozmiary były podawane w bajtach. Począwszy od Linuksa 2.3.23 (i386), 2.3.48
+(wszystkie architektury) struktura ta ma postać
+
+.RS
+.nf
+struct sysinfo {
+	long uptime;             /* ilość sekund od startu systemu */
+	unsigned long loads[3];  /* średnie obciążenie w ciągu 1, 5 i 15min.*/
+	unsigned long totalram;  /* ilość pamięci */
+	unsigned long freeram;   /* ilość wolnej pamięci */
+	unsigned long sharedram; /* ilość pamięci wspólnej */
+	unsigned long bufferram; /* pamięć wykorzystywana przez bufory */
+	unsigned long totalswap; /* ilość pamięci wymiany */
+	unsigned long freeswap;  /* ilość wolnej pamięci wymiany */
+	unsigned short procs;    /* ilość procesów */
+	unsigned long totalhigh; /* ilość pamięci wysokiej */
+	unsigned long freehigh;  /* ilość wolnej pamięci wysokiej */
+	unsigned int mem_unit;   /* wielkość jednostki pamięci w bajtach */
+	char _f[20-2*sizeof(long)-sizeof(int)]; /* dopełnienie dla libc5 */
+};
+.fi
+.RE
+
+i rozmiary są podawane jako wielokrotności \fImem_unit\fP bajtów.
+
+.B sysinfo
+w prosty sposób udostępnia ogólnosystemowe statystyki. Metoda ta jest bardziej
+przenośna niż odczytywanie \fI/dev/kmem\fP. Przykład użycia można znaleźć w
+intro(2).
+.SH "WARTOŚĆ ZWRACANA"
+W razie pomyślnego zakończenia zwracane jest zero. W przypadku błędu
+zwracane jest \-1 i odpowiednio ustawiane
+.IR errno .
+.SH BŁĘDY
+.TP
+.B EFAULT
+wskaźnik do \fIstruct\ sysinfo\fP jest nieprawidłowy
+.SH "ZGODNE Z"
+Ta funkcja jest specyficzna dla Linuksa i nie powinna być wykorzystywana w
+programach, które mają być przenośne.
+.sp
+Jądro Linuksa dysponuje wywołaniem systemowym sysinfo od wersji 0.98.pl6.
+Linoksowa boblioteka libc zawiera funkcję sysinfo() od wersji 5.3.5, a glibc
+od 1.90.
+.SH "ZOBACZ TAKŻĘ"
+.BR proc (5)

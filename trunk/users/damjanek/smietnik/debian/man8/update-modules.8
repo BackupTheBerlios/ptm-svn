@@ -1,0 +1,105 @@
+.\" {PTM/PR/0.1/01-09-1999/"tworzenie pliku /etc/modules.conf"}
+.\" Translation updated by RL, Nov 2005, modutils 2.4.27.0-3
+.\" $Id: update-modules.8,v 1.4 2005/10/16 21:10:43 robert Exp $
+.\"
+.TH UPDATE-MODULES 8 "Użytki Debiana" "DEBIAN"
+.SH NAZWA
+update\-modules \- tworzenie plików /etc/modules.conf i /etc/chandev.conf
+.SH SKŁADNIA
+.B update\-modules
+[force]
+.SH OPIS
+.B update\-modules
+jest prostym narzędziem do zarządzania plikami
+.IR /etc/modules.conf
+i
+.IR /etc/chandev.conf
+w przypadku architektury s390.
+Narzędzia obsługi modułów Linuksa korzystają z jednego pliku konfiguracyjnego.
+Utrudnia to tworzenie pakietów, które dodają informacje o swoich własnych
+modułach. Program
+.B update\-modules
+został wprowadzony właśnie dlatego, aby ułatwić dynamiczne zarządzanie
+plikiem konfiguracyjnym,
+.PP
+.B update\-modules
+tworzy plik konfiguracyjny z osobnych plików umieszczonych w katalogu
+.IR /etc/modutils .
+Wszystkie pliki w tym katalogu zostają połączone w plik
+.IR /etc/modules.conf
+i
+.IR /etc/chandev.conf .
+Istnieje specjalny podkatalog
+.RI ( /etc/modutils/arch )
+który zawiera informacje o poszczególnych architekturach.
+.B update\-modules
+uwzględnia architekturę i wykorzystuje tylko potrzebne pliki.
+.PP
+Po utworzeniu nowego pliku, poprzedni jest zachowywany pod nazwą
+.IR /etc/modules.conf.old
+lub
+.IR /etc/chandev.conf.old .
+.PP
+Kod wyjścia 0 oznacza poprawne zakończenie programu
+.BR update-modules ,
+1 oznacza znalezienie konfliktów, 2 oznacza, że użytkownik,
+próbujący uruchomić
+.BR update-modules ,
+nie jest rootem i 3 oznacza, że plik konfiguracyjny
+.B /etc/modules.conf
+lub
+.B /etc/chandev.cof
+\fInie\fR został wygenerowany automatycznie (i nie będzie nadpisany, jeżeli
+nie podano opcji \fI--force\fR).
+
+.SH "PLIKI"
+Są dwa rodzaje plików, które mogą znaleźć się w katalogu
+.IR /etc/modutils :
+zwyczajne pliki oraz pliki wykonywalne. Zwyczajne pliki zawierają standardowe
+informacje o modułach, opisane w
+.BR modules.conf (5).
+Pliki z rozszerzeniem .chandev zawierają opcje modułu, jak to opisano w
+.BR chandev (8).
+.\"The special file 0chandev.chandev contains the channel device layer specific
+.\"options.
+Pliki wykonywalne są wykonywane, a ich standardowe wyjście jest dołączane do
+pliku konfiguracyjnego. Komunikaty błędów są wysyłane na stderr i nie są
+dalej przekierowywane.
+.PP
+.B update\-modules
+ignoruje pliki, których nazwy pasują do następującego wyrażenia regularnego:
+.RS
+.B *\e(\e.dpkg\-[a\-z]*\e|\.orig|,v|~\e)$
+.RE
+(tj. pliki o rozszerzeniach:
+.IR .dpkg\-new ,
+.IR .dpkg\-orig ,
+.IR .dpkg\-dist ,
+.IR .dpkg\-old ,
+.IR .orig ,
+.IR ,v ,
+oraz takie, których nazwa kończy się znakiem
+.IR ~ ).
+.SH OPCJE
+.TP
+.I force
+.B update\-modules
+sprawdza, czy bieżące pliki
+.I /etc/modules.conf
+i
+.I /etc/chandev.conf
+są plikami wygenerowanym poprzez zbadanie specjalnego znacznika w pierwszej
+linii. Jeśli nie został on znaleziony, operacja jest zatrzymywana (z kodem wyjścia 3).
+Podanie parametru
+.I force
+powoduje, że w takim przypadku, wyświetlane jest tylko ostrzeżenie.
+.SH "ZOBACZ TAKŻE"
+.BR depmod (1),
+.BR modules.conf (5),
+.BR modprobe (8),
+.BR chandev (8).
+.SH BŁĘDY
+Żadnych, oczywiście! :)
+.SH AUTOR
+Ten podręcznik napisał Wichert Akkerman <wakkerma@debian.org>
+dla systemu Debian GNU/Linux.

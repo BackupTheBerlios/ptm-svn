@@ -1,0 +1,297 @@
+.\" Tłumaczenie na podstawie wersji man-pages 1.47 - grudzień 2001
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 2000 Sam Varshavchik <mrsam@courier-mta.com>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References: RFC 2553
+.\" ------------
+.TH getaddrinfo 3 2000-12-18 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getaddrinfo \- tłumaczenie adresów i usług sieciowych
+.SH SKŁADNIA
+.nf
+.B #include <sys/types.h>
+.B #include <sys/socket.h>
+.B #include <netdb.h>
+.sp
+.BI "int getaddrinfo(const char *" "node" ", const char *" "service" ,
+.BI "                const struct addrinfo *" "hints" ,
+.BI "                struct addrinfo **" "res" );
+.sp
+.BI "void freeaddrinfo(struct addrinfo *" "res" );
+.sp
+.BI "const char *gai_strerror(int " "errcode" );
+.fi
+.SH OPIS
+Funkcja
+.BR getaddrinfo (3)
+łączy w pojedynczym interfejsie funkcjonalność udostępnianą przez funkcje
+.BR getipnodebyname (3),
+.BR getipnodebyaddr (3),
+.B getservbyname (3)
+i
+.BR getservbyport (3).
+Przystosowana do wielowątkowości funkcja
+.BR getaddrinfo (3)
+tworzy jedną lub więcej struktur adresowych gniazda, które mogą być
+wykorzystane przez funkcje systemowe
+.BR bind (2)
+i
+.BR connect (2)
+do utworzenia gniazda klienta lub serwera.
+.PP
+Funkcja
+.BR getaddrinfo (3)
+nie jest ograniczona do tworzenia struktur adresowych gniazd IPv4. Gniazda
+IPv6 mogą również być tworzone za jej pomocą, o ile dostępne jest wspomaganie
+dla IPv6. Te struktury adresowe gniazd mogą być bezpośrednio wykorzystane
+przez
+.BR bind (2)
+i
+.BR connect (2)
+do sporządzenia gniazda klienta lub serwera.
+.PP
+Struktura
+.B addrinfo
+używana przez tę funkcję zawiera następujące pola:
+.sp
+.nf
+.B struct addrinfo {
+.BI "    int     " "ai_flags" ";"
+.BI "    int     " "ai_family" ";"
+.BI "    int     " "ai_socktype" ";"
+.BI "    int     " "ai_protocol" ";"
+.BI "    size_t  " "ai_addrlen" ";"
+.BI "    struct sockaddr *" "ai_addr" ";"
+.BI "    char   *" "ai_canonname" ";"
+.BI "    struct addrinfo *" "ai_next" ";"
+.B };
+.fi
+.PP
+.BR getaddrinfo (3)
+ustawia
+.IR res ,
+aby wskazywało na dynamicznie zaalokowaną listę struktur
+.BR addrinfo ,
+dowiązaną do pola
+.IR ai_next .
+Istnieje kilka powodów, dla których lista może zawierać więcej niż
+jedną strukturę
+.BR addrinfo ,
+włączając w to: posiadanie przez host wielu interfejsów sieciowych oraz
+dostępność tej samej usługi poprzez wiele protokołów gniazda (na przykład,
+gdy jednym z nich jest
+.BR SOCK_STREAM ,
+a innym
+.BR SOCK_DGRAM ).
+.PP
+Pola
+.IR ai_family ,
+.I ai_socktype
+i
+.I ai_protocol
+mają to samo znaczenie jako odpowiednie parametry wywołania systemowego
+.BR socket (2).
+Funkcja
+.BR getaddrinfo (3)
+zwraca adresy gniazd IPv4 lub IPv6
+.RI "(" "ai_family"
+zostanie ustawione albo na
+.B PF_INET
+albo na
+.BR PF_INET6 ).
+.PP
+Parametr
+.I hints
+określa preferowany rodzaj gniazda lub protokół.
+Wartość NULL dla
+.I hints
+określa, że akceptowany jest dowolny adres sieciowy lub protokół.
+Jeśli parametr ten ma wartość różną od
+.BR NULL ,
+wskazuje on na strukturę
+.BR addrinfo ,
+w której pola
+.IR ai_family ,
+.I ai_socktype
+i
+.I ai_protocol
+określają preferowany rodzaj gniazda.
+.B PF_UNSPEC
+w
+.I ai_family
+określa dowolną rodzinę protokołów (na przykład IPv4 lub IPv6).
+0 w
+.I ai_socktype
+lub
+.I ai_protocol
+stwierdza, że akceptowalny jest również dowolny rodzaj gniazda lub protokół.
+Pole
+.I ai_flags
+zawiera dodatkowe, zdefiniowane poniżej, opcje.
+Wiele znaczników podaje się jako ich logiczne OR.
+Wszystkie pozostałe pola parametru
+.I hints
+muszą zawierać albo 0 albo wskaźnik NULL.
+.PP
+Parametry
+.I node
+i
+.I service
+mogą być równe NULL, ale nie oba naraz.
+.I node
+zawiera albo adres sieciowy w postaci numerycznej
+(w formacie dziesiętnych liczb rozdzielonych kropkami dla IPv4, a w formacie
+szesnastkowym dla IPv6) albo nazwę hosta, dla której adresy sieciowe będą
+poszukiwane i rozwiązane.
+Jeśli pole
+.I ai_flags
+parametru
+.I hints
+zawiera znacznik
+.BR AI_NUMERICHOST ,
+to parametr
+.I node
+musi być adresem sieciowym w postaci numerycznej.
+Znacznik
+.B AI_NUMERICHOST
+eliminuje jakiekolwiek, potencjalnie długotrwałe, poszukiwania adresu
+sieciowego hosta.
+.PP
+Funkcja
+.BR getaddrinfo (3)
+tworzy listę struktur
+.BR addrinfo ,
+po jednej dla każdej podstawy ograniczenia adresów sieciowych
+narzuconej przez parametr
+.IR hints .
+Gdy
+.I ai_flags
+w
+.I hints
+zawiera znacznik
+.BR AI_CANONNAME ,
+to
+.I ai_canonname
+jest ustawiane tak, aby wskazywało na oficjalną nazwę hosta.
+.IR ai_family ,
+.I ai_socktype
+i
+.I ai_protocol
+zawierają parametry tworzenia gniazda.
+Wskaźnik do adresu gniazda jest umieszczany w polu
+.IR ai_addr ,
+a długość adresu gniazda w bajtach jest umieszczana w polu
+.IR ai_addrlen .
+.PP
+Gdy
+.I node
+jest równe NULL,
+inicjalizacja adresu sieciowego w każdej ze struktur gniazda zależy od
+znacznika
+.BR AI_PASSIVE ,
+który jest ustawiany w polu
+.I ai_flags
+parametru
+.IR hints .
+Gdy znacznik
+.B AI_PASSIVE
+jest ustawiony, to adres sieciowy w każdej ze struktur gniazda pozostanie
+nieokreślony.
+Jest to wykorzystywane przez programy serwerów, które zamierzają przyjmować
+połączenia od klientów na dowolny adres sieciowy.
+Gdy znacznik
+.B AI_PASSIVE
+nie jest ustawiony, to adres sieciowy zostanie ustawiony na adres interfejsu
+loopback.
+Jest to wykorzystywane przez programy klienckie, które zamierzają połączyć się
+z serwerem działającym na tym samym hoście.
+.PP
+.I service
+ustawia numer portu w adresie sieciowym każdej ze struktur gniazda.
+Jeśli
+.I service
+jest różne od NULL, to numer portu pozostanie niezainicjalizowany.
+.PP
+Funkcja
+.BR freeaddrinfo (3)
+zwalnia pamięć przydzieloną dla dynamicznie zaalokowanej listy
+.IR res .
+.SH "WARTOŚĆ ZWRACANA"
+.BR getaddrinfo (3)
+zwraca 0, gdy zakończy się pomyślnie, a w przeciwnym razie jeden z
+następujących niezerowych kodów błędów:
+.TP
+.B EAI_FAMILY
+Zupełny brak wsparcia dla żądanej rodziny adresów.
+.TP
+.B EAI_SOCKTYPE
+Zupełny brak wsparcia dla żądanego rodzaju gniazda.
+.TP
+.B EAI_BADFLAGS
+.I ai_flags
+zawiera nieprawidłowe znaczniki.
+.TP
+.B EAI_NONAME
+.I node
+lub
+.I service
+jes nieznane.
+Ten błąd jest również zwracany, gdy zarówno
+.IR node ,
+jak i
+.I service
+są równe NULL.
+.TP
+.B EAI_SERVICE
+Żądana usługa nie jest dostępna dla zadanego rodzaju gniazda.
+Może ona jednak być dostępna dla innego rodzaju gniazda.
+.TP
+.B EAI_ADDRFAMILY
+Podany host nie posiada żadnego adresu sieciowego dla zadanej rodziny adresów.
+.TP
+.B EAI_NODATA
+Podany host istnieje, ale nie zdefiniowano dla niego żadnego adresu
+sieciowego.
+.TP
+.B EAI_MEMORY
+Brak pamięci.
+.TP
+.B EAI_FAIL
+Serwer nazw zwrócił błąd trwały.
+.TP
+.B EAI_AGAIN
+Serwer nazw zwrócił błąd tymczasowy.
+Należy spróbować później.
+.TP
+.B EAI_SYSTEM
+Inny błąd systemowy; szczegółowe informacje zawarte są w
+.IR errno .
+.PP
+Funkcja
+.BR gai_strerror (3)
+tłumaczy te kody błędów na czytelny dla człowieka napis,
+odpowiedni dla zgłaszania błędów.
+.SH "ZOBACZ TAKŻE"
+.BR getipnodebyname (3),
+.BR getipnodebyaddr (3)

@@ -1,0 +1,60 @@
+.\" Tłumaczenie: wrzesień 2001 PTM Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" Aktualizacja do man-pages 1.67 - Robert Luberda <robert@debian.org>, październik 2004
+.\" $Id: sinh.3,v 1.5 2004/10/09 14:51:29 robert Exp $
+.\" --------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 1996-06-08 by aeb
+.\" Modified 2002-07-27 by Walter Harms
+.\" 	(walter.harms@informatik.uni-oldenburg.de)
+.\"
+.TH SINH 3  2002-07-27 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+sinh, sinhf, sinhl \- funkcja sinus hiperboliczny
+.SH SKŁADNIA
+.nf
+.B #include <math.h>
+.sp
+.BI "double sinh(double " x );
+.sp
+.BI "float sinhf(float " x );
+.sp
+.BI "long double sinhl(long double " x );
+.fi
+.SH OPIS
+Funkcja \fBsinh()\fP zwraca sinus hiperboliczny dla \fIx\fP, który jest
+matematycznie zdefiniowany jako (exp(x) - exp(-x)) / 2.
+.SH "ZGODNE Z"
+SVID 3, POSIX, BSD 4.3, ISO 9899.
+Warianty float i long double są wymagane przez C99
+.SH "ZOBACZ TAKŻE"
+.BR acosh (3),
+.BR asinh (3),
+.BR atanh (3),
+.BR cosh (3),
+.BR tanh (3)

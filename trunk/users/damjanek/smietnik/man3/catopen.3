@@ -1,0 +1,169 @@
+.\" {PTM/AB/0.1/13-12-1998/"catopen, catclose - otwarcie/zamknięcie katalogu komunikatów"}
+.\" tłumaczenie Adam Byrtek <abyrtek@priv.onet.pl>
+.\" aktualizacja do man-pages 1.45 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 1993 Mitchum DSouza <m.dsouza@mrc-applied-psychology.cambridge.ac.uk>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Thu Dec 13 22:51:19 2001 by Martin Schulze <joey@infodrom.org>
+.\" Modified 2001-12-14 aeb
+.\"
+.\" ------------
+.TH CATOPEN 3 2001-12-14
+.SH NAZWA
+catopen, catclose \- otwarcie/zamknięcie katalogu komunikatów
+.SH SKŁADNIA
+.B #include <nl_types.h>
+.sp
+.BI "nl_catd catopen(const char *" name ", int " flag );
+.br
+.BI "int catclose(nl_catd " catalog );
+.SH OPIS
+Funkcja
+.B catopen()
+otwiera katalog komunikatów i zwraca deskryptor tego katalogu.
+Deskryptor pozostaje ważny aż do wywołania catclose() lub exec().
+Jeśli w celu implementacji deskryptorów katalogów, użyty zostanie deskryptor
+pliku, to zostanie ustawiony znacznik FD_CLOEXEC.
+.LP
+Argument
+.I name
+określa nazwę otwieranego katalogu komunikatów. Jeśli
+.I name
+jest ścieżką bezwzględną (tzn. zawiera znak '/'), to
+.I name
+wyznacza ścieżkę do katalogu komunikatów. W przeciwnym wypadku używana jest
+zmienna środowiskowa
+.B NLSPATH
+z ciągiem
+.B %N
+zastąpionym przez
+.I name
+(zobacz
+.BR locale (7)).
+Nie jest określone, czy zmianna
+.B NLSPATH
+zostanie użyta, gdy proces ma uprawnienia root-a.
+Jeśli zmienna
+.B NLSPATH
+nie istnieje, lub katalog komunikatów nie może zostać otwarty
+w żadnej ze ścieżek przez nią określonych,
+to zostanie użyta ściężka zależna od implementacji.
+Ta domyślna ścieżka może zależeć od ustawienia locale
+.B LC_MESSAGES
+gdy argument
+.I flag
+jest równy
+.B NL_CAT_LOCALE
+lub od zmiennej środowiskowej
+.B LANG
+gdy argument
+.I flag
+jest równy 0.
+Zmiana części LC_MESSAGES ustawień locale może unieważnić otwarte deskryptory
+katalogów.
+.LP
+Argument
+.B catopen()
+.I flag
+służy do wskazania źródeł dla używanego języka.
+Jeśli ma wartość
+.BR NL_CAT_LOCALE ,
+to użyte zostanie bieżące ustawienie locale dla
+.BR LC_MESSAGES .
+W przeciwnym przypadku użyta zostanie zmienna środowiskowa
+.BR LANG .
+.LP
+Funkcja
+.B catclose()
+zamyka katalog komunikatów określony przez deskryptor
+.IR catalog .
+Unieważnia ona każde następne odwołania do katalogu
+.IR catalog .
+.LP
+.SH "WARTOŚĆ ZWRACANA"
+Jeśli funkcja
+.B catopen()
+zakończy się pomyślnie, zwraca deskryptor katalogu komunikatow, który jest
+typu
+.IR nl_catd .
+Jeśli funkcja zawiedzie, zwraca (nl_catd) \-1
+i ustawia 
+.B errno
+wskazując rodzaj błędu. Możliwe wartości błędów obejmują wszystkie możliwe
+wartości dla wywołania
+.IR open() .
+.LP
+Funkcja
+.B catclose()
+zwraca 0 jeśli zakończy się pomyślnie, a \-1 w przeciwnym przypadku.
+.SH ŚRODOWISKO
+.TP
+.B LC_MESSAGES
+Może stanowić źródło ustawienia locale LC_MESSAGES i wówczas określa język
+używany, gdy
+.I flag
+jest ustawione na
+.BR NL_CAT_LOCALE .
+.TP
+.B LANG
+Język używany, gdy
+.I flag
+wynosi 0.
+.SH UWAGI
+Powyższe stanowi opis wg POSIX 1003.1-2001.
+Dla glibcwartość NL_CAT_LOCALE wynosi 1.
+(Porównaj MCLoadAll poniżej.)
+Domyślna ścieżka może być różna, ale zazwyczaj stanowi kilka miejsc wewnątrz
+katalogu
+.IR /usr/share/locale .
+.SH "UWAGI DLA LIBC4 I LIBC5"
+Funkcje te są dostępne w Linuksie od libc 4.4.4c.
+W przypadku linuksowych libc4 i libc5, deskryptor katalogu
+.IR nl_catd ,
+jest odwzorowanym przez mmap() obszarem pamięci, a nie deskryptorem pliku.
+Argument
+.B catopen()
+.I flag
+Powinien być równy albo
+.B MCLoadBySet
+(=0) albo
+.B MCLoadAll
+(=1).
+Pierwsza z wartości wskazuje, że zestaw z katalogu ma być załadowany, gdy
+będzie to potrzebne, podczas gdy druga z nich powoduje, że pierwsze wywołanie
+.BR catopen ()
+załaduje cały katalog do poamieci.
+Domyślna ścieżka przeszukiwania może być różna, ale zazwyczaj stanowi kilka
+miejsc wewnątrz katalogów
+.I /etc/locale
+i
+.IR /usr/lib/locale .
+.SH "ZGODNE Z"
+POSIX 1003.1-2001.
+W XPG 1987, Vol. 3 mówi on:
+.I "Argument flag funkcji catopen jest zarezerwowany do wykorzystania w przyszłości"
+.IR "i powinien być ustawiony na 0" .
+Nie jest jasne, co było źródłem dla stałych MCLoadBySet i MCLoadAll.
+.SH "ZOBACZ TAKŻE"
+.BR catgets (3),
+.BR setlocale (3)

@@ -1,0 +1,90 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl>
+.TH pgm 5 "12 listopada 1991"
+.SH NAZWA
+pgm - przenośny format szarej bitmapy
+.SH OPIS
+Jest to prosty format szarej bitmapy.
+.IX "Format pliku PGM"
+Definicja jest następująca:
+.IP - 2
+"Numer magiczny", identyfikujący rodzaj pliku. Numerem magicznym pliku pgm
+jest "P2".
+.IX "numery magiczne"
+.IP - 2
+Biała spacja (spacje, tabulacje, CR, LF).
+.IP - 2
+Szerokość, sformatowana jako dziesiętne ASCII.
+.IP - 2
+Biała spacja.
+.IP - 2
+Wysokość, znów jako dziesiętne ASCII.
+.IP - 2
+Biała spacja.
+.IP - 2
+Maksymalna wartość szarości, w dziesiętnym ASCII.
+.IP - 2
+Biała spacja.
+.IP - 2
+Szerokość * wysokość wartości szarości w postaci dziesiętnej ASCII,
+zawierających się między 0 a podaną wartością maksymalną. Rozdzielane są
+białymi spacjami, poczynając od lewego górnego rogu, do końca, w kierunku
+czytania. Wartość 0 oznacza czerń, wartość maksymalna biel.
+.IP - 2
+Łańcuchy, rozpoczynające się  od "#" do końca linii są ignorowane
+(komentarze).
+.IP - 2
+Żadna z linii nie powinna być dłuższa niż 70 znaków.
+.PP
+Oto przykład małego obrazka w tym formacie:
+.nf
+P2
+# feep.pgm
+24 7
+15
+0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+0  3  3  3  3  0  0  7  7  7  7  0  0 11 11 11 11  0  0 15 15 15 15  0
+0  3  0  0  0  0  0  7  0  0  0  0  0 11  0  0  0  0  0 15  0  0 15  0
+0  3  3  3  0  0  0  7  7  7  0  0  0 11 11 11  0  0  0 15 15 15 15  0
+0  3  0  0  0  0  0  7  0  0  0  0  0 11  0  0  0  0  0 15  0  0  0  0
+0  3  0  0  0  0  0  7  7  7  7  0  0 11 11 11 11  0  0 15  0  0  0  0
+0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+.fi
+.PP
+Programy, które odczytują ten format powinny być jak najwyrozumialsze,
+przyjmując wszystko, co z daleka wygląda jak mapa szarości.
+.PP
+Istnieje też wariant tego formatu, dostępny po ustawieniu podczas kompilacji
+opcji RAWBITS. Wariant różni się w sposób następujący:
+.IX RAWBITS
+.IP - 2
+"Numer magiczny" to "P5" zamiast "P2".
+.IP - 2
+Wartości szarości są zapisywane jako bajty, zamiast wartości dziesiętnych
+ASCII.
+.IP - 2
+W sekcji szarości nie są dozwolone białe spacje oraz dozwolona jest tylko
+jedna biała spacja (zwykle nowa linia) po wartości maksymalnego koloru.
+.IP - 2
+Pliki są mniejsze i dużo szybsze od formatu podstawowego.
+.PP
+Zauważ, że format ten jest przystosowany do wartości szarości mniejszych niż
+256.
+Jeśli używasz biblioteki
+.I pgm
+i próbujesz zapisać plik o większych wartościach, biblioteka przełączy się
+na format podstawowy.
+.SH "ZOBACZ TAKŻE"
+fitstopgm(1), fstopgm(1), hipstopgm(1), lispmtopgm(1), psidtopgm(1),
+rawtopgm(1),
+pgmbentley(1), pgmcrater(1), pgmedge(1), pgmenhance(1), pgmhist(1), pgmnorm(1),
+pgmoil(1), pgmramp(1), pgmtexture(1),
+pgmtofits(1), pgmtofs(1), pgmtolispm(1), pgmtopbm(1),
+pnm(5), pbm(5), ppm(5)
+.SH AUTOR
+Copyright (C) 1989, 1991 Jef Poskanzer.
+.\" Permission to use, copy, modify, and distribute this software and its
+.\" documentation for any purpose and without fee is hereby granted, provided
+.\" that the above copyright notice appear in all copies and that both that
+.\" copyright notice and this permission notice appear in supporting
+.\" documentation.  This software is provided "as is" without express or
+.\" implied warranty.

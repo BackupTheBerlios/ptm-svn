@@ -1,0 +1,141 @@
+.\" PTM/WK/2001-VI
+.de Id
+.ds Rv \\$3
+.ds Dt \\$4
+..
+.Id $Id: merge.1,v 1.2 2001/06/12 11:09:04 robert Exp $
+.TH MERGE 1 \*(Dt GNU
+.SH NAZWA
+merge \- trójstronne scalanie plików
+.SH SKŁADNIA
+.B merge
+[
+.I "opcje"
+]
+.I "plik1 plik2 plik3"
+.SH OPIS
+.B merge
+nanosi na
+.I plik1
+wszystkie zmiany, które z pliku
+.I plik2
+uczyniły
+.IR plik3 .
+Wynik normalnie trafia do
+.IR plik1 .
+.B merge
+przydaje się do łączenia poczynionych osobno zmian tego samego oryginału.
+Załóżmy, że
+.I plik2
+jest oryginałem, a
+.I plik1
+oraz
+.I plik3
+niezależnymi modyfikacjami
+.IR pliku2 .
+Wówczas
+.B merge
+łączy obie zmiany.
+.PP
+Jeśli zarówno
+.IR plik1,
+jak i
+.I plik3
+zawierają zmiany w tym samym wycinku linii, to występuje konflikt.
+W takim przypadku
+.B merge
+normalnie wypisuje ostrzeżenie i ujmuje konflikt pomiędzy dwie linie
+złożone nawiasów ostrych
+.B <<<<<<<
+i
+.BR >>>>>>> .
+Typowy konflikt wygląda tak:
+.LP
+.RS
+.nf
+.BI <<<<<<< " plik A"
+.I "linie pliku A"
+.B "======="
+.I "linie pliku B"
+.BI >>>>>>> " plik B"
+.RE
+.fi
+.LP
+Jeśli wystąpiły konflikty, użytkownik powinien poprawić wynik ręcznie,
+usuwając jedną z alternatyw.
+.SH OPCJE
+.TP
+.B \-A
+Wypisuje konflikty przy użyciu stylu
+.B \-A
+programu
+.BR diff3 (1),
+jeśli jest on udostępniany przez
+.BR diff3 .
+Scala to wszystkie zmiany czyniące z pliku
+.I plik2
+plik
+.I plik3
+do
+.IR pliku1
+i tworzy najbardziej szczegółowe wyjście.
+.TP
+\f3\-E\fP, \f3\-e\fP
+Te opcje określają style wypisywania konfliktów, które generują mniej
+informacji niż
+.BR \-A .
+Szczegóły można znaleźć w
+.BR diff3 (1).
+Domyślnie używane jest
+.BR \-E .
+Z opcją
+.BR \-e ,
+.B merge
+nie ostrzega o konfliktach.
+.TP
+.BI \-L " etykieta"
+Tę opcję można podać do trzech razy. Określa etykiety, które w raportach
+o konfliktach mają być użyte zamiast odpowiednich nazw plików.
+To znaczy, że
+.B "merge\ \-L\ x\ \-L\ y\ \-L\ z\ a\ b\ c"
+tworzy wyjście wyglądające, tak jakby pochodziło z plików
+.BR x ,
+.B y
+i
+.BR z ,
+a nie z plików o nazwach
+.BR a ,
+.B b
+i
+.BR c .
+.TP
+.BI \-p
+Wysyła wyniki na standardowe wyjście zamiast nadpisywania
+.IR pliku1 .
+.TP
+.BI \-q
+Tryb cichy. Nie ostrzega o konfliktach.
+.BI \-V
+Wypisuje numer wersji programu \*r.
+.SH DIAGNOSTYKA
+Kod zakończenia 0 oznacza pomyślnie ukończoną pracę, 1 napotkanie konfliktów,
+a 2 kłopoty.
+.SH IDENTYFIKACJA
+Autor: Walter F. Tichy.
+.br
+Data zmian strony podręcznika: \*(Rv; Data wydania: \*(Dt.
+.br
+Copyright \(co 1982, 1988, 1989 Walter F. Tichy.
+.br
+Copyright \(co 1990, 1991, 1992, 1993, 1994, 1995 Paul Eggert.
+.SH ZOBACZ TAKŻE
+.BR diff3 (1),
+.BR diff (1),
+.BR rcsmerge (1),
+.BR co(1) .
+.SH BŁĘDY
+Zwykle nie ma sensu scalanie plików binarnych tak, jakby były
+tekstowymi, ale
+.B merge
+i tak próbuje to robić.
+.br

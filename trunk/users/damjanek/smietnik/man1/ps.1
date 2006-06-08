@@ -1,0 +1,1562 @@
+'\" t
+.\" {PTM/PB/0.1/25-04-1999/"Zgłoś status procesu"}
+.\" Translation update: Robert Luberda <robert@debian.org>, Oct 2004, procps 3.2.3
+.\" $Id: ps.1,v 1.4 2004/10/09 14:50:32 robert Exp $
+.\"
+.\" Man page for ps.
+.\" Quick hack conversion by Albert Cahalan, 1998.
+.\" Licensed under version 2 of the Gnu General Public License.
+.\"
+.TH PS 1 "28 lipca 2004" "Linux" "Podręcznik użytkownika Linuksa"
+.SH NAZWA
+ps \- zgłasza status procesu
+.\"
+.\" To render this page:
+.\"    groff -t -b -man -X -P-resolution -P100 -Tps nicolas-ps.1 &
+.\"    groff -t -b -man -X -TX100 nicolas-ps.1 &
+.\"    tbl ps.1 | troff -Ww -man -z
+.\"    groff -t -man -Tps ps.1 | ps2pdf - - > ps.pdf
+.\"
+.\" The '70s called. They want their perfect justification,
+.\" hyphenation, and double-spaced sentences back.
+.na
+.nh
+.if n .ss 12 0
+.\"
+.\" See /usr/share/groff/current/tmac/an-old.tmac for what these do.
+.\" Setting them to zero provides extra space, but only do that for
+.\" plain text output. PostScript and such will remain indented.
+.if n .nr IN 0n
+.if n .nr an-prevailing-indent 0n
+.\"
+.\"
+.\" ColSize is used for the format spec table.
+.\" It's the left margin, minus the right, minus
+.\" the space needed for the 1st two columns.
+.\" Making it messy: inches, ens, points, scaled points...
+.\"
+.nr ColSize ((\n(.lu-\n(.iu/\n(.Hu-20u)n)
+.\"
+.\" This is for command options
+.nr OptSize (16u)
+.\"
+.\" l=\n(.l
+.\" i=\n(.i
+.\" o=\n(.o
+.\" H=\n(.H
+.\" s=\n(.s
+.\" ColSize=\n[ColSize]
+.\"
+.\" Macro for easy option formatting:   .opt \-x
+.de opt
+.  TP \\n[OptSize]
+.  BI \\$*
+..
+.\"
+.SH SKŁADNIA
+\fBps\fR [\fIopcje\fR]
+.PP
+.PP
+.SH OPIS
+.B ps
+wyświetla opis bieżących procesów.
+Jeśli potrzebujesz powtarzającego się statusu,
+użyj \fItop\fR(1).
+.P
+Domyślnie \fBps\fR wyświetla procesy mające ten sam efektywny identyfikator
+użytkownika (EUID), co bieżący użytkownik, oraz podłączone do tego samego terminala,
+do którego podłączona jest osoba uruchamiająca \fBps\fR. Wyświetlany jest identyfikator
+procesu (PID), terminal (tty), do którego proces jest podłączony (TTY), łączny czas
+procesora w formacie [dd\-]hh:mm:ss (TIME) oraz nazwa pliku wykonywalnego (CMD). Użycie
+opcji w stylu BSD zmieni także wybór wyświetlanych procesów, włączając te procesy podłączone
+do innych terminali (TTY), których jesteś właścicielem; może to zostać opisane jako
+wybór wszystkich procesów bez tych, których właścicielami są inni użytkownicy, i tych,
+które nie są podłączone do żadnego terminala.
+Wyjście domyślnie nie jest posortowane.
+.P
+Poza przypadkiem opisanym poniżej, opcje wyboru procesów są dołączające.
+.\" FIXME additive
+Nie bierze się pod uwagę domyślnego wyboru procesów, lecz procesy wybrane przez użytkownika
+są dołączane do zbioru procesów do wyświetlenia. Tak więc proces będzie
+pokazany, jeżeli spełnia którekolwiek z kryteriów wyboru podanych przez użytkownika.
+.PP
+.PP
+.SH "OPCJE LINII KOMEND"
+Ta wersja programu \fBps\fR akceptuje kilka rodzajów opcji:
+.PD 0
+.IP 1 4
+Opcje w stylu UNIX, które mogą być grupowane i muszą być poprzedzone myślnikiem.
+.IP 2 4
+Opcje BSD, które mogą być grupowane i nie mogą być użyte z myślnikiem.
+.IP 3 4
+Długie opcje GNU, które są poprzedzone dwoma myślnikami.
+.PD
+.PP
+Różne typy opcji można ze sobą dowolnie mieszać, jednakże mogą pojawić się konflikty.
+Niektóre opcje są synonimiczne, ich funkcjonalność jest identyczna, z powodu
+mnogości standardów i implementacji \fBps\fR, z którymi ta wersja programu
+\fBps\fR jest zgodna.
+.P
+Proszę zauważyć, że "\fBps\ \-aux\fR" to nie jest to samo, co "\fBps\ aux\fR".
+Standardy POSIX i UNIX wymagają, aby "\fBps\ \-aux\fR" wypisało wszystkie procesy,
+które byłyby wybrane przez podanie opcji \fB\-a\fR. Jeżeli użytkownik o nazwie "x"
+nie istnieje, to \fBps\fR może zinterpretować tę komendę jako "\fBps\ aux\fR"
+i wypisać ostrzeżenie. To zachowanie ma pomóc w przechodzeniu ze starych skryptów
+i nawyków. Może się to zmienić, nie należy na tym zachowaniu polegać.
+.PP
+.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.SH "PRZYKŁADY"
+.TP 3
+Aby zobaczyć wszystkie procesy w systemie, używając standardowej składni:
+.B ps\ \-e
+.br
+.B ps\ \-ef
+.br
+.B ps\ \-eF
+.br
+.B ps\ \-ely
+.TP
+Aby zobaczyć wszystkie procesy w systemie, używając składni BSD:
+.B ps\ ax
+.br
+.B ps\ axu
+.TP
+Aby wypisać drzewo procesów:
+.B ps\ -ejH
+.br
+.B ps\ axjf
+.TP
+Aby wyświetlić informację o wątkach:
+.B ps\ -eLf
+.br
+.B ps\ axms
+.TP
+Aby wyświetlić informacje związane z bezpieczeństwem:
+.B ps\ -eo euser,ruser,suser,fuser,f,comm,label
+.br
+.B ps\ axZ
+.br
+.B ps\ -eM
+.TP
+Aby zobaczyć wszystkie procesy poza tymi działającymi jako root (rzeczywiste i efektywne ID):
+.B ps\ \-U\ root\ \-u\ root\ \-N
+.TP
+Aby wyświetlić wszystkie procesy w formacie zdefiniowanym przez użytkownika:
+.B ps\ \-eo\ pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:14,comm
+.br
+.B ps\ axo\ stat,euid,ruid,tty,tpgid,sess,pgrp,ppid,pid,pcpu,comm
+.br
+.B ps\ \-eopid,tt,user,fname,tmout,f,wchan
+.TP
+Wyświetlenie deskryptorów pól AIX:
+.B ps\ \-o\ "%u\ :\ %U\ :\ %p\ :\ %a"
+.TP
+Wyświetlenie tylko identyfikatora procesu syslogd:
+.B ps\ \-C\ syslogd\ \-o\ pid=
+.TP
+Wyświetlenie tylko nazwy procesu o identyfikatorze 42:
+.B ps\ \-p\ 42\ \-o\ comm=
+.PP
+.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.SH "PROSTY WYBÓR PROCESÓW"
+.TP \n[OptSize]
+.B \-A
+Wybór wszystkich procesów. Identyczne z \fB-e\fR.
+
+.TP
+.B \-N
+Wybór wszystkich procesów, poza tymi, które spełniają określone warunki.
+
+.opt T
+Wybór wszystkich procesów podpiętych do tego teminala. Identyczny z
+opcją \fBt\fR bez żadnych argumentów.
+
+.TP
+.B \-a
+Wybór wszystkich procesów poza liderami sesji (zobacz \fIgetsid\fR(2))
+i procesami nie podłączonymi do żadnego terminala.
+
+.TP
+.B a
+Uruchamia restrykcję w stylu BSD "tylko własne", która jest nakładana
+na zbiór wszystkich procesów, jeżeli są używane jakieś opcje w stylu
+BSD (bez\ "\-") lub gdy osobowość \fBps\fR jest z rodziny BSD.
+Wybrany w ten sposób zbiór procesów jest dołączany do zbioru procesów
+wybranych w inny sposób.
+Alternatywny opis jest taki, że ta opcja
+powoduje wylistowanie przez \fBps\fR wszystkich procesów mających
+przypisany terminal (tty) lub wylistowanie wszystkich procesów,
+jeżeli użyta łącznie z opcją \fBx\fR.
+
+.TP
+.B \-d
+Wybór wszystkich procesów poza liderami sesji.
+
+.TP
+.B \-e
+Wybór wszystkich procesów. Identyczne z \fB\-A\fR.
+
+.\" Current "g" behavior: add in the session leaders, which would
+.\" be excluded in the sunos4 personality. Supposed "g" behavior:
+.\" add in the group leaders -- at least according to the SunOS 4
+.\" man page on the FreeBSD site. Uh oh. I think I had tested SunOS
+.\" though, so maybe the code is correct.
+.TP
+.B g
+Naprawdę wszystkie, nawet liderzy sesji. Ta falga jest przestarzała
+i może zniknąć w przyszłych wersjach programu. Jest włączana przez
+flagę \fBa\fR i jest użyteczna tylko podczas pracy w osobowości sunos4.
+
+.TP
+.B r
+Zawęża wybór tylko do uruchomionych procesów.
+
+.TP
+.B x
+Uruchamia restrykcję w stylu BSD "musi mieć tty", która jest nakładana
+na zbiór wszystkich procesów, jeżeli są używane jakieś opcje w stylu
+BSD (bez\ "\-") lub gdy osobowość \fBps\fR jest z rodziny BSD.
+Wybrany w ten sposób zbiór procesów jest dołączany do zbioru procesów
+wybranych w inny sposób.
+Alternatywny opis jest taki, że ta opcja
+powoduje wylistowanie wszystkich procesów, których jesteś właścicielem
+(EUID taki sam jak procesu \fBps\fR), lub wylistowanie wszystkich procesów,
+jeśli użyta łącznie z opcją \fBa\fR.
+
+.TP
+.B \-\-deselect
+Wybór wszystkich procesów poza tymi, które spełniają określone warunki.
+
+.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.PD
+.PP
+.SH "WYBÓR PROCESÓW PRZEZ PODANIE LISTY"
+Te opcje akceptują pojedynczy argument w postaci listy rozdzielonej spacjami
+bądź przecinkami. Mogą być używane wiele razy.
+Na\ przykład:\ \fBps\ \-p\ "1\ 2"\ \-p\ 3,4\fR
+.P
+.TP \n[OptSize]
+.BI \-C \ cmdlist
+Wybór przez nazwę polecenia.
+.br
+Wybiera procesy, których nazwa pliku wykonywalnego jest podana w
+\fIcmdlist\fR.
+
+.TP
+.BI \-G \ grplist
+Wybór przez podanie rzeczywistego identyfikatora grupy (RGID) bądź nazwy.
+.br
+Wybiera nazwy procesów, których rzeczywista nazwa grupy bądź identyfikator
+występuje w liście \fIgrplist\fR. Rzeczywisty identyfikator grupy określa grupę
+użytkownika, który utworzył proces, patrz \fIgetgid\fR(2).
+
+.TP
+.BI U \ userlist
+Wybór przez podanie efektywnego identyfikatora użytkownika (EUID) bądź nazwy.
+.br
+Wybiera procesy, których efektywna nazwa użytkownika lub ID
+jest w \fIuserlist\fR.
+Efektywne ID użytkownika opisuje użytkownika, którego prawa dostępu
+do plików są używane przez proces (patrz\ \fIgeteuid\fR(2)).
+Identyczne z \fB\-u\fR i\ \fB\-\-user\fR.
+
+.TP
+.BI \-U \ userlist
+Wybór przez podanie rzeczywistego identyfikatora użytkownika (RUID) bądź nazwy.
+.br
+Wybiera procesy, których rzeczywista nazwa użytkownika lub ID
+jest w \fIuserlist\fR.
+Rzeczywiste ID użytkownika opisuje użytkownika, który utworzył proces
+(patrz\ \fIgetuid\fR(2)).
+
+.TP
+.BI \-g \ grplist
+Wybór przez podanie sesji bądź efektywnej nazwy grupy.
+.br
+Wiele standardów określa wybór przez podanie sesji,
+ale wybór przez podanie efektywnej nazwy grupy jest logicznym
+zachowaniem, używanym przez wiele systemów operacyjnych.
+Ta wersja programu \fBps\fR wyszuka po nazwach sesji, jeżeli
+lista zawiera tylko liczby (którymi\ są\ sesje).
+Numeryczne identyfikatory grup będą działać tylko wtedy, gdy
+podane zostaną również jakieś nazwy grup.
+Patrz opcje \fB\-s\fR i \fB\-\-group\fR.
+
+.TP
+.BI p \ pidlist
+Wybór przez podanie identyfikatorów procesów. Identyczne z
+\fB\-p\fR i\ \fB\-\-pid\fR.
+
+.TP
+.BI \-p \ pidlist
+Wybór przez PID.
+.br
+Wybiera procesy, których identyfikatory pojawiają się w
+\fIpidlist\fR.  Identyczne z \fBp\fR i\ \fB\-\-pid\fR.
+
+.TP
+.BI \-s \ sesslist
+Wybór przez identyfikator sesji.
+.br
+Wybiera procesy mające identyfikator sesji podany w\ \fIsesslist\fR.
+
+.TP
+.BI t \ ttylist
+Wybór przez tty.
+.br
+Prawie identyczne z \fB\-t\fR i \fB\-\-tty\fR, jednak może być
+także użyte z pustą listą \fIttylist\fR, aby określić terminal
+skojarzony z \fBps\fR.
+Używanie opcji \fBT\fR jest uważane za lepsze niż podanie opcji \fBt\fR
+z\ pustą\ \fIttylist\fR.
+
+.TP
+.BI \-t \ ttylist
+Wybór przez tty.
+.br
+Wybiera procesy podłączone do terminali podanych w liście
+\fIttylist\fR.
+Terminale (tty lub ekrany dla wyjścia tekstowego) mogą być podane na różne
+sposoby: /dev/ttyS1, ttyS1, S1.
+Można użyć "\-", aby określić procesy nie mające terminala.
+
+.TP
+.BI \-u \ userlist
+Wybór przez podanie efektywnego identyfikatora użytkownika (EUID) bądź nazwy.
+.br
+Wybiera procesy, których efektywna nazwa użytkownika lub ID
+jest w \fIuserlist\fR.
+Efektywne ID użytkownika opisuje użytkownika, którego prawa dostępu
+do plików są używane przez proces (patrz\ \fIgeteuid\fR(2)).
+Identyczne z \fBU\fR i\ \fB\-\-user\fR.
+
+.TP
+.BI \-\-Group \ grplist
+Wybór przez podanie rzeczywistego ID grupy (RGID) bądź nazwy. Identyczne
+z\ \fB\-G\fR.
+
+.TP
+.BI \-\-User \ userlist
+Wybór przez podanie rzeczywistego ID użytkownika (RUID) bądź nazwy. Identyczne
+z\ \fB\-U\fR.
+
+.TP
+.BI \-\-group \ grplist
+Wybór przez podanie efektywnego ID grupy (EGID) bądź nazwy.
+.br
+Wybiera procesy, których efektywna nazwa grupy lub ID występuje w
+\fIgrouplist\fR.
+Efektywny identyfikator grupy określa grupę, której prawa dostępu
+do plików są używane przez proces (patrz\ \fIgeteuid\fR(2)).
+Opcja \fB\-g\fR jest często alternatywą dla\ \fB\-\-group\fR.
+
+.TP
+.BI \-\-pid \ pidlist
+Wybór przez ID\ procesu. Identyczne z
+\fB\-p\fR\ i\ \fBp\fR.
+
+.TP
+.BI \-\-ppid \ pidlist
+Wybór przez podanie ID\ procesu\ nadrzędnego.
+.br
+Wybiera procesy, których ID\ procesu\ nadrzędnego występuje w \fIpidlist\fR.
+To znaczy, że wybiera procesy, których dzieci określono w \fIpidlist\fR.
+
+.TP
+.BI \-\-sid \ sesslist
+Wybór przez ID\ sesji. Identyczne z\ \fB\-s\fR.
+
+.TP
+.BI \-\-tty \ ttylist
+Wybór przez podanie terminala. Identyczne z \fB\-t\fR i\ \fBt\fR.
+
+.TP
+.BI \-\-user \ userlist
+Wybór przez podanie efektywnego ID użytkownika (EUID) bądź nazwy.
+Identyczne z \fB\-u\fR i\ \fBU\fR.
+
+.TP
+\fB\-\fI123\fR
+Identyczne z \fB\-\-sid\ \fI123\fR.
+
+.TP
+.B \fI123\fR
+Identyczne z \fB\-\-pid\ \fI123\fR.
+
+.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.PD
+.PP
+.SH "KONTROLOWANIE FORMATU WYJŚCIA"
+Poniższe opcje są używane do wyboru informacji wyświetlanych przez \fBps\fR.
+Wyjście może zależeć od osobowości.
+.PP
+
+.TP \n[OptSize]
+.B \-F
+Format ekstrapełny. Patrz opcja \fB-f\fR, którą \fB-F\fR włącza.
+
+.TP
+.BI \-O \ format
+Jak \fB\-o\fR, ale z paroma kolumnami domyślnie predefiniowanymi.
+Identyczne z \fB\-o\ pid,\fIformat\fB,state,tname,time,command\fR
+lub \fB\-o\ pid,\fIformat\fB,tname,time,cmd\fR, patrz\ \fB\-o\fR\ niżej.
+
+.TP
+.BI O \ format
+Jest predefiniowanym \fBo\fR (przeładowana).
+.br
+Opcja BSD \fBO\fR  może zachowywać się jak \fB\-O\fR (wyjście zdefiniowane
+przez użytkownika z paroma polami predefiniowanymi) albo może być użyta do
+określenia porządku sortowania. Heurystyka jest używana do określenia
+pożądanego zachowania się tej opcji.
+Aby wprost określić wymagane zachowanie (sortowanie lub formatowanie),
+należy podać tę opcję w inny sposób
+(np. jako \fB\-O\fR lub \fB\-\-sort\fR).
+Używana jako opcja formatowania jest identyczna z \fB\-O\fR, z osobowością\ BSD.
+
+.TP
+.B \-M
+Dodaje kolumnę z danymi dotyczącymi bezpieczeństwa (dla\ SE\ Linuksa).
+
+.TP
+.B X
+Format rejestru.
+
+.TP
+.B Z
+Dodaje kolumnę z danymi dotyczącymi bezpieczeństwa (dla\ SE\ Linuksa).
+
+.TP
+.B \-c
+Wyświetla inne informacje schedulera, w połączeniu z opcją \fB-l\fR.
+
+.TP
+.B \-f
+Wyjście w pełnym formacie. Ta opcja może być połączona z wieloma
+innymi opcjami w stylu UNIX, aby dodać dodatkowe kolumny. Także powoduje
+wypisywanie argumentów poleceń. Użyta z \fB\-L\fR dodaje kolumny
+NLWP (liczba wątków) i LWP (ID wątku).
+
+.TP
+.B j
+Format kontroli zadań BSD.
+
+.TP
+.B \-j
+Format zadań.
+
+.TP
+.B l
+Długi format BSD.
+
+.TP
+.B \-l
+Długi format. Opcja \fB\-y\fR jest często przydatna w połączeniu z tą opcją.
+
+.TP
+.BI o \ format
+Określa format zdefiniowany przez użytkownika. Identyczne z
+\fB\-o\fR i
+\fB\-\-format\fR.
+
+.TP
+.BI \-o \ format
+Format zdefiniowany przez użytkownika
+.br
+\fIformat\fR jest pojedynczym argumentem w formie listy rozdzielonej
+spacjami bądź przecinkami, określającej poszczególne kolumny wyjścia.
+Rozpoznawane słowa kluczowe opisano poniżej, w sekcji \fBSTANDARDOWE SPECYFIKATORY
+FORMATU\fR.
+Można zmienić nazwę nagłówków
+(\fBps\ \-o\ pid,ruser=RzeczywistyUżytkownik\ \-o\ comm=Polecenie\fR), jeśli jest to pożądane.
+Jeśli wszystkie nagłówki kolumn są puste (\fBps\ \-o\ pid=\ \-o\ comm=\fR),
+linia nagłówka nie jest wyświetlana. Szerokość kolumn jest zwiększana w razie
+potrzeby dla szerokich nagłówków; może być to użyte do poszerzania kolumn takich jak
+WCHAN (\fBps\ \-o\ pid,wchan=SZEROKA\-KOLUMNA\-WCHAN\ \-o\ comm\fR).
+Oferowana jest także bezpośrednia kontrola szerokości kolumn
+(\fBps\ opid,wchan:42,cmd\fR).
+Zachowanie polecenia \fBps\ \-o\ pid=X,comm=Y\fR zależy od osobowości:
+wyjściem może być jedna kolumna o nazwie "X,comm=Y" lub dwie kolumny
+nazwane "X" i "Y". W razie wątpliwości, prosimy użyć wielu opcji \fB\-o\fR.
+W razie potrzeby, w zmiennej środowiskowej \fBPS_FORMAT\fR można podać domyślny format.
+DefSysV i DefBSD to makra, których można użyć, aby wybrać domyślne kolumny
+w stylu UNIX-a lub BSD.
+
+.TP
+.B s
+Format wyświetlania sygnałów
+
+.TP
+.B u
+Wyświetla format zorientowany na użytkownika
+
+.TP
+.B v
+Wyświetla format pamięci wirtualnej
+
+.TP
+.B \-y
+Nie pokazuje flag, wyświetla rss zamiast addr.
+Może być użyta tylko z \fB\-l\fR.
+
+.TP
+.BI \-\-format \ format
+Format zdefiniowany przez użytkownika. Identyczne z \fB\-o\fR i \fBo\fR.
+
+.TP
+.B \-\-context
+Wyświetla format kontekstu bezpieczeństwa (dla\ SE\ Linuksa).
+
+.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.PD
+.PP
+.SH "MODYFIKATORY WYJŚCIA"
+
+.\"  .TP
+.\"  .B C
+.\"  use raw CPU time for %CPU instead of decaying average
+
+.TP \n[OptSize]
+.B \-H
+Pokazuje hierarchię procesów (las)
+
+.TP
+.BI N \ namelist
+Określa plik z listą nazw funkcji jądra. Identyczne z \fB\-n\fR, patrz poniżej \fB\-n\fR.
+
+.TP
+.BI O \ order
+Porządek sortowania (przeładowna).
+.br
+Opcja BSD \fBO\fR  może zachowywać się jak \fB\-O\fR (wyjście zdefiniowane
+przez użytkownika z paroma polami predefiniowanymi) albo może być użyta do
+określenia porządku sortowania. Heurystyka jest używana do określenia
+pożądanego zachowania się tej opcji.
+Aby wprost określić wymagane zachowanie (sortowanie lub formatowanie),
+należy podać tę opcję w inny sposób
+(np. jako \fB\-O\fR lub \fB\-\-sort\fR).
+
+Dla sortowania, przestarzała składnia BSD opcje \fBO\fR jest następująca
+\fBO\fR[\fB+\fR|\fB\-\fR]\fIk1\fR[,[\fB+\fR|\fB\-\fR]\fIk2\fR[,...]].
+Sortuje ona listę procesów zgodnie z wielopoziomowym kluczem określonym przez
+sekwencję jednoliterowych krótkich kluczy
+\fIk1\fR, \fIk2\fR, ... opisanych w sekcji
+\fBPRZESTARZAŁE KLUCZE SORTOWANIA\fR poniżej.
+"+" jest obecnie opcjonalny, służy jedynie do powtórnej iteracji w domyślnym kierunku
+po kluczu, jednak może on pomóc rozróżnić \fBO\fR sortujące od \fBO\fR formatującego.
+"\-" odwraca kierunek sortowania tylko w kluczu, przed którym występuje.
+
+.TP
+.B S
+Sumuje niektóre informacje, jak użycie CPU, od umarłych procesów\-dzieci
+do ich rodziców. Użyteczne  przy badaniu systemu, w którym proces\-rodzic
+wielokrotnie uruchamia krótko żyjące dzieci, aby wykonały zadanie.
+
+.TP
+.B c
+Wyświetla prawdziwą linię poleceń. Jest ona wyciągana raczej z nazwy pliku wykonywalnego,
+niż z wartości argv, która mogła być zmieniona prze użytkownika. Argumenty poleceń nie są
+wyświetlane.
+
+.TP
+.B e
+Wyświetla środowisko za poleceniem.
+
+.TP
+.B f
+Hierarchia procesów jako ASCII\-art (las).
+
+.TP
+.B h
+Bez nagłówka (lub jeden nagłówek na ekran, jeśli wybrano osobowość BSD).
+.br
+Opcja \fBh\fP sprawia problemy. Standardowe \fBps\fR z BSD używa
+tej opcji do wyświetlenia nagłówka na każdej stronie wyjścia, ale
+starsze \fBps\fR z Linuksa  używa tej opcji do całkowitego wyłączenia
+nagłówka. Ta wersja programu \fBps\fR zachowuje się jak wersja linuksowa i
+nie wypisuje nagłówka, chyba że wybrano osobowość BSD \- w tym przypadku
+wypisuje nagłówek na każdej stronie wyjścia. Niezależnie od osobowości,
+można użyć opcji \fB\-\-headers\fR i \fB\-\-no\-headers\fR, aby \- odpowiednio \-
+włączyć wypisywanie nagłówka na każdej stronie bądź całkowicie wyłączyć wypisywanie
+nagłówka.
+
+.TP
+.BI k \ spec
+Określa porządek sortowania. Składnia sortowania jest następująca:
+[\fB+\fR|\fB\-\fR]\fIklucz\fR[,[\fB+\fR|\fB\-\fR]\fIklucz\fR[,...]]
+Proszę wybrać wieloliterowy klucz z sekcji \fBSTANDARDOWE SPECYFIKATORY FORMATU\fR.
+"+" jest opcjonalny, ponieważ domyślnym porządkiem jest rosnący porządek
+numeryczny lub leksykograficzny.
+Identyczne z \fB\-\-sort\fR. Przykłady:
+.br
+\fBps\ jaxkuid,\-ppid,+pid\fR
+.br
+\fBps\ axk\ comm\ o\ comm,args\fR
+.br
+\fBps\ kstart_time\ \-ef\fR
+
+.TP
+.BI \-n \ namelist
+Ustawia plik z listą nazw funkcji jądra. Identyczne z \fBN\fR.
+.br
+Plik z listą nazw jest potrzebny do poprawnego wyświetlania kolumny WCHAN
+i dla poprawnego wyjścia musi dokładnie odpowiadać obecnej wersji jądra.
+Bez tej opcji, domyślna ścieżka poszukiwań pliku z listą nazw jest następująca:
+
+	$PS_SYSMAP
+.br
+	$PS_SYSTEM_MAP
+.br
+	/proc/*/wchan
+.br
+	/boot/System.map\-\`uname\ \-r\`
+.br
+	/boot/System.map
+.br
+	/lib/modules/\`uname\ \-r\`/System.map
+.br
+	/usr/src/linux/System.map
+.br
+	/System.map
+
+.TP
+.B n
+Wyjście liczbowe dla kolumn WCHAN i USER (włączając wszystkie typu UID i GID).
+
+.TP
+.B \-w
+Szerokie wyjście. Proszę użyć dwa razy, aby uzyskać nielimitowaną szerokość wyjścia.
+
+.TP
+.B w
+Szerokie wyjście. Proszę użyć dwa razy, aby uzyskać nielimitowaną szerokość wyjścia.
+
+.TP
+.BI \-\-cols \ n
+Ustawia szerokość ekranu
+
+.TP
+.BI \-\-columns \ n
+Ustawia szerokość ekranu
+
+.TP
+.B \-\-cumulative
+Dołącza kilka danych zmarłych procesów\-dzieci (jako sumę z rodzicem)
+
+.TP
+.B \-\-forest
+Drzewo procesów jako ASCII\-art
+
+.TP
+.B \-\-headers
+Powtarza linie nagłówka, po jednej na stronę wyjścia
+
+.TP
+.B \-\-no\-headers
+Nie wyświetla żadnej linii nagłówka
+
+.TP
+.BI \-\-lines \ n
+Ustawia wysokość ekranu
+
+.TP
+.BI \-\-rows \ n
+Ustawia wysokość ekranu
+
+.TP
+.BI \-\-sort \ spec
+Określa porządek sortowania. Składania sortowania jest następująca:
+[\fB+\fR|\fB\-\fR]\fIklucz\fR[,[\fB+\fR|\fB\-\fR]\fIklucz\fR[,...]]
+Proszę podać wieloliterowy klucz z sekcji \fBSTANDARDOWE SPECYFIKATORY FORMATU\fR.
+"+" jest opcjonalny, ponieważ domyślne sortowanie odbywa się w rosnącym porządku numerycznym
+lub leksykograficznym.
+Identyczny z\ \fBk\fR.
+Przykład: \fBps\ jax\ \-\-sort=uid,\-ppid,+pid\fR
+
+.TP
+.BI \-\-width \ n
+Ustawia szerokość ekranu
+.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.PD
+.PP
+.SH "WYŚWIETLANIE WĄTKÓW"
+.PD 0
+
+.TP \n[OptSize]
+.B H
+Wyświetla wątki tak, jakby były procesami
+
+.TP
+.B \-L
+Wyświetla wątki, być może z kolumnami LWP i NLWP
+
+.TP
+.B \-T
+Wyświetla wątki, być może z kolumną SPID
+
+.TP
+.B m
+Wyświetla wątki za procesami
+
+.TP
+.B \-m
+Wyświetla wątki za procesami
+
+.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.PD
+.PP
+.SH "INNE INFORMACJE"
+.PD 0
+
+.TP \n[OptSize]
+.B L
+Wyświetla listę wszystkich specyfikatorów formatu.
+
+.TP
+.B \-V
+Wyświetla wersję procps.
+
+.TP
+.B V
+Wyświetla wersję procps.
+
+.TP
+.B \-\-help
+Wyświetla komunikat pomocy.
+
+.TP
+.B \-\-info
+Wyświetla informacje przydatne przy debugowaniu.
+
+.TP
+.B \-\-version
+Wyświetla wersję procps.
+
+.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.PD
+.PP
+.SH UWAGI
+Ta wersja \fBps\fR używa do działania wirtualnych plików w\ katalogu /proc.
+To \fBps\fR nie musi być setuidowane kmem ani mieć innych przywilejów, aby działać.
+Nie dawaj tej wersji \fBps\fR żadnych specjalnych uprawnień.
+
+Aby poprawnie wyświetlić kolumnę WCHAN, ta wersja \fBps\fR musi mieć
+dostęp do danych listy nazw. Dla wersji jądra niższych niż 2.6, plik
+System.map musi być zainstalowany.
+
+Użycie CPU jest obecnie wyrażone jako procent czasu spędzonego na wykonywaniu
+procesu podczas całego czasu życia procesu. Nie jest to idealne i nie jest zgodne
+ze standardami, z którymi \fBps\fR jest \- poza tym przypadkiem \- zgodne.
+Jest mało prawdopodobne, aby użycie CPU dodało się dokładnie do\ 100%.
+
+Programy wyswapowane na dysk będą pokazane bez argumentów linii poleceń,
+chyba że podano w nawiasach opcję \fBc\fR.
+
+Pola SIZE i RSS nie liczą pewnych części procesu, włączając to tablice stron,
+stos jądra, struktury thread_info i task_struct. Jest to zazwyczaj 20\ KiB
+pamięci, która jest zawsze wykorzystywana.
+SIZE oznacza wirtualny rozmiar procesu (kod+dane+stos).
+
+Procesy oznaczone jako <defunct> są procesami zmarłymi (tak\ zwane\ "zombi"),
+które pozostały, ponieważ ich rodzic nie zniszczył ich odpowiednio. Te procesy
+będą zniszczone przez \fIinit\fR(8), gdy ich rodzic zakończy działanie.
+
+
+.SH "FLAGI PROCESU"
+Suma poniższych wartości jest wyświetlana w kolumnie "F",
+dostarczanej przez specyfikator wyjścia \fBflags\fR.
+.PD 0
+.TP 5
+1
+sforkowany, ale nie wykonał exec.
+.TP
+4
+używał uprawnień superużytkownika.
+.PD
+.PP
+.SH "KODY STANU PROCESU"
+Poniżej są różne wartości, które specyfikatory wyjścia
+\fBs\fR, \fBstat\fR i
+\fBstate\fR (nagłówek\ "STAT"\ lub\ "S") wyświetlą, aby opisać
+stan procesu:
+.PD 0
+.TP 5
+D
+Nieprzerywalnie uśpiony (zazwyczaj\ wejście/wyjście)
+.TP
+R
+Wykonywany lub możliwy do wykonania (w\ kolejce\ do\ wykonania)
+.TP
+S
+Przerywalnie uśpiony (czekający na zakończenie zdarzenia)
+.TP
+T
+Zatrzymany, albo przez sygnał kontroli zadań, albo z powodu śledzenia.
+.TP
+W
+Stronicowany (niepoprawne od wersji jądra  2.6.xx)
+.TP
+X
+Zmarły (nigdy nie powinno wystąpić)
+.TP
+Z
+Proces niefunkcjonujący ("zombie"), zakończony, ale nie usunięty przez rodzica
+.PD
+.PP
+Dla formatów BSD, jeżeli użyto słowa kluczowego \fBstat\fR, mogą
+zostać wyświetlone dodatkowe znaki:
+.PD 0
+.TP 5
+<
+o wysokim priorytecie (niemiły dla innych użytkowników)
+.TP
+N
+o niskim priorytecie (miły dla innych użytkowników)
+.TP
+L
+mający zablokowane strony w pamięci (dla czasu rzeczywistego lub IO)
+.TP
+s
+będący liderem sesji
+.TP
+l
+wielowątkowy (używając CLONE_THREAD, jak to robi NPTL pthreads)
+.TP
++
+będący w pierwszoplanowej grupie procesów
+.PD
+.PP
+.PP
+.SH "PRZESTARZAŁE KLUCZE SORTOWANIA"
+Te klucze są używane przez opcję \fBO\fR BSD (sortowanie). Opcja GNU
+\fB\-\-sort\fR nie używa tych kluczy, lecz specyfikatorów opisanych poniżej w sekcji
+\fBSTANDARDOWE SPECYFIKATORY FORMATOWANIA\fR. Proszę zauważyć, że wartości
+używane do sortowania są wewnętrznymi wartościami programu \fBps\fR, a nie gotowymi
+wartościami używanymi w którymś z wyjściowych pól formatu (tj. sortowanie
+po tty posortuje po numerze urządzenia, a nie zgodnie z wyświetlaną
+nazwą terminala). Proszę przepuścić wyjście \fBps\fR przez polecenie \fIsort\fR(1),
+aby posortować po gotowych wartościach.
+
+.TS
+l l lw(3i).
+\fBKLUCZ	DŁUGI	OPIS\fR
+.PD 0
+c	cmd	Sama nazwa programu wykonywalnego
+C	pcpu	Wykorzystanie procesora
+f	flags	Flagi jak w polu F długiego listingu
+g	pgrp	Id grupy procesu
+G	tpgid	Id grupy procesu kontrolującego tty
+j	cutime	Łączny czas użytkownika
+J	cstime	Łączny czas systemu
+k	utime	Czas użytkownika
+m	min_flt	Liczba mniejszych błędów stron
+M	maj_flt	Liczba większych błędów stron
+n	cmin_flt	Łączne mniejsze błędy stron
+N	cmaj_flt	Łączne większe błędy stron
+o	session	ID sesji
+p	pid	ID procesu
+P	ppid	ID procesu rodzicielskiego
+r	rss	Wartość `resident set size'
+R	resident	Wartość `resident pages'
+s	size	Rozmiar pamięci w kilobajtach
+S	share	Wielkość stron dzielonych
+t	tty	Minorowy numer urządzenia tty
+T	start_time	Czas uruchomienia procesu
+U	uid	Id użytkownika
+u	user	Nazwa użytkownika
+v	vsize	Całkowity rozmiar VM (pamięci) w bytes
+y	priority	Priorytet w schedulerze jądra
+.\"K	stime	system time (conflict, system vs. start time)
+.TE
+.PD
+.PP
+.PP
+.SH "SPECYFIKATORY FORMATU AIX"
+Ta wersja \fBps\fR wspiera specyfikatory formatu AIX, które działają trochę jak
+kody formatujące \fIprintf\fR(3). Na przykład, normalne domyślne wyjście można
+uzyskać za pomocą: \fBps\ \-eo\ "%p\ %y\ %x\ %c"\fR.
+\fBZWYKŁE\fR kody opisano w następnej sekcji.
+.TS
+l l l.
+\fBKOD	ZWYKŁY	NAGŁÓWEK\fR
+%C	pcpu	%CPU
+%G	group	GROUP
+%P	ppid	PPID
+%U	user	USER
+%a	args	COMMAND
+%c	comm	COMMAND
+%g	rgroup	RGROUP
+%n	nice	NI
+%p	pid	PID
+%r	pgid	PGID
+%t	etime	ELAPSED
+%u	ruser	RUSER
+%x	time	TIME
+%y	tty	TTY
+%z	vsz	VSZ
+.TE
+
+.SH "STANDARDOWE SPECYFIKATORY FORMATU"
+Sekcja ta zawiera słowa kluczowe, które mogą być użyte do kontrolowania
+formatu wyjścia (np. z opcją \fB\-o\fR) albo do sortowania wybranych procesów
+z opcją GNU \fB\-\-sort\fR.
+
+Przykład:  \fBps\ \-eo\ pid,user,args\ \-\-sort\ user\fR
+
+Ta wersja \fBps\fR próbuje rozpoznawać większość słów kluczowych używanych
+w innych implementacjach \fBps\fR.
+
+Następujące definiowane przez użytkownika specyfikatory formatu mogą zawierać
+spacje: \fBargs\fR, \fBcmd\fR, \fBcomm\fR, \fBcommand\fR, \fBfname\fR,
+\fBucmd\fR, \fBucomm\fR,
+\fBlstart\fR, \fBbsdstart\fR, \fBstart\fR.
+
+Niektóre słowa kluczowe mogą nie być dostępne przy sortowaniu.
+
+.\" #######################################################################
+.\" lB1 lB1 lB1 lB1 s s s
+.\" lB1 l1  l1  l1  s s s.
+.\"
+.\" lB1 lB1 lBw(5.5i)
+.\" lB1 l1  l.
+.\"
+.TS
+expand;
+lB1 lB1 lBw(\n[ColSize]n)
+lB1 l1  l.
+KOD	NAGŁÓWEK	OPIS
+
+%cpu	%CPU	T{
+Użycie procesora dla procesu w formacie "##.#". Jest to użyty czas CPU
+podzielony przez czas, w którym proces był wykonywany (współczynnik cputime/realtime),
+wyrażony w procentach. Nie sumuje się do 100%, chyba że masz szczęście
+(alias\ \fBpcpu\fR).
+T}
+
+%mem	%MEM	T{
+Stosunek współczynnika `resident set size' procesu do fizycznej pamięci maszyny, wyrażony
+w procentach (alias\ \fBpmem\fR).
+T}
+
+args	COMMAND	T{
+Polecenie ze wszystkimi jego argumentami. Może być pocięte, jeśli jest to pożądane.
+Nie są pokazywane modyfikacje argumentów. Wyjście w tej kolumnie może zawierać spacje
+(aliasy\ \fBcmd\fR,\ \fBcommand\fR).
+T}
+
+blocked	BLOCKED	T{
+Maska zablokowanych sygnałów, patrz \fIsignal\fR(7).
+Zgodnie z szerokością pola, wyświetlana jest jako 32\-\ lub\ 64\-bitowa maska w formacie
+liczby szesnastkowej
+(aliasy\ \fBsig_block\fR,\ \fBsigmask\fR).
+T}
+
+bsdstart	START	T{
+Czas od uruchomienia polecenia. Jeśli proces został uruchomiony mniej
+niż 24 godziny temu, formatem wyjścia jest "\ HH:MM", w przeciwnym
+wypadku jest to "mmm\ dd" (gdzie mmm oznacza trzyliterowy skrót nazwy miesiąca).
+T}
+
+bsdtime	TIME	T{
+Połączony czas procesora, użytkownika +\ systemu. Formatem wyświetlania jest zazwyczaj
+"MMM:SS", jednak może być przesunięty w prawo, jeśli proces użył więcej
+niż 999 minut czasu procesora.
+T}
+
+c	C	T{
+Wartość liczbowa procentu użycia procesowa (patrz\ \fB%cpu\fR).
+T}
+
+caught	CAUGHT	T{
+Maska przechwytywanych sygnałów, patrz \fIsignal\fR(7). Wyświetlana
+jest 32\-\ lub\ 64\-bitowa maska w notacji szesnastkowej, w zależności
+od szerokości pola
+(aliasy\ \fBsig_catch\fR,\ \fBsigcatch\fR).
+T}
+
+class	CLS	T{
+Klasa schedulera procesu (aliasy\ \fBpolicy\fR,\ \fBcls\fR).
+Możliwe wartości pola:
+.br
+\-	nieraportowany
+.br
+TS	SCHED_OTHER
+.br
+FF	SCHED_FIFO
+.br
+RR	SCHED_RR
+.br
+?	wartość nieznana
+T}
+
+cls	CLS	T{
+Klasa schedulera procesu (aliasy\ \fBpolicy\fR,\ \fBclass\fR).
+Możliwe wartości pola:
+.br
+\-	nieraportowany
+.br
+TS	SCHED_OTHER
+.br
+FF	SCHED_FIFO
+.br
+RR	SCHED_RR
+.br
+?	wartość nieznana
+T}
+
+cmd	CMD	T{
+Patrz \fBargs\fR (aliasy\ \fBargs\fR,\ \fBcommand\fR).
+T}
+
+comm	COMMAND	T{
+Nazwa polecenia (tylko\ nazwa pliku\ wykonywalnego).  Wyjście tej kolumny
+może zawierać spacje  (aliasy\ \fBucmd\fR,\ \fBucomm\fR).
+T}
+
+command	COMMAND	T{
+Patrz \fBargs\fR (aliasy\ \fBargs\fR,\ \fBcmd\fR).
+T}
+
+cp	CP	T{
+Użycie CPU na mill (patrz\ \fB%cpu\fR).
+.\" FIXME mill
+T}
+
+cputime	TIME	T{
+Łączny czas CPU w formacie "[dd\-]hh:mm:ss"   (alias\ \fBtime\fR).
+T}
+
+egid	EGID	T{
+Efektywny identyfikator grupy procesy jako liczba dziesiętna
+(alias\ \fBgid\fR).
+T}
+
+egroup	EGROUP	T{
+Efektywny identyfikator grupy procesu. Będzie to albo nazwa grupy,
+jeżeli jest znana i pole jest wystarczająco szerokie,
+albo liczba dziesiętna \- w przeciwnym wypadku
+(alias\ \fBgroup\fR).
+T}
+
+eip	EIP	T{
+Wskaźnik do instrukcji.
+T}
+
+esp	ESP	T{
+Wskaźnik do stosu.
+T}
+
+etime	ELAPSED	T{
+Wartość czasu, jaki minął od uruchomienia procesu
+w\ formacie\ [[dd\-]hh:]mm:ss.
+T}
+
+euid	EUID	T{
+Efektywny identyfikator użytkownika (alias\ \fBuid\fR).
+T}
+
+euser	EUSER	T{
+Efektywna nazwa użytkownika. Będzie to teksowe ID użytkownika,
+jeśli jest znane, a pole jest wystarczająco szerokie, lub liczba
+dziesiętna w przeciwnym wypadku.
+Opcja\ \fBn\fR\ może zostać użyta, aby wymusić reprezentację jako
+liczba dziesiętna
+(aliasy\ \fBuname\fR,\ \fBuser\fR).
+T}
+
+f	F	T{
+Flagi skojarzone z procesem, patrz sekcja \fBFLAGI PROCESU\fR.
+(aliasy\ \fBflag\fR,\ \fBflags\fR).
+T}
+
+fgid	FGID	T{
+ID grupy dostępu do systemu plików
+(alias\ \fBfsgid\fR).
+T}
+
+fgroup	FGROUP	T{
+ID grupy dostępu do systemu plików. Będzie to identyfikator tekstowy,
+jeśli jest znany, a pole ma wystarczającą szerokość, lub liczba
+dziesiętna w\ przeciwnym wypadku
+(alias\ \fBfsgroup\fR).
+T}
+
+flag	F	T{
+Patrz\ \fBf\fR (aliasy\ \fBf\fR,\ \fBflags\fR).
+T}
+
+flags	F	T{
+Patrz\ \fBf\fR (aliasy\ \fBf\fR,\ \fBflag\fR).
+T}
+
+fname	COMMAND	T{
+Pierwszych 8 bajtów nazwy pliku wykonywalnego procesu. Wyjście
+w tej kolumnie może zawierać spacje.
+T}
+
+fuid	FUID	T{
+ID użytkownika dostępu do systemu plików.  (alias\ \fBfsuid\fR).
+T}
+
+fuser	FUSER	T{
+ID użytkownika dostępu do systemu plików. Będzie to nazwa użytkownika,
+jeżeli jest dostępna, a szerokość pola jest wystarczająca, lub
+liczba dziesiętna w przeciwnym wypadku.
+T}
+
+gid	GID	T{
+Patrz\ \fBegid\fR (alias\ \fBegid\fR).
+T}
+
+group	GROUP	T{
+Patrz\ \fBegroup\fR (alias\ \fBegroup\fR).
+T}
+
+ignored	IGNORED	T{
+Maska ignorowanych sygnałów, patrz \fIsignal\fR(7). Wyświetlana jest
+wartość 32\-\ lub\ 64\-bitowa jako liczba szesnastkowa, w zależności
+od szerokości pola
+(aliasy \fBsig_ignore\fR, \fBsigignore\fR).
+T}
+
+label	LABEL	T{
+Etykieta bezpieczeństwa, najczęściej używana w danych kontekstowych
+SE\ Linuksa. Jest to potrzebne dla
+\fIMandatory Access Control\fR ("MAC"), występującego na systemach
+o\ wysokim bezpieczeństwie.
+T}
+
+lstart	STARTED	T{
+Czas, kiedy proces został uruchomiony.
+T}
+
+lwp	LWP	T{
+Identyfikator LWP (light weight process) raportowanego lwp
+(aliasy\ \fBspid\fR,\ \fBtid\fR).
+T}
+
+ni	NI	T{
+Wartość nice procesu. Zakres od 19 (najmilszy) to \-20 (niemiły\ dla\ innych),
+patrz\ \fInice\fR(1) (alias\ \fBnice\fR).
+T}
+
+nice	NI	T{
+Patrz\ \fBni\fR (alias\ \fBni\fR).
+T}
+
+nlwp	NLWP	T{
+Liczba LWP-ów (wątków) procesu  (alias\ \fBthcount\fR).
+T}
+
+nwchan	WCHAN	T{
+Adres funkcji jądra, w której proces został uśpiony
+(użyj \fBwchan\fR, aby dostać nazwę funkcji jądra).
+Zadania obecnie uruchomione będą miały w tej kolumnie wyświetlony myślnik ('\-').
+T}
+
+pcpu	%CPU	T{
+Patrz\ \fB%cpu\fR (alias\ \fB%cpu\fR).
+T}
+
+pending	PENDING	T{
+Maska oczekujących sygnałów. Patrz\ \fIsignal\fR(7). Sygnały oczekujące
+dla procesu są inne niż oczekujące dla poszczególnych wątków.
+Aby zobaczyć oba powyższe rodzaje, proszę użyć opcji \fBm\fR lub \fB\-m\fR.
+Wyświetlana jest  32\-\ lub\ 64\-bitowa maska w formacie szesnastkowym,
+w zależności od szerokości pola (alias\ \fBsig\fR).
+T}
+
+pgid	PGID	T{
+ID grupy procesów lub \- równoważnie \- ID procesu będącego
+przywódcą grupy procesów
+(alias\ \fBpgrp\fR).
+T}
+
+pgrp	PGRP	T{
+Patrz\ \fBpgid\fR (alias\ \fBpgid\fR).
+T}
+
+pid	PID	T{
+Identyfikator procesu
+T}
+
+pmem	%MEM	T{
+Patrz\ \fB%mem\fR (alias\ \fB%mem\fR).
+T}
+
+policy	POL	T{
+Klasa schedulera procesu (aliasy\ \fBclass\fR,\ \fBcls\fR).
+Możliwe wartości pola:
+.br
+\-	nieraportowany
+.br
+TS	SCHED_OTHER
+.br
+FF	SCHED_FIFO
+.br
+RR	SCHED_RR
+.br
+?	wartość nieznana
+T}
+
+ppid	PPID	T{
+Identyfikator procesu\-rodzica.
+T}
+
+psr	PSR	T{
+Procesor, do którego proces jest obecnie przypisany.
+T}
+
+rgid	RGID	T{
+Rzeczywisty identyfikator grupy.
+T}
+
+rgroup	RGROUP	T{
+Rzeczywista nazwa grupy. Będzie do nazwa grupy, jeżeli jest dostępna,
+a szerokość pola jest wystarczająca, lub liczba dziesiętna w przeciwnym wypadku.
+T}
+
+rss	RSS	T{
+Resident set size, czyli niewyswapowana pamięć, której zadanie używało
+(w\ kilobajtach)
+(aliasy\ \fBrssize\fR,\ \fBrsz\fR).
+T}
+
+rssize	RSS	T{
+Patrz\ \fBrss\fR (aliasy\ \fBrss\fR,\ \fBrsz\fR).
+T}
+
+rsz	RSZ	T{
+Patrz\ \fBrss\fR (aliasy\ \fBrss\fR,\ \fBrssize\fR).
+T}
+
+rtprio	RTPRIO	T{
+Priorytet czasu rzeczywistego.
+T}
+
+ruid	RUID	T{
+Rzeczywisty identyfikator użytkownika.
+T}
+
+ruser	RUSER	T{
+Rzeczywisty identyfikator użytkownika.
+Będzie to nazwa użytkownika, jeśli jest dostępna i szerokość pola
+jest wystarczająca, lub liczba dziesiętna w przeciwnym wypadku.
+T}
+
+s	S	T{
+Minimalnie wyświetlony stan (jeden\ znak)
+Patrz\ sekcja \fBKODY STANU PROCESU\fR, aby zobaczyć możliwe
+wartości.
+Patrz\ również \fBstat\fR, aby wyświetlić dodatkowe informacje
+(alias\ \fBstate\fR).
+T}
+
+sched	SCH	T{
+Polistyka uruchamiania procesu. Polityki sched_other, sched_fifo,
+i sched_rr są odpowiednio wyświetlane jako 0,\ 1\ i\ 2.
+T}
+
+sess	SESS	T{
+ID sesji bądź \- równoważnie \- ID\ procesu przywódcy sesji
+(aliasy\ \fBsession\fR,\ \fBsid\fR).
+T}
+
+sgi_p	P	T{
+Procesor, na którym proces się obecnie wykonuje.
+Jeżeli proces nie jest obecnie wykonywany, to wyświetlana jest "*".
+T}
+
+sgid	SGID	T{
+Zachowany identyfikator grupy
+(alias\ \fBsvgid\fR).
+T}
+
+sgroup	SGROUP	T{
+Zachowana nazwa grupy. Będzie to nazwa grupy, jeżeli jest
+dostępna i pole jest wystarczająco szerokie, i
+lub liczba dziesiętna w przeciwnym wypadku
+T}
+
+sid	SID	T{
+Patrz\ \fBsess\fR (aliasy\ \fBsess\fR,\ \fBsession\fR).
+T}
+
+sig	PENDING	T{
+Patrz\ \fBpending\fR (aliasy\ \fBpending\fR,\ \fBsig_pend\fR).
+T}
+
+sigcatch	CAUGHT	T{
+Patrz\ \fBcaught\fR (aliasy\ \fBcaught\fR,\ \fBsig_catch\fR).
+T}
+
+sigignore	IGNORED	T{
+Patrz\ \fBignored\fR (aliasy\ \fBignored\fR,\ \fBsig_ignore\fR).
+T}
+
+sigmask	BLOCKED	T{
+Patrz\ \fBblocked\fR (aliasy\ \fBblocked\fR,\ \fBsig_block\fR).
+T}
+
+size	SZ	T{
+Szacowana ilość przestrzeni swap, która byłaby wymagana,
+gdyby proces miał opróżnić wszystkie swoje zapisywalne strony,
+a potem zostać wyswapowany.
+Liczba ta jest bardzo niedokładna!
+T}
+
+spid	SPID	T{
+Patrz \fBlwp\fR (aliasy\ \fBlwp\fR,\ \fBtid\fR).
+T}
+
+stackp	STACKP	T{
+Adres początku stosu procesu.
+T}
+
+start	STARTED	T{
+Czas uruchomienia procesu.
+Jeśli proces został uruchomiony wcześniej niż 24 godziny temu,
+to wyjście jest w formacie "HH:MM:SS", a w przeciwnym wypadku
+\- w formacie "\ \ mmm\ dd" (gdzie mm oznacza trzyliterowy skrót nazwy
+miesiąca).
+T}
+
+start_time	START	T{
+Czas lub data uruchomienia procesu.
+Jeżeli proces nie został uruchomiony w tym samym roku, w którym
+uruchomiono \fBps\fR, to wyświetlony zostanie
+tylko rok, jeżeli nie został uruchomiony tego samego dnia, to
+wyświetlone będzie "mmmdd", w przeciwnym wypadku \- "HH:MM".
+T}
+
+stat	STAT	T{
+Wieloliterowy stan procesu.
+Patrz\ sekcja \fBKODY STANU PROCESU\fR, aby uzyskać
+informacje o znaczeniu poszczególnych wartości.
+Patrz także \fBs\fR i \fBstate\fR, aby wyświetlić tylko pierwszy
+znak stanu procesu.
+T}
+
+state	S	T{
+Patrz\ \fBs\fR (alias\ \fBs\fR).
+T}
+
+suid	SUID	T{
+Zachowany identyfikator użytkownika.  (alias\ \fBsvuid\fR).
+T}
+
+suser	SUSER	T{
+Zachowana nazwa użytkownika. Będzie to nazwa użytkownika,
+jeżeli jest dostępna i pole ma wystarczającą szerokość,
+albo liczba dziesiętna w przeciwnym wypadku.
+(alias\ \fBsvuser\fR).
+T}
+
+svgid	SVGID	T{
+Patrz\ \fBsgid\fR (alias\ \fBsgid\fR).
+T}
+
+svuid	SVUID	T{
+Patrz\ \fBsuid\fR (alias\ \fBsuid\fR).
+T}
+
+sz	SZ	T{
+Rozmiar w fizycznych stronach obrazu pamięci procesu,
+włączając w to tekst, dane i przestrzeń stosu
+T}
+
+thcount	THCNT	T{
+Patrz \fBnlwp\fR (alias\ \fBnlwp\fR).
+Liczba wątków jądra, których proces jest właścicielem.
+T}
+
+tid	TID	T{
+Patrz\ \fBlwp\fR (alias\ \fBlwp\fR).
+T}
+
+time	TIME	T{
+Łączny czas CPU w formacie "[dd\-]hh:mm:ss"  (alias\ \fBcputime\fR).
+T}
+
+tname	TTY	T{
+Kontrolujący tty (terminal)
+(aliasy\ \fBtt\fR,\ \fBtty\fR).
+T}
+
+tpgid	TPGID	T{
+ID pierwszoplanowej grupy procesów na tty (terminalu), do
+którego proces jest podłączony lub \-1, gdy proces nie jest
+podłączony do terminala.
+T}
+
+tt	TT	T{
+Kontrolujący tty (terminal)
+(aliasy\ \fBtname\fR,\ \fBtty\fR).
+T}
+
+tty	TT	T{
+Kontrolujący tty (terminal)
+(aliasy\ \fBtname\fR,\ \fBtt\fR).
+T}
+
+ucmd	CMD	T{
+Patrz \fBcomm\fR (aliasy\ \fBcomm\fR,\ \fBucomm\fR).
+T}
+
+ucomm	COMMAND	T{
+Patrz \fBcomm\fR (aliasy\ \fBcomm\fR,\ \fBucmd\fR).
+T}
+
+uid	UID	T{
+Patrz \fBeuid\fR (aliasy\ \fBeuid\fR).
+T}
+
+uname	USER	T{
+Patrz \fBeuser\fR (aliasy\ \fBeuser\fR,\ \fBuser\fR).
+T}
+
+user	USER	T{
+Patrz \fBeuser\fR (aliasy\ \fBeuser\fR,\ \fBuname\fR).
+T}
+
+vsize	VSZ	T{
+Użycie wirtualnej pamięci dla całego procesu.
+vm_lib\ +\ vm_exe\ +\ vm_data\ +\ vm_stack
+T}
+
+vsz	VSZ	T{
+Patrz \fBvsize\fR (aliasy\ \fBvsize\fR).
+T}
+
+wchan	WCHAN	T{
+Nazwa funkcji jądra, w której proces jest uśpiony, lub
+"\-"\ jeśli proces jest wykonywany,
+lub "*"\, jeśli proces jest wielowątkowy, a
+\fBps\fR nie wyświetla wątków.
+T}
+.TE
+.\" #######################################################################
+.SH "ZMIENNE ŚRODOWISKA"
+Następujące zmienne środowiska mogą mieć wpływ na \fBps\fR:
+.TP 3
+.B COLUMNS
+Nadpisuje domyślną szerokość wyjścia.
+.TP
+.B LINES
+Nadpisuje domyślną wysokość wyjścia.
+.TP
+.B PS_PERSONALITY
+Jedno z posix, old, linux, bsd, sun, digital...
+(patrz\ poniżej\ sekcja\ \fBOSOBOWOŚĆ\fR).
+.TP
+.B CMD_ENV
+Jedno z  posix, old, linux, bsd, sun, digital...
+(patrz\ poniżej\ sekcja\ \fBOSOBOWOŚĆ\fR).
+.TP
+.B I_WANT_A_BROKEN_PS
+Wymusza przestarzałą interpretację linii poleceń.
+.TP
+.B LC_TIME
+Format daty.
+.TP
+.B PS_COLORS
+Obecnie nieobsługiwana.
+.TP
+.B PS_FORMAT
+Nadpisuje domyślny format wyjścia.
+.TP
+.B PS_SYSMAP
+Domyślna lokalizacja pliku nazw (System.map).
+.TP
+.B PS_SYSTEM_MAP
+Domyślna lokalizacja pliku nazw (System.map).
+.TP
+.B POSIXLY_CORRECT
+Nie ignoruje złych opcji.
+.TP
+.B POSIX2
+Ustawione na "on", działa tak, jak \fBPOSIXLY_CORRECT\fR.
+.TP
+.B UNIX95
+Nie ignoruje złych opcji.
+.TP
+.B _XPG
+Wyłącza niestandardowe zachowanie \fBCMD_ENV\fI=irix\fR.
+.PP
+Ogólnie, ustawianie tych zmiennych jest złym pomysłem.
+Jedynym wyjątkiem jest \fBCMD_ENV\fR lub \fBPS_PERSONALITY\fR,
+które mogą być ustawione na Linux dla normalnych systemów.
+Bez tego ustawienia,
+\fBps\fR jest zgodny z nieużytecznymi i złymi częściami standardu Unix98.
+
+.PP
+.PP
+.SH "OSOBOWOŚĆ"
+.TS
+l	l.
+390	jak \fBps\fR z S/390 OpenEdition
+aix	jak \fBps\fR z AIX
+bsd	jak \fBps\fR z FreeBSD (zupełnie niestandardowy)
+compaq	jak \fBps\fR z Digital Unix
+debian	jak \fBps\fR ze starego Debiana
+digital	jak \fBps\fR z Tru64 (wcześniej Digital\ Unix, wcześniej OSF/1)
+gnu	jak \fBps\fR ze starego Debiana
+hp	jak \fBps\fR z HP\-UX
+hpux	jak \fBps\fR z HP\-UX
+irix	jak \fBps\fR z Irix
+linux	***** ZALECANY *****
+old	jak \fBps\fR z oryginalnego Linuksa (zupełnie niestandardowy)
+os390	jak \fBps\fR z OS/390 Open Edition
+posix	standardowy
+s390	jak \fBps\fR z OS/390 Open Edition
+sco	jak \fBps\fR z SCO
+sgi	jak \fBps\fR z Irix
+solaris2	jak \fBps\fR z Solaris 2+ (SunOS 5)
+sunos4	jak \fBps\fR z SunOS 4 (Solaris 1) (zupełnie niestandardowy)
+svr4	standardowy
+sysv	standardowy
+tru64	jak \fBps\fR z Tru64 (wcześniej Digital\ Unix, wcześniej OSF/1)
+unix	standardowy
+unix95	standardowy
+unix98	standardowy
+.TE
+
+.PP
+.PP
+.SH "ZOBACZ TAKŻE"
+\fItop\fR(1), \fIpgrep\fR(1), \fIpstree\fR(1), \fIproc\fR(5).
+
+.PP
+.PP
+.SH STANDARDY
+Ta wersja programu \fBps\fR jest zgodna z:
+.PP
+.PD 0
+.IP 1 4
+Wersją drugą Single Unix Specification
+.IP 2 4
+The Open Group Technical Standard Base Specifications, Issue\ 6
+.IP 3 4
+IEEE Std 1003.1, 2004\ Edition
+.IP 4 4
+X/Open System Interfaces Extension [UP\ XSI]
+.IP 5 4
+ISO/IEC 9945:2003
+.PD
+
+.PP
+.SH AUTOR
+\fBps\fR początkowo był napisany przez Branka Lankestera <lankeste@fwi.uva.nl>.
+Michael K. Johnson <johnsonm@redhat.com>) znacząco go zmodyfikował, aby
+używał systemu plików proc. Michael Shields
+<mjshield@nyx.cs.du.edu> dodał właściwość pid\-listy.
+Charles Blake <cblake@bbn.com>
+dodał wielopoziomowe sortowanie, bibliotekę w stylu dirent, bazę mapowań
+nazwy na numer dla urządzeń, szukanie bezpośrednio w System.map i sporo
+usprawnień estetycznych i oczyszczeń w kodzie źródłowym i dokumentacji.
+David Mossberger\-Tang napisał wsparcie BFD dla psupdate. Albert Cahalan
+<albert@users.sf.net> przepisał ps dla pełnego wsparcia Unix98 i BSD support,
+wraz z samymi brzydkimi hackami dla przestarzałej i obcej skadni.
+
+Proszę przesyłać zgłoszenia o błędach do <procps\-feedback@lists.sf.net>.
+.\" FIXME: No\ subscription is required or suggested.

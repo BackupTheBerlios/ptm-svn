@@ -1,0 +1,15 @@
+# Lista polskich stron man dla pakietu
+# lpold - lp* z BSD
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+lpr.1		man1/lpr.1a
+lprm.1		man1/lprm.1a
+lptest.1	man1/lptest.1a
+printcap.5	man5/printcap.5a
+lpc.8		man8/lpc.8a
+lpd.8		man8/lpd.8a
+pac.8		man8/pac.8a
+#
+# koniec listy

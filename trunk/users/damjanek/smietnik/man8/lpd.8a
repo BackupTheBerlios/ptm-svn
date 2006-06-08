@@ -1,0 +1,243 @@
+.\" {PTM/WK-2000-VII}
+.\"     $OpenBSD: lpd.8,v 1.5 1997/07/17 07:43:07 deraadt Exp $
+.\"
+.\" Copyright (c) 1983, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)lpd.8	8.3 (Berkeley) 4/19/94
+.\"
+.Dd April 19, 1994
+.Dt LPD 8
+.Os BSD 4.4
+.Sh NAZWA
+.Nm lpd
+.Nd demon buforowania drukarki wierszowej
+.Sh SKŁADNIA
+.Nm lpd
+.Op Fl l
+.Sh OPIS
+.Nm Lpd
+jest demonem drukarki (obsługuje buforowanie wydruków) i normalnie
+wywoływany jest podczas startu systemu z pliku
+.Xr rc 8 .
+Wykonuje jednokrotne przejście przez plik
+.Xr printcap 5a ,
+by dowiedzieć się o istniejących drukarkach i drukuje pliki, jakie
+ewentualnie pozostały po załamaniu systemu. Następnie wykorzystuje
+funkcje systemowe
+.Xr listen 2
+i
+.Xr accept 2
+do otrzymywania żądań wydruku plików z kolejki, transferu plików do obszaru
+buforowania, wyświetlania kolejki i usuwania zadań z kolejki.
+W każdym z tych przypadków do obsługi żądania
+.Nm
+rozwidla się w proces potomny. W ten sposób proces macierzysty może nadal
+nasłuchiwać kolejnych żądań.
+.Pp
+Dostępne opcje:
+.Bl -tag -width Ds
+.It Fl l
+Flaga
+.Fl l
+powoduje, że
+.Nm lpd
+rejestruje otrzymane z sieci poprawne żądania. Może być przydatne do celów
+diagnostycznych.
+.El
+.Pp
+Istnieją dwa środki kontroli dostępu. Po pierwsze, wszystkie żądania
+muszą nadchodzić z jednaj z maszyn wymienionych w pliku
+.Pa /etc/hosts.equiv
+lub
+.Pa /etc/hosts.lpd .
+Po drugie, jeżeli dla drukarki, do której następuje odwołanie,
+podano właściwość
+.Li rs
+we wpisie
+.Xr printcap ,
+to będą honorowane tylko żądania
+.Em lpr
+pochodzące od użytkowników mających konta na maszynie z tą drukarką.
+.Pp
+Plik
+.Em minfree
+w każdym z katalogów buforowania zawiera liczbę bloków dyskowych, jakie mają
+pozostać wolne, tak by kolejka drukarki nie wypełniła całkowicie dysku.
+Plik
+.Em minfree
+można zmieniać dowolnym ulubionym edytorem tekstów.
+.Pp
+Demon rozpoczyna przetwarzanie plików po pomyślnym ustawieniu blokady
+na wyłączny dostęp (opisane nieco później), i szuka w katalogu buforowania
+plików rozpoczynających się od
+.Em cf .
+Wiersze w każdym z plików
+.Em cf
+określają pliki, jakie mają być wydrukowane lub akcje nie będące drukowaniem,
+jakie należy wykonać. Każdy taki wiersz rozpoczyna się znakiem kluczowym,
+podającym co należy zrobić z resztą wiersza.
+.Bl -tag -width Ds
+.It J
+Nazwa zadania (job name).  Łańcuch, jaki ma być użyty jako nazwa zadania
+na stronie rozdzielającej.
+.It C
+Klasyfikacja (classification).  Łańcuch, jaki ma być użyty w wierszu
+klasyfikacji na stronie rozdzielającej.
+.It L
+Dosłownie (literal).  Wiersz zawiera informacje identyfikacyjne z pliku haseł
+i powoduje, że zostanie wydrukowana strona rozdzielająca.
+.It T
+Tytuł (title).  Łańcuch, jaki ma być użyty jako tytuł dla
+.Xr pr 1 .
+.It H
+Nazwa hosta.  Nazwa maszyny, z której wywołano
+.Xr lpr .
+.It P
+Osoba (person).  Nazwa zgłoszeniowa (login) osoby, która wywołała
+.Xr lpr .
+Stosowane do weryfikacji właściciela przez
+.Xr lprm .
+.It M
+Po zakończeniu aktualnego zadania druku wysyła list do zadanego użytkownika.
+.It f
+Plik sformatowany.  Nazwa pliku już sformatowanego do druku.
+.It l
+Podobnie jak ``f'', ale przekazuje znaki sterujące i nie wykonuje łamania
+stron.
+.It p
+nazwa pliku do wydrukowania przy pomocy
+.Xr pr 1
+jako filtru.
+.It t
+Plik troff.  Plik zawiera wyjście utworzone przez
+.Xr troff 1
+(polecenia cat fotonaświetlarki).
+.It n
+Plik ditroff.  Plik zawiera wyjście ditroff (device independent
+troff \- troff niezależny od urządzenia).
+.It r
+Plik DVI.  Plik zawiera wyjście programu
+.Tn Tex l
+(format DVI ze Standford).
+.It g
+Plik graficzny.  Plik zawiera dane utworzone przez
+.Xr plot 3 .
+.It c
+Plik cifplot.  Plik zawiera dane utworzone przez
+.Em cifplot .
+.It v
+Plik zawiera obraz rastrowy.
+.It r
+Plik zawiera dane tekstowe z FORTRAN-owymi znakami sterowania karetką.
+.It \&1
+Font R troff-a. Nazwa pliku fontu, jaki ma zostać użyty zamiast domyślnego.
+.It \&2
+Font I troff-a. Nazwa pliku fontu, jaki ma zostać użyty zamiast domyślnego.
+.It \&3
+Font B troff-a. Nazwa pliku fontu, jaki ma zostać użyty zamiast domyślnego.
+.It \&4
+Font S troff-a. Nazwa pliku fontu, jaki ma zostać użyty zamiast domyślnego.
+.It W
+Szerokość (width). Zmienia szerokość strony (w znakach) stosowaną przez
+.Xr pr 1
+i filtry tekstowe.
+.It I
+Wcięcie (indent).  Liczba znaków, o jaką ma być wcięty wydruk (w ascii).
+.It U
+Usunięcie (unlink).  Nazwa pliku do usunięcia po zakończeniu wydruku.
+.It N
+Nazwa pliku.  Nazwa pliku do wydrukowania, lub puste dla standardowego
+wejścia (gdy
+.Xr lpr
+wywoływane jest w potoku).
+.El
+.Pp
+Jeżeli plik nie może być otwarty, odpowiedni komunikat zostanie
+zarejestrowany poprzez
+.Xr syslog 3
+przy zastosowaniu podsystemu
+.Em LOG_LPR .
+.Nm Lpd
+Próbuje otworzyć przeznaczony do wydruku plik, którego spodziewa się
+w danym miejscu, do 20 razy, po czym pomija go.
+.Pp
+.Nm Lpd
+wykorzystuje
+.Xr flock 2
+do zapewnienia wyłącznego dostępu do pliku blokującego i zapobiegania
+równoczesnej aktywności wielokrotnych demonów. Jeżeli demon powinien
+zostać zabity lub niespodziewanie umiera, to plik blokujący nie musi
+być usuwany.
+Plik blokujący przechowywany jest w czytelnej postaci
+.Tn ASCII
+i zawiera dwa wiersze.
+Pierwszy jest identyfikatorem procesu demona, a drugi nazwą kontrolną
+pliku aktualnie drukowanego zadania. Drugi wiersz jest aktualizowany tak,
+by odzwierciedlał bieżący status
+.Nm lpd
+dla programów
+.Xr lpq 1a
+i
+.Xr lprm 1a .
+.Sh PLIKI
+.Bl -tag -width "/var/spool/*/minfree" -compact
+.It Pa /etc/printcap
+plik opisu drukarek
+.It Pa /var/spool/*
+katalogi buforowania wydruków
+.It Pa /var/spool/*/minfree
+miminalne wolne miejsce, jakie należy pozostawić
+.It Pa /dev/lp*
+urządzenia drukarek
+.It Pa /var/run/printer
+gniazdo dla żądań lokalnych
+.It Pa /etc/hosts.equiv
+spis nazw maszyn uprawnionych do dostępu do drukarek
+.It Pa /etc/hosts.lpd
+spis nazw maszyn uprawnionych do dostępu do drukarek,
+ale nie pod tą samą kontrolą administratorską.
+.El
+.Sh ZOBACZ TAKŻE
+.Xr lpc 8a ,
+.Xr pac 8a ,
+.Xr lpr 1a ,
+.Xr lpq 1a ,
+.Xr lprm 1a ,
+.Xr syslog 3 ,
+.Xr printcap 5a
+.Rs
+.%T "BSD 4.3 Line printer manual"
+.Re
+.Sh HISTORIA
+Demon
+.Nm
+pojawił się w wersji 6 Uniksa AT&T.

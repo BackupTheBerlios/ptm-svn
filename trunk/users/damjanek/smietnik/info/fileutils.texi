@@ -1,0 +1,3691 @@
+%& -translate-file=il2-pl
+\def\fontprefix{pl}
+\input texinfo
+@c %**start of header
+@setfilename fileutils.info
+@settitle Narzędzia plikowe @sc{gnu}
+@documentencoding ISO-8859-2
+@documentlanguage pl
+@c %**end of header
+
+@c WK: zrezygnowałem z
+@c   @include version.texi
+@c bo gryzło się z innymi *utils w jednym katalogu
+@set UPDATED 23 kwietnia 2001
+@set UPDATED-MONTH kwiecień 2001
+@set EDITION 4.1
+@set VERSION 4.1
+
+@c Define new indices for file names and options.
+@c @defcodeindex fl
+@defcodeindex op
+
+@c Put everything in one index (arbitrarily chosen to be the concept index).
+@c @syncodeindex fl cp
+@ifinfo
+@synindex fn cp
+@synindex ky cp
+@synindex op cp
+@synindex pg cp
+@synindex vr cp
+@end ifinfo
+@iftex
+@syncodeindex fn cp
+@syncodeindex ky cp
+@syncodeindex op cp
+@syncodeindex pg cp
+@syncodeindex vr cp
+@end iftex
+
+@ifinfo
+@format
+START-INFO-DIR-ENTRY
+* Narzędzia plikowe: (fileutils).             Narzędzia plikowe GNU.
+* chgrp: (fileutils)Wywołanie chgrp.          Zmienia grupę pliku.
+* chown: (fileutils)Wywołanie chown.          Zmienia właściciela i grupę pliku.
+* chmod: (fileutils)Wywołanie chmod.          Zmienia prawa dostępu do pliku.
+* cp: (fileutils)Wywołanie cp.                Kopiowanie plików.
+* dd: (fileutils)Wywołanie dd.                Konwersja i kopiowanie pliku.
+* df: (fileutils)Wywołanie df.                Raport zajętości dysku.
+* dir: (fileutils)Wywołanie dir.              Skrócony listing katalogu.
+* dircolors: (fileutils)Wywołanie dircolors.  Konfigurowanie kolorów dla ls.
+* du: (fileutils)Wywołanie du.                Zużycie miejsca na dysku.
+* install: (fileutils)Wywołanie install.      Kopiuje pliki i nadaje atrybuty.
+* ln: (fileutils)Wywołanie ln.                Tworzy dowiązania między plikami.
+* ls: (fileutils)Wywołanie ls.                Lista zawartości katalogu.
+* mkdir: (fileutils)Wywołanie mkdir.          Tworzy katalogi.
+* mkfifo: (fileutils)Wywołanie mkfifo.        Tworzy FIFO (potoki nazwane).
+* mknod: (fileutils)Wywołanie mknod.          Tworzy pliki specjalne.
+* mv: (fileutils)Wywołanie mv.                Przesuwa (przemianowuje) pliki.
+* rm: (fileutils)Wywołanie rm.                Usuwa pliki.
+* rmdir: (fileutils)Wywołanie rmdir.          Usuwa puste katalogi.
+* shred: (fileutils)Wywołanie shred.          Bezpieczniejsze usuwanie plików.
+* sync: (fileutils)Wywołanie sync.            Synchronizuje pamięć i dysk.
+* touch: (fileutils)Wywołanie touch.          Zmienia znaczniki czasu pliku.
+* vdir: (fileutils)Wywołanie vdir.            Szczegółowo listuje katalog.
+END-INFO-DIR-ENTRY
+@end format
+@end ifinfo
+
+@ifinfo
+Niniejszy podręcznik opisuje zestaw narzędzi plikowych GNU.
+
+Copyright 1994, 95, 96, 1999, 2001 Free Software Foundation, Inc.
+
+Zezwala się na kopiowanie, rozpowszechnianie i/lub modyfikowanie tego
+dokumentu na warunkach Licencji Wolnej Dokumentacji GNU (GNU Free
+Documentation License) w wersji 1.1 lub jakiejkolwiek nowszej wersji
+opublikowanej przez Fundację Wolnego Oprogramowania, przy czym Sekcjami
+niezmiennymi są ,,GNU General Public License'' i ,,GNU Free Documentation
+License'', bez treści przedniej lub tylnej strony okładki.
+Egzemplarz licencji zamieszczono w sekcji zatytułowanej
+,,GNU Free Documentation License''.
+
+@end ifinfo
+
+@titlepage
+@title Narzędzia plikowe @sc{gnu}
+@subtitle Zestaw narzędzi plikowych
+@subtitle wersji @value{VERSION}, @value{UPDATED}
+@author David MacKenzie et al.
+
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1994, 95, 96, 1999, 2001 Free Software Foundation, Inc.
+
+Zezwala się na kopiowanie, rozpowszechnianie i/lub modyfikowanie tego
+dokumentu na warunkach Licencji Wolnej Dokumentacji GNU (GNU Free
+Documentation License) w wersji 1.1 lub jakiejkolwiek nowszej wersji
+opublikowanej przez Fundację Wolnego Oprogramowania, przy czym Sekcjami
+niezmiennymi są ,,GNU General Public License'' i ,,GNU Free Documentation
+License'', bez treści przedniej lub tylnej strony okładki.
+Egzemplarz licencji zamieszczono w sekcji zatytułowanej
+,,GNU Free Documentation License''.
+@end titlepage
+
+@ifnottex
+@node Top
+@top Narzędzia plikowe GNU
+
+@cindex pliki, narzędzia do obsługi
+@cindex narzędzia plikowe
+@cindex narzędzia do obsługi plików
+
+Niniejszy podręcznik opisuje zestaw narzędzi plikowych @sc{gnu}
+w wersji @value{VERSION}.
+
+@menu
+* Wstęp::                           Przestrogi, przegląd i autorzy.
+* Wspólne opcje::                   Wspólne opcje.
+* Prawa pliku::                     Tryby dostępu.
+* Formaty wprowadzania daty::       Podawanie łańcuchów daty.
+* Listowanie zawartości katalogów:: ls dir vdir d v dircolors.
+* Podstawowe operacje::             cp dd install mv rm shred.
+* Specjalne typy plików::           ln mkdir rmdir mkfifo mknod.
+* Zmiana atrybutów pliku::          chgrp chmod chown touch.
+* Zajętość dysku::                  df du sync.
+* Kopiowanie::                      Licencja Wolnej Dokumentacji.
+* Skorowidz::                       Skorowidz.
+@end menu
+@end ifnottex
+
+
+@node Wstęp
+@chapter Wstęp
+
+@cindex wstęp
+
+Podręcznik ten nie jest wyczerpujący: nie usiłowano wyjaśnić podstawowych
+pojęć dotyczących plików w sposób odpowiedni dla nowicjuszy. Zatem, jeśli
+jesteś zainteresowany, włącz się, proszę, w udoskonalanie go. Skorzysta na tym
+cała wspólnota @sc{gnu}.
+
+@cindex POSIX.2
+Narzędzia plikowe @sc{gnu} są w większości zgodne ze standardem @sc{posix.2}.
+
+@c This paragraph appears in all of fileutils.texi, textutils.texi, and
+@c sh-utils.texi too -- so be sure to keep them consistent.
+@cindex błędy, zgłaszanie
+Błędy proszę zgłaszać, w jęz.angielskim, do @email{bug-fileutils@@gnu.org}.
+Pamiętaj, by zamieścić numer wersji, architekturę maszyny, pliki wejściowe
+i inne informacje potrzebne do powielenia błędu: wprowadzane znaki, czego
+się spodziewałeś, co otrzymałeś i dlaczego jest to źle. Pliki diff są mile
+widziane, ale proszę dołączyć również opis problemu, gdyż czasem ciężko
+jest wyciągnąć wnioski. @xref{Bugs, , , gcc, GNU CC}.
+
+@cindex historia
+Podręcznik ten powstał pierwotnie na bazie uniksowych stron man napisanych
+przez Davida MacKenzie i aktualizowanych przez Jima Meyeringa. Autorytatywną
+dokumentacją jest obecnie dokumentacja w formacie info; strony man nie są
+już rozwijane i aktualizowane.
+Fran@,{c}ois Pinard wykonał wstępną konwersję do formatu Texinfo. Karl
+Berry wykonał indeksy, trochę reorganizacji i edycji wyników.
+Richard Stallman wniósł swój zwykły nieoceniony wgląd w całość procesu.
+
+
+@unnumberedsec Od tłumacza
+Niniejszy przekład powstał
+w ramach @uref{http://ptm.linux.pl/, Projektu Tłumaczenia Manuali}
+z wykorzystaniem istniejących tłumaczeń stron podręcznika systemowego man,
+które wykonali:
+
+@itemize @w
+@item Przemek Borys (@email{pborys@@p-soft.silesia.linux.org.pl})
+@item Adam Byrtek (@email{alpha@@irc.pl})
+@item Wojtek Kotwica (@email{wkotwica@@post.pl})
+@item Łukasz Kowalczyk (@email{lukow@@tempac.okwf.fuw.edu.pl})
+@end itemize
+
+Zgłoszenia błędów, komentarze i sugestie
+proszę przesyłać na listę dyskusyjną Projektu: @email{ptm@@amg.net.pl}
+lub ewentualnie do redaktora całości.
+Fragmenty nie występujące w oryginale, zaczerpnięte z wcześniejszych stron man
+lub powstałe na podstawie kodu źródłowego, umieszczono w nawiasach kwadratowych.
+
+Polskie, nieoficjalne, tłumaczenie GNU Free Documentation License można
+znaleźć na @uref{http://gnu.org.pl/}.
+Proszę pamiętać, że pod względem prawnym obowiązująca jest wyłącznie
+oryginalna, angielska wersja.  Stanowisko FSF w tej kwestii wyjaśniono
+na stronie @uref{http://www.gnu.org/copyleft/copyleft.html}.
+
+W.Kotwica (@email{wkotwica@@post.pl})
+
+@node Wspólne opcje
+@chapter Wspólne opcje
+
+@cindex wspólne opcje
+
+Pewne opcje dostępne są we wszystkich omawianych programach (faktycznie
+powinien je akceptować każdy program @sc{gnu}).  Zamiast tworzyć identyczne
+opisy dla każdego z programów, wspólne opcje omówiono tutaj.
+
+@table @samp
+@item --help
+@opindex --help
+@cindex help, online
+@cindex pomoc, online
+Wypisuje komunikat o sposobie używania podający wszystkie dostępne opcje,
+a następnie pomyślnie kończy działanie.
+
+@item --version
+@opindex --version
+@cindex numer wersji, znajdowanie
+@cindex wersja, znajdowanie numeru
+Wypisuje numer wersji, a następnie pomyślnie kończy działanie.
+@end table
+
+@menu
+* Opcje kopii zapasowych::  -b -S -V, w niektórych programach.
+* Rozmiar bloku::           BLOCK_SIZE i --block-size, w niektórych programach.
+* Katalog docelowy::        --target-directory, w niektórych programach.
+* Końcowe ukośniki::        --strip-trailing-slashes, w niektórych programach.
+@end menu
+
+
+@node Opcje kopii zapasowych
+@section Opcje kopii zapasowych
+
+@cindex opcje kopii zapasowych
+@cindex kopie zapasowe, opcje
+
+Niektóre z programów @sc{gnu} (co najmniej @code{cp}, @code{install},
+@code{ln} i @code{mv}) opcjonalnie tworzą kopie zapasowe plików przed
+zapisaniem ich nowych wersji.  Opcje te sterują szczegółami robienia kopii.
+Są one także krótko wzmiankowane w opisach konkretnych programów.
+
+@table @samp
+
+@item -b
+@itemx @w{@kbd{--backup}[=@var{metoda}]}
+@opindex -b
+@opindex --backup
+@vindex VERSION_CONTROL
+@cindex kopie zapasowe, tworzenie
+Tworzy kopię zapasową każdego pliku, który inaczej byłby nadpisany lub
+usunięty.  Bez użycia tej opcji wersje pierwotne są niszczone.
+Posługuje się zadaną @var{metodą} do określenia typu kopii zapasowych,
+jakie mają być wykonywane.  Gdy opcja ta jest używana bez określenia metody,
+do używana jest wartość zmiennej środowiskowej @env{VERSION_CONTROL}.
+A jeśli ta zmienna nie jest ustawiona, to domyślnym typem kopii zapasowej
+jest @samp{existing}.
+
+Zauważ, że krótka postać tej opcji, @samp{-b} nie przyjmuje żadnego
+argumentu.  Użycie @samp{-b} jest równoważne użyciu @samp{--backup=existing}.
+
+@vindex version-control @r{zmienna Emacsa}
+Opcja ta odpowiada zmiennej @samp{version-control} Emacsa: używane są te
+same wartości dla @var{metody} tworzenia kopii. Opcje te rozpoznają także
+bardziej opisowe synonimy. Prawidłowe wartości to (unikalne skróty są
+dopuszczalne):
+
+@table @samp
+@item none
+@itemx off
+@opindex none @r{metoda tworzenia kopii}
+Nigdy nie tworzy kopii zapasowych.
+
+@item numbered
+@itemx t
+@opindex numbered @r{metoda tworzenia kopii}
+Zawsze tworzy numerowane kopie zapasowe.
+
+@item existing
+@itemx nil
+@opindex existing @r{metoda tworzenia kopii}
+Tworzy numerowane kopie zapasowe plików, które już je mają, zwykłe kopie dla
+reszty.
+
+@item simple
+@itemx never
+@opindex simple @r{metoda tworzenia kopii}
+Robi zawsze zwykłe kopie zapasowe. Zauważ, proszę, że @samp{never} nie
+powinno być mylone z @samp{none}.
+
+@end table
+
+@item -S @var{przyrostek}
+@itemx --suffix=@var{przyrostek}
+@opindex -S
+@opindex --suffix
+@cindex przyrostek kopii
+@vindex SIMPLE_BACKUP_SUFFIX
+Dodaje @var{przyrostek}  do nazwy każdego pliku kopii zapasowej wykonanego
+za pomocą @samp{-b}.  Jeśli opcja ta nie zostanie podana, to użyta zostanie
+wartość zmiennej środowiskowej @code{SIMPLE_BACKUP_SUFFIX}.
+Jeśli ona również nie jest określona, to użyty zostanie domyślny znak
+@samp{~}, jak w Emacsie.
+
+@item -V @var{metoda}
+@itemx --version-control=@var{metoda}
+@opindex -V
+@opindex --version-control
+@c FIXME: remove this block one or two releases after the actual
+@c removal from the code.
+Opcja ta jest przestarzała i w przyszłych wydaniach zostanie usunięta.
+Została zastąpiona przez @w{@kbd{--backup}}.
+
+@end table
+
+@node Rozmiar bloku
+@section Rozmiar bloku
+
+@cindex Rozmiar bloku
+
+Niektóre z programów @sc{gnu} (co najmniej @code{df}, @code{du} i @code{ls})
+wyświetlają wielkości plików w ``blokach''. Możesz dopasować rozmiar bloku
+by uczytelnić rozmiary plików. Rozmiar bloku do wyświetlania jest niezależny
+od rozmiaru bloku jakiegokolwiek systemu plików.
+
+Normalnie wyświetlane zajętości dysku zaokrąglane są w górę, ilość wolnego
+miejsca w dół, a inne rozmiary do najbliższego bloku, z połówkami
+zaokrąglanymi do liczb parzystych.
+
+@opindex --block-size=@var{rozmiar}
+@vindex BLOCK_SIZE
+@vindex DF_BLOCK_SIZE
+@vindex DU_BLOCK_SIZE
+@vindex LS_BLOCK_SIZE
+@vindex POSIXLY_CORRECT@r{, and block size}
+
+Domyślny rozmiar bloku wybierany jest przez sprawdzenie kolejno poniższych
+zmiennych środowiska; pierwsza, która jest ustawiona określa rozmiar bloku.
+
+@table @code
+
+@item DF_BLOCK_SIZE
+Określa domyślny rozmiar bloku dla polecenia @code{df}. Podobnie,
+@var{DU_BLOCK_SIZE} określa wielkość domyślną dla `du', zaś
+@var{BLS_BLOCK_SIZE} dla @code{ls}.
+
+@item BLOCK_SIZE
+Określa domyślny rozmiar bloku dla wszystkich trzech poleceń, jeśli nie są
+ustawione wymienione wyżej zmienne specyficzne dla poszczególnych poleceń.
+
+@item POSIXLY_CORRECT
+Jeżeli nie jest ustawiona ani zmienna @env{@var{polecenie}_BLOCK_SIZE}
+ani też @env{BLOCK_SIZE}, ale ta zmienna jest ustawiona, to domyślną
+wartością bloku jest 512.
+
+@end table
+
+Jeśli nie jest ustawiona żadna z powyższych zmiennych środowiskowych, to
+obecnie domyślny rozmiar bloku wynosi 1024 bajty, lecz liczba ta może
+w przyszłości się zmienić.
+
+@cindex human-readable, postać wyjścia
+@cindex SI, postać wyjścia
+
+Rozmiaru bloku może opisywać dodatnia liczba całkowita, określająca
+liczbę bajtów bloku, bądź jeden z napisów @code{human-readable} lub
+@code{si}, wybierający format w postaci czytelnej dla człowieka.
+
+W przypadku formatów czytelnych dla człowieka wyświetlane rozmiary
+kończone są literą przyrostka potęgi, jak @samp{M} dla megabajtów.
+@code{BLOCK_SIZE=human-readable} posługuje się potęgami 1024; @samp{M}
+oznacza 1,048,576 bajtów.  @code{BLOCK_SIZE=si} jest podobne, ale używa
+potęg 1000; @samp{M} oznacza tu 1,000,000 bajtów.  (SI, Międzynarodowy
+System Jednostek, definiuje wymienione przyrostki kolejnych potęg liczby
+1000.)
+
+Całkowity rozmiar bloku może być zakończony literą określającą wielokrotność
+tego rozmiaru. Przy użyciu tej notacji, litery rozmiarów normalnie oznaczają
+potęgi 1024, i może po nich wystąpić opcjonalna litera @samp{B} dla
+oznaczenia ``bajtów''; ale jeżeli po literze rozmiaru występuje @samp{D}
+(``bajty dziesiętnie''), oznacza to potęgi 1000. Na przykład,
+@code{BLOCK_SIZE=4MB} jest równoważne @code{BLOCK_SIZE=4194304}, a
+@code{BLOCK_SIZE=4MD} jest równoważne @code{BLOCK_SIZE=4000000}.
+
+Zdefiniowane są poniższe litery. Bardzo wielkie rozmiary, jak `1Y' mogą być
+odrzucone przez twój komputer z powodu ograniczeń jego arytmetyki.
+
+@table @samp
+@item k
+kilo: @math{2^10 = 1024} dla @code{human-readable},
+lub @math{10^3 = 1000} dla @code{si}.
+@item M
+Mega: @math{2^20 = 1,048,576}
+lub @math{10^6 = 1,000,000}.
+@item G
+Giga: @math{2^30 = 1,073,741,824}
+lub @math{10^9 = 1,000,000,000}.
+@item T
+Tera: @math{2^40 = 1,099,511,627,776}
+lub @math{10^12 = 1,000,000,000,000}.
+@item P
+Peta: @math{2^50 = 1,125,899,906,842,624}
+lub @math{10^15 = 1,000,000,000,000,000}.
+@item E
+Exa: @math{2^60 = 1,152,921,504,606,846,976}
+lub @math{10^18 = 1,000,000,000,000,000,000}.
+@item Z
+Zetta: @math{2^70 = 1,180,591,620,717,411,303,424}
+lub @math{10^21 = 1,000,000,000,000,000,000,000}.
+@item Y
+Yotta: @math{2^80 = 1,208,925,819,614,629,174,706,176}
+lub @math{10^24 = 1,000,000,000,000,000,000,000,000}.
+@end table
+
+@opindex -k
+@opindex --kilobytes
+@opindex -h
+@opindex --human-readable
+@opindex --si
+
+Domyślne rozmiary bloków mogą być unieważniane przez jawne użycie opcji
+@samp{--block-size=@var{size}}.  Opcja @samp{-k} lub @samp{--kilobytes}
+jest równoważna @samp{--block-size=1k}, co jest ustawieniem domyślnym, chyba
+że ustawiono zmienną środowiskową @env{POSIXLY_CORRECT}.  Opcja @samp{-h}
+lub @samp{--human-readable} jest równoważna
+@samp{--block-size=human-readable}.  Opcja @samp{--si} jest
+równoważna @samp{--block-size=si}.
+
+@node Katalog docelowy
+@section Katalog docelowy
+
+@cindex katalog docelowy
+@cindex docelowy, katalog
+Niektóre programy @sc{gnu} (co najmniej @code{cp}, @code{install}, @code{ln}
+i @code{mv}) pozwalają na podanie tą opcją katalogu docelowego:
+
+@table @samp
+
+@itemx @w{@kbd{--target-directory}=@var{katalog}}
+@opindex --target-directory
+@cindex katalog przeznaczenia
+@cindex katalog docelowy
+@cindex docelowy, katalog
+Określa @var{katalog} docelowy.
+
+Interfejs większości programów przewiduje, że po przetworzeniu opcji
+i skończonej liczby (może być to zero) argumentów stałopozycyjnych,
+pozostała lista argumentów powinna być albo pusta albo być listą pozycji
+(zwykle plików), które będą identycznie traktowane. Program @code{xargs}
+zaprojektowano do pracy z taką konwencją.
+
+Polecenia z rodziny @code{mv} są niezwyczajne przez to, że pobierają zmienną
+liczbę argumentów, specjalnie traktując @emph{ostatni} z nich (czyli katalog
+docelowy).  Powoduje to, że wykonanie niektórych operacji nie jest banalne,
+np., ``przesuń wszystkie pliki stąd do ../d/'', gdyż @code{mv * ../d/} może
+wyczerpać przestrzeń argumentów [będzie ich zbyt wiele na możliwość
+rozwinięcia znaku @code{*} przez powłokę]. Z kolei @code{ls | xargs ...}
+nie daje czystego sposobu na określenie dodatkowego, końcowego argumentu dla
+każdego wywołania odpowiedniego polecenia. (Da się to zrobić przez polecenie
+powłoki, ale wymaga to więcej ludzkiej pracy i wysiłku umysłowego niż
+powinno.)
+
+Opcja @w{@kbd{--target-directory}} pozwala programom @code{cp},
+@code{install}, @code{ln} i @code{mv} na wygodne użytkowanie z @code{xargs}.
+Na przykład, można przesunąć pliki z bieżącego katalogu do równoległego
+katalogu @code{d} w ten sposób (jednak, nie przesuwa to plików o nazwach
+rozpoczynających się od @samp{.})
+
+@smallexample
+ls |xargs mv --target-directory=../d
+@end smallexample
+
+Korzystając z programu @code{find} w wersji @sc{gnu}, można przesunąć
+@emph{wszystkie} pliki takim poleceniem:
+@example
+find . -mindepth 1 -maxdepth 1 \
+  | xargs mv --target-directory=../d
+@end example
+
+Zawiedzie ono jednak, jeżeli w bieżącym katalogu nie ma żadnych plików lub
+któryś z plików ma nazwę zawierającą znak nowej linii. Poniższy przykład
+usuwa te ograniczenia i wymaga równocześnie @sc{gnu} @code{find}
+i @sc{gnu} @code{xargs}:
+@example
+find . -mindepth 1 -maxdepth 1 -print0 \
+  | xargs --null --no-run-if-empty \
+      mv --target-directory=../d
+@end example
+
+@end table
+
+@node Końcowe ukośniki
+@section Końcowe ukośniki
+
+@cindex końcowe ukośniki
+
+Niektóre programy @sc{gnu} (co najmniej @code{cp}
+i @code{mv}) umożliwiają usunięcie ewentualnych końcowych ukośników przed
+operacją na każdym z argumentów typu @var{źródło}.  Takie zachowanie włącza
+opcja @w{@kbd{--strip-trailing-slashes}}.
+
+Przydaje się to w sytuacji, gdy argument @var{źródło} może zawierać kończący
+ukośnik a określa dowiązanie symboliczne do katalogu.  Scenariusz taki jest
+faktycznie dość powszechny, gdyż niektóre powłoki potrafią automatycznie
+dodawać końcowy ukośnik wykonując dopełnianie nazwy pliku dla takich
+dowiązań symbolicznych.  Bez tej opcji, @code{mv}, na przykład, (poprzez
+systemową funkcję @code{rename}) musi interpretować końcowy ukośnik jako
+żądanie dereferencjonowania dowiązania symbolicznego, a zatem musi zmieniać
+nazwę pośrednio wskazanego @emph{katalogu} a nie dowiązania symbolicznego.
+Mimo że przyjęcie takiego zachowania za domyślne może wydawać się
+zaskakujące, wymagane jest ono przez @sc{posix.2} i jest spójne z innymi
+częściami standardu.
+
+@node Prawa pliku
+@chapter Prawa pliku
+
+@cindex prawa pliku
+@cindex plik, prawa dostępu
+
+@include perm.texi
+
+
+@include getdate.texi
+
+
+@node Listowanie zawartości katalogów
+@chapter Listowanie zawartości katalogów
+
+Ten rozdział opisuje polecenie @code{ls} i jego warianty: @code{dir}
+i @code{vdir}, które wypisują informacje o plikach.
+
+@menu
+* Wywołanie ls::             Lista zawartości katalogu.
+* Wywołanie dir::            ls krótko.
+* Wywołanie vdir::           Rozgadane ls.
+* Wywołanie dircolors::      Konfigurowanie kolorów dla ls, itd.
+@end menu
+
+
+@node Wywołanie ls
+@section @code{ls}: lista zawartości katalogu
+
+@pindex ls
+@cindex listowanie katalogu
+
+Program @code{ls} listuje informacje o plikach (dowolnego typu, łącznie
+z katalogami). Jak zwykle, opcje i argumenty określające pliki mogą być
+dowolnie przemieszane.
+
+Dla nieopcyjnych argumentów wiersza poleceń określających katalogi
+domyślnie @code{ls} podaje zawartość katalogów, bez podkatalogów
+i z pominięciem plików o nazwach rozpoczynających się kropką.
+Dla innych argumentów, nie stanowiących opcji @code{ls} wyświetla jedynie
+nazwę pliku.  Jeżeli nie podano innych niż opcje argumentów, to wyświetlana
+jest zawartość bieżącego katalogu.
+
+Domyślnie wyniki są sortowane alfabetycznie. Jeżeli standardowym wyjściem
+jest terminal to wyniki wyświetlane są w szpaltach (kolumnach) posortowanych
+pionowo a znaki sterujące wyprowadzane są jako znaki zapytania; w innym
+wypadku są listowane jeden na wiersz a znaki kontrolne wyprowadzane są bez
+zmian.
+
+Ponieważ @code{ls} jest programem podstawowym, to w ciągu wielu lat
+zgromadził mnóstwo opcji. Opisano je w podsekcjach grupujących opcje
+dotyczące różnych aspektów pracy @code{ls}. Podział ten nie jest sztywny,
+gdyż niektóre opcje mają wpływ na więcej niż jeden aspekt działania
+@code{ls}.
+
+@opindex -g @r{(ignorowana)}
+Ta opcja jest akceptowana, ale ignorowana; istnieje dla zgodności z Unixem.
+Zobacz też @ref{Wspólne opcje}.
+
+@menu
+* Jakie pliki są wyświetlane::
+* Jakie dane są wyświetlane::
+* Sortowanie wyników::
+* Szczegóły dotyczące sortowania wersji::
+* Ogólne formatowanie wyników::
+* Formatowanie nazw plików::
+@end menu
+
+
+@node Jakie pliki są wyświetlane
+@subsection Jakie pliki są wyświetlane
+
+Opcje te określają, dla których plików @code{ls} będzie wyświetlać
+informacje. Domyślnie wyświetlane są wszystkie pliki i zawartości katalogów
+podanych w wierszu poleceń [z wyjątkiem rozpoczynających się kropką, chyba
+że jawnie podano je jako argumenty].
+
+@table @samp
+
+@item -a
+@itemx --all
+@opindex -a
+@opindex --all
+Listuje wszystkie pliki w katalogach, również pliki zaczynające się
+od @samp{.}.
+
+@item -A
+@itemx --almost-all
+@opindex -A
+@opindex --almost-all
+Listuje wszystkie pliki w katalogach, poza @file{.} i @file{..}.
+
+@item -B
+@itemx --ignore-backups
+@opindex -B
+@opindex --ignore-backups
+@cindex pliki kopii zapasowych, ignorowanie
+Nie pokazuje plików, które kończą się na @samp{~}, chyba że podano je w
+wierszu poleceń. [Są to zwyczajowo pliki kopii zapasowych.]
+
+@item -d
+@itemx --directory
+@opindex -d
+@opindex --directory
+Wypisuje tylko nazwy katalogów, tak jak innych plików, zamiast wyświetlać ich
+zawartość.
+
+@item -I WZORZEC
+@itemx --ignore=WZORZEC
+@opindex -I
+@opindex --ignore=@var{wzorzec}
+Nie wypisuje plików, których nazwy odpowiadają wzorcowi powłokowemu (nie
+wyrażeniu regularnemu) @var{wzorzec}, chyba że podano je w wierszu poleceń.
+Podobnie jak w powłoce, @samp{.} na początku @var{wzorca} nazwy pliku
+nie oznacza znaku uogólnienia. Czasami przydaje się kilkakrotne
+podanie tej opcji. Na przykład:
+
+@smallexample
+$ ls --ignore='.??*' --ignore='.[^.]' --ignore='#*'
+@end smallexample
+
+Pierwsza z opcji pomija nazwy o długości 3 lub więcej znaków rozpoczynające
+się od @samp{.}, druga pomija wszystkie dwuznakowe nazwy rozpoczynające się
+od @samp{.} z wyjątkiem @samp{..}, a trzecia pomija nazwy rozpoczynające
+się od @samp{#}.
+
+@item -L
+@itemx --dereference
+@opindex -L
+@opindex --dereference
+@cindex symboliczne dowiązania, dereferencja
+@cindex dowiązania symboliczne, dereferencja
+W długim formacie wyświetlania pokazuje dane (np. czasy, prawa) dotyczące
+plików wskazywanych przez dowiązania symboliczne, zamiast danych samych
+dowiązań.
+
+@item -R
+@itemx --recursive
+@opindex -R
+@opindex --recursive
+@cindex rekurencyjny listing katalogów
+@cindex listing katalogów, rekurencyjny
+Listuje rekurencyjnie zawartości wszystkich katalogów [czyli wyświetla
+również podkatalogi].
+
+@end table
+
+
+@node Jakie dane są wyświetlane
+@subsection Jakie dane są wyświetlane
+
+Opcje te wpływają na to, jaką informację wyświetla @code{ls}. Domyślnie
+pokazywane są tylko nazwy plików.
+
+@table @samp
+
+@item -D
+@itemx --dired
+@opindex -D
+@opindex --dired
+@cindex obsługa trybu dired Emacsa
+@cindex dired Emacsa, obsługa
+Przy użyciu ``długiego'' formatu (@samp{-l}) podaje dodatkowy wiersz po
+wyświetleniu głównych informacji:
+
+@example
+//DIRED// @var{pocz1 kon1 pocz2 kon2 @dots{}}
+@end example
+
+@noindent
+@var{poczN} i @var{konN} są liczbami całkowitymi bez znaku (unsigned
+integer), opisującymi pozycję w bajtach początku i końca każdej nazwy pliku
+w wyświetlonej liście. Ułatwia to Emacsowi odnalezienie nazw plików, nawet
+jeśli zawierają nietypowe znaki, jak spacje czy znaki nowej linii, bez
+potrzeby udziwnionego wyszukiwania.
+
+Jeśli katalogi wyświetlane są rekurencyjnie (@code{-R}), to dodatkowo
+wyświetlany jest podobny wiersz, opisujący podkatalogi:
+@example
+//SUBDIRED// @var{format} @var{pocz1 kon1 @dots{}}
+@end example
+
+Na końcu podawany jest wiersz w postaci:
+@example
+//DIRED-OPTIONS// --quoting-style=@var{słowo}
+@end example
+gdzie @var{słowo} jest stylem cytowania (@pxref{Formatowanie nazw plików}).
+
+@item -G
+@itemx --no-group
+@opindex -G
+@opindex --no-group
+Nie wyświetla informacji o grupie przy długim formacie listingu katalogu.
+(Jest to domyślne zachowanie niektórych wersji polecenia @code{ls} innych
+niż wersje @sc{gnu}, więc opcja ta została dodana z uwagi na zgodność.)
+
+@item -h
+@itemx --human-readable
+@opindex -h
+@opindex --human-readable
+@cindex human-readable, postać wyjścia
+Pokazuje objętości w postaci czytelniejszej dla człowieka, dodając literowe
+przyrostki określające potęgi 1024, np. @samp{M} dla megabajtów.
+@samp{M} oznacza 1.048.576 bajtów. Jeżeli wolisz potęgi 1000 - użyj opcji
+@samp{--si}.
+
+@item -H
+@itemx --si
+@opindex -H
+@opindex --si
+@cindex SI, postać wyjścia
+Każdy z rozmiarów pokazuje z dodaną literą, jak np. @samp{M} dla megabajtów.
+(SI - Międzynarodowy System Miar definiuje przyrostki potęg 1000). Stosowane
+są potęgi 1000, nie 1024. Przy zastosowaniu tej opcji przyrostek @samp{M}
+oznacza 1.000.000 bajtów. Posłuż się opcją @samp{-h}
+(@samp{--human-readable}), jeśli wolisz potęgi 1024.
+
+Ostrzeżenie: w przyszłości znaczenie opcji @option{-H} ulegnie zmianie,
+by było zgodne z @sc{posix}.  Dla starego znaczenia należy stosować
+@option{--si}.
+
+@item -i
+@itemx --inode
+@opindex -i
+@opindex --inode
+@cindex i-węzeł, wypisywanie numeru
+@cindex numer i-węzeła, wypisywanie
+Wypisuje numer i-węzła (zwany też numerem indeksowym, numerem seryjnym)
+każdego pliku po lewej stronie jego nazwy. (Numer ten jednoznacznie
+identyfikuje plik w ramach danego systemu plików.)
+
+@item -l
+@itemx --format=long
+@itemx --format=verbose
+@opindex -l
+@opindex --format
+@opindex long, @r{format} ls
+@opindex verbose, @r{format} ls
+Oprócz nazwy każdego pliku, wypisuje jego typ, prawa, liczbę
+dowiązań twardych, właściciela, grupę, rozmiar w bajtach i znacznik
+czasu (timestamp) (domyślnie czas modyfikacji). Dla plików z czasem starszym
+niż 6 miesięcy lub wypadającym w przyszłości, znacznik czasu zawiera
+określenie roku zamiast godziny.
+Jeśli znacznik czasu zawiera dzisiejszą datę z podanym rokiem, a nie godziną,
+to czas pliku jest z przyszłości, co znaczy, że zapewne masz problemy
+z przesunięciem impulsów zegarowych.  Może to psuć działanie programów,
+które, jak @command{make}, opierają się na czasie pliku.
+
+Zawartość każdego wyświetlanego katalogu poprzedzana jest wierszem z napisem
+@samp{total @var{bloków}}, gdzie @var{bloki} są całkowitą przestrzenią
+dysku zajmowaną przez wszystkie pliki w tym katalogu. Obecnie domyślnie
+używane są bloki 1024-bajtowe, ale można to zmienić (@pxref{Rozmiar bloku}).
+@var{bloki} zliczane są osobno dla każdego dowiązania twardego. Jest to
+usterka dyskusyjna.
+
+@cindex prawa dostępu, wypisywane przez @code{ls}
+Prawa dostępu wyświetlane są w sposób zbliżony do specyfikacji trybu
+symbolicznego (@pxref{Tryby symboliczne}).
+Jednakże @code{ls} w trzecim znaku każdej z grup praw łączy wiele bitów.
+Znaki te ustalane są według następujących reguł:
+@table @samp
+@item s
+Jeżeli ustawione są bity setuid lub setgid oraz odpowiedni bit
+wykonywalności.
+
+@item S
+Jeżeli ustawione są bity setuid lub setgid, ale odpowiedni bit
+wykonywalności nie jest ustawiony.
+
+@item t
+Jeżeli równocześnie ustawione są bit lepkości (sticky bit) i bit wykonywania
+dla innych użytkowników.
+
+@item T
+Jeżeli ustawiony jest bit lepkości, ale nie jest ustawiony bit
+wykonywania dla innych użytkowników.
+
+@item x
+Bit prawa wykonywania jest ustawiony, ale nie zachodzi żadna z powyższych
+sytuacji.
+
+@item -
+W pozostałych przypadkach.
+@end table
+
+Po bitach uprawnień  następuje pojedynczy znak określający, czy do danego
+pliku stosuje się alternatywna metoda dostępu. Gdy znakiem tym jest spacja,
+to nie ma żadnej alternatywnej metody dostępu. Jeśli jest to znak drukowalny
+(np. @samp{+}), to istnieje taka metoda.
+
+@item -o
+@opindex -o
+Używa długiego formatu wyświetlania, ale nie wyświetla informacji o grupie.
+Równoważne użyciu opcji @samp{--format=long} wraz z opcją @samp{--no-group}.
+Opcja zapewniana w celu zgodności z innymi wersjami @code{ls}.
+
+@item -s
+@itemx --size
+@opindex -s
+@opindex --size
+@cindex przydział przestrzeni dysku
+@cindex alokacja dysku
+@cindex dysk, alokacja
+@cindex rozmiary plików, zgłaszanie
+Dla każdego pliku wypisuje na lewo od jego nazwy zajętość dysku przez
+ten plik.  Jest to wielkość przestrzeni dyskowej zużytej przez plik, co
+zwykle wynosi nieco więcej niż rozmiar pliku, ale może to być również mniej,
+jeśli plik ma dziury.
+
+Zwykle zajętość dysku drukowana jest w jednostkach 1024-bajtowych, może to
+być jednak zmienione (@pxref{Rozmiar bloku}).
+
+@cindex NFS montowany z BSD do HP-UX
+Na systemach BSD, dla plików zamontowanych przez NFS z systemu HP-UX,
+opcja ta zgłasza rozmiary, które są o połowę mniejsze od poprawnych
+wielkości.  Na HP-UX zgłasza rozmiary dwa razy większe od poprawnych, jeśli
+pliki są zamontowane przez NFS z BSD.  Jest to usterka HP-UX i ma wpływ
+również na program @code{ls} z tego systemu.
+
+@end table
+
+
+@node Sortowanie wyników
+@subsection Sortowanie wyników
+
+@cindex sortowanie wyników @code{ls}
+@cindex sortowanie wyjścia @code{ls}
+Te opcje zmieniają kolejność, w jakiej @code{ls} sortuje wypisywane dane.
+Domyślnie sortowanie wykonywane jest według kodu znaku
+(np., kolejność ASCII).
+
+@table @samp
+
+@item -c
+@itemx --time=ctime
+@itemx --time=status
+@itemx --time=use
+@opindex -c
+@opindex --time
+@opindex ctime@r{, wypisywanie lub sortowanie wg}
+@opindex status time@r{, wypisywanie lub sortowanie wg}
+@opindex use time@r{, wypisywanie lub sortowanie wg}
+@opindex czas zmiany stanu, wypisywanie lub sortowanie wg
+@opindex czas dostępu, wypisywanie lub sortowanie wg
+Jeżeli używany jest długi format wyświetlania (np. @samp{-l}, @samp{-o}),
+wypisuje czas zmiany statusu (@samp{ctime} i-węzła) zamiast czasu
+modyfikacji. Przy jawnym sortowaniu według czasu (@samp{--sort=time} lub
+@samp{-t}) lub, gdy  nie jest używany długi format, sortuje zawartość
+katalogu według według czasu zmiany statusu plików.
+
+@item -f
+@opindex -f
+@cindex niesortowany, listing katalogu
+@cindex listing wg kolejności w katalogu
+Przede wszystkim, jak @samp{-U} -- nie sortuje zawartości katalogów. Podaje
+je w takiej kolejności, w jakiej są zapisane w katalogu. Ale również
+włącza opcję @samp{-a} (listowanie wszystkich plików) a wyłącza @samp{-l},
+@samp{--color} i @samp{-s} (jeśli zostały podane przed @samp{-f}).
+
+@item -r
+@itemx --reverse
+@opindex -r
+@opindex --reverse
+@cindex sortowanie w odwrotnej kolejności
+@cindex reverse, sortowanie w odwrotnej kolejności
+Odwraca stosowany sposób sortowania -- tzn. podaje pliki w odwrotnej
+kolejności alfabetycznej, najpierw najmłodsze, najpierw najmniejsze itp.,
+zależnie od podstawowej metody sortowania.
+
+@item -S
+@itemx --sort=size
+@opindex -S
+@opindex --sort
+@opindex rozmiar plików@r{, sortowanie plików wg}
+Sortuje zawartość katalogów według rozmiaru pliku.
+Największe pliki wyświetlane będą na początku.
+
+@item -t
+@itemx --sort=time
+@opindex -t
+@opindex --sort
+@opindex czas modyfikacji@r{, sortowanie plików wg}
+Sortuje zawartość katalogów  według czasu modyfikacji (@samp{mtime} i-węzła).
+Najnowsze pliki są pierwsze.
+
+@item -u
+@itemx --time=atime
+@itemx --time=access
+@opindex -u
+@opindex --time
+@opindex use time@r{, wypisywanie lub sortowanie wg}
+@opindex atime@r{, wypisywanie lub sortowanie wg}
+@opindex access time@r{, wypisywanie lub sortowanie wg}
+@opindex czas zmiany stanu, wypisywanie lub sortowanie wg
+@opindex czas dostępu, wypisywanie lub sortowanie wg
+Jeżeli używany jest długi format wyświetlania (np. @samp{--format=long}),
+wypisuje czas ostatniego dostępu do pliku (@samp{atime} i-węzła).
+Przy jawnym sortowaniu według czasu (@samp{--sort=time} lub
+@samp{-t}) lub, gdy nie jest używany długi format, sortuje zawartość
+katalogu według czasu dostępu do plików.
+
+@item -U
+@itemx --sort=none
+@opindex -U
+@opindex --sort
+@opindex none@r{, opcja sortowania w @code{ls}}
+Nie sortuje -- pokazuje pliki w takiej kolejności, w jakiej są
+zapisane w katalogu. (Nie wykonuje żadnych innych, związanych z tym, rzeczy,
+jakie robi @samp{-f}.)  Szczególnie przydatna przy listowaniu obszernych
+katalogów, gdyż brak sortowania znacznie przyspiesza otrzymanie wyniku.
+[Opcja ta nie jest nazwana @samp{-f} ponieważ uniksowy @code{ls -f} włącza
+@samp{-a} i wyłącza @samp{-l}, @samp{-s} i @samp{-t}.
+Wydaje się bezużytecznym i brzydkim grupowanie niezwiązanych rzeczy naraz
+w jednej opcji. Skoro ta opcja tego nie robi, ma inną nazwę.]
+@item -v
+@itemx --sort=version
+@opindex -v
+@opindex --sort
+@opindex version@r{, opcja sortowania w @code{ls}}
+Sortuje według nazwy i numeru, najpierw o najmniejszym numerze.
+Zachowuje się podobnie jak domyślne sortowanie, z wyjątkiem tego, że każda
+sekwencja cyfr dziesiętnych traktowana jest numerycznie jako indeks/numer
+wersji. (@xref{Szczegóły dotyczące sortowania wersji}.).
+
+@item -X
+@itemx --sort=extension
+@opindex -X
+@opindex --sort
+@opindex rozszerzenie@r{, sortowanie plików wg}
+Sortuje zawartość katalogów alfabetycznie według rozszerzeń plików (znaki po
+ostatniej kropce @samp{.}). Pliki bez rozszerzenia są podawane jako pierwsze.
+
+@end table
+
+
+@node Szczegóły dotyczące sortowania wersji
+@subsection Szczegóły dotyczące sortowania wersji
+
+Sortowanie wersji bierze pod uwagę fakt, że nazwy plików często zawierają
+indeksy lub numery wersji. Standardowe funkcje sortowania zwykle nie tworzą
+uporządkowania, jakiego się oczekuje, gdyż porównywania dokonywane są znak
+po znaku. Sortowanie wersji rozwiązuje ten problem i jest szczególnie
+przydatne przy przeglądaniu katalogów zawierających wiele plików z
+indeksami/numerami wersji w nazwach:
+
+@example
+      > ls -1            > ls -1v
+      foo.zml-1.gz       foo.zml-1.gz
+      foo.zml-100.gz     foo.zml-2.gz
+      foo.zml-12.gz      foo.zml-6.gz
+      foo.zml-13.gz      foo.zml-12.gz
+      foo.zml-2.gz       foo.zml-13.gz
+      foo.zml-25.gz      foo.zml-25.gz
+      foo.zml-6.gz       foo.zml-100.gz
+@end example
+
+Zauważ też, że numeryczne części z początkowymi zerami są traktowane jako
+ułamkowe.
+
+@example
+      > ls -1            > ls -1v
+      abc-1.007.tgz      abc-1.007.tgz
+      abc-1.012b.tgz     abc-1.01a.tgz
+      abc-1.01a.tgz      abc-1.012b.tgz
+@end example
+
+@node Ogólne formatowanie wyników
+@subsection Ogólne formatowanie wyników
+
+Poniższe opcje mają wpływ na wygląd całości wyniku.
+
+@table @samp
+
+@item -1
+@itemx --format=single-column
+@opindex -1
+@opindex --format
+@opindex jednokolumnowe wypisywanie plików
+Wypisuje po jednym pliku na wiersz. Domyślna, gdy
+standardowym wyjściem nie jest terminal.
+
+@item -C
+@itemx --format=vertical
+@opindex -C
+@opindex --format
+@opindex vertical @r{sorted files in columns}
+Listuje pliki w kolumnach, posortowanych pionowo. Sposób domyślny, gdy
+standardowe wyjście stanowi terminal. Zawsze domyślny dla programów
+@code{dir} i @code{d}.  @sc{gnu} @code{ls} posługuje się zmienną szerokością
+kolumn, by wyświetlić możliwie najwięcej plików w najmniejszej liczbie
+wierszy.
+
+@item --color [=@var{kiedy}]
+@opindex --color
+@cindex kolor, rozróżnianie typów plików
+Decyduje, czy posługiwać się kolorami do rozróżnienia typów plików.
+Argument @var{kiedy} może być pominięty lub być jednym z poniższych:
+@itemize @bullet
+@item none
+@vindex none @r{opcja koloru}
+W ogóle nie wykorzystuje kolorów.  Jest to opcja domyślna.
+[Udostępniona w celu wyłączania poprzedniej opcji color.  W celu zapewnienia
+zgodności z innymi wersjami dopuszczalne są też równoważne argumenty
+@samp{never} i @samp{no}.]
+@item auto
+@vindex auto @r{opcja koloru}
+@cindex terminal, wykorzystanie kolorów
+Używa kolorowania nazw plików, lecz tylko, jeśli standardowym wyjściem jest
+terminal.  [Bardzo przydatne w skryptach powłoki i aliasach poleceń,
+szczególnie jeśli nasz ulubiony pager nie wspiera kodów sterujących
+kolorami.  W celu zapewnienia zgodności z innymi wersjami dopuszczalne
+są też równoważne argumenty @samp{tty} i @samp{if-tty}.]
+@item always
+@vindex always @r{opcja koloru}
+Zawsze. Używa kolorów bez względu na rodzaj standardowego wyjścia.
+[W celu zapewnienia zgodności z innymi wersjami dopuszczalne są też
+równoważne argumenty @samp{force} i @samp{yes}.]
+@end itemize
+Podanie opcji @samp{--color} bez podania argumentu @var{kiedy} jest
+równoważne @samp{--color=always}.
+Przepuszczenie kolorowego zestawienia potokiem do programu stronicującego,
+jak @code{more} czy @code{less} zazwyczaj daje nieczytelne wyniki.
+Zdaje się jednak, że działa @code{more -f}.
+
+@item -F
+@itemx --classify
+@itemx --indicator-style=classify
+@opindex -F
+@opindex --classify
+@opindex --indicator-style
+@cindex typy plików i pliki wykonywalne, oznaczanie
+@cindex pliki wykonywalne i typy plików, oznaczanie
+Dodaje do każdej nazwy pliku znak oznaczający typ pliku. Dla plików
+wykonywalnych będzie to @samp{*}.  Dla katalogów @samp{/}, @samp{@@}
+dla dowiązań symbolicznych, @samp{|} dla potoków FIFO, @samp{=} dla gniazd
+i nic dla zwykłych plików.
+
+@item --full-time
+@opindex --full-time
+Podaje czasy w pełnej postaci, a nie w zwykłym heurystycznym uproszczeniu.
+Format jest obecnie podobny do występującego w poleceniu @code{date}, ale
+planowana jest jego zmiana w przyszłym wydaniu, częściowo z powodu większej
+dokładności nowoczesnych znaczników czasu pliku.  Jego zmiana nie
+jest możliwa, ale można wyciąć łańcuch opisujący datę poleceniem
+@code{cut} i przesłać wynik do @code{date -d}.
+@xref{date invocation, @code{date} invocation, , sh-utils, Shell utilities}.
+
+Najprzydatniejsze, gdyż wyświetlany czas będzie zawierać sekundy (uniksowe
+systemy plikowe przechowują czasy modyfikacji/dostępu z dokładnością
+do najbliższej sekundy, więc opcja ta pokazuje pełną istniejącą informację).
+Może, na przykład, być pomocne gdy używany plik Makefile nie odbudowuje
+prawidłowo plików.
+
+@item --indicator-style=@var{słowo}
+@opindex --indicator-style
+Do nazwy pliku dodaje znak oznaczający jego typ według stylu @var{słowo}.
+Możliwe style oznaczania:
+@table @samp
+@item none
+Nie dodaje żadnego oznaczenia pliku; typ domyślny.
+@item file-type
+Dodaje @samp{/} dla katalogów, @samp{@@} dla dowiązań symbolicznych,
+@samp{|} dla potoków FIFO, @samp{=} dla gniazd i nic dla zwykłych plików.
+Jest to to samo, co opcja @samp{-p} lub @samp{--file-type}.
+@item classify
+Dodaje @samp{*} dla zwykłych plików wykonywalnych, dla pozostałych zachowuje
+się jak dla @samp{file-type}. Jest to to samo, co opcja @samp{-F} lub
+@samp{--classify}.
+@end table
+
+@item -k
+@itemx --kilobytes
+@opindex -k
+@opindex --kilobytes
+Pokazuje rozmiary w blokach 1024-bajtowych (kilobajtach), przesłaniając
+domyślną wielkość bloku (@pxref{Rozmiar bloku}).
+
+@item -m
+@itemx --format=commas
+@opindex -m
+@opindex --format
+@opindex przecinki@r{, wypisywanie między plikami}
+Wypisuje pliki poziomo, w takiej ilości, jaka pomieści się w każdym wierszu,
+oddziela je sekwencją złożoną z przecinka i spacji (@samp{, }).
+
+@item -n
+@itemx --numeric-uid-gid
+@opindex -n
+@opindex --numeric-uid-gid
+@cindex numeryczny uid i gid
+Podaje numeryczne wartości UID i GID (identyfikatorów użytkowników i grup),
+zamiast nazw.
+
+@item -p
+@itemx --file-type
+@itemx --indicator-style=file-type
+@opindex --file-type
+@opindex --indicator-style
+@cindex typy plików, oznaczanie
+Dodaje do każdej nazwy pliku znak wskazujący na typ pliku. Podobne do
+@samp{-F}, z wyjątkiem tego, że nie są oznaczane pliki wykonywalne.
+
+@item -x @var{format}
+@itemx --format=across
+@itemx --format=horizontal
+@opindex -x
+@opindex --format
+@opindex poziomo@r{, listowanie plików}
+Listuje pliki wierszami zamiast kolumnami [posortowane poziomo].
+@c w kolumnach, posortowanych poziomo.
+@c List the files in columns, sorted horizontally.
+
+@item -T @var{kolumny}
+@itemx --tabsize=@var{kolumny}
+@opindex -T
+@opindex --tabsize
+Przyjmuje, że tabulator ma szerokość @var{kolumny} kolumn.  Domyślnie jest
+to 8.  Dla efektywności, @code{ls} używa, gdzie jest to możliwe, znaków
+tabulacji.  Zerowa wartość argumentu @var{kolumny} powoduje wyłączenie
+używania tabulacji.
+
+@item -w
+@itemx --width=@var{kolumny}
+@opindex -w
+@opindex --width
+@vindex COLUMNS
+Przyjmuje, że szerokość ekranu wynosi @var{cols}.  Domyślna wartość jest
+pobierana ze sterownika terminala (jeśli to możliwe); w przeciwnym wypadku
+używa się (o ile jest ustawiona) zmiennej środowiskowej @env{COLUMNS}.
+W pozostałych przypadkach używa się domyślnej wartości 80.
+
+@end table
+
+
+@node Formatowanie nazw plików
+@subsection Formatowanie nazw plików
+
+Poniższe opcje zmieniają sposób, w jaki wypisywane są same nazwy plików.
+
+@table @samp
+
+@item -b
+@itemx --escape
+@itemx --quoting-style=escape
+@opindex -b
+@opindex --escape
+@opindex --quoting-style
+@cindex odwrotny ukośnik, sekwencje specjalne w nazwach plików
+@cindex sekwencje specjalne w nazwach plików
+Cytuje niegraficzne znaki w nazwach plików używając sekwencji alfabetycznych
+i ósemkowych z odwrotnymi ukośnikami, podobnych do używanych w języku C.
+
+@item -N
+@itemx --literal
+@opindex -N
+@opindex --literal
+Nie cytuje nazw plików [pokazuje je w takiej postaci w jakiej występują].
+
+@item -q
+@itemx --hide-control-chars
+@opindex -q
+@opindex --hide-control-chars
+Wypisuje znaki zapytania zamiast niegraficznych znaków w nazwach plików.
+Ustawienie domyślne gdy wyjście stanowi terminal
+a wywołanym programem jest @code{ls}.
+
+@item -Q
+@itemx --quote-name
+@itemx --quoting-style=c
+@opindex -Q
+@opindex --quote-name
+@opindex --quoting-style
+Umieszcza nazwy plików w podwójnych cudzysłowach i cytuje znaki niegraficzne
+jak w C.
+
+@item --quoting-style=@var{słowo}
+@opindex --quoting-style
+@cindex styl cytowania
+Używa stylu @var{słowo} do cytowania wynikowych nazw.
+@var{słowo} powinno być jednym z poniższych:
+@table @samp
+@item literal
+(Dosłownie). Wypisuje nazwy bez zmian, takie jakie są.
+@item shell
+Cytuje nazwy dla powłoki, jeśli zawierają metaznaki powłoki (znaki
+uogólniające) lub mogą powodować niejednoznaczność wyniku.
+@item shell-always
+Cytuje nazwy dla powłoki, nawet jeśli normalnie nie wymagałyby cytowania.
+@item c
+Cytuje nazwy jak w łańcuchu znakowym języka C.  Jest to to samo, co opcja
+@samp{-Q} lub @samp{--quote-name}.
+@item escape
+Cytuje jak opcja \fBc\fP z wyjątkiem pomijania otaczających znaków
+podwójnego cudzysłowu.  To samo, co opcja @samp{-b} lub @samp{--escape}.
+@item clocale
+Cytuje jak opcja \fBc\fP z wyjątkiem użycia znaków cytowania
+właściwych do ustawień regionalnych (locale).  [Znakami cytowania dla
+domyślnych ustawień locale są @samp{`} oraz @samp{'}].
+@item locale
+@c Use @t instead of @samp to avoid duplicate quoting in some output styles.
+Jak @samp{clocale}, ale cytuje @t{`w ten sposób'} zamiast @t{"w taki"}
+w domyślnym ustawieniu locale C.  Na wielu monitorach wygląda to ładniej.
+@end table
+
+Domyślną wartość opcji @samp{--quoting-style} określa się za pomocą
+zmiennej środowiskowej @env{QUOTING_STYLE}.  Jeśli nie jest ona ustawiona,
+to wartością domyślną jest @samp{literal}.  Wartość domyślna może się
+jednak zmienić na @samp{shell} w przyszłej wersji tego pakietu.
+
+@item --show-control-chars
+@opindex --show-control-chars
+Pokazuje bez zmian niegraficzne znaki w nazwach plików.
+Jest to ustawienie domyślne, chyba że programem jest @code{ls}, a wyjście
+stanowi terminal.
+
+@end table
+
+
+@node Wywołanie dir
+@section @code{dir}: skrócona lista zawartości katalogu
+
+@pindex dir
+@cindex listing katalogu, skrócony
+
+@code{dir} (instalowane również jako @code{d}) jest równoważnikiem
+@code{ls -C -b}. To znaczy, domyślnie pliki listowane są w posortowanych
+pionowo kolumnach, zaś znaki specjalne reprezentowane są przez sekwencje
+specjalne z odwrotnym ukośnikiem.
+
+@xref{Wywołanie dir, @code{ls}}.
+
+
+@node Wywołanie vdir
+@section @code{vdir}: szczegółowa lista zawartości katalogu
+
+@pindex vdir
+@cindex listing katalogów, verbose
+@cindex listing katalogów, szczegółowy
+
+@code{vdir} (instalowane także jako @code{v}) jest równoważnikiem
+@code{ls -l -b}.  To znaczy, domyślnie pliki listowane są w ``długim''
+formacie, zaś znaki specjalne reprezentowane są przez sekwencje specjalne
+z odwrotnym ukośnikiem.
+
+@node Wywołanie dircolors
+@section @code{dircolors}: konfigurowanie kolorów dla @code{ls}
+
+@pindex dircolors
+@cindex konfigurowanie kolorów
+@cindex kolory, konfigurowanie
+
+@code{dircolors} wysyła sekwencję poleceń powłoki konfigurujących terminal
+do kolorowego wyjścia z @code{ls} (oraz @code{dir}, itd.).
+Typowy sposób wywołania:
+
+@example
+eval `dircolors [@var{opcja}]@dots{} [@var{plik}]`
+@end example
+
+Jeśli podano @var{plik}, @code{dircolors} odczytuje go aby ustalić, jakiego
+koloru użyć dla konkretnego typu pliku czy rozszerzenia. W przeciwnym
+wypadku używana jest domyślna, wkompilowana baza danych. W celu uzyskania
+informacji o formacie tych plików, należy
+uruchomić @samp{dircolors --print-database}.
+
+@vindex LS_COLORS
+@vindex SHELL @r{zmienna środowiska, a kolor}
+Wyjściem programu jest polecenie powłoki do ustawiania zmiennej
+środowiskowej @env{LS_COLORS}.  Można wybrać składnię dla odpowiedniej
+powłoki z linii poleceń, albo @code{dircolors} sam ją odgadnie na podstawie
+zawartości zmiennej środowiskowej @env{SHELL}.
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+@item -b
+@itemx --sh
+@itemx --bourne-shell
+@opindex -b
+@opindex --sh
+@opindex --bourne-shell
+@cindex Bourne shell, składnia, przy konfiguracji kolorów
+@cindex @code{sh},  składnia, przy konfiguracji kolorów
+Wysyła na wyjście polecenia powłoki Bourne'a.  Jest to domyślne
+zachowanie jeśli zmienna środowiskowa @env{SHELL} jest ustawiona i nie
+kończy się znakami @samp{csh} czy @samp{tcsh}.
+
+@item -c
+@itemx --csh
+@itemx --c-shell
+@opindex -c
+@opindex --csh
+@opindex --c-shell
+@cindex C shell, składnia, przy konfiguracji kolorów
+@cindex @code{csh}, składnia, przy konfiguracji kolorów
+Wysyła na wyjście polecenia powłoki C. Jest to domyślne zachowanie jeśli
+@env{SHELL} kończy się znakami @code{csh} czy @code{tcsh}.
+
+@item -p
+@itemx --print-database
+@opindex -p
+@opindex --print-database
+@cindex kolory, wypisanie bazy danych
+@cindex baza danych konfigurująca kolory, wypisanie
+@cindex wypisanie bazy danych kolorów
+Wyświetla domyślną (wkompilowaną) bazę danych konfiguracji kolorów.
+Wynik stanowi poprawny plik konfiguracyjny i dość dobrze opisuje dostępne
+możliwości.
+
+@end table
+
+
+@node Podstawowe operacje
+@chapter Podstawowe operacje
+
+@cindex operowanie na plikach
+
+W tym rozdziale opisano polecenia do podstawowych działań na plikach:
+kopiowania, przesuwania (zmiany nazwy) i usuwania (kasowania).
+
+@menu
+* Wywołanie cp::               Kopiuje pliki.
+* Wywołanie dd::               Konwertuje i kopiuje plik.
+* Wywołanie install::          Kopiuje pliki i nadaje atrybuty.
+* Wywołanie mv::               Przesuwa/przemianowuje pliki.
+* Wywołanie rm::               Usuwa pliki lub katalogi.
+* Wywołanie shred::            Bezpieczniejsze usuwanie plików.
+@end menu
+
+
+@node Wywołanie cp
+@section @code{cp}: kopiowanie plików i katalogów
+
+@pindex cp
+@cindex kopiowanie plików i katalogów
+@cindex pliki, kopiowanie
+@cindex katalogi, kopiowanie
+
+@code{cp} kopiuje pliki (lub, opcjonalnie, katalogi).  Kopia jest całkowicie
+niezależna od oryginału.  Można kopiować jeden plik na inny albo też kopiować
+dowolną liczbą plików do katalogu docelowego.  [Istniejące docelowe pliki są
+nadpisywane.]
+Składnia:
+
+@example
+cp [@var{opcja}]@dots{} @var{źródło} @var{przeznaczenie}
+cp [@var{opcja}]@dots{} @var{źródło}@dots{} @var{katalog}
+@end example
+
+Jeśli ostatni argument określa istniejący katalog, to @code{cp} kopiuje
+każdy z podanych plików @var{źródło}wych do tego katalogu (zachowując te
+same nazwy).  W przeciwnym przypadku, gdy podano tylko dwa pliki
+program kopiuje pierwszy z nich na drugi.  Jest błędem, jeśli ostatni
+argument nie jest katalogiem a podano więcej niż dwa argumenty.
+
+Zasadniczo, pliki są zapisywane tak, jak są odczytywane. Wyjątki opisano
+poniżej w opcji @samp{--sparse}.
+
+Domyślnie, @code{cp} nie kopiuje katalogów.  Jednakże opcje @option{-R},
+@option{-a} i @option{-r} powodują, że program kopiuje rekurencyjnie
+zagłębiając się w katalogi źródłowe i kopiując pliki do odpowiednich
+katalogów docelowych.
+
+Domyślnie, @command{cp} podąża za dowiązaniami symbolicznymi tylko wtedy, gdy
+nie kopiuje rekurencyjnie.  Zachowanie domyślne można zignorować opcjami
+@option{--no-dereference} (@option{-d}), @option{--dereference} (@option{-L})
+i @option{-H}.  Jeśli podano więcej niż jedną z nich, to ostatnia milcząco
+przesłania pozostałe.
+
+@cindex self-backup
+@cindex kopie zapasowe, tworzenie tylko kopii
+Ogólnie @code{cp} odmawia skopiowania pliku na ten sam plik, z następującym
+jednak wyjątkiem: jeśli użyto opcji @samp{--force --backup} przy
+identycznym @var{źródle} i @var{przeznaczeniu}, odnoszących się do zwykłego
+pliku, @code{cp} utworzy kopię zapasową (backup) pliku (zwykłą lub
+numerowaną, jak podano w przyjęty sposób: @pxref{Opcje kopii zapasowych}).
+Przydatne do tworzenia kopii zapasowej istniejącego pliku przed jego zmianą.
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+@item -a
+@itemx --archive
+@opindex -a
+@opindex --archive
+Zachowuje w kopiach tyle ile możliwe ze struktury i atrybutów oryginalnych
+plików (ale nie próbuje zachować wewnętrznej struktury katalogów, tzn.
+@samp{ls \-U} może pokazywać pozycje w skopiowanym katalogu w innej
+kolejności).  To samo co @samp{-dpR}.
+
+@item -b
+@itemx @w{@kbd{--backup}[=@var{metoda}]}
+@opindex -b
+@opindex --backup
+@vindex VERSION_CONTROL
+@cindex kopie zapasowe, tworzenie
+@xref{Opcje kopii zapasowych}.
+Tworzy kopie zapasowe tych plików, które mają być nadpisane lub usunięte.
+Szczególnym przypadkiem jest tworzenie przez @code{cp} kopii zapasowych
+@var{źródła} gdy podano opcje wymuszonego nadpisywania (@samp{--force})
+i kopii zapasowych (@samp{--backup}) a @var{źródło} i @var{przeznaczenie}
+są tą samą nazwą istniejącego, zwykłego pliku.  Jednym z przydatnych
+zastosowań tej kombinacji opcji jest mały skrypt powłoki Bourne'a:
+
+@example
+#!/bin/sh
+# Składnia: backup PLIK...
+# Tworzy kopie zapasowe w stylu @sc{gnu}
+# każdego z podanych PLIKÓW
+for i in "$@"; do
+  cp --backup --force "$i" "$i"
+done
+@end example
+
+@item -d
+@itemx --no-dereference
+@opindex -d
+@opindex --no-dereference
+@cindex dowiązania symboliczne, kopiowanie
+@cindex dowiązania twarde, zachowywanie
+Kopiuje dowiązania symboliczne jako dowiązania, zamiast kopiowania plików,
+na które one wskazują i zachowuje połączenia dowiązań twardych (hardlinks)
+pomiędzy plikami źródłowymi w kopiach.
+
+@item -f
+@itemx --force
+@opindex -f
+@opindex --force
+Podczas kopiowania bez tej opcji, jeśli istniejącego pliku docelowego nie
+daje się otworzyć do zapisu, to operacja kończy się niepowodzeniem.
+Jednakże, jeśli użyto @samp{--force}, to po nieudanym otwarciu pliku
+docelowego @code{cp} usuwa plik (za pomocą unlink) i usiłuje otworzyć go
+ponownie.  Zauważ, że zachowanie to jest odmienne niż w przypadku włączenia
+opcji @samp{--link} i @samp{--symbolic-link}, gdzie plik docelowy nigdy nie
+jest otwierany, tylko usuwany bezwarunkowo.
+
+@item -H
+@opindex -H
+Jeżeli argument wiersza poleceń określa dowiązanie symboliczne, to zamiast
+samego dowiązania kopiowany jest plik, na który ono wskazuje.  Będą
+jednak kopiowane (z zachowaniem ich specyficznej natury) wszystkie
+dowiązania symboliczne napotkane podczas rekurencyjnego przeglądania
+katalogów.
+
+@item -i
+@itemx --interactive
+@opindex -i
+@opindex --interactive
+@cindex potwierdzanie, a @code{cp}
+Pyta czy nadpisywać istniejące zwykłe pliki docelowe.
+
+@item -l
+@itemx --link
+@opindex -l
+@opindex --link
+Tworzy dowiązania twarde zamiast kopii plików innych niż katalogi.
+
+@item -L
+@itemx --dereference
+@opindex -L
+@opindex --dereference
+Zawsze działa na plikach wskazywanych przez dowiązania symboliczne.
+
+@item -p
+@itemx --preserve
+@opindex -p
+@opindex --preserve
+@cindex informacja o pliku, zachowywanie
+Zachowuje atrybuty (właściciela, grupę, prawa i czasy) oryginalnych plików.
+Przy braku tej opcji każdy z plików docelowych jest tworzony z prawami
+odpowiedniego pliku źródłowego minus bity ustawione w umask.
+@xref{Prawa pliku}.
+
+@item -P
+@itemx --parents
+@opindex -P
+@opindex --parents
+@cindex katalogi nadrzędne a @code{cp}
+Ta opcja tworzy nazwę każdego z plików docelowych przez dodanie do katalogu
+docelowego ukośnika i podanej nazwy pliku źródłowego.  Ostatni argument
+podany polecenie @code{cp} musi być nazwą istniejącego katalogu.
+Na przykład, polecenie:
+
+@example
+cp --parents a/b/c istn_katalog
+@end example
+
+@noindent
+kopiuje plik @file{a/b/c} do @file{istn_katalog/a/b/c}, tworząc w razie
+potrzeby brakujące katalogi pośrednie.
+
+Ostrzeżenie: w przyszłości znaczenie @option{-P} zmieni się, by uzyskać
+zgodność @sc{posix}.  Należy używać @option{--parents} dla starego znaczenia,
+a @option{--no-dereference} dla nowego.
+
+@item -r
+@cindex katalogi, kopiowanie rekurencyjne
+@cindex kopiowanie rekurencyjne katalogów
+@cindex rekurencyjne kopiowanie katalogów
+@cindex nie-katalogi, kopiowane jako pliki specjalne
+Kopiuje rekurencyjnie całe poddrzewa katalogów wejściowych do katalogu
+docelowego.  Wszystkie pliki nie będące katalogami i pliki specjalne
+(np.dowiązania symboliczne, nazwane potoki/FIFO i pliki urządzeń)
+kopiowane są tak, jakby były zwykłymi plikami.  Oznacza to próbę odczytu
+danych z każdego z plików źródłowych i zapisu w docelowym.
+Zwykle błędem jest zastosowanie @code{cp -r} do plików specjalnych, jak
+potoki FIFO i inne, znajdujących się w katalogu @file{/dev}.  W większości
+przypadków @code{cp -r} zawiśnie próbując w nieskończoność czytać z FIFO
+i plików specjalnych w rodzaju @file{/dev/console}, a przepełni dysk
+docelowy jeśli użyje się go do skopiowania @file{/dev/zero}.
+Zamiast tego, jeśli chce się kopiować pliki specjalne, należy użyć opcji
+@samp{--recursive} (@samp{-R}). Zachowa to ich specyficzną naturę,
+zamiast czytania z nich w celu skopiowania zawartości.
+
+@item -R
+@itemx --recursive
+@opindex -R
+@opindex --recursive
+Kopiuje katalogi rekurencyjnie zachowując nie-katalogi (w przeciwieństwie
+do @samp{-r}, opisanego wyżej).
+
+@item --remove-destination
+@opindex --remove-destination
+Usuwa każdy istniejący plik docelowy przed próbą otwarcia go
+(inaczej niż opcja @option{-f} powyżej).
+
+@item --sparse=@var{kiedy}
+@opindex --sparse=@var{kiedy}
+@cindex rzadkie, pliki, kopiowanie
+@cindex sparse, pliki rzadkie, kopiowanie
+@cindex dziury, kopiowanie plików zawierających
+@findex read @r{funkcja systemowa, a dziury}
+@dfn{Plik rzadki} (@dfn{sparse file}) zawieras @dfn{dziury} -- ciągi
+zerowych bajtów, które nie zajmują żadnych fizycznych bloków na dysku;
+systemowa funkcja odczytu @samp{read} czyta je jako zera.  Oszczędza to
+znacząco miejsce na dysku jak i powiększa prędkość, gdyż wiele plików
+binarnych zawiera mnóstwo kolejnych bajtów zerowych.  Domyślnie @code{cp}
+wykrywa dziury w pliku źródłowym przy pomocy zgrubnych metod heurystycznych
+i tworzy odpowiedni plik wynikowy również jako rzadki.
+
+Argument @var{kiedy} opcji @samp{--sparse} może mieć jedną z następujących
+wartości:
+@table @samp
+@item auto
+Zachowanie domyślne. Plik wynikowy jest rzadki jeśli plik źródłowy
+jest rzadki.
+
+@item always
+Zawsze tworzy rzadki plik wynikowy.  Przydatne, gdy plik źródłowy
+przechowywany jest w systemie plików nie obsługującym plików rzadkich
+(najistotniejszym przykładem są systemy @samp{efs} w SGI IRIX 5.3
+i wcześniejszych), ale plik wynikowy jest w innego typu systemie plików.
+
+@item never
+Nigdy nie tworzy rzadkich plików wynikowych.  Przydatne przy tworzeniu
+pliku na użytek polecenia @code{mkswap}, gdyż taki plik nie może mieć
+żadnych dziur.
+@end table
+
+@itemx @w{@kbd{--strip-trailing-slashes}}
+@opindex --strip-trailing-slashes
+@cindex usuwanie końcowych ukośników
+@cindex końcowe ukośniki, usuwanie
+Usuwa końcowe ukośniki z każdego argumentu @var{źródło}.
+@xref{Końcowe ukośniki}.
+
+@item -s
+@itemx --symbolic-link
+@opindex -s
+@opindex --symbolic-link
+@cindex dowiązania symboliczne, kopiowanie z ich użyciem
+Tworzy dowiązania symboliczne zamiast kopii plików innych niż katalogi.
+Wszystkie nazwy plików źródłowych muszą być bezwzględne (zaczynające się
+od @samp{/}), chyba że pliki docelowe są w bieżącym katalogu.  Opcja ta
+powoduje komunikat o błędzie na systemach, które nie obsługują dowiązań
+symbolicznych.
+
+@item -S @var{przyrostek}
+@itemx --suffix=@var{przyrostek}
+@opindex -S
+@opindex --suffix
+Dokleja @var{przyrostek} do każdej nazwy pliku kopii zapasowej utworzonego
+opcją @samp{-b}.  @xref{Opcje kopii zapasowych}.
+
+@itemx @w{@kbd{--target-directory}=@var{katalog}}
+@opindex --target-directory
+@cindex katalog przeznaczenia
+@cindex katalog docelowy
+@cindex docelowy, katalog
+Określa @var{katalog} docelowy.  @xref{Katalog docelowy}.
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Przed skopiowaniem każdego pliku wypisuje jego nazwę.
+
+@item -V @var{metoda}
+@itemx --version-control=@var{metoda}
+@opindex -V
+@opindex --version-control
+Zmienia metodę tworzenia kopii zapasowych wykonywanych za pomocą @samp{-b}.
+Argument @samp{metoda} przyjmuje wartości: @samp{none} (lub @samp{off}),
+@samp{numbered} (lub @samp{t}), @samp{existing} (lub @samp{nil}) albo
+@samp{never} (lub @samp{simple}).  @xref{Opcje kopii zapasowych}.
+
+@item -x
+@itemx --one-file-system
+@opindex -x
+@opindex --one-file-system
+@cindex system plików, pomijanie przy kopiowaniu na inny
+Pomija podkatalogi, które znajdują się na innym systemie plików niż ten,
+na którym rozpoczęło się kopiowanie. Jednak katalogi stanowiące punkty
+montowania @emph{są} kopiowane.
+
+@end table
+
+
+@node Wywołanie dd
+@section @code{dd}: konwertuje i kopiuje plik
+
+@pindex dd
+@cindex konwersja podczas kopiowania pliku
+
+@code{dd} kopiuje plik (domyślnie ze standardowego wejścia na standardowe
+wyjście), z wybieranymi przez użytkownika rozmiarami bloków wejścia/wyjścia.
+Podczas kopiowania opcjonalnie wykonuje na nim konwersje.  Składnia:
+
+@example
+dd [@var{opcja}]@dots{}
+@end example
+
+Program przyjmuje niżej wymienione opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@cindex mnożniki po liczbach
+Za tymi z opcji, które przyjmują wartości numeryczne (@var{bajty}
+i @var{bloki}) może następować mnożnik oznaczający odpowiednio:
+@samp{b}=512, @samp{c}=1, @samp{w}=2, @samp{x@var{m}}=@var{m}, lub dowolny
+ze standardowych przyrostków rozmiaru bloku, jak np. @samp{k}=1024
+(@pxref{Rozmiar bloku}).
+
+Chcąc użyć innego rozmiaru bloków do pominięcia, a innego dla operacji
+wejścia/wyjścia, należy zastosować różne wywołania @command{dd}.
+Na przykład, poniższe polecenia powłoki kopiują dane pomiędzy dyskiem a taśmą
+blokami po 512kB, ale nie zapisują ani nie odtwarzają 4-kilobajtowej etykiety
+na początku dysku:
+ 
+@example
+disk=/dev/rdsk/c0t1d0s2
+tape=/dev/rmt/0
+
+# kopiowanie wszystkiego oprócz etykiety z dysku na taśmę.
+(dd bs=4k skip=1 count=0 && dd bs=512k) <$disk >$tape
+
+# kopiowanie z taśmy z powrotem na dysk, z pozostawieniem etykiety dysku.
+(dd bs=4k seek=1 count=0 && dd bs=512k) <$tape >$disk
+@end example
+
+@table @samp
+
+@item if=@var{plik}
+@opindex if
+Czyta z @var{pliku} zamiast ze standardowego wejścia.
+
+@item of=@var{plik}
+@opindex of
+Zapisuje do @var{pliku} zamiast na standardowe wyjście.
+O ile nie podano @samp{conv=notrunc}, @code{dd} skraca @var{plik}
+do zera bajtów (lub rozmiaru wskazanego przez @samp{seek=}).
+
+@item ibs=@var{bajty}
+@opindex ibs
+@cindex blok, rozmiar dla wejścia
+@cindex wejście, rozmiar bloku
+Odczytuje @var{bajtów} naraz.
+
+@item obs=@var{bajty}
+@opindex obs
+@cindex blok, rozmiar dla wyjścia
+@cindex wyjście, rozmiar bloku
+Zapisuje @var{bajtów} naraz.
+
+@item bs=@var{bajty}
+@opindex bs
+@cindex blok, rozmiar
+.BI bs= bajtów
+Odczytuje i zapisuje @var{bajtów} naraz. Przesłania @samp{ibs} i @samp{obs}.
+
+@item cbs=@var{bajty}
+@opindex cbs
+@cindex blok, rozmiar dla konwersji
+@cindex konwersja, rozmiar bloku
+Konwertuje @var{bajtów} naraz.
+
+@item skip=@var{bloki}
+@opindex skip
+Pomija @var{bloki} @samp{ibs}-bajtowych bloków pliku wejściowego przed
+kopiowaniem.
+
+@item seek=@var{bloki}
+@opindex seek
+Pomija @var{bloki} @samp{obs}-bajtowych bloków pliku wyjściowego przed
+kopiowaniem.
+
+@item count=@var{bloki}
+@opindex count
+Kopiuje tylko @var{bloki} @samp{ibs}-bajtowych bloków wejściowych z pliku
+wejściowego, zamiast kopiowania wszystkiego aż do końca pliku.
+
+@item conv=@var{konwersja}[,@var{konwersja}]@dots{}
+@opindex conv
+Konwertuje plik według argumentu(ów) @var{konwersja}.
+(Bez spacji wokół przecinków.)
+
+Konwersje:
+
+@table @samp
+
+@item ascii
+@opindex ascii@r{, konwersja na}
+Konwertuje EBCDIC na ASCII.
+
+@item ebcdic
+@opindex ebcdic@r{, konwersja na}
+Konwertuje ASCII na EBCDIC.
+
+@item ibm
+@opindex alternatywne ebcdic@r{, konwersja na}
+Konwertuje ASCII na alternatywne EBCDIC.
+
+@item block
+@opindex blok @r{(uzupełnianie spacjami)}
+Dla każdego wiersza wejścia, wysyła na wyjście @samp{cbs} bajtów,
+zamieniając znak nowej linii na spację i w razie potrzeby uzupełniając
+spacjami.
+
+@item unblock
+@opindex unblock
+Zamienia końcowe spacje w każdym bloku wejściowym wielkości @samp{cbs}
+na znak nowej linii.
+
+@item lcase
+@opindex lcase@r{, konwersja na małe litery}
+Zmienia duże litery na małe.
+
+@item ucase
+@opindex ucase@r{, konwersja na duże litery}
+Zmienia małe litery na duże.
+
+@item swab
+@opindex swab @r{(zamiana bajtów)}
+@cindex bajty, zamiana
+Zamienia miejscami każdą parę bajtów wejściowych. @sc{gnu} @code{dd} działa
+inaczej niż inne gdy odczytana zostanie nieparzysta liczba bajtów --
+ostatni bajt jest po prostu kopiowany (ponieważ nie ma go z czym zamienić).
+
+@item noerror
+@opindex noerror
+@cindex odczyt, ignorowanie błędów
+Kontynuuje po błędach odczytu.
+
+@item notrunc
+@opindex notrunc
+@cindex obcinanie pliku wyjściowego, unikanie
+Nie obcina pliku wyjściowego.
+
+@item sync
+@opindex sync @r{(uzupełnianie bajtami zerowymi)}
+Uzupełnia każdy blok wejściowy do rozmiaru @samp{ibs} bajtów końcowymi
+bajtami zerowymi (NUL).
+Użyte razem z @samp{block} lub @samp{unblock}, uzupełnia spacjami zamiast
+bajtami zerowymi.
+@end table
+
+@end table
+
+
+@node Wywołanie install
+@section @code{install}: kopiuje pliki i nadaje atrybuty
+
+@pindex install
+@cindex kopiowanie plików i nadawanie atrybutów
+
+@code{install} kopiuje pliki i nadaje im prawa dostępu oraz, jeżeli jest to
+możliwe, właściciela i grupę.  Składnie:
+
+@example
+install [@var{opcja}]@dots{} @var{źródło} @var{cel}
+install [@var{opcja}]@dots{} @var{źródło}@dots{} @var{katalog}
+install -d [@var{opcja}]@dots{} @var{katalog}@dots{}
+@end example
+
+W pierwszym z formatów plik @var{źródło} jest kopiowany na
+plik @var{cel}.  W drugim, każdy z plików @var{źródło}wych kopiowany jest
+do docelowego @var{katalogu}.  W ostatnim, tworzony jest zadany
+@var{katalog}(i) i wszelkie brakujące katalogi nadrzędne (rodzicielskie).
+
+@cindex Makefile, instalacja programów w pliku
+@code{install} jest podobny do @code{cp}, ale umożliwia kontrolę nad
+atrybutami plików docelowych.  Na ogół wykorzystywany jest w plikach
+Makefile do kopiowania programów do odpowiednich katalogów docelowych.
+Odmiawia kopiowania plików na same siebie.
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -b
+@itemx @w{@kbd{--backup}[=@var{metoda}]}
+@opindex -b
+@opindex --backup
+@vindex VERSION_CONTROL
+@cindex kopie zapasowe, tworzenie
+@xref{Opcje kopii zapasowych}.
+Tworzy kopie zapasowe tych plików, które mają być nadpisane lub usunięte.
+
+@item -c
+@opindex -c
+Opcja ignorowana; pozostawiona dla kompatybilności ze starymi wersjami
+programu pochodzącymi z systemów Unix.
+
+@item -d
+@itemx --directory
+@opindex -d
+@opindex --directory
+@cindex katalogi, tworzenie z zadanymi atrybutami
+@cindex katalogi nadrzędne, tworzenie brakujących
+@cindex nadrzędne, katalogi, tworzenie brakujących
+@cindex rodzicielskie, katalogi, tworzenie brakujących
+Tworzy każdy dany katalog oraz jego katalogi nadrzędne, jeżeli jeszcze nie
+istnieją. Nadaje właściciela, grupę oraz prawa dostępu zgodnie z opcjami
+z wiersza poleceń lub wartościami domyślnymi. Wszystkie tworzone
+katalogi nadrzędne dostają te same atrybuty. Jest to działanie odmienne
+w stosunku do wersji programu @code{install} z systemu SunOS 4.x, gdzie
+tworzone katalogi dostają domyślne atrybuty.
+
+@item -g @var{grupa}
+@itemx --group=@var{grupa}
+@opindex -g
+@opindex --group
+@cindex grupa właścicieli instalowanych plików, ustawianie
+Ustanawia grupę pliku lub katalogu zgodnie z podanym parametrem.
+Domyślną wartością jest bieżąca grupa procesu.
+Parametr @var{grupa} może być również albo nazwą grupy albo numerycznym
+identyfikatorem grupy.
+
+@item -m @var{tryb}
+@itemx --mode=@var{tryb}
+@opindex -m
+@opindex --mode
+@cindex prawa dostępu instalowanych plików, ustawianie
+Nadaje prawa dostępu instalowanego pliku lub tworzonego katalogu zgodnie
+z parametrem @var{tryb}.  Prawa mogą być podane jako liczba w systemie
+ósemkowym lub w postaci symbolicznej, jak w programie @code{chmod},
+z 0 jako punktem wyjścia (@pxref{Prawa pliku}).
+Domyślnym trybem dostępu jest @samp{u=rwx,go=rx} -- odczyt, zapis
+i wykonywanie dla właściciela, odczyt i wykonywanie dla grupy i pozostałych
+użytkowników.
+
+@item -o @var{właściciel}
+@itemx --owner=@var{właściciel}
+@opindex -o
+@opindex --owner
+@cindex właściciel instalowanych plików, ustawianie
+@cindex odpowiednie uprawnienia
+@vindex root @r{jako domyślny właściciel}
+Jeżeli @code{install} ma odpowiednie uprawnienia (jest uruchomiony przez
+superużytkownika root), to opcja ta ustanawia właściciela pliku zgodnie
+z podaną wartością (domyślną wartością jest @code{root}).  @var{Właściciel}
+może być określony albo przez nazwę użytkownika albo jego numeryczny
+identyfikator.
+
+@item -p
+@itemx --preserve-timestamps
+@opindex -p
+@opindex --preserve-timestamps
+@cindex znaczniki czasu instalowanych plików, zachowywanie
+@cindex timestamps instalowanych plików, zachowywanie
+Ustawia czas ostatniego dostępu i czas ostatniej modyfikacji każdego
+instalowanego pliku tak, by odpowiadały odpowiednim czasom oryginalnych plików.
+Jeśli plik jest instalowany bez tej opcji, to czas ostatniego dostępu
+i ostatniej modyfikacji tego pliku ustawiane są na czas instalacji. Opcja ta
+jest przydatna jeśli chcemy używać czasów ostatniej modyfikacji instalowanych
+plików, by widzieć, kiedy były ostatnio tworzone a nie kiedy były instalowane.
+
+@item -s
+@itemx --strip
+@opindex -s
+@opindex --strip
+@cindex tablica symboli, usuwanie danych
+@cindex usuwanie danych tablicy symboli
+Usuwa tablice symboli z instalowanych binarnych plików wykonywalnych.
+
+@item -S @var{przyrostek}
+@itemx --suffix=@var{przyrostek}
+@opindex -S
+@opindex --suffix
+Dodaje @var{przyrostek} do nazwy każdego pliku kopii zapasowej wykonanego
+za pomocą @samp{-b}.
+@xref{Opcje kopii zapasowych}.
+
+@itemx @w{@kbd{--target-directory}=@var{katalog}}
+@opindex --target-directory
+@cindex katalog przeznaczenia
+@cindex katalog docelowy
+@cindex docelowy, katalog
+Określa @var{katalog} docelowy.  @xref{Katalog docelowy}.
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Przed skopiowaniem każdego pliku wypisuje jego nazwę.
+
+@item -V @var{metoda}
+@itemx --version-control=@var{metoda}
+@opindex -V
+@opindex --version-control
+Zmienia metodę tworzenia kopii zapasowych wykonywanych za pomocą @samp{-b}.
+Argument @samp{metoda} przyjmuje wartości: @samp{none} (lub @samp{off}),
+@samp{numbered} (lub @samp{t}), @samp{existing} (lub @samp{nil}) albo
+@samp{never} (lub @samp{simple}).  @xref{Opcje kopii zapasowych}.
+
+@end table
+
+
+@node Wywołanie mv
+@section @code{mv}: przesuwa (przemianowuje) pliki
+
+@pindex mv
+
+@code{mv} przesuwa lub przemianowuje pliki (lub katalogi).
+Składnia:
+
+@example
+mv [@var{opcja}]@dots{} @var{źródło} @var{cel}
+mv [@var{opcja}]@dots{} @var{źródło}@dots{} @var{katalog}
+@end example
+
+Jeśli ostatnim argumentem jest istniejący katalog, to @code{mv}
+przeniesie do tego katalogu pliki podane jako poprzednie argumenty
+(nie zmieniając ich nazw).  Jeżeli podano tylko dwie nazwy plików, zmieni
+nazwę pierwszego pliku na drugą nazwę.  Podanie więcej niż dwu argumentów,
+z których ostatni nie jest katalogiem, jest błędem.
+
+@code{mv} potrafi przenosić dowolny typ plików z jednego systemu plików
+na inny.  Przed wersją @code{4.0} pakietu fileutils, potrafił przesuwać
+pomiędzy systemami plików tylko pliki zwykłe.  Na przykład, teraz potrafi
+przenieść całą hierarchię (poddrzewo) katalogów łącznie ze specjalnymi
+plikami urządzeń z jednej partycji na inną.  Najpierw do przekopiowania
+żądanych plików i katalogów posługuje się tym samym kodem co używany przez
+@code{cp -a}, następnie (zakładając, że kopiowanie się powiodło) usuwa ich
+oryginały.  Jeśli kopiowanie zawiedzie, to część, która została już
+skopiowana na partycję docelową, jest usuwana. Jeśli przesuwano trzy
+katalogi z jednej partycji na inną i kopia pierwszego powiodła się, ale nie
+udała się kopia drugiego, to pierwszy zostanie na partycji docelowej, zaś
+drugi i trzeci pozostaną na pierwotnej partycji.
+
+@cindex potwierdzanie, a @code{mv}
+Jeśli plik docelowy istnieje, ale normalnie jest niezapisywalny, standardowym
+wejściem jest terminal, a nie podano opcji @samp{-f} lub @samp{--force},
+to @code{mv} pyta użytkownika czy nadpisać plik.  (Usuwający może być
+właścicielem pliku lub mieć prawo zapisu w tym katalogu.) Jeśli odpowiedź
+nie zaczyna się od @samp{y} lub @samp{Y}, plik jest pomijany.
+
+@emph{Ostrzeżenie}: Jeśli próbuje się przesunąć dowiązanie symboliczne
+wskazujące na katalog, a zostanie ono podane z końcowym ukośnikiem,
+to @code{mv} nie przesuwa dowiązania, lecz katalog przez nie wskazywany.
+@xref{Końcowe ukośniki}.
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -b
+@itemx @w{@kbd{--backup}[=@var{metoda}]}
+@opindex -b
+@opindex --backup
+@vindex VERSION_CONTROL
+@cindex kopie zapasowe, tworzenie
+@xref{Opcje kopii zapasowych}.
+Tworzy kopie zapasowe plików, które mają zostać nadpisane lub usunięte.
+
+@item -f
+@itemx --force
+@opindex -f
+@opindex --force
+Nie pyta o zgodę przed usunięciem nie dających się zapisać plików docelowych.
+
+@item -i
+@itemx --interactive
+@opindex -i
+@opindex --interactive
+Pyta użytkownika czy nadpisywać pliki docelowe, które już istnieją,
+niezależnie od ich praw dostępu.  Jeśli odpowiedź nie zaczyna się od
+@samp{y} lub @samp{Y}, plik jest pomijany.
+
+@item -u
+@itemx --update
+@opindex -u
+@opindex --update
+@cindex nowsze pliki, przesuwanie wyłącznie nowszych
+Aktualizacja. Nie przenosi pliku (nie-katalogu), który ma istniejący cel
+o takiej samej lub nowszej dacie modyfikacji.
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Przed przeniesieniem każdego pliku wypisuje jego nazwę.
+
+@itemx @w{@kbd{--strip-trailing-slashes}}
+@opindex --strip-trailing-slashes
+@cindex usuwanie końcowych ukośników
+@cindex końcowe ukośniki, usuwanie
+Usuwa końcowe ukośniki z każdego argumentu @var{źródło}.
+@xref{Końcowe ukośniki}.
+
+@item -S @var{przyrostek}
+@itemx --suffix=@var{przyrostek}
+@opindex -S
+@opindex --suffix
+Dokleja @var{przyrostek} do każdej nazwy pliku kopii zapasowej utworzonego
+opcją @samp{-b}.  @xref{Opcje kopii zapasowych}.
+
+@itemx @w{@kbd{--target-directory}=@var{directory}}
+@opindex --target-directory
+@cindex katalog przeznaczenia
+@cindex katalog docelowy
+@cindex docelowy, katalog
+Określa @var{katalog} docelowy.  @xref{Katalog docelowy}.
+
+@item -V @var{metoda}
+@itemx --version-control=@var{metoda}
+@opindex -V
+@opindex --version-control
+Zmienia metodę tworzenia kopii zapasowych wykonywanych za pomocą @samp{-b}.
+Argument @samp{metoda} przyjmuje wartości: @samp{none} (lub @samp{off}),
+@samp{numbered} (lub @samp{t}), @samp{existing} (lub @samp{nil}) albo
+@samp{never} (lub @samp{simple}).  @xref{Opcje kopii zapasowych}.
+
+@end table
+
+
+@node Wywołanie rm
+@section @code{rm}: usuwa pliki lub katalogi
+
+@pindex rm
+@cindex usuwanie plików lub katalogów
+
+@code{rm} usuwa każdy podany @var{plik}.  Domyślnie nie usuwa katalogów.
+Składnia:
+
+@example
+rm [@var{opcja}]@dots{} [@var{plik}]@dots{}
+@end example
+
+@cindex potwierdzanie, a @code{rm}
+Jeśli pliki jest niezapisywalny, standardowym wejściem jest terminal,
+a nie podano opcji @samp{-f} ani @samp{--force} lub @emph{podano} opcję
+@samp{-i} lub @samp{--interactive}, to @code{rm} pyta użytkownika czy usunąć
+plik. Jeśli odpowiedź nie zaczyna się od @samp{y} lub @samp{Y}, plik jest
+pomijany.
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -d
+@itemx --directory
+@opindex -d
+@opindex --directory
+@cindex katalogi, usuwanie za pomocą @code{unlink}
+@findex unlink
+@pindex fsck
+Usiłuje usunąć katalogi za pomocą @code{unlink} zamiast użycia @code{rmdir}
+i nie wymaga by katalogi były puste przed próbą skasowania.  Działa to tylko
+jeśli mamy odpowiednie uprawnienia a system obsługuje @code{unlink}
+w odniesieniu do katalogów. Ponieważ kasowanie w ten sposób katalogów
+powoduje, że wszystkie pliki w skasowanym katalogu nie posiadają przypisań,
+rozsądnie jest użyć @code{fsck} na systemie plików po dokonaniu takiej
+operacji.
+
+@item -f
+@itemx --force
+@opindex -f
+@opindex --force
+Ignoruje nieistniejące pliki i nigdy nie prosi o potwierdzenie.  Ignoruje
+uprzednią opcję @samp{--interactive} (@samp{-i}).
+
+@item -i
+@itemx --interactive
+@opindex -i
+@opindex --interactive
+Dla każdego z plików pyta czy go usunąć.  Jeśli odpowiedź nie zaczyna
+się od @samp{y} lub @samp{Y}, plik jest pomijany.
+Ignoruje uprzednią opcję @samp{--force} (@samp{-f}).
+
+@item -r
+@itemx -R
+@itemx --recursive
+@opindex -r
+@opindex -R
+@opindex --recursive
+@cindex katalogi, usuwanie (rekurencyjne)
+Usuwanie rekurencyjne. Usuwane są także katalogi wraz z całą zawartością.
+[@emph{Tej opcji należy używać bardzo ostrożnie}.]
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Przed usunięciem każdego pliku wypisuje jego nazwę.
+
+@end table
+
+@cindex pliki zaczynające się od @samp{-}, usuwanie
+@cindex @samp{-}, usuwanie plików zaczynających się od
+Jednym z częstych pytań jest: Jak usunąć pliki o nazwach
+zaczynających się od kreski @samp{-}?
+@sc{gnu} @code{rm}, podobnie jak każdy inny program, który używa funkcji
+@code{getopt} do rozbioru swoich argumentów, pozwala na używanie opcji
+@samp{--} do wskazania, że wszystkie następne argumenty nie są opcjami.
+Aby skasować plik o nazwie @file{-f} w bieżącym katalogu, można wpisać albo:
+
+@example
+rm -- -f
+@end example
+
+@noindent
+albo:
+
+@example
+rm ./-f
+@end example
+
+@opindex - @r{a uniksowy @code{rm}}
+Stosowanie przez uniksowy program @code{rm} pojedynczego znaku @samp{-}
+do tego samego celu pochodzi sprzed rozwoju standardowej składni getopt.
+
+
+@node Wywołanie shred
+@section @code{shred}: bezpieczniejsze usuwanie plików
+
+@pindex shred
+@cindex dane, wymazywanie
+@cindex wymazywanie danych
+
+@code{shred} nadpisuje urządzenia lub pliki, pomagając uchronić dane przed
+odzyskaniem nawet za pomocą bardzo drogiego sprzętu.
+
+Normalnie gdy usuwamy plik (@pxref{Wywołanie rm}), dane nie są faktycznie
+niszczone.  Niszczony jest wyłącznie indeks wskazujący, gdzie jest
+przechowywany plik, a miejsce jest udostępniane do ponownego wykorzystania.
+Istnieją narzędzia odzyskiwania skasowanych danych usiłujące odtworzyć
+indeks i potrafiące odzyskać plik, jeśli części nie były ponownie użyte.
+
+Na zajętych systemach z prawie pełnymi napędami, miejsce może zostać
+ponownie wykorzystane w ciągu kilku sekund.  Nie ma jednak sposobu, by
+się co do tego upewnić.  Jeżeli posiadamy istotne dane, chcemy być pewni,
+że odtworzenie nie jest możliwe, w tym celu faktycznie nadpisując plik
+nieistotnymi danymi.
+
+Jednak nawet po takim nadpisaniu, możliwe jest zabranie dysku do
+laboratorium i użycie różnego czułego (i kosztownego) sprzętu do oglądnięcia
+śladów ``echa'' pierwotnych danych pod danymi, które je nadpisały. Jeżeli
+dane zostały nadpisane tylko jednokrotnie, to nie jest to nawet takie trudne.
+
+Najlepszym sposobem usunięcia czegoś nieodwracalnie jest zniszczenie jego
+nośnika kwasem, stopienie lub podobne czynności. Dla tanich nośników
+wymienialnych, jak dyskietki, jest to metoda zalecana. Jednak dyski twarde
+są drogie i trudne do stopienia, więc narzędzie @code{shred}
+[niszczarka, shred oznacza cięcie na paski]
+próbuje osiągnąć podobny efekt w sposób nieniszczący.
+
+Posługuje się ono wieloma kolejnymi nadpisywaniami, z wzorcami danych
+dobranymi tak, aby zmaksymalizować szkody wyrządzane starym danym.
+Mimo że działa to także na dyskietkach, to wzorce zaprojektowane są dla
+uzyskania najlepszego efektu na dyskach twardych. Więcej szczegółów
+znaleźć można w kodzie źródłowym oraz wystąpieniu Petera Gutmanna
+@cite{Secure Deletion of Data from Magnetic and Solid-State Memory},
+z materiałów the Sixth USENIX Security Symposium
+(San Jose, California, 22-25 lipca 1996).
+Dokument ten jest także dostępny online
+@url{http://www.cs.auckland.ac.nz/~pgut001/pubs/secure_del.html}.
+
+@strong{Zauważ}, iż @code{shred} opiera się na bardzo istotnym założeniu: że
+używany system plików nadpisuje dane w miejscu.  Taki jest tradycyjny sposób
+wykonywania tej operacji, ale wiele współczesnych projektów systemów plików
+nie spełnia tego założenia. Wyjątki obejmują:
+
+@itemize @bullet
+
+@item
+Systemy plików oparte o rejestrację (log) lub dziennik zmian (journaling),
+jak dostarczane z AIX czy Solarisem.
+
+@item
+Systemy plików zapisujące nadmiarowe dane i działające nawet jeśli któryś
+z zapisów zawiedzie, tak jak systemy plików bazujące na RAID.
+
+@item
+Systemy plików tworzące tzw.snapshots (``zdjęcia stanu''),
+jak Network Appliance NFS server.
+
+@item
+Systemy plików z buforowaniem (cache) w tymczasowych miejscach, jak klienci
+NFS wersji 3.
+
+@item
+Kompresowane systemy plików.
+@end itemize
+
+Jeśli nie mamy pewności jak działa nasz system plików, powinniśmy założyć,
+że nie nadpisuje danych w miejscu, co oznacza, że shred nie może w sposób
+godny zaufania działać na zwykłych plikach tego systemu.
+
+Mówiąc ogólnie, pewniej jest niszczyć dane całego urządzenia niż pliku,
+gdyż obchodzi się wówczas problem konstrukcji systemu plików wspomniany
+powyżej.  Jednak nawet niszczenie danych z całych urządzeń nie zawsze jest
+całkowicie godne zaufania.  Na przykład, większość dysków zaznacza błędne
+sektory w sposób niewidzialny dla aplikacji.  Jeżeli złe sektory zawierają
+ważne dane, @code{shred} nie będzie w stanie ich zniszczyć.
+
+@code{shred} nie podejmuje żadnych prób wykrycia lub zgłoszenia takich
+kłopotów, tak jak nie usiłuje niczego robić z kopiami zapasowymi. Jednak,
+ponieważ pewniejsze jest ``niszczenie'' za jego pomocą całych urządzeń niż
+plików, @code{shred} domyślnie nie obcina do zera ani nie usuwa pliku
+wynikowego.  Takie zachowanie jest bardziej odpowiednie dla urządzeń,
+które zwykle nie mogą być obcięte (trunctated) ani nie powinny być usuwane.
+
+@example
+shred [@var{opcje}]@dots{} @var{plik}[@dots{}]
+@end example
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -f
+@itemx --force
+@opindex -f
+@opindex --force
+@cindex wymuszone usuwanie
+W razie potrzeby zmienia prawa dostępu tak, by umożliwić nadpisanie.
+
+@item -@var{ile}
+@itemx -n @var{ile}
+@itemx --iterations=@var{ile}
+@opindex -n @var{ile}
+@opindex --iterations=@var{ile}
+@cindex iteracje, wybranie liczby
+Domyślnie @code{shred} wykonuje nadpisanie 25 razy.  Wystarcza to, by każdy
+ze wszystkich przydatnych wzorców nadpisania został użyty przynajmniej
+jednokrotnie.  Możliwe jest zmniejszenie liczby cykli nadpisania, by
+oszczędzić na czasie, lub zwiększenie jej jeśli mamy mnóstwo czasu do
+zmarnowania.
+
+@item -s @var{bajty}
+@itemx --size=@var{bajty}
+@opindex -s @var{bajty}
+@opindex --size=@var{bajty}
+@cindex rozmiar pliku do zniszczenia
+Niszczy @var{bajty} początkowych bajtów pliku. Domyślnie niszczony jest cały
+plik.  Po @var{bajty} może wystąpić skrót jednostki (wielokrotności) jak np.
+@samp{k}, @samp{M} lub @samp{G}).  @xref{Rozmiar bloku}.
+
+@item -u
+@itemx --remove
+@opindex -u
+@opindex --remove
+@cindex usuwanie pliku po zniszczeniu
+Po zniszczeniu pliku przez nadpisanie obcina go (jeśli to możliwe) i usuwa.
+Jeżeli plik posiada wiele dowiązań to usunięte dostanie tylko dowiązanie
+o podanych nazwach.
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Pokazuje postępy sterylizacji.
+
+@item -x
+@itemx --exact
+@opindex -x
+@opindex --exact
+[Nie zaokrągla rozmiarów pliku do następnego pełnego bloku.]
+Normalnie shred zaokrągla rozmiar pliku w górę do pełnej wielokrotności
+rozmiaru bloku systemu plikowego, co pozwala na pełne wymazanie ostatniego
+bloku pliku. Opcja ta zakazuje takiego zachowania.
+Zatem, domyślnie jeśli niszczymy 10-bajtowy plik na systemie o 512-bajtowych
+blokach, to plik wynikowy będzie miał długość 512 bajtów.  Uruchomiony z tą
+opcją shred nie powiększy rozmiaru pliku.
+
+@item -z
+@itemx --zero
+@opindex -z
+@opindex --zero
+[Dodaje końcowe nadpisanie zerami by ukryć niszczenie.]
+Normalnie ostatni przebieg nadpisywania odbywa się przy użyciu danych
+losowych. Jeśli miało by się to rzucać w oczy na dysku (na przykład, dlatego
+że wygląda jak zaszyfrowane dane) czy też po prostu sądzimy, że tak
+będzie wyglądać porządniej, opcja @samp{--zero} dokłada dodatkowy przebieg
+nadpisywania ze wszystkimi bitami zerowymi. Przebieg ten nie jest wliczany
+do liczby cykli podanej opcją @samp{--iterations}.
+
+@item -
+@opindex -
+Niszczy standardowe wyjście.
+
+Argument ten traktowany jest jak opcja.  Jeżeli użyto powszechnej opcji
+@samp{--} do wskazania końca opcji wiersza poleceń, to @samp{-} zostanie
+zinterpretowane jako zwykła nazwa pliku.
+
+Przeznaczeniem tej opcji jest niszczenie usuniętego pliku tymczasowego.
+Na przykład
+
+@example
+i=`tempfile -m 0600`
+exec 3<>"$i"
+rm -- "$i"
+echo "Hello, world" >&3
+shred - >&3
+exec 3>-
+@end example
+
+Zauważ, że wydanie polecenia powłoki @samp{shred - >plik} nie zniszczy
+zawartości @var{pliku}, gdyż obcina ono @var{plik} przed wywołaniem samego
+@code{shred}.  Zamiast tego należy posłużyć się poleceniem @samp{shred plik}
+lub (używając powłoki zgodnej z powłoką Bourne'a) @samp{shred - 1<>plik}.
+
+@end table
+
+Do wymazania wszelkich śladów po systemie plików utworzonym na dyskietce
+w pierwszym napędzie można użyć poniższego polecenia.  Wymazuje dyskietkę
+1.44MB w ciągu około 20 minut.
+ 
+@example
+shred --verbose /dev/fd0
+@end example
+ 
+Podobnie, poleceniem jak niżej, można wymazać wszystkie dane z wybranej
+partycji dysku twardego:
+ 
+@example
+shred --verbose /dev/sda5
+@end example
+
+@node Specjalne typy plików
+@chapter Specjalne typy plików
+
+@cindex specjalne typy plików
+@cindex typy plików, specjalne
+
+W tym rozdziale opisano polecenia tworzące pliki specjalnych typów
+(oraz @code{rmdir}, które usuwa katalogi, będące jednym ze specjalnych typów
+plików.)
+
+@cindex specjalne typy plików
+@cindex typy plików
+Mimo, że uniksopodobne systemy operacyjne mają znacznie mniej specjalnych
+typów plików niż inne, nie @emph{wszystko} może być traktowane wyłącznie
+jako niezróżnicowany strumień bajtów @dfn{zwykłych plików}. Na przykład,
+podczas tworzenia lub usuwania pliku, system musi odnotować tę informację,
+co czyni w @dfn{katalogu} -- specjalnym rodzaju pliku. Można czytać katalogi
+tak jak zwykłe pliki, jeśli ktoś jest ciekaw, jednak system do wykonania
+swojej roboty musi narzucić strukturę, pewne uporządkowanie bajtów takiego
+pliku.  Dlatego jest to ``specjalny'' typ pliku.
+
+Oprócz katalogów, inne typy plików specjalnych obejmują potoki nazwane
+(FIFO), dowiązania symboliczne, gniazda i tak zwane @dfn{pliki specjalne}.
+
+@menu
+* Wywołanie ln::                Tworzy dowiązania między plikami.
+* Wywołanie mkdir::             Tworzy katalogi.
+* Wywołanie mkfifo::            Tworzy FIFO (potoki nazwane).
+* Wywołanie mknod::             Tworzy blokowe lub znakowe pliki specjalne.
+* Wywołanie rmdir::             Usuwa puste katalogi.
+@end menu
+
+
+@node Wywołanie ln
+@section @code{ln}: tworzy dowiązania między plikami
+
+@pindex ln
+@cindex links (dowiązania)
+@cindex dowiązania, tworzenie
+@cindex dowiązania twarde, tworzenie
+@cindex symboliczne (miękkie) dowiązania, tworzenie
+@cindex tworzenie, dowiązań (twardych lub symbolicznych)
+
+@cindex systemy plików a dowiązania twarde
+@code{ln} tworzy dowiązania (links) między plikami.  Domyślnie, tworzy
+dowiązania twarde.  Z opcją @samp{-s} tworzy dowiązania symboliczne, miękkie
+(@dfn{soft}).  Składnie:
+
+@example
+ln [@var{opcje}]@dots{} @var{cel} [@var{nazwa_dowiązania}]
+ln [@var{opcje}]@dots{} @var{cel}@dots{} @var{katalog}
+@end example
+
+@itemize @bullet
+
+@item Jeśli ostatni z argumentów określa istniejący katalog, to w katalogu
+tym zostaną utworzone dowiązania do każdego plików podanych jako
+poprzednie argumenty (@var{cel}).
+(Patrz jednak opis opcji @samp{--no-deference}).
+Dowiązania te będą mieć takie nazwy, jak pliki źródłowe.
+
+@item Jeśli podano dwa argumenty typu plik, to drugi z nich zostanie
+utworzony jako dowiązanie do pierwszego.
+
+@item Jeśli podano tylko jeden argument - nazwę pliku, to @code{ln} utworzy
+w bieżącym katalogu dowiązanie do niego mające taką samą nazwę.  [Oczywiście
+nie można w ten sposób utworzyć dowiązania do pliku w bieżącym katalogu].
+
+@item Podanie więcej niż dwu argumentów, z których ostatni nie jest
+katalogiem jest błędem.
+Bez opcji @samp{-f} lub @samp{-i} (zob.niżej) polecenie @code{ln} nie
+usuwa istniejącego pliku.  Do zmiany nazwy istniejących plików służy opcja
+@samp{--backup}.
+
+@end itemize
+
+@cindex hard link, definicja
+@cindex dowiązanie twarde, definicja
+@cindex i-węzły, a dowiązania twarde
+@dfn{Dowiązanie twarde} (@dfn{hard link}) jest inną nazwą istniejącego
+pliku.  Dowiązanie i oryginalna nazwa są w pełni równoprawne.  Technicznie
+rzecz biorąc, posiadają ten sam i-węzeł, zaś i-węzeł zawiera całą informację
+o pliku - faktycznie nie jest błędem stwierdzenie, iż i-węzeł @emph{jest}
+plikiem.  [W ten sposób plik może występować pod wieloma równoważnymi
+nazwami - wskazującymi na te same dane. Usunięcie jednej z tych nazw przez
+@code{rm} nie powoduje jeszcze usunięcia pliku. Jest on usuwany dopiero
+z chwilą usunięcia ostatniej nazwy.]
+
+We wszystkich istniejących implementacjach nie można tworzyć twardych
+dowiązań do katalogów, a dowiązania twarde nie mogą przekraczać granic
+systemów plików.  (Ograniczenia te nie są jednak narzucone przez @sc{posix}.)
+
+@cindex dereferencjowanie dowiążań symbolicznych
+@cindex symbolic link, definicja
+@cindex dowiązanie symboliczne, definicja
+@dfn{Dowiązania symboliczne} (@dfn{symbolic link}, w skrócie @dfn{symlink}),
+z drugiej strony, są specjalnym typem plików (nie obsługiwanym przez
+wszystkie jądra; w szczególności system V release 3 i starsze nie posiadają
+dowiązań symbolicznych), w którym plik dowiązania faktycznie wskazuje na
+inny plik (przez nazwę). Dla większości operacji (otwarcie, odczyt, zapis
+i tak dalej) otrzymujących jako argument dowiązanie symboliczne jądro
+automatycznie @dfn{dereferencjowuje} (``odwskaźnikowuje'') dowiązanie
+i działa na samym celu dowiązania.  Jednak niektóre operacje (np. usuwanie)
+działają na samym dowiązaniu, nie zaś na celu przez nie wskazywanym.
+@xref{Symbolic Links,,, library, The GNU C Library Reference Manual}.
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -b
+@itemx @w{@kbd{--backup}[=@var{metoda}]}
+@opindex -b
+@opindex --backup
+@vindex VERSION_CONTROL
+@cindex kopie zapasowe, tworzenie
+@xref{Opcje kopii zapasowych}.
+Tworzy kopie zapasowe tych plików, które mają być nadpisane lub usunięte.
+
+@item -d
+@itemx -F
+@itemx --directory
+@opindex -d
+@opindex -F
+@opindex --directory
+@cindex dowiązania twarde do katalogów
+Pozwala użytkownikowi uprzywilejowanemu (root) na tworzenie dowiązań
+twardych (hardlinks) do katalogów.
+
+@item -f
+@itemx --force
+@opindex -f
+@opindex --force
+Usuwa istniejące pliki docelowe.
+
+@item -i
+@itemx --interactive
+@opindex -i
+@opindex --interactive
+@cindex potwierdzanie, a @code{ln}
+Pyta czy usuwać istniejące pliki docelowe.
+
+@item -n
+@itemx --no-dereference
+@opindex -n
+@opindex --no-dereference
+Gdy podany cel jest dowiązaniem symbolicznym do katalogu,
+traktuje to dowiązanie jak gdyby było zwykłym plikiem.
+
+Gdy @var{cel} jest nazwą rzeczywistego katalogu (a nie dowiązania
+symbolicznego), nie ma żadnych dwuznaczności. Dowiązanie jest tworzone w tym
+katalogu. Jeśli jednak podany cel jest symbolicznym dowiązaniem do katalogu,
+to istnieją dwa sposoby potraktowania żądania użytkownika. @code{ln} może
+potraktować cel tak, jakby był zwykłym katalogiem (na który wskazuje
+dowiązanie) i utworzyć w nim żądane dowiązanie. Z drugiej strony, cel może
+być postrzegany jako nie-katalog -- dowiązanie symboliczne samo w sobie.
+W tym przypadku @code{ln} musi usunąć lub utworzyć kopię tego dowiązania
+przed utworzeniem nowego dowiązania. Domyślnym sposobem działania jest
+traktowanie celu będącego dowiązaniem symbolicznym do katalogu tak jak
+katalogu.
+[Przy użyciu opcji @samp{-n} będzie on traktowany jak dowiązanie.]
+
+@item -s
+@itemx --symbolic
+@opindex -s
+@opindex --symbolic
+Tworzy dowiązania symboliczne zamiast dowiązań twardych.
+Ta opcja wypisuje błąd na systemach nie obsługujących dowiązań symbolicznych.
+
+@item -S @var{przyrostek}
+@itemx --suffix=@var{przyrostek}
+@opindex -S
+@opindex --suffix
+Dokleja @var{przyrostek} do każdej nazwy pliku kopii zapasowej utworzonego
+opcją @samp{-b}.  @xref{Opcje kopii zapasowych}.
+
+@itemx @w{@kbd{--target-directory}=@var{katalog}}
+@opindex --target-directory
+@cindex katalog przeznaczenia
+@cindex katalog docelowy
+@cindex docelowy, katalog
+Określa @var{katalog} docelowy.  @xref{Katalog docelowy}.
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Przed utworzeniem dowiązania do każdego pliku wypisuje jego nazwę.
+
+@item -V @var{metoda}
+@itemx --version-control=@var{metoda}
+@opindex -V
+@opindex --version-control
+Zmienia metodę tworzenia kopii zapasowych wykonywanych za pomocą @samp{-b}.
+Argument @samp{metoda} przyjmuje wartości: @samp{none} (lub @samp{off}),
+@samp{numbered} (lub @samp{t}), @samp{existing} (lub @samp{nil}) albo
+@samp{never} (lub @samp{simple}).  @xref{Opcje kopii zapasowych}.
+
+@end table
+
+Przykłady:
+
+@smallexample
+ln -s /tam/nazwa  # tworzy dowiązanie ./nazwa wskazujące na /tam/nazwa
+ln -s /tam/nazwa moje # tworzy dowiązanie ./moje wskazujące na /tam/nazwa
+ln -s a b ..      # tworzy dowiązania ../a i ../b wskazujące na ./a i ./b
+@end smallexample
+
+
+@node Wywołanie mkdir
+@section @code{mkdir}: tworzy katalogi
+
+@pindex mkdir
+@cindex katalogi, tworzenie
+@cindex tworzenie katalogów
+
+@code{mkdir} tworzy katalogi o podanych nazwach.  Składnia:
+
+@example
+mkdir [@var{opcja}]@dots{} @var{nazwa}@dots{}
+@end example
+
+Jeśli @var{nazwa} jest nazwą istniejącego pliku a nie katalogu, to
+@code{mkdir} wysyła na standardowe wyjście błędów komunikat ostrzegawczy
+i po przetworzeniu pozostałych @var{nazw} kończy pracę z kodem zakończenia
+równym 1. Taka sama akcja jest podejmowana gdy @var{nazwa} jest
+istniejącym katalogiem a nie podano opcji @samp{-p}. Jeżeli katalog
+@var{nazwa} istnieje a została użyta opcja @samp{-p}, to @code{mkdir}
+będzie go ignorować.  To znaczy, @code{mkdir} nie wypisze ostrzeżenia,
+nie zgłosi błędu ani nie zmieni trybu dostępu tego katalogu (nawet jeśli
+podano opcję @samp{-m}), po prostu przejdzie do przetwarzania pozostałych
+kolejnych @var{nazw}.
+
+Program przyjmuje następujące opcje. Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -m @var{tryb}
+@itemx --mode=@var{tryb}
+@opindex -m
+@opindex --mode
+@cindex prawa dostępu tworzonych katalogów, nadawanie
+Tworzonym katalogom nadaje prawa dostępu zgodnie z paramatrem @var{tryb},
+przekazanym symbolicznie, jak w @code{chmod}.  Używa jako punktu wyjścia
+@samp{a=rwx} (odczyt, zapis i wykonywanie dozwolone dla wszystkich) minus
+bity ustawione w umask.
+@xref{Prawa pliku}.
+
+@item -p
+@itemx --parents
+@opindex -p
+@opindex --parents
+@cindex katalogi nadrzędne a @code{mkdir}
+Dla każdego argumentu tworzy wszystkie brakujące katalogi nadrzędne.
+Katalogom nadrzędnym nadawany jest tryb według umask zmodyfikowanego
+przez @samp{u+wx}.  Ignoruje argumenty odpowiadające istniejącym katalogom.
+
+@item -v
+@item --verbose
+@opindex -v
+@opindex --verbose
+Wyświetla komunikat dla każdego utworzonego katalogu.
+Najprzydatniejsze z @samp{--parents}.
+@end table
+
+
+@node Wywołanie mkfifo
+@section @code{mkfifo}: tworzy FIFO (potoki nazwane)
+
+@pindex mkfifo
+@cindex FIFO, tworzenie
+@cindex potoki nazwane, tworzenie
+@cindex tworzenie FIFO (potoków nazwanych)
+
+@code{mkfifo} tworzy FIFO (@dfn{potoki nazwane}) o podanych nazwach.
+[Domyślnie, prawa utworzonego FIFO to 0666 minus bity ustawione w umask.]
+Składnia:
+
+@example
+mkfifo [@var{opcja}] @var{nazwa}@dots{}
+@end example
+
+@dfn{FIFO} jest specjalnym typem pliku pozwalającego na komunikowanie się
+niezależnych procesów. Jeden z procesów otwiera plik FIFO do zapisu, zaś
+drugi do odczytu, po czym dane mogą przezeń przepływać jak przez zwykły
+potok anonimowy w powłokach czy gdzie indziej.
+
+Program przyjmuje następujące opcje. Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -m @var{tryb}
+@itemx --mode=@var{tryb}
+@opindex -m
+@opindex --mode
+@cindex prawa dostępu tworzonych FIFO, nadawanie
+Tworzonemu FIFO nadaje prawa dostępu zgodnie z parametrem @var{tryb},
+przekazanym w formie symbolicznej, jak w @code{chmod}.  Jako punktu wyjścia
+używa @samp{a=rw} (odczyt i zapis dozwolony dla wszystkich) minus bity
+ustawione w umask.  @xref{Prawa pliku}.
+
+@end table
+
+
+@node Wywołanie mknod
+@section @code{mknod}: tworzy blokowe lub znakowe pliki specjalne.
+
+@pindex mknod
+@cindex blokowe pliki specjalne, tworzenie
+@cindex znakowe pliki specjalne, tworzenie
+
+@code{mknod} tworzy FIFO, specjalny plik znakowy lub specjalny plik
+blokowy o podanej nazwie.
+[Domyślnie, prawa tworzonych plików to 0666 minus bity ustawione w umask.]
+Składnia:
+
+@example
+mknod [@var{opcja}]@dots{} @var{nazwa} @var{typ} [@var{major} @var{minor}]
+@end example
+
+@cindex pliki specjalne
+@cindex blokowe pliki specjalne
+@cindex znakowe pliki specjalne
+W przeciwieństwie do sformułowania ``specjalny typ pliku'' powyżej,
+termin @dfn{plik specjalny} (``special file'') posiada w Uniksie znaczenie
+techniczne: coś, co potrafi tworzyć lub odbierać dane. Zwykle odpowiada on
+jakiemuś elementowi sprzętowemu, np. drukarce czy dyskowi. (Pliki te są na
+ogół tworzone podczas konfiguracji systemu.) To właśnie polecenie
+@code{mknod} tworzy pliki tego rodzaju. Z takich urządzeń może być
+jednorazowo odczytywany albo pojedynczy znak albo ``blok'' (wiele znaków),
+zatem mówimy, że istnieją @dfn{blokowe pliki specjalne}
+i @dfn{znakowe pliki specjalne}.
+
+Argument występujący po @var{nazwie} podaje, jaki typ pliku utworzyć:
+
+@table @samp
+
+@item p
+@opindex p @r{dla pliku FIFO}
+dla FIFO
+
+@item b
+@opindex b @r{dla blokowego pliku specjalnego}
+dla blokowego [buforowanego] pliku specjalnego
+
+@item c
+@c Nie dokumentować opcji `u' -- to tylko synonim `c'.
+@c Czy *jakakolwiek* wersja mknod jeszcze ją używa?
+@c @itemx u
+@opindex c @r{dla znakowego pliku specjalnego}
+@c @opindex u @r{dla znakowego pliku specjalnego}
+dla znakowego [niebuforowanego] pliku specjalnego
+
+@end table
+
+Gdy tworzy się znakowy bądź blokowy plik specjalny, trzeba podać po typie
+również jego numer główny (@var{major}) i poboczny (@var{minor}).
+[Przy tworzeniu pliku FIFO podawanie tych numerów jest zabronione.]
+
+Program przyjmuje następujące opcje. Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -m @var{tryb}
+@item -m @var{tryb}
+@itemx --mode=@var{tryb}
+@opindex -m
+@opindex --mode
+Tworzonym plikom nadaje prawa dostępu zgodnie z parametrem
+@var{tryb}, przekazanym w formie symbolicznej, jak w @code{chmod}.  Jako
+punktu wyjścia używa @samp{a=rw} (odczyt i zapis dozwolony dla wszystkich)
+minus bity ustawione w umask.  @xref{Prawa pliku}.
+
+@end table
+
+
+@node Wywołanie rmdir
+@section @code{rmdir}: usuwa puste katalogi
+
+@pindex rmdir
+@cindex usuwanie pustych katalogów
+@cindex katalogi, usuwanie pustych
+
+@code{rmdir} usuwa puste katalogi.  Składnia:
+
+@example
+rmdir [@var{opcje}]@dots{} @var{katalog}@dots{}
+@end example
+
+Jeśli któryś argument @var{katalog} nie wskazuje na istniejący, pustego
+katalogu, to jest to błąd.
+
+Program przyjmuje następujące opcje. Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item --ignore-fail-on-non-empty
+@opindex --ignore-fail-on-non-empty
+@cindex usuwanie katalogów, ignorowanie niepowodzenia
+@cindex katalogi, ignorowanie niepowodzenia przy usuwaniu
+Ignoruje każde niepowodzenie wynikające wyłącznie stąd, że katalog
+nie jest pusty.
+
+@item -p
+@itemx --parents
+@opindex -p
+@opindex --parents
+@cindex katalogi nadrzędne a @code{rmdir}
+Usuwa @var{katalog}, a następnie spróbuje usunąć każdą składową
+@var{katalogu}.  Zatem, np. @samp{rmdir -p a/b/c} jest zbliżone do
+@samp{rmdir a/b/c a/b a}.  W związku z tym zawodzi, jeśli któryś z katalogów
+nadrzędnych nie będzie pusty.  By taka sytuacja nie powodowała wyświetlenia
+komunikatu diagnostycznego i niepomyślnego zakończenia działania
+@code{rmdir}, należy skorzystać z opcji @samp{--ignore-fail-on-non-empty}.
+
+@item -v
+@item --verbose
+@opindex -v
+@opindex --verbose
+@cindex usuwanie katalogów, raportowanie
+Wyświetla komunikaty diagnostyczne dla każdego pomyślnie usuniętego
+katalogu.
+@var{katalog} is removed.
+
+@end table
+
+@xref{Wywołanie rm}, gdzie opisano sposób usuwania niepustych katalogów
+(rekurencyjnie).
+
+
+@node Zmiana atrybutów pliku
+@chapter Zmiana atrybutów pliku
+
+@cindex zmiana atrybutów pliku
+@cindex atrybuty plików, zmiana
+@cindex pliki, atrybuty
+
+Plik to nie tylko jego zawartość, nazwa i typ
+pliku (@pxref{Specjalne typy plików}).
+Plik ma także właściciela (id użytkownika), grupę (id grupy), prawa
+(co może zrobić z plikiem jego właściciel, co mogą członkowie grupy
+a co wszyscy inni), różne znaczniki czasu (timestamps) i inne dane.
+Zbiorczo, nazywamy je @dfn{atrybutami} pliku.
+
+Poniższe polecenia zmieniają atrybuty pliku.
+
+@menu
+* Wywołanie chown::             Zmienia właściciela i grupę pliku.
+* Wywołanie chgrp::             Zmienia grupę pliku.
+* Wywołanie chmod::             Zmienia prawa dostępu do pliku.
+* Wywołanie touch::             Zmienia znaczniki czasu pliku.
+@end menu
+
+
+@node Wywołanie chown
+@section @code{chown}: zmienia właściciela i grupę pliku
+
+@pindex chown
+@cindex właściciel pliku, zmiana
+@cindex grupa właścicieli, zmiana
+@cindex zmiana właściciela pliku
+@cindex zmiana grupy pliku
+
+@code{chown} zmienia właściciela i/lub grupę właścicieli każdego zadanego
+@var{pliku} na @var{nowego-właściciela} lub użytkownika i grupę
+istniejącego pliku odniesienia, wskazanego opcją @samp{--reference}.
+Składnia:
+
+@example
+chown [@var{opcje}]@dots{} @{@var{nowy-właściciel} | --reference=@var{plik-odn}@} @var{plik}@dots{}
+@end example
+
+Jeżeli użyto składni opisującej wprost @var{nowego-właściciela}, to
+określa ona nowego właściciela i grupę w formacie (bez wtrąconych białych
+znaków):
+
+@example
+[@var{właściciel}] [ [:] [@var{grupa}] ]
+@end example
+
+W szczególności:
+
+@table @var
+@item właściciel
+Jeśli podano tylko @var{właściciela} (nazwę użytkownika lub jego numeryczny
+identyfikator), to ten użytkownik staje się właścicielem pliku,
+a grupa pliku pozostaje niezmieniona.
+
+@itemx właściciel@code{:}grupa
+Jeśli po @var{właścicielu} występuje dwukropek, i, bezpośrednio po nim,
+@var{grupa} (nazwa lub numeryczny identyfikator grupy), to zmieniana
+jest także grupa pliku (na @var{grupę}).
+
+@itemx właściciel@code{:}
+Jeśli po @var{właścicielu} wpisano dwukropek, lecz nie podano nazwy grupy,
+to właścicielem plików staje się wskazany użytkownik, a grupa jest zmieniana
+na grupę główną (zgłoszeniową) @var{właściciela}.
+
+@itemx @code{:}grupa
+Jeśli podano dwukropek i @var{grupę}, lecz pominięto nazwę właściciela,
+zmieniana jest tylko grupa plików.  W tym wypadku @code{chown} dokonuje
+tych samych operacji co @code{chgrp}.
+
+@end table
+
+Zamiast separatora @samp{:} można stosować @samp{.}.
+Jest to rozszerzenie @sc{gnu} w celu zachowania zgodności ze starszymi skryptami.
+W nowych skryptach powinno się unikać używania kropki @samp{.}, gdyż
+@sc{gnu} @code{chown} może zawieść jeśli nazwa @var{właściciela} będzie
+zawierać @samp{.}.
+
+Program przyjmuje następujące opcje. Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -c
+@itemx --changes
+@opindex -c
+@opindex --changes
+@cindex zmieniani właściciele, szersze informowanie
+Szerzej opisuje działania dla każdego @var{pliku}, którego właściciel lub
+grupa rzeczywiście ulegają zmianie.
+
+@item -f
+@itemx --silent
+@itemx --quiet
+@opindex -f
+@opindex --silent
+@opindex --quiet
+@cindex komunikaty o błędach, pomijanie
+Nie wypisuje komunikatów o błędach przy plikach, których właściciela lub
+grupy nie udało się zmienić.
+
+@itemx @w{@kbd{--from}=@var{stary-właściciel}}
+@opindex --from
+@cindex zmiana właściciela, z innego wskazanego
+Zmienia właściciela/grupę @var{pliku} tylko wtedy, gdy plik ten ma aktualne
+atrybuty określone przez @var{stary-właściciel}.
+Parametr @var{stary-właściciel} ma tę samą postać co @var{nowy-właściciel},
+opisany wyżej.
+Opcja ta jest przydatna głównie z punktu widzenia bezpieczeństwa, gdyż
+znacząco zawęża możliwość potencjalnych nadużyć.
+Na przykład, bez takiej opcji, w celu odzwierciedlenia zmiany numeracji UID
+na plikach danego użytkownika, @code{root} mógłby uruchomić
+
+@smallexample
+find / -owner STARY-UZ -print0 | xargs -0 chown NOWY-UZ
+@end smallexample
+
+Jest to jednak niebezpieczne, gdyż czas między sprawdzeniem przez
+@code{find} właściciela istniejącego pliku a momentem faktycznego
+uruchomienia @code{chown} może być całkiem długi.  Jednym ze sposobów
+zawężenia luki byłoby wywoływanie chown dla każdego pliku w chwili jego
+znalezienia:
+
+@example
+find / -owner STARY-UZ -exec chown NOWY-UZ @{@} \;
+@end example
+
+Jest to jednak bardzo powolne jeśli dotyczy wielu plików.
+Z zastosowaniem opisywanej opcji, jest bezpieczniej (luka jest jeszcze
+mniejsza), choć nadal nie idealnie:
+@c (the gap is narrower still) though still not perfect:
+
+@example
+chown -R --from=STARY-UZ NOWY-UZ /
+@end example
+
+@item --dereference
+@opindex --dereference
+@cindex dowiązania symboliczne, zmiana właściciela
+@findex lchown
+Działa na plikach wskazywanych przez dowiązania symboliczne zamiast na
+samych dowiązaniach.
+
+@item -h
+@itemx --no-dereference
+@opindex -h
+@opindex --no-dereference
+@cindex dowiązania symboliczne, zmiana właściciela
+@findex lchown
+Działa na dowiązaniach symbolicznych zamiast na plikach, które one wskazują
+[dostępne tylko w systemach potrafiących zmienić właściciela dowiązania
+symbolicznego]. Jest to zachowanie domyślne. Opiera się na wywołaniu funkcji
+systemowej @code{lchown}. Na systemach nie zapewniających tej funkcji
+@code{chgrp} zwraca błąd gdy plik podany w wierszu poleceń jest dowiązaniem
+symbolicznym.  Domyślnie nie są emitowane żadne komunikaty diagnostyczne
+dla dowiązań symbolicznych napotykanych podczas rekurencyjnej pracy
+w katalogach, zobacz jednak opis opcji @samp{--verbose}.
+
+@item --reference=@var{plik-odn}
+@opindex --reference
+Zmienia właściciela i grupę każdego @var{pliku} na takie same, jakie posiada
+@var{plik-odn}.  Jeśli @var{plik-odn} jest dowiązaniem symbolicznym, to nie
+jest używany właściciel i grupa tego dowiązania, tylko pliku, na który ono
+wskazuje.
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Wypisuje komunikaty diagnostyczne o każdym przetwarzanym pliku.
+Jeżeli podczas rekurencyjnego przetwarzania napotkane zostanie dowiązanie
+symboliczne, zaś system nie obsługuje funkcji systemowej @code{lchown}
+a działa opcja @samp{--no-dereference}, to program wysyła komunikat
+diagnostyczny informujący, że nie jest zmieniane ani dowiązanie ani
+wskazywany przez nie plik.
+
+@item -R
+@itemx --recursive
+@opindex -R
+@opindex --recursive
+@cindex rekurencyjna zmiana właścicieli pliku
+[Operuje również na podkatalogach.]
+Rekurencyjnie zmienia właściciela/grupę katalogów i ich zawartości.
+
+@end table
+
+
+@node Wywołanie chgrp
+@section @code{chgrp}: zmienia grupę pliku
+
+@pindex chgrp
+@cindex grupa właścieli, zmiana
+@cindex zmiana grupy właścicieli
+
+@code{chgrp} zmienia grupę właścicieli każdego podanego @var{pliku}
+na podaną @var{grupę} (która może być albo nazwą grupy, albo jej numerycznym
+identyfikatorem) lub na grupę istniejącego pliku odniesienia,
+wskazanego opcją @samp{--reference}.
+Składnia:
+
+@example
+chgrp [@var{opcja}]@dots{} @{@var{grupa} | --reference=@var{plik-odn}@} @var{plik}@dots{}
+@end example
+
+Program przyjmuje następujące opcje. Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -c
+@itemx --changes
+@opindex -c
+@opindex --changes
+@cindex zmieniane pliki, szersze informowanie
+Szerzej opisuje działania dla każdego @var{pliku}, którego grupa
+rzeczywiście ulega zmianie.
+
+@item -f
+@itemx --silent
+@itemx --quiet
+@opindex -f
+@opindex --silent
+@opindex --quiet
+@cindex komunikaty o błędach, pomijanie
+Nie wypisuje komunikatów o błędach przy plikach, których grupy nie udało się
+zmienić.
+
+@item --dereference
+@opindex --dereference
+@cindex symbolic links, changing owner
+@findex lchown
+Działa na plikach wskazywanych przez dowiązania symboliczne zamiast na
+samych dowiązaniach.
+
+@item -h
+@itemx --no-dereference
+@opindex -h
+@opindex --no-dereference
+@cindex dowiązania symboliczne, zmiana grupy
+@findex lchown
+Działa na dowiązaniach symbolicznych zamiast na plikach, które one wskazują
+[dostępne tylko w systemach potrafiących zmienić właściciela dowiązania
+symbolicznego].  Jest to zachowanie domyślne.  Opiera się na wywołaniu
+funkcji systemowej @code{lchown}.  Na systemach nie zapewniających tej
+funkcji @code{chgrp} zwraca błąd gdy plik podany w wierszu poleceń jest
+dowiązaniem symbolicznym.  Domyślnie nie są emitowane żadne komunikaty
+diagnostyczne dla dowiązań symbolicznych napotykanych podczas rekurencyjnej
+pracy w katalogach, zobacz jednak opis opcji @samp{--verbose}.
+
+@item --reference=@var{plik-odn}
+@opindex --reference
+Zmienia grupę każdego @var{pliku} na taką samą, jaką posiada @var{plik-odn}.
+Jeśli @var{plik-odn} jest dowiązaniem symbolicznym, to nie używa grupy tego
+dowiązania, tylko pliku, na który ono wskazuje.
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Wypisuje komunikaty diagnostyczne o każdym przetwarzanym pliku.
+Jeżeli podczas rekurencyjnego przetwarzania napotkane zostanie dowiązanie
+symboliczne, zaś system nie obsługuje funkcji systemowej @code{lchown}
+a działa opcja @samp{--no-dereference}, to program wysyła komunikat
+diagnostyczny informujący, że nie jest zmieniane ani dowiązanie ani
+wskazywany przez nie plik.
+
+@item -R
+@itemx --recursive
+@opindex -R
+@opindex --recursive
+@cindex rekurencyjna zmiana grupy właścicieli
+[Operuje również na podkatalogach.]
+Rekurencyjnie zmienia grupę właścicieli katalogów i ich zawartości.
+
+@end table
+
+
+@node Wywołanie chmod
+@section @code{chmod}: zmienia prawa dostępu do pliku
+
+@pindex chmod
+@cindex zmiana praw dostępu
+@cindex prawa dostępu, zmiana
+@cindex tryby, zmiana
+
+@code{chmod} zmienia prawa dostępu wskazanych plików.  Składnia:
+
+@example
+chmod [@var{opcja}]@dots{} @{@var{tryb} | --reference=@var{plik-odn}@} @var{plik}@dots{}
+@end example
+
+@cindex dowiązania symboliczne, prawa dostępu do nich
+@code{chmod} nigdy nie zmienia praw dowiązań symbolicznych, gdyż funkcja
+systemowa @code{chmod} nie potrafi tego dokonać.  Nie jest to problemem,
+ponieważ prawa dowiązań symbolicznych nigdy nie są używane.  Jednakże, dla
+każdego dowiązania symbolicznego wymienionego w wierszu poleceń, @code{chmod}
+zmienia prawa wskazywanego przez nie pliku.
+W przeciwieństwie do powyższego, @code{chmod} ignoruje dowiązania
+symboliczne napotkane podczas rekurencyjnego przechodzenia przez katalogi.
+
+Jeśli go podano, @var{tryb} określa nowe prawa dostępu.  Szcegóły można
+znaleźć w sekcji @ref{Prawa pliku}.
+
+Program przyjmuje następujące opcje. Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -c
+@itemx --changes
+@opindex -c
+@opindex --changes
+Szerzej opisuje działania dla każdego @var{pliku}, którego prawa
+rzeczywiście ulegają zmianie.
+
+@item -f
+@itemx --silent
+@itemx --quiet
+@opindex -f
+@opindex --silent
+@opindex --quiet
+@cindex komunikaty o błędach, pomijanie
+Nie wypisuje komunikatów o błędach przy plikach, których praw nie udało się
+zmienić.
+
+@item -v
+@itemx --verbose
+@opindex -v
+@opindex --verbose
+Szerzej opisuje akcję lub brak akcji podjęte dla każdego @var{pliku}.
+
+@item --reference=@var{plik}
+@opindex --reference
+Zmienia prawa każdego @var{pliku} na takie same, jakie posiada @var{plik-odn}.
+@xref{Prawa pliku}.
+Jeśli @var{plik-odn} jest dowiązaniem symbolicznym, to nie używa praw tego
+dowiązania, tylko pliku, na który ono wskazuje.
+
+@item -R
+@itemx --recursive
+@opindex -R
+@opindex --recursive
+@cindex rekurencyjna zmiana praw dostępu
+Rekurencyjnie zmienia prawa katalogów i ich zawartości.
+
+@end table
+
+
+@node Wywołanie touch
+@section @code{touch}: zmienia znaczniki czasu pliku
+
+@pindex touch
+@cindex zmiana znaczniki czasu pliku
+@cindex znaczniki czasu pliku, zmiana
+@cindex timestamps pliku, zmiana
+@cindex plik, zmiana znaczników czasu
+
+@code{touch} zmienia czas dostępu i/lub modyfikacji podanych plików.
+Składnia:
+
+@example
+touch [@var{opcja}]@dots{} @var{plik}@dots{}
+@end example
+
+Jeśli pierwszy argument @var{plik} może być poprawnym argumentem opcji
+@samp{-t} a nie podano żadnego znacznika czasu opcją @samp{-d}, @samp{-r}
+czy @samp{-t} i nie podano argumentu @samp{--}, to jest on interpretowany
+jako czas dla pozostałych plików, a nie nazwa pliku.
+Ostrzeżenie: ta składnia wychodzi z użycia i przyszłe wersje @sc{posix} będą
+wymagać, by jej obsługa została wycofana.  Zamiast niej należy używać opcji
+@option{-t}.
+
+@cindex puste pliki, tworzenie
+Jeśli któryś z @var{plików} nie istnieje, jest tworzony jako pusty
+[z uprawnieniami 0666 zmodyfikowanymi przez umask].
+
+@cindex prawa, do zmiany znaczników czasu
+Jeśli zmieniane są oba czasy, dostępu i modyfikacji, na czas aktualny,
+@code{touch} może zmienić znaczniki czasu plików, których użytkownik
+uruchamiający program nie jest właścicielem, ale ma prawo do zapisu.
+W innym przypadku użytkownik musi być ich właścicielem.
+
+Chociaż @code{touch} udostępnia opcje do zmiany dwu czasów pliku -- ostatniego
+dostępu i modyfikacji, w rzeczywistości istnieje również trzeci: czas zmiany
+i-węzła.  Często określany jest jako @code{ctime} pliku.
+Czas zmiany i-węzła to czas, kiedy ostatnio zmieniła się meta-informacja
+pliku.  Jednym z przykładów takiej sytuacji jest zmiana praw dostępu do pliku.
+Zmiana praw nie jest użyciem pliku, więc atime się nie zmienia, nie zmienia
+też pliku, więc nie zmienia się mtime.  Mimo to, coś dotyczącego samego pliku
+się zmieniło i gdzieś to musi zostać odnotowane.  To właśnie jest zadaniem
+pola ctime.  Informacja ta jest niezbędna, na przykład po to, by program
+wykonujący kopie zapasowe mógł zrobić świeżą kopię pliku, zawierającą
+nową wartość praw.  Przy normalnych działaniach, w żadnej sytuacji użytkownik
+nie jest w stanie zmienić pola ctime na określoną przez siebie wartość.
+@c the others is renaming.  In any case, it is not possible, in normal
+@c operations, for a user to change the ctime field to a user-specified value.
+
+Program przyjmuje następujące opcje. Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -a
+@itemx --time=atime
+@itemx --time=access
+@itemx --time=use
+@opindex -a
+@opindex --time
+@opindex atime@r{, zmiana}
+@opindex use time@r{, zmiana}
+@opindex access time@r{, zmiana}
+@opindex czas zmiany stanu, zmiana
+@opindex czas dostępu, zmiana
+Zmienia tylko czas ostatniego dostępu.
+
+@item -c
+@itemx --no-create
+@opindex -c
+@opindex --no-create
+Nie tworzy nieistniejących plików.
+
+@item -d
+@itemx --date=czas
+@opindex -d
+@opindex --date
+@opindex time
+Używa argumentu @var{czas} zamiast aktualnego czasu. Może on zawierać
+nazwy miesięcy, strefy czasowe, @samp{am} i @samp{pm}, itd.
+@xref{Formaty wprowadzania daty}.
+
+@item -f
+@opindex -f
+@cindex BSD, kompatybilność @code{touch}
+Ignorowane, zachowane dla zgodności z wersją BSD @code{touch}.
+
+@item -m
+@itemx --time=mtime
+@itemx --time=modify
+@opindex -m
+@opindex --time
+@opindex mtime@r{, zmiana}
+@opindex modify time@r{, zmiana}
+@opindex czas modyfikacji, zmiana
+Zmienia tylko czas modyfikacji pliku.
+
+@item -r @var{plik}
+@itemx --reference=@var{plik}
+@opindex -r
+@opindex --reference
+Używa czasów pochodzących od @var{pliku} odniesienia zamiast aktualnego
+czasu.
+
+@item -t [[SS]RR]MMDDggmm[.ss]
+Używa argumentu (opcjonalnego cztero- lub dwuznakowego roku, miesiąca,
+dnia, godziny, minut, opcjonalnych sekund) zamiast aktualnego czasu. Jeśli
+rok podano tylko dwucyfrowo, to za @var{SS} przyjmowane jest 20 dla lat
+0 @dots{} 68, zaś 19 dla lat 69 @dots{} 99.  Jeżeli nie podano cyfr roku,
+to argument jest interpretowany jako data bieżącego roku.
+
+@end table
+
+
+@node Zajętość dysku
+@chapter Zajętość dysku
+
+@cindex zajętość dysku
+
+Żaden dysk nie pomieści nieskończonej ilości danych. Poniższe polecenia
+podają, jak bardzo zajęte lub dostępne jest miejsce na dyskach. (Nie ma to
+nic wspólnego z tym, ile @emph{pamięci głównej}, tj. RAM, używa dany
+program podczas pracy; w tym celu potrzebujemy @code{ps}, @code{pstat}
+lub @code{swap} albo jakiegoś podobnego polecenia.)
+
+@menu
+* Wywołanie df::                Raport zajętości dysku dla systemów plików.
+* Wywołanie du::                Szacunkowe zużycie miejsca przez plik.
+* Wywołanie sync::              Synchronizuje pamięć i dysk.
+@end menu
+
+
+@node Wywołanie df
+@section @code{df}: raport zajętości dysku dla systemów plików
+
+@pindex df
+@cindex system plików, zajętość dysku
+@cindex zajętość dysku przez system plików
+
+@code{df} podaje rozmiar wykorzystanej i dostępnej przestrzeni dyskowej
+na systemach plików.  Składnia:
+
+@example
+df [@var{opcja}]@dots{} [@var{plik}]@dots{}
+@end example
+
+Bez argumentów, pokazywana jest ilość miejsca wykorzystanego i dostępnego
+na wszystkich aktualnie zamontowanych systemach plików (wszystkich typów).
+W przeciwnym razie, @code{df} informuje o systemie plików zawierającym każdy
+argument @var{plik}.
+
+Normalnie przestrzeń dysku jest wypisywana w jednostkach 1024-bajtowych
+(kilobajtach), ale można to zmienić (@pxref{Rozmiar bloku}).
+
+@cindex plik urządzenia dyskowego
+@cindex urządzenie dyskowe, plik
+Jeśli argument @var{plik} jest nazwą pliku węzła urządzenia dyskowego,
+zawierającego podmontowany system plików, to @code{df} pokazuje ilość
+miejsca dostępną na tym systemie plików, a nie na systemie plików,
+zawierającym węzeł urządzenia (tj. systemie root).  @sc{gnu} @code{df} nie
+próbuje określić miejsca dostępnego na niezamontowanych systemach plików,
+ponieważ dla większości rodzajów systemów zrobienie tego wymaga wielce
+nieprzenośnej i dogłębnej wiedzy o strukturach danego systemu plików.
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -a
+@itemx --all
+@opindex -a
+@opindex --all
+@cindex automounter, systemy plików
+@cindex ignorowanie systemów plików
+Ujmuje w zestawieniu systemy plików, mające zero bloków (które domyślnie są
+pomijane). Takie systemy plików są typowo pseudosystemami przeznaczonymi
+do specjalnych zadań, takich jak wpisy automountera. Również systemy plików
+typu ``ignore'' lub ``auto'', obsługiwane przez niektóre systemy
+operacyjne, są włączane do raportu wyłącznie dzięki tej opcji.
+
+@item -h
+@itemx --human-readable
+@opindex -h
+@opindex --human-readable
+@cindex human-readable, postać wyjścia
+Pokazuje objętości w postaci czytelniejszej dla człowieka, dodając literowe
+przyrostki określające potęgi 1024, np. @samp{M} dla megabajtów.
+@samp{M} oznacza 1.048.576 bajtów. Jeżeli wolisz potęgi 1000 - użyj opcji
+@samp{-H} (@samp{--si}).
+
+@item -H
+@itemx --si
+@opindex -H
+@opindex --si
+@cindex SI, postać wyjścia
+Każdy z rozmiarów pokazuje z dodaną literą, jak np. @samp{M} dla megabajtów.
+(SI - Międzynarodowy System Miar definiuje przyrostki potęg 1000). Stosowane
+są potęgi 1000, nie 1024. Przy zastosowaniu tej opcji przyrostek @samp{M}
+oznacza 1.000.000 bajtów. Posłuż się opcją @samp{-h}
+(@samp{--human-readable}), jeśli wolisz potęgi 1024.
+
+@item -i
+@itemx --inodes
+@opindex -i
+@opindex --inodes
+@cindex i-węzły, wykorzystane
+Wypisuje informacje o wykorzystanych i-węzłach zamiast o blokach.
+i-węzeł (inode, skrót od ``index node'' /węzeł indeksowy/) jest
+specjalnym rodzajem bloku dyskowego,który zawiera dane dotyczące pliku jak
+np. jego właściciele, prawa, czasy pliku i położenie na dysku.
+
+@item -k
+@itemx --kilobytes
+@opindex -k
+@opindex --kilobytes
+@cindex kilobajty w rozmiarach systemów plików
+Pokazuje rozmiary w blokach 1024-bajtowych (kilobajtach), przesłaniając
+domyślną wielkość bloku (@pxref{Rozmiar bloku}).
+
+@item -l
+@itemx --local
+@opindex -l
+@opindex --local
+@cindex systemy plików, ograniczenie wyświetlania do wybranych typów
+Ogranicza raport do lokalnych systemów plików. Domyślnie wykazywane są także
+zdalne systemy plików.
+
+@item -m
+@itemx --megabytes
+@opindex -m
+@opindex --megabytes
+@cindex megabajty w rozmiarach systemów plików
+Pokazuje rozmiary blokach megabajtowych (tj. 1.048.576-bajtowych).
+
+@item --no-sync
+@opindex --no-sync
+@cindex miejsce na systemie plików, szybsze uzyskiwanie starych danych
+Nie wywołuje @code{sync} przed uzyskaniem informacji o zajętości. Powoduje
+to, że @code{df} działa znacząco szybciej na systemach z wieloma dyskami,
+ale na niektórych systemach (szczególnie SunOS) wyniki mogą być nieco
+nieaktualne.  Jest to zachowanie domyślnie.
+
+@item -P
+@itemx --portability
+@opindex -P
+@opindex --portability
+@cindex jednowierszowy format wyjścia
+@cindex POSIX-owy format wyjścia
+@cindex przenośny  format wyjścia
+@cindex format wyjścia, przenośny
+Używa formatu wyjściowego @sc{posix}. Jest on taki jak domyślny format,
+poza tym, że:
+
+@enumerate
+@item
+Dla każdego systemu plików dane go dotyczące są zawsze wypisywane w dokładnie
+jednym wierszu; urządzenie montowane nigdy nie jest wstawiane w linii samo.
+Znaczy to, że jeśli nazwa montowanego urządzenie jest dłuższa niż 20 znaków
+(jak w przypadku niektórych zamontowanych systemów sieciowych), to kolumny
+będą źle wyrównane.
+
+@item
+Wartości niecałkowite wypisywane są jako liczby całkowite z zaokrągleniem
+w górę, zamiast arytmetycznego zaokrąglania do najbliższej całkowitej.
+[oryg.: ``zamiast w dół lub do najbliższej całkowitej''].
+
+@item
+Etykiety w wierszu nagłówkowym zmienione są tak, by wypełnić wymagania
+POSIX.
+@end enumerate
+
+@item --sync
+@opindex --sync
+@cindex miejsce na systemie plików, wolniejsze uzyskiwanie aktualnych danych
+Przed uzyskaniem informacji o zajętości wywołuje funkcję systemową
+@code{sync}.  Na niektórych systemach (szczególnie SunOS) zyskuje się
+bardziej aktualne wyniki, ale ogólnie opcja ta spowalnia działanie
+@code{df}, szczególnie przy wielu lub bardzo obciążonych systemach plików.
+
+@item -t @var{typ_fs}
+@itemx --type=@var{typ_fs}
+@opindex -t
+@opindex --type
+@cindex systemy plików, ograniczenie wyświetlania do wybranych typów
+Ogranicza raport do systemów plików typu @var{typ_fs}.
+Można określić więcej niż jeden typ systemu podając opcję @samp{-t}
+wielokrotnie.
+Domyślnie nie są pomijane żadne typy systemów plików.
+
+@item -T
+@itemx --print-type
+@opindex -T
+@opindex --print-type
+@cindex systemy plików, wypisywanie typów
+@cindex typy systemów plików, wypisywanie
+Dla każdego systemu plików wypisuje jego typ. Użyte tu typy plików są tymi
+samymi, które można włączać lub pomijać opcjami @samp{-t} i @samp{-x}.
+Konkretne wypisywane wartości typu zależą od tego, co obsługuje dany system.
+Poniżej podano kilka powszechnych nazw (ta lista z pewnością nie jest
+wyczerpująca):
+
+@table @samp
+
+@item nfs
+@cindex NFS, typ systemu plików
+System plików NFS, tj. zamontowany poprzez sieć z innej maszyny. Wydaje się,
+że jest to jedyna nazwa systemu plików używana jednolicie we wszystkich
+systemach.
+
+@item 4.2@r{, }ufs@r{, }efs@dots{}
+@cindex typy systemów plików, Linuksowe
+@cindex typy systemów plików, lokalne
+@opindex 4.2 @r{typ systemu plików}
+@opindex ufs @r{typ systemu plików}
+@opindex efs @r{typ systemu plików}
+System plików na lokalnie zamontowanym dysku twardym. (System może nawet
+obsługiwać więcej niż jeden typ tego rodzaju: robi to Linux).
+
+@item hsfs@r{, }cdfs
+@cindex CD-ROM typ systemu plików
+@cindex High Sierra, system plików
+@opindex hsfs @r{typ systemu plików}
+@opindex cdfs @r{typ systemu plików}
+System plików na dysku CD-ROM. HP-UX używa nazwy @samp{cdfs}, większość
+pozostałych systemów posługuje się nazwą @samp{hsfs} (@samp{hs}
+od ``High Sierra'').
+
+@item pcfs
+@cindex PC, system plików
+@cindex DOS, system plików
+@cindex MS-DOS, system plików
+@cindex dyskietkowy system plików
+@opindex pcfs
+System plików MS-DOS, zwykle na dyskietce.
+
+@end table
+
+@item -x @var{typ_fs}
+@itemx --exclude-type=@var{typ_fs}
+@opindex -x
+@opindex --exclude-type
+Ogranicza raport do systemów typu @var{typ_fs}.
+Można wykluczyć więcej niż jeden typ systemu podając opcję @samp{-t}
+wielokrotnie.
+Domyślnie nie są pomijane żadne typy systemów plików.
+
+@item -v
+Ignorowana; istnieje dla zgodności z wersjami @code{df} z Systemu V.
+
+@end table
+
+
+@node Wywołanie du
+@section @code{du}: szacunkowe zużycie miejsca przez plik
+
+@pindex du
+@cindex plik, wykorzystanie miejsca przez
+@cindex dysk, wykorzystanie przez dane pliki
+
+@code{du} zgłasza ilość przestrzeni dyskowej wykorzystywanej przez podane
+pliki i dla każdego podkatalogu (dla argumentów będących katalogami).
+Składnia
+
+@example
+du [@var{opcja}]@dots{} [@var{plik}]@dots{}
+@end example
+
+Jeżeli nie podano argumentów, @code{du} podaje przestrzeń dyskową
+zajmowaną przez katalog bieżący.
+Normalnie przestrzeń dysku jest wypisywana w jednostkach 1024-bajtowych
+(kilobajtach), ale można to zmienić (@pxref{Rozmiar bloku}).
+
+Program przyjmuje następujące opcje.  Zobacz też @ref{Wspólne opcje}.
+
+@table @samp
+
+@item -a
+@itemx --all
+@opindex -a
+@opindex --all
+Wypisuje liczby dla wszystkich plików, nie tylko katalogów.
+
+@item -b
+@itemx --bytes
+@opindex -b
+@opindex --bytes
+Pokazuje rozmiary w bajtach, bez względu na domyślny rozmiar bloku
+(@pxref{Rozmiar bloku}).
+
+@item -c
+@itemx --total
+@opindex -c
+@opindex --total
+@cindex suma zajętości dysku
+Podaje całkowitą sumę wszystkich argumentów po ich przetworzeniu.
+Może być używane do znalezienia całkowitej objętości zadanego zestawu
+plików lub katalogów.
+
+@item -D
+@itemx --dereference-args
+@opindex -D
+@opindex --dereference-args
+Dereferencjuje dowiązania symboliczne, które są argumentami z wiersza
+poleceń.  Nie dotyczy to innych dowiązań symbolicznych.  Pomocne do
+uzyskiwania wykorzystania dysku przez katalogi takie jak @file{/usr/tmp},
+które często są dowiązaniami symbolicznymi.
+
+@item -h
+@itemx --human-readable
+@opindex -h
+@opindex --human-readable
+@cindex human-readable, postać wyjścia
+Pokazuje objętości w postaci czytelniejszej dla człowieka, dodając literowe
+przyrostki określające potęgi 1024, np. @samp{M} dla megabajtów.
+@samp{M} oznacza 1.048.576 bajtów. Jeżeli wolisz potęgi 1000 - użyj opcji
+@samp{-H} (@samp{--si}).
+
+@item -H
+@itemx --si
+@opindex -H
+@opindex --si
+@cindex SI, postać wyjścia
+Każdy z rozmiarów pokazuje z dodaną literą, jak np. @samp{M} dla megabajtów.
+(SI - Międzynarodowy System Miar definiuje przyrostki potęg 1000). Stosowane
+są potęgi 1000, nie 1024. Przy zastosowaniu tej opcji przyrostek @samp{M}
+oznacza 1.000.000 bajtów. Posłuż się opcją @samp{-h}
+(@samp{--human-readable}), jeśli wolisz potęgi 1024.
+
+@item -k
+@itemx --kilobytes
+@opindex -k
+@opindex --kilobytes
+Pokazuje rozmiary w blokach 1024-bajtowych (kilobajtach), przesłaniając
+domyślną wielkość bloku (@pxref{Rozmiar bloku}).
+
+@item -l
+@itemx --count-links
+@opindex -l
+@opindex --count-links
+@cindex dowiązania twarde, wliczane w @code{du}
+Liczy rozmiar wszystkich plików, nawet jeśli już się pojawiły (jako inne
+dowiązania twarde).  [Rozmiary plików o wielu dowiązaniach twardych są
+wówczas zliczane wielokrotnie.]
+
+@item -L
+@itemx --dereference
+@opindex -L
+@opindex --dereference
+@cindex dowiązania symboliczne, dereferencjonowanie w @code{du}
+Dereferencjuje wszystkie dowiązania symboliczne (pokazuje objętość zajmowaną
+przez plik lub katalog, na który wskazuje dowiązanie, zamiast objętości
+samego dowiązania).
+
+@item --max-depth=@var{głębokość}
+@opindex --max-depth=@var{głębokość}
+@cindex ograniczanie wyników @code{du}
+Pokazuje całkowitą objętość każdego z katalogów (i plików, jeżeli posłużono
+się opcją @samp{--all}) będącego co najwyżej @var{głębokość} poziomów
+w dół hierarchii plików licząc od korzenia. Korzeń położony jest
+na poziomie 0, zatem @samp{du --max-depth=0} jest równoważnikiem
+@samp{du -s}.
+
+@item -m
+@itemx --megabytes
+@opindex -m
+@opindex --megabytes
+@cindex megabajty w rozmiarach systemów plików
+Pokazuje rozmiary blokach megabajtowych (tj. 1.048.576-bajtowych).
+
+@item -s
+@itemx --summarize
+@opindex -s
+@opindex --summarize
+Wyświetla tylko objętość całkowitą każdego argumentu.
+
+@item -S
+@itemx --separate-dirs
+@opindex -S
+@opindex --separate-dirs
+Wyszczególnia rozmiar każdego katalogu osobno, nie włączając rozmiarów
+podkatalogów.
+
+@item -x
+@itemx --one-file-system
+@opindex -x
+@opindex --one-file-system
+@cindex jeden system plików, ograniczenie @code{du} do
+Pomija katalogi leżące na innym systemie plików niż ten, na którym znajduje
+się przetwarzany właśnie argument.
+
+@item --exclude=@var{wzorzec}
+@opindex --exclude=@var{wzorzec}
+@cindex wykluczanie plików z @code{du}
+Podczas pracy rekurencyjnej pomija podkatalogi i pliki pasujące do
+@var{wzorca}.  Na przykład, @code{du --exclude='*.o'} wyklucza pliki,
+których nazwy kończą się na @samp{.o}.
+
+@item -X @var{plik}
+@itemx --exclude-from=@var{plik}
+@opindex -X @var{plik}
+@opindex --exclude-from=@var{plik}
+@cindex wykluczanie plików z @code{du}
+Podobnie do @samp{--exclude}, ale pobiera wzorce wykluczeń z @var{pliku},
+po jednym na wiersz. Jeżeli @var{plikiem} jest @samp{-}, to wzorce pobierane
+są ze standardowego wejścia.
+
+@end table
+
+@cindex NFS montowany z BSD do HP-UX
+Na systemach BSD, dla plików zamontowanych przez NFS z systemu HP-UX,
+@code{du} zgłasza rozmiary, które są o połowę mniejsze od poprawnych
+wielkości.  Na HP-UX zgłasza rozmiary dwa razy większe od poprawnych, jeśli
+pliki są zamontowane przez NFS z BSD.  Jest to usterka HP-UX i ma wpływ
+również na program @code{du} z tego systemu.
+
+
+@node Wywołanie sync
+@section @code{sync}: synchronizuje dane na dysku z pamięcią
+
+@pindex sync
+@cindex synchronizacja pamięci i dysku
+
+@cindex superblok, zapisywanie
+@cindex i-węzły, zapisane buforowane
+Polecenie @code{sync} zapisuje wszelkie dane buforowane w pamięci na dysk.
+Może to obejmować (ale nie ogranicza się do tego) zmienione superbloki,
+zmienione i-węzły, oraz opóźnione odczyty i zapisy. Musi to być
+zaimplementowane przez jądro: program @code{sync} nie wykonuje niczego
+poza wywołaniem systemowej funkcji @code{sync}.
+
+@cindex załamania i uszkodzenia
+Jądro systemu przechowuje dane w pamięci, by uniknąć wykonywania (stosunkowo
+powolnych) odczytów i zapisów dyskowych. Poprawia to wydajność, ale jeżeli
+komputer pada, w rezultacie mogą zostać utracone dane lub ulec uszkodzeniu
+system plików.
+@code{sync} daje pewność, że wszystko, co pozostawało w pamięci jest zapisane
+na dysk.
+
+Ignorowane są wszelkie argumenty, poza pojedynczo występującymi
+@samp{--help} lub @samp{--version} (@pxref{Wspólne opcje}).
+
+@node Kopiowanie
+@chapter Licencja Wolnej Dokumentacji GNU
+@menu
+* GNU Free Documentation License::
+@end menu
+@include fdl-1.1.texi
+
+
+@node Skorowidz
+@unnumbered Skorowidz
+
+@printindex cp
+
+@contents
+@bye
+
+@c Local variables:
+@c texinfo-column-for-description: 32
+@c End:

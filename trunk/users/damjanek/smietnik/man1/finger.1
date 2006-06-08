@@ -1,0 +1,152 @@
+.\" Copyright (c) 1989, 1990 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	from: @(#)finger.1	6.14 (Berkeley) 7/27/91
+.\"	$Id: finger.1,v 1.4 2002/06/01 11:50:59 robert Exp $
+.\"
+.\" Translation (c) 1998 Marcin Mazurek <mazek@capella.ae.poznan.pl>
+.\" {PTM/MM/0.1/08-10-1998/"finger.1 - program do sprawdzania informacji o użytkowniku"}
+.TH FINGER 1 "13 lipca 1996" "Linux NetKit 0.07"
+.SH NAZWA
+finger \- program do sprawdzania informacji o użytkowniku
+.SH SKŁADNIA
+.B finger 
+.RB [ \-lmsp ]
+.RI [ "użytkownik ..." ]
+.RI [ "użytkownik@host ..." ]
+.SH OPIS
+.B finger
+wyświetla informacje o użytkownikach danego systemu.
+.PP
+Dozwolone opcje to:
+.SS
+.TP
+.B \-s
+.B finger
+podaje nazwę użytkownika (login name), imię i nazwisko, nazwę terminala
+i możliwość pisania do niego
+ (``*'' po nazwie terminala oznacza że prawo pisania do niego jest
+zabronione), czas "bezczynności", czas zalogowania się, adres i telefon biura.
+.sp
+Czas logowania wyświetlany jest w następującym formacie: miesiąc, dzień,
+godzina i minuty. Jeśli czas ten jest większy niż sześć miesięcy
+wyświetlany jest rok a nie czas co do godziny i minuty.
+.sp
+Nieznane urządzenia jak i nie dające się określić czasy zalogowania się i bezczynności
+pokazywane są jako gwiazdki.
+.TP
+.B \-l
+Po podaniu tej opcji finger wyświetla pełną informację, pokazaną w kilku
+liniach, określoną przez opcję
+.B \-s
+plus dodatkowo katalog domowy użytkownika, telefon domowy, powłoka logowania,
+informację o jego poczcie, i zawartość plików
+.BR .plan ,
+.I .project
+i
+.I .forward
+z katalogu domowego użytkownika.
+.sp
+Numery telefonów podane jako jedenastocyfrowe liczby są wyświetlane w
+formacie ``+N-NNN-NNN-NNNN''.
+Numery podane jako dziesięcio- lub siedmiocyfrowe liczby są wyświetlane jako
+jego odpowiedni podłańcuch.
+Numery podane jako liczby pięciocyfrowe są wyświetlane w formacie ``xN-NNNN''.
+Numery podane jako liczby czterocyfrowe są wyświetlane w formacie ``xNNNN''.
+.sp
+Jeśli prawo pisania do urządzenia jest wyłączone, wtedy tekst ``(messages off)''
+jest dołączany do lini zawierającej nazwę urządzenia.
+Przy podanej opcji
+.B \-l
+informacja o terminalu zalogowanego użytkownika jest podana dla każdego
+użytkownika i powtórzona w zależności od liczby logowań się.
+.sp
+Informacja o braku poczty zasygnalizowana jest tekstem ``No Mail.'',
+Jeśli użytkownik sprawdził swoją pocztą zanim przyszła nowa wyświetlany jest
+tekst ``Mail last read DDD MMM ## HH:MM YYYY (TZ)''
+, lub ``New mail received ...'',
+``  Unread since ...'' jeśli użytkownik ma nową pocztę.
+.TP
+.B \-p
+Wyłącza w opcji
+.B \-l
+programu
+.B finger
+wyświetlanie zawartości plików
+.I .plan
+i
+.IR .project .
+.TP
+.B \-m
+Wyłącza wyszukiwanie nazw użytkowników.
+Nazwa użytkownika podawana jako argument programu finger jest zazwyczaj
+nazwą użytkownika w systemie; jednakże, finger wyszukuje tego ciągu także w
+prawdziwej nazwie użytkownika, chyba że zostanie podana opcja 
+.BR \-m .
+Nie istnieje rozróżnienie na duże i małe litery w nazwach wyszukiwanych przez
+.BR finger .
+.PP
+Jeśli nie ma podanych żadnych opcji,
+.B finger
+standardowo wyświetla informację w stylu opcji
+.B \-l
+jeśli nazwa użytkownika lub systemu została podana, 
+format informacji odpowiada opcji
+.BR \-s .
+Jeśli któraś z informacji nie jest dostępna, niektórych pól może brakować.
+.PP
+Jeśli nie zostały podane żadne argumenty,
+.B finger
+wypisze informację dla każdego użytkownika zalogowanego w danej chwili w
+systemie.
+.PP
+.B finger
+może być wykorzystany do wyszukiwania użytkowników na odległym systemie.
+Zamiast pojedynczej nazwy użytkownika
+.I użytkownik
+podajemy
+.IR użytkownik@host ,
+lub
+.IR @host ,
+gdzie informacja w pierwszym przypadku standardowo wyświetlana jest w formacie 
+opcji 
+.BR \-l ,
+a w drugim w formacie opcji
+.BR \-s .
+Opcja
+.B \-l
+jest jedyną opcją jaka może być przekazana odległemu systemowi.
+.SH "ZOBACZ TAKŻE"
+chfn(1), passwd(1), w(1), who(1)
+.SH HISTORIA
+Polecenie
+.B finger
+pojawiło się po raz pierwszy w BSD 3.0 

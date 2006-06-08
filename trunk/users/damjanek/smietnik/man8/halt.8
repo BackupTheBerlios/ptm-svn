@@ -1,0 +1,91 @@
+.\" {PTM/PB/0.1/02-10-1998/"bele"}
+.\" Translation 1999 Przemek Borys <pborys@dione.ids.pl>
+.\" Aktualizacja do wersji zawartej w SysVinit-2.82 - listopad 2001
+.\"		Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"{{{}}}
+.\"{{{  Title
+.TH HALT 8 "24 sierpnia 1999" "" "Podręcznika administratora Linuksa"
+.\"}}}
+.\"{{{  Name
+.SH NAZWA
+halt, reboot, poweroff \- zatrzymanie systemu
+.\"}}}
+.\"{{{  Synopsis
+.SH SKŁADNIA
+.B /sbin/halt
+.RB [ \-n ]
+.RB [ \-w ]
+.RB [ \-d ]
+.RB [ \-f ]
+.RB [ \-i ]
+.RB [ \-p ]
+.br
+.B /sbin/reboot
+.RB [ \-n ]
+.RB [ \-w ]
+.RB [ \-d ]
+.RB [ \-f ]
+.RB [ \-i ]
+.br
+.B /sbin/poweroff
+.RB [ \-n ]
+.RB [ \-w ]
+.RB [ \-d ]
+.RB [ \-f ]
+.RB [ \-i ]
+.\"}}}
+.\"{{{  Description
+.SH OPIS
+\fBHalt\fP zaznacza w pliku \fB/var/log/wtmp\fP,
+że system jest zamykany, a następnie zleca jądru zatrzymanie systemu, jego
+restart lub wyłączenie komputera. Jeśli podczas wywołania polecenia \fIhalt\fP
+lub \fIreboot\fP system nie znajduje się w trybie pracy (runlevel) \fB0\fP
+ani \fB6\fP, to zamiast tego zostanie wywołany \fIshutdown\fP (z parametrem
+\fB-h\fP lub \fB-r\fP).
+.\"}}}
+.\"{{{  Options
+.SH OPCJE
+.IP \fB\-n\fP
+Nie wykonuje sync (opróżniania buforów na dysk) przed restartem lub
+zatrzymaniem.
+.IP \fB\-w\fP
+Nie restartuje ani nie zatrzymuje systemu naprawdę, lecz zapisuje tylko rekord
+wtmp (w pliku \fB/var/log/wtmp\fP).
+.IP \fB\-d\fP
+Nie zapisuje rekordu wtmp. Opcja \fB\-n\fP implikuje \fB\\-d\fP.
+.IP \fB\-f\fP
+Wymusza zatrzymanie lub restart, nie wywołuje \fBshutdown\fP(8).
+.IP \fB\-i\fP
+Bezpośrednio przed zatrzymaniem systemu lub restartem wyłącza wszystkie
+interfejsy sieciowe.
+.IP \fB\-p\fP
+W przypadku zatrzymywania systemu wyłącza komputer. Jest to domyślne
+zachowanie, gdy halt jest wołany jako \fBpoweroff\fP.
+.\"}}}
+.\"{{{  Diagnostics
+.SH DIAGNOSTYKA
+Użytkownik nie będący superużytkownikiem otrzyma komunikat `must be superuser'
+(trzeba być superużytkownikiem).
+.\"}}}
+.\"{{{  Notes
+.SH UWAGI
+We wcześniejszych wersjach \fBsysvinit\fP,  ani \fIreboot\fP ani \fIhalt\fP
+nie powinny być wywoływane bezpośrednio. Począwszy od wersji 2.74, polecenia
+\fIhalt\fP i \fIreboot\fP wywołują \fIshutdown\fP, o ile system nie znajduje
+się w trybie 0 ani 6. Oznacza to, że jeżeli \fBhalt\fP lub \fBreboot\fP nie
+będą mogły określić aktualnego trybu pracy (na przykład, gdy nie zostanie
+prawidłowo zainicjalizowany \fI/var/run/utmp\fP), to zostanie wywołany
+\fBshutdown\fP. Takie zachowanie może różnić się od oczekiwanego.
+W celu uzyskania twardego \fBhalt\fP lub \fBreboot\fP, należy użyć opcji
+\fB-f\fP.
+.PP
+.\"}}}
+.\"{{{  Author
+.SH AUTOR
+Miquel van Smoorenburg, miquels@cistron.nl
+.\"}}}
+.\"{{{  See also
+.SH "ZOBACZ TAKŻE"
+.BR shutdown (8),
+.BR init (8)
+.\"}}}

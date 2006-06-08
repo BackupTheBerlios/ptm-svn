@@ -1,0 +1,304 @@
+.\" {PTM/PB/0.1/02-03-1999/"Skrypt automatyzujący dialogi z modemem"}
+.\" Translation 1999 Przemek Borys <pborys@dione.ids.pl>
+.\" Tekst beznadziejnie wodolejski... :-/
+.\" -*- nroff -*-
+.\" manual page [] for chat 1.8
+.\" $Id: chat.8,v 1.7 2000/10/22 16:15:32 wojtek2 Exp $
+.\" SH section heading
+.\" SS subsection heading
+.\" LP paragraph
+.\" IP indented paragraph
+.\" TP hanging label
+.TH CHAT 8 "5 Maj 1995" "Chat Wersja 1.9"
+.SH NAZWA
+chat \- Zautomatyzowany skrypt dialogu z modemem
+.SH SKŁADNIA
+.B chat
+[
+.I options
+]
+.I script
+.SH OPIS
+.LP
+Program \fIchat\fR definiuje wymianę rozmów między komputerem a modemem.
+Jego głównym celem jest zestawianie połączeń pomiędzy demonem Point-To-Point
+(\fIpppd\fR), a procesem \fIpppd\fR drugiego końca.
+.SH OPCJE
+.TP
+.B -f \fI<chat file>
+Odczytaj skrypt rozmowy z pliku \fIfile\fR. Używanie tej opcji wyklucza
+parametry skryptowe rozmowy. Użytkownik musi mieć prawa do odczytu tego pliku.
+Dozwolonych jest wiele linii w pliku. Do oddzielania napisów powinny być
+używana spacja lub tabulacja.
+.TP
+.B -t \fI<timeout>
+Ustaw timeout dla odbioru oczekiwanego napisu. Jeśli napis nie zostanie
+odebrany w limicie czasowym, to napis odpowiedzi nie jest wysyłany. Może
+być natomiast wysłana alternatywna odpowiedź, lub skrypt może zostać
+przerwany w wypadku braku takiej alternatywy. Chat zakończy wtedy działanie,
+zwracając niezerowy kod błędu.
+.TP
+.B -r \fI<report file>
+Ustaw plik dla wyjścia napisów raportujących. Jeżeli używasz słowa
+kluczowego \fIREPORT\fR, napisy wynikowe są zapisywane do tego pliku. Jeśli
+opcja ta nie jest używana, możesz i tak używać słów \fIREPORT\fR, które
+użyją pliku \fIstderr\fR.
+.TP
+.B -v
+Żądaj uruchomienia skryptu \fIchat\fR w trybie verbose (gadatliwym). Program
+\fIchat\fR będzie wtedy logował wszystkie teksty uzyskane od modemu, a także
+te, które sam wysyła. Logi wysyłane są do SYSLOG.
+.TP
+.B -V
+Żądaj uruchomienia skryptu \fIchat\fR w trybie verbose (gadatliwym), ale na
+stderr. (tym się to różni od powyższego). Urządzenie to jest zwykle lokalną
+konsolą stacji uruchamiającej program chat lub pppd. Opcja ta nie będzie
+działać prawidłowo, jeśli stderr jest przekierowane na /dev/null, co ma
+miejsce gdy pppd działa w trybie `detached' (odłączonym od konsoli). W tym
+wypadku użyj opcji `-v' do zapisywania sesji na urządzeniu SYSLOG.
+.TP
+.B script
+Jeśli skrypt nie jest podany opcją \fI-f\fR w pliku, to skrypt script jest
+włączany jako parametry programu \fIchat\fR.
+.SH SKRYPT ROZMOWY
+.LP
+Skrypt rozmowy definiuje komunikację.
+.LP
+Skrypt składa się z jednej lub większej ilości par napisów
+"oczekuj-wysyłaj", oddzielonych spacjami z ewentualnymi dodatkowymi parami
+"podoczekuj-podwysyłaj", oddzielonymi kreską, jak w przykładzie:
+.IP
+ogin:-BREAK-ogin: ppp ssword: hello2u2
+.LP
+Znaczy to, że \fIchat\fR powinien oczekiwać napisu "ogin:". Jeśli to
+zawiedzie (nastąpi timeout), to wysyła na drugi koniec sekwencję przerwania
+(break) i oczekuje napisu "ogin:". Jeśli jednak pierwszy "ogin:" zostanie
+odebrany, sekwencja przerwania nie jest wysyłana.
+.LP
+Gdy już uzyskaliśmy prompt logina, \fIchat\fR spróbuje wysłać napis ppp i
+oczekiwać na prompt "ssword:". Gdy odczyta ten prompt, to wyśle hasło,
+hello2u2.
+.LP
+Na zakończenie napisu odpowiedzi zwykle wysyłany jest CR. Nie jest on
+oczekiwany w napisie "oczekiwania", chyba że jest specyficznie wskazany,
+przez użycie sekwencji \\r.
+.LP
+Sekwencja oczekiwania powinna zawierać tylko to, co potrzebne do
+zidentyfikowania napisu. Ponieważ normalnie jest przechowywana na dysku,
+nie powinna zawierać informacji zmiennych. Generalnie nie jest akceptowane
+podglądanie napisów czasowych, identyfikacji sieci, lub innych zmiennych
+jako sekwencji oczekiwanej.
+.LP
+Aby pomóc poprawić znaki, które mogą być zmienione w sekwencji początkowej,
+oczekuj raczej napisu "ogin:" niż "login:". Jest możliwe, że początkowy
+znak będzie odebrany z błędem, a wtedy możesz nigdy nie znaleźć oczekiwanego
+napisu, chociaż został on wysłany przez system. Z tego powodu, skrypty
+oczekują "ogin:" zamiast "login:" i "ssword:" zamiast "password".
+.LP
+Bardzo prosty skrypt może wyglądać następująco:
+.IP
+ogin: ppp ssword: hello2u2
+.LP
+Innymi słowy, oczekuj ....ogin:, wyślij ppp, oczekuj ...ssword:, wyślij
+hello2u2.
+.LP
+W rzeczywistości proste skrypty są raczej rzadkie. Przynajmniej powinieneś
+załączyć sekwencje "pod-oczekiwania". Np. rozważ następujący skrypt:
+.IP
+ogin:--ogin: ppp ssword: hello2u2
+.LP
+Byłby to lepszy skrypt niż poprzedni. Oczekiwałby na ten sam prompt login:,
+lecz gdyby go nie odebrał, wysłałby sekwencję powrotu i oczekiwał dalej.
+Gdyby więc szum linii zniekształcił pierwszy prompt, to późniejsze
+przesłanie pustej linii zazwyczaj wygeneruje nowy prompt.
+.SH STRINGI PRZERWANIA (ABORT)
+Wiele modemów raportuje status połączenia jako napisy. Napisy te to np.
+\fBCONNECTED\fR, \fBNO CARRIER\fR, lub \fBBUSY\fR. Często jest właściwym
+wyłączenie skryptu, jeśli modem nie połączy się z drugim końcem. Przy jednej
+próbie może odebrać \fBBUSY\fR, podczas gdy następnym razem zdarzyć się może
+\fBNO CARRIER\fR.
+.LP
+Te napisy "przerywania" mogą być podane w skrypcie przy użyciu sekwencji
+\fIABORT\fR. Jest to zapisane w poniższym przykładzie:
+.IP
+ABORT BUSY ABORT 'NO CARRIER' '' ATZ OK ATDT5551212 CONNECT
+.LP
+Sekwencja ta nie będzie niczego oczekiwać; później wyśle ATZ. Oczekiwaną
+odpowiedzią jest \fIOK\fR. Po odebraniu \fIOK\fR, wysyłany jest napis
+ATDT5551212, wykręcający numer telefonu. Oczekiwanym napisem jest
+\fICONNECT\fR. Jeśli odebrany zostanie napis \fICONNECT\fR, to reszta
+skryptu jest wykonywana. Jednak jeśli modem spotka się z zajętą linią, to
+wyśle napis \fIBUSY\fR. Napis ten będzie odpowiadał sekwencji
+przerwania. Skrypt wtedy zakończy działanie, ponieważ uzyskał rozkaz
+przerwania. Podobnie będzie, gdy skrypt uzyska napis \fINO CARRIER\fR.
+
+.SH STRINGI RAPORTOWE
+Napis raportowy jest bardzo podobny do napisu przerywania. Różnica
+polega na tym, że napisy i wszystkie znaki do następującego znaku
+sterującego, takiego jak CR, są wypisywane w pliku raportu.
+.LP
+Napisy raportu mogą być używane do izolowania ze napisu połączenia ciągu
+określającego szybkość transmisji i zwracania wartości użytkownikowi.
+Analiza logiki napisu raportowego występuje w połączeniu z innym
+przetwarzaniem napisu, takim jak podglądanie napisu oczekiwanego. Użycie
+tego samego napisu jako przerywający i raportowy, prawdopodobnie nie jest
+zbyt użyteczne, jednak jest możliwe.
+.LP
+Napisy raportowe nie wpływają na kod zakończenia programu.
+.LP
+Napisy raportowe mogą być podawane w skrypcie przy użyciu sekwencji
+\fIREPORT\fR. Jest to zapisywane w skrypcie jak w następującym przykładzie.
+.IP
+REPORT CONNECT ABORT BUSY '' ATDT5551212 CONNECT '' ogin: account
+.LP
+Sekwencja ta nie będzie oczekiwać niczego; a potem wyśle napis ATDT5551212,
+wykręcający numer telefonu. Oczekiwanym napisem jest \fICONNECT\fR. Jeśli
+napis ten jest odebrany, wykonywana jest reszta skryptu. Dodatkowo, program
+wydrukuje do oczekującego pliku napis \fICONNECT\fR plus dodatkowo znaki,
+które za nim podążały, takie jak szybkość połączenia.
+.SH TIMEOUT
+Początkowa wartość timeoutu to 45 sekund. Może to być zmienione przy użyciu
+parametru \fB-t\fR.
+.LP
+Aby zmienić wartość timeoutu dla następnego z oczekiwanych napisów, można
+użyć następującego przykładu:
+.IP
+ATZ OK ATDT5551212 CONNECT TIMEOUT 10 ogin:--ogin: TIMEOUT 5 assowrd: hello2u2
+.LP
+Zmieni to timeout na 10 sekund podczas oczekiwania promptu login:. Następnie
+timeout jest zmieniany na 5 sekund, podczas oczekiwania na prompt password:.
+.LP
+Zmieniony timeout pozostaje efektywny aż do następnej zmiany.
+.SH WYSYŁANIE EOT
+Specjalny napis odpowiedzi, \fIEOT\fR, wskazuje, że program chat powinien
+wysłać znak EOT na drugi koniec. Normalnie jest to sekwencja End-of-file.
+Nie przesyłany jest po niej znak return.
+.PR
+Sekwencja EOT może być załączona do wysyłanego napisu przy użyciu sekwencji
+\fI^D\fR.
+.SH GENEROWANIE PRZERWANIA (BREAK)
+Specjalny napis odpowiedzi, \fIBREAK\fR, spowoduje wysłanie warunku
+przerwania. Sygnał ten jest specjalnym sygnałem. Normalną akcją u
+odbierającego go jest zmiana szybkości transmisji. Może być używany do
+przeskakiwania przez dostępne szybkości transmisji, aż będzie można odebrać
+prawidłowy prompt logina.
+.PR
+Sekwencja przerwania może być załączona do wysyłanego napisu przy użyciu
+sekwencji \fI\\K\fR.
+.SH SEKWENCJE ESKEJPOWE
+Napisy oczekiwania i odpowiedzi mogą zawierać sekwencje eskejpowe.
+Wszystkie sekwencje są legalne w napisie odpowiedzi. Wiele jest legalnych w
+napisie oczekiwania. Te, które nie są legalne w sekwencji oczekiwania, są
+zaznaczone.
+.TP
+.B ''
+Oczekuje lub wysyła napis zerowy. Jeśli wysyłasz napis zerowy, to wysyłany
+będzie znak return. Sekwencja ta może być zarówno parą apostrofów, jak i
+znaków cytowania.
+.TP
+.B \\\\b
+reprezentuje znak backspace.
+.TP
+.B \\\\c
+Powstrzymuje generowanie nowej linii na końcu napisu odpowiedzi. Jest to
+jedyna metoda wysyłania napisu bez kończącego go znaku return. Musi być
+wysyłana na końcu napisu. Na przykład sekwencja
+hello\\c prześle po prostu znaki h, e, l, l, o.
+.I (nie używane w napisie oczekiwania)
+.TP
+.B \\\\d
+Zatrzymaj się na sekundę. Program użyj sleep(1), który zatrzyma się
+maksymalnie na sekundę.
+.I (nie używane w napisie oczekiwania)
+.TP
+.B \\\\K
+Wstaw BREAK
+.I (nie używane w napisie oczekiwania)
+.TP
+.B \\\\n
+Prześlij znak nowej linii.
+.TP
+.B \\\\N
+Prześlij znak null. Ta sama sekwencja może być reprezentowana przez \\0.
+.I (nie używane w napisie oczekiwania)
+.TP
+.B \\\\p
+Pauzuj na część sekundy. Opóźnienie wynosi 1/10 sekundy.
+.I (nie używane w sekwencji oczekiwania)
+.TP
+.B \\\\q
+Zabroń zapisywania napisu do pliku SYSLOG. Do logu w jego miejscu wpisywany
+jest napis ???????.
+.I (nie używane w sekwencji oczekiwania)
+.TP
+.B \\\\r
+Wyślij lub oczekuj CR.
+.TP
+.B \\\\s
+Reprezentuje znak spacji w napisie. Może to być używane, gdy nie jest
+pożądanym cytowanie napisów zawierających spacje. Sekwencje 'HI TIM' 
+i HI\\sTIM są identyczne.
+.TP
+.B \\\\t
+Wyślij lub oczekuj znaku tabulacji.
+.TP
+.B \\\\\\\\
+Wyślij lub oczekuj znaku odwrotnego ukośnika.
+.TP
+.B \\\\ddd
+Przekształć ósemkowe cyfry (ddd) w pojedynczy znak ASCII i wyślij ten znak.
+.I (niektóre znaki nie są używane w sekwencji oczekiwania)
+.TP
+.B \^^C
+Podmień sekwencję znakiem sterującym (z Ctrl) reprezentowanym przez C. 
+Na przykład znak DC1 (17) jest pokazywany jako \^^Q.
+.I (niektóre znaki nie są używane w sekwencji oczekiwania)
+.SH KODY ZAKOŃCZENIA
+Program \fIchat\fR kończy swoje działanie z następującymi kodami wyjścia.
+.TP
+.B 0
+Normalne zakończenie programu. Znaczy to, że skrypt został wykonany bez
+błędów.
+.TP
+.B 1
+Jeden, lub więcej parametrów było nieprawidłowych, lub napis oczekiwania
+był zbyt duży dla buforów wewnętrznych. Wskazuje to, że program nie był
+prawidłowo uruchomiony.
+.TP
+.B 2
+Pojawił się błąd podczas uruchomiania programu. Może to być spowodowane
+błędem operacji odczytu lub zapisu, lub odebraniem przez program sygnału
+takiego, jak SIGINT.
+.TP
+.B 3
+Nastąpiło zdarzenie timeoutu dla napisu oczekiwania, który nie miał napisu
+"pod-wysłania". Może to oznaczać, że nie zaprogramowałeś właściwie skryptu na
+ten warunek, lub że pojawiło się jakieś nieoczekiwane zdarzenie i oczekiwany
+napis nie mógł zostać znaleziony.
+.TP
+.B 4
+Pojawił się pierwszy napis zaznaczony jako warunek \fIABORT\fR.
+.TP
+.B 5
+Pojawił się drugi napis zaznaczony jako warunek \fIABORT\fR.
+.TP
+.B 6
+Pojawił się trzeci napis zaznaczony jako warunek \fIABORT\fR.
+.TP
+.B 7
+Pojawił się czwarty napis zaznaczony jako warunek \fIABORT\fR.
+.TP
+.B ...
+Inne kody wyjścia są również napisami zaznaczonymi jako \fIABORT\fR.
+.LP
+Używając kodu wyjścia, możliwym jest określenie, które zdarzenie zakończyło
+skrypt. Jest możliwym określenie czy modem otrzymał np. napis "BUSY" czy
+"NO DIALTONE". Podczas gdy pierwsze zdarzenie wymaga drugiej próby, drugie w
+ten sposób może mieć mniejsze szanse.
+.SH ZOBACZ TAKŻE
+Dodatkowe informacje o skryptach \fIchat\fR można znaleźć w dokumentacji
+UUCP.
+.LP
+uucico(1), uucp(1)
+.SH COPYRIGHT
+Program \fIchat\fR jest w public domain. Nie jest to licencja GNU.

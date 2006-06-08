@@ -1,0 +1,134 @@
+.\" {PTM/AB/0.1/15-12-1998/"drand48, erand48, lrand48, nrand48, mrand48, jrand48, srand48, seed48, lcong48 - generowanie jednolicie rozłożonych liczb pseudolosowych"}
+.\" tłumaczenie Adam Byrtek <abyrtek@priv.onet.pl>
+.\" Aktualizacja do man-pages 1.45 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:46:03 1993 by Rik Faith (faith@cs.unc.edu)
+.\" ------------
+.TH DRAND48 3 1993-07-02 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+drand48, erand48, lrand48, nrand48, mrand48, jrand48, srand48, seed48,
+lcong48 \- generowanie jednolicie rozłożonych liczb pseudolosowych
+.SH SKŁADNIA
+.nf
+.B #include <stdlib.h>
+.sp
+.B double drand48(void);
+.sp
+.BI "double erand48(unsigned short " xsubi [3]);
+.sp
+.B long int lrand48(void);
+.sp
+.BI "long int nrand48(unsigned short " xsubi [3]);
+.sp
+.B long int mrand48(void);
+.sp
+.BI "long int jrand48(unsigned short " xsubi [3]);
+.sp
+.BI "void srand48(long int " seedval );
+.sp
+.BI "unsigned short *seed48(unsigned short " seed16v [3]);
+.sp
+.BI "void lcong48(unsigned short " param [7]);
+.fi
+.SH OPIS
+Funkcje te generują liczby pseudolosowe korzystając z liniowego algorytmu
+kongruencyjnego i 48-bitowej arytmetyki liczb całkowitych.
+.PP
+Funkcje \fBdrand48()\fP i \fBerand48()\fP zwracają nieujemne
+zmiennoprzecinkowe wartości podwójnej precyzji równomiernie rozłożone w
+przedziale [0.0, 1.0].
+.PP
+Funkcje \fBlrand48()\fP i \fBnrand48()\fP zwracają nieujemne wartości long
+integer równomiernie rozłożone w przedziale pomiędzy 0 a 2^31.
+.PP
+Funkcje \fBmrand48()\fP i \fBjrand48()\fP zwracają wartości long integer ze
+znakiem równomiernie rozłożone w przedziale pomiędzy \-2^31 a 2^31.
+.PP
+Funkcje \fBsrand48()\fP, \fBseed48()\fP i \fBlcong48()\fP to funkcje
+inicjujące. Jedna z nich powinna zostać wywołana przed użyciem funkcji
+\fBdrand48()\fP, \fBlrand48()\fP czy \fBmrand48()\fP. Funkcje
+\fBerand48()\fP, \fBnrand48()\fP i \fBjrand48()\fP nie wymagają
+wcześniejszego wywołania funkcji inicjującej.
+.PP
+Wszystkie te funkcje generują ciąg 48-bitowych liczb całkowitych \fIXi\fP,
+według liniowego wzoru kongruencyjnego:
+.sp
+.nf
+.RS
+.B Xn+1 = (aXn + c) mod m,   gdzie n >= 0
+.RE
+.fi
+.sp
+Parametr \fIm\fP = 2^48, jako że korzystamy z 48-bitowej arytmetyki. Jeśli
+nie wywołano \fBlcong48()\fP, \fIa\fP i \fIc\fP są zadane jako:
+.sp
+.nf
+.RS
+.B a = 0x5DEECE66D
+.B c = 0xB
+.RE
+.fi
+.sp
+Wartość zwracana przez każdą z funkcji \fBdrand48()\fP, \fBerand48()\fP,
+\fBlrand48()\fP, \fBnrand48()\fP, \fBmrand48()\fP czy \fBjrand48()\fP jest
+obliczana poprzez wygenerowanie następnego 48-bitowego \fIXi\fP z ciągu, a
+następnie skopiwanie odpowiedniej ilości bardziej znaczących bitów \fIXi\fP,
+zależnej od zwracanego typu danych, i przekształcenie ich w zwracaną wartość.
+.PP
+Funkcje \fBdrand48()\fP, \fBlrand48()\fP i \fBmrand48()\fP przechowują
+ostatnią 48-bitową wartość \fIXi\fP w wewnętrznym buforze. Funkcje
+\fBerand48()\fP, \fBnrand48()\fP i \fBjrand48()\fP wymagają od wywołującego je
+programu zapawnienia miejsca dla kolejnych wartości \fIXi\fP w tablicy
+\fIxsubi\fP podanej jako argument. Te funkcje są inicjowane poprzez
+umieszczenie w tablicy początkowych wartości \fIXi\fP przed pierwszym
+wywołaniem funkcji.
+.PP
+Funkcja inicjująca \fBsrand48()\fP wpisuje wartość argumentu \fIseedval\fP do
+\fIXi\fP, ustawiając 32 bardziej znaczące bity. Mniej znaczącym 16 bitom
+zawsze nadawana jest wartość 0x330E.
+.PP
+Funkcja inicjująca \fBseed48()\fP zmienia wartość \fIXi\fP na 48-bitową
+wartość podana w tablicy \fIseed16v\fP. Poprzednia wartość \fIXi\fP jest
+kopiowana do wewnętrznego bufora, a wskaźnik do tego bufora jest zwracany
+przez funkcję \fBseed48()\fP.
+.PP
+Funkcja inicjująca \fBlcong48()\fP pozwala określić początkowe wartości dla
+\fIXi\fP, \fIa\fP oraz \fIc\fP. Elementy tablicy \fIparam[0-2]\fP określają
+\fIXi\fP, \fIparam[3-5]\fP określają \fIa\fP, a \fIparam[6]\fP określa
+\fIc\fP. Po wywołaniu \fBlcong48()\fP każde następne wywołanie
+\fBsrand48()\fP czy \fBseed48()\fP przywróci standardowe wartości \fIa\fP i
+\fIc\fP.
+.SH "ZGODNE Z"
+SVID 3
+.SH UWAGI
+Te funkcje są uznane przez SVID 3 za przestarzałe, zamiast nich powinna być
+używana funkcja rand(3).
+.SH "ZOBACZ TAKŻE"
+.BR rand (3),
+.BR random (3)

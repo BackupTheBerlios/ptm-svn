@@ -1,0 +1,67 @@
+.\" {PTM/LK/0.1/08-10-1998/"zakończenie procesu"}
+.\" Tłumaczenie: 08-10-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.\" Copyright 1994 Salvatore Valente (svalente@mit.edu)
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH KILL 1 "14 października 1994" "Programy użytkowe" "Instrukcja Programisty Linuksa"
+.SH NAZWA
+kill \- zakończ proces
+.SH SKŁADNIA
+.BR "kill" " [ \-s sygnał | \-p ] " " [ -a ] " "pid ..."
+.br
+.B "kill -l [ sygnał ]"
+.SH OPIS
+.B kill
+wysyła podany sygnał do danego procesu. Jeżeli nie podano numeru sygnału,
+wysyłany jest sygnał TERM. Sygnał TERM kończy te procesy, które go nie
+przechwytują. Dla innych procesów niezbędne może się okazać użycie sygnału
+KILL (9), ponieważ nie może on zostać przechwycony.
+
+Większość nowoczesnych powłok posiada wbudowane polecenie kill.
+.SH OPCJE
+.TP
+.BR "pid ..."
+Lista procesów, które mają być zakończone. Każda opcja
+.I pid
+może być jedną z następujących:
+.IR "nazwa procesu" ,
+wówczas sygnał zostanie wysłany do nazwanego procesu.
+.IR n ,
+gdzie
+.I n
+jest liczbą większą od zera. Sygnał zostanie wysłany do procesu, którego
+pid jest równy
+.IR n .
+.IR -1 ,
+w którym to przypadku sygnał zostanie wysłany do wszystkich procesów o
+numerach pid o wartościach od MAX_INT do 2, jeżeli pozwalają na to
+uprawnienia użytkownika.
+.\" (przyp. tłum.) to był oryginalny tekst; moim zdaniem o to chodziło ^^^
+.\" as allowed by the issuing user.
+.IR -n ,
+gdzie n jest większe od 1; sygnał zostanie wysłany do wszystkich procesów
+należących do grupy o numerze
+.IR n .
+Jeżeli 
+.I n
+jest ujemne, musi przed nim wystąpić numer sygnału \- w przeciwnym wypadku
+numer grupy zostanie potraktowany jako numer sygnału do wysłania.
+.TP
+.BR \-s
+Rodzaj wysyłanego sygnału. Może być podany jako nazwa lub numer.
+.TP
+.BR \-p
+Polecenie wypisze jedynie numery procesów (pid), do których zostałby wysłany
+sygnał, zamiast go rzeczywiście wysyłać.
+.TP
+.BR \-l
+Wypisz listę nazw sygnałów. Znajduje się ona w pliku
+.I /usr/include/linux/signal.h
+.SH "ZOBACZ TAKŻE"
+.BR bash (1),
+.BR tcsh (1),
+.BR kill (2),
+.BR sigvec (2)
+.SH AUTOR
+Program pochodzi z BSD 4.4. Możliwość tłumaczenia nazw procesów na ich
+numery została dodana przez Salvatore Valente <svalente@mit.edu>.

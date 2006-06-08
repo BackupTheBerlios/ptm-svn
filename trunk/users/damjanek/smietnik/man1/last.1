@@ -1,0 +1,78 @@
+.\" {PTM/WK/1999-XII}
+.TH LAST,LASTB 1 "28 marca 1998" "" "Podręcznik Administratora Linuksa"
+.SH NAZWA
+last, lastb \- pokaż listę ostatnio zalogowanych użytkowników
+.SH SKŁADNIA
+.TP
+.B last
+.RB [ \-R ]
+.RI [ \fB\-\fPnum ]
+.RB [ \-n \fInum\fP]
+.RB [ \-adox ]
+.RB [ \-f
+.IR plik ]
+.RI [ nazwa... ]
+.RI [ tty... ]
+.TP
+.B lastb
+.RB [ \-R ]
+.RI [ \fB\-\fPnum ]
+.RB [ \-n \fInum\fP]
+.RB [ \-adox ]
+.RB [ \-f
+.IR plik ]
+.RI [ nazwa... ]
+.RI [ tty... ]
+.SH OPIS
+.B Last
+przeszukuje wstecz plik \fB/var/log/wtmp\fP (lub plik wskazany flagą \fB\-f\fP)
+i wyświetla listę wszystkich zalogowanych (i wylogowanych) od czasu utworzenia
+pliku użytkowników. Mogą zostać podane nazwy użytkowników i terminali (tty);
+w tym przypadku \fBlast\fP pokaże jedynie zapisy pasujące do tych argumentów.
+Nazwy terminali mogą być skracane, zatem \fBlast 0\fP, to to samo, co
+\fBlast tty0\fP.  
+.PP
+Gdy \fBlast\fP przechwyci sygnał \s-2SIGINT\s0 (generowany przez klawisz
+przerwania, zwykle control-C) lub sygnał \s-2SIGQUIT\s0 (generowany przez
+klawisz zakończenia, zwykle control-\e), pokaże jak daleko przeszukał plik;
+następnie, w przypadku sygnału \s-2SIGINT\s0, \fBlast\fP przerwie pracę.
+.PP
+Pseudoużytkownik \fBreboot\fP rejestrowany jest przy każdorazowym przeładowaniu
+systemu. Zatem \fBlast reboot\fP pokaże rejestr (log) wszystkich przeładowań
+od utworzenia pliku rejestrującego.
+.PP
+\fBLastb\fP jest tym samym, co \fBlast\fP, z wyjątkiem tego, że domyślnie
+pokazuje zapisy z pliku \fB/var/log/btmp\fP, zawierającego zakończone
+niepowodzeniem próby logowań.
+.SH OPCJE
+.IP \fB\-\fP\fInum\fP
+Liczba mówiąca \fBlast\fP, ile wierszy ma pokazać.
+.IP "\fB\-n\fP \fInum\fP"
+To samo.
+.IP \fB\-R\fP
+Nie wyświetlaj pola z nazwą hosta.
+.IP \fB\-a\fP
+Wyświetlaj nazwę hosta w ostatniej kolumnie. Przydatne w połączeniu z następną
+flagą.
+.IP \fB\-d\fP
+Dla logowań nie-lokalnych Linux przechowuje nie tylko nazwę zdalnego hosta,
+ale i jego numer IP. Opcja ta przekłada numer IP z powrotem na nazwę hosta.
+.IP \fB\-o\fP
+Czyta plik wtmp starego typu (zapisany przez aplikacje linux-libc5).
+.IP \fB\-x\fP
+Wyświetla zapisy o zamknięciach systemu i zmianach jego poziomów pracy.
+.SH UWAGI
+Mogą nie zostać odnalezione pliki \fIwtmp\fP i \fIbtmp\fP. System rejestruje
+informacje w tych plikach tylko wtedy, gdy istnieją. Wynika to z lokalnej
+konfiguracji. Jeśli chcesz, by były one używane, możesz je utworzyć po prostu
+poleceniem \fBtouch\fP(1) (na przykład, \fItouch /var/log/wtmp\fP).
+.SH PLIKI
+.I /var/log/wtmp
+.br
+.I /var/log/btmp
+.SH AUTOR
+Miquel van Smoorenburg, miquels@cistron.nl
+.SH "ZOBACZ TAKŻE"
+.BR shutdown (8),
+.BR login (1),
+.BR init (8).

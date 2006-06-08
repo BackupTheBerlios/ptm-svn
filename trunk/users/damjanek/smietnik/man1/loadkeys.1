@@ -1,0 +1,155 @@
+.\" {PTM/PB/0.1/28-09-1998/"ładuj tablice translacji klawiatury"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" Aktualizacja do wersji kbd-1.06 - listopad 2001
+.\"              Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" @(#)loadkeys.1
+.TH LOADKEYS 1 "6 lutego 1994"
+.SH NAZWA
+loadkeys \- ładowanie tablic translacji klawiatury
+.SH SKŁADNIA
+.B loadkeys
+[
+.I -c --clearcompose
+] [
+.I -d --default
+] [
+.I -h --help
+] [
+.I -m --mktable
+] [
+.I -s --clearstrings
+] [
+.I -v --verbose
+] [
+.I nazwapliku...
+]
+.LP
+.SH OPIS
+.IX "loadkeys command" "" "\fLloadkeys\fR command"  
+.LP
+Program
+.B loadkeys
+odczytuje plik lub pliki podane przez
+.I nazwapliku...
+Jego głównym przeznaczeniem jest załadowanie tablicy klawiaturowej dla
+konsoli.
+.SH "PRZYWRÓCENIE USTAWIEŃ DOMYŚLNYCH"
+Jeśli podana jest opcja
+.I -d
+(lub
+.I --default
+) ,
+.B loadkeys
+ładuje domyślną tablicę klawiaturową, najprawdopodobniej jako plik
+.IR defkeymap.map ,
+znajdujący się w
+.I /usr/share/keymaps
+albo w
+.IR /usr/src/linux/drivers/char .
+(Prawdopodobnie pierwsza jest definiowana przez użytkownika, podczas gdy druga
+jest tablicą klawiaturową typu qwerty dla PC - raczej nie tą, która jest
+pożądana.) Czasami, po załadowaniu dziwnej tablicy klawiaturowej (z minusem
+osiągalnym poprzez dziwną, nieznaną kombinację modyfikatorów) prościej jest
+wpisać `loadkeys defkeymap'.
+.SH "ZAŁADOWANIE TABLICY KLAWIATURY"
+Główną rolą 
+.B loadkeys
+jest załadowanie lub modyfikacja tablic translacji dla sterownika klawiatury.
+Podając nazwy plików, standardowe wejście można podać jaki myślnik (-). Jeśli
+nazwa pliku nie zostanie podana, dane będą czytane ze standardowego wejścia.
+.LP
+Dostępne są gotowe tablice klawiaturowe dla wielu krajaów i dla różnych
+rodzajów klawiatur tak, że polecenie typu `loadkeys uk' może zrobić to, czego
+oczekujesz. Z drugiej strony, łatwo jest skonstruować swoją własną tablicę
+klawiaturową. Użytkownik musi podać jakie symbole mają być przypisane
+poszczególnym klawiszom. Może on znaleźć kody klawiszy za pomocą
+.BR showkey (1),
+podczas gdy format tablicy klawiaturowej jest podany w
+.BR keymaps (5)
+a można go również zobaczyć jako wynik polecenia
+.BR dumpkeys (1).
+.SH "ZAŁADOWANIE TABLICY AKCENTÓW"
+Jeśli plik wejściowy nie zawiera definicji klawiszy kompozycji (compose keys),
+tablica akcentów pozostaje bez zmian, chyba że podana zostanie opcja
+.I -c
+(lub
+.I --clearcompose
+), która powoduje wyczyszczenie tablicy akcentów. Gdy plik wejściowy nie
+zawiera definicji klawiszy kompozycji, to wszystkie stare definicje zostaną
+usunięte i zastąpione podanymi nowymi wpisami. Tablica akcentów jest ciągiem
+(domyślnie 68) wpisów określających jak się zachowują martwe znaki
+diakrytyczne i klawisze kompozycji.
+Na przykład linia
+.LP
+.RS
+compose ',' 'c' to ccedilla
+.RE
+.LP
+oznacza, że należy połączyć <ComposeKey><,><c> w <ccedilla>. Aktualną
+zawartość tej  tablicy można obejrzeć a pomocą `dumpkeys --compose-only'.
+.SH "ZAŁADOWANIE TABLICY ŁAŃCUCHÓW"
+Opcja
+.I -s
+(lub
+.I --clearstrings
+) czyści tablicę napisów (łańcuchów znakowych) w jądrze. Jeśli ta opcja nie
+zostanie podana,  
+.B loadkeys
+tylko doda, lub zamieni napisy, lecz ich nie usunie.
+(Zatem opcja \-s jest niezbędna dla osiągnięcia stanu dobrze zdefiniowanego.)
+Tablica łańcuchów jest ciągiem napisów o nazwach takich jak F31. Można
+spowodować, aby klawisz funkcyjny F5 (na zwykłej klawiaturze PC) powodował
+wypisanie tekstu `Hello!', a Shift+F5 `Goodbye!', za pomocą następujących
+linii w tablicy klawiaturowej:
+.LP
+.RS
+keycode 63 = F70 F71
+.br
+string F70 = "Hello!"
+.br
+string F71 = "Goodbye!"
+.RE
+.LP
+Domyślnie klawiszom funkcyjnym przypisane są pewne sekwencje eskejpowe,
+przeważnie wzorowane na terminalu VT100.
+.SH "TWORZENIE TABLICY ŹRÓDŁOWEJ"
+Jeśli podana jest opcja
+.I -m
+(lub
+.I --mktable
+), program wypisze na stdout (standardowe wyjście) zawartość pliku, który może
+zostać później użyty jako
+.IR /usr/src/linux/drivers/char/defkeymap.c ,
+określający domyślne przypisania klawiszy w jądrze.
+(i nie zmieniający aktualnych ustawień).
+.SH "INNE OPCJE"
+.TP
+.B \-h \-\-help
+.B loadkeys
+wypisze swoją wersję i krótką informację o sposobie użycia na wyjście
+standardowj diagnostyki i zakończy działanie.
+.SH OSTRZEŻENIE
+Ktokolwiek, kto ma dostęp do odczytu
+.B /dev/console
+może uruchomić
+.B loadkeys
+i zmienić rozkład klawiatury, nawet czyniąc go bezużytecznym. Zauważ,
+że tablice translacji klawiatury są wspólne dla wszystkich konsoli
+wirtualnych, więc jakiekolwiek zmiany przypisań klawiszy dotyczą
+ich wszystkich naraz.
+.LP
+Z uwagi na to, że zmiany dotyczą wszystkich konsoli wirtualnych, będą one
+obowiązywać również po zakończeniu bieżącej sesji. Oznacza to, że nawet na
+ekranie logowania przypisania klawiszy mogą być inne niż użytkownik oczekuje.
+.LP
+.SH PLIKI
+.TP
+.BI /usr/share/keymaps/
+domyślny katalog plików tablic klawiaturowych (keytables)
+.LP
+.BI /usr/src/linux/drivers/char/defkeymap.map
+domyślna tablica klawiaturowa (keymap)
+.PD
+.SH "ZOBACZ TAKŻE"
+.BR dumpkeys (1),
+.BR keymaps (5)

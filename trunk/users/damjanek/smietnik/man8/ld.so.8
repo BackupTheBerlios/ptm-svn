@@ -1,0 +1,111 @@
+.\" 1999 PTM Przemek Borys
+.\" Updated 2002 by Grzegorz Goławski <grzegol@pld.org.pl>
+.TH "ld.so" "8" "14 Marca 1998" "" ""
+.SH "NAZWA"
+ld.so/ld\-linux.so \- dynamiczny konsolidator/ładowacz
+.SH "OPIS"
+.B ld.so
+ładuje biblioteki dzielone wymagane przez program, przygotowuje
+program do uruchomienia i uruchamia go.
+.PP 
+O ile podczas kompilacji nie podano jawnie opcji
+.BR \-static ,
+wszystkie binaria linuksowe będą niekompletne i będą wymagały
+dalszego konsolidowania podczas działania.
+.PP 
+Potrzebne biblioteki dzielone są szukane w następującej kolejności:
+.IP o
+Przy użyciu zmiennej środowiskowej
+.BR LD_LIBRARY_PATH
+.RB ( LD_AOUT_LIBRARY_PATH
+dla programów a.out).
+Poza binariami suid/sgid, dla których jest to ignorowane.
+.IP o
+Z pliku buforowego
+.BR /etc/ld.so.cache
+który zawiera skompilowaną listę kandydatów, znalezionych w ścieżce
+bibliotek.
+.IP o
+W domyślnym katalogu
+.BR /usr/lib ,
+a potem w
+.BR /lib .
+.SH "ŚRODOWISKO"
+.TP 
+.B LD_LIBRARY_PATH
+Oddzielona dwukropkami lista katalogów, w których szukać bibliotek ELF
+podczas wykonywania.
+Podobne do zmiennej środowiskowej
+.BR PATH .
+.TP 
+.B LD_PRELOAD
+Oddzielona spacjami lista dodatkowych, podanych przez użytkownika bibliotek
+dzielonych ELF, którą należy załadować przed wszystkimi innmi. Umożliwia to
+wybiórczą zamianę funkcji w innych bibliotekach dzielonych. Dla plików
+binarnych ELF z ustawionym bitem setuid/setgid, ładowane będą tylko
+biblioteki ze standardowych katalogów, mające także ustawiony bit setgid.
+.TP 
+.B LD_TRACE_LOADED_OBJECTS
+Gdy zmienna ta jest obecna, sprawia, że program wypisze swoje zależności od
+bibliotek dynamicznych, tak jakby był uruchomiany przez ldd, a nie normalnie.
+.TP 
+.B LD_BIND_NOW
+Gdy zmienna ta jest obecna, sprawia, że dynamiczny konsolidator rozwiąże
+wszystkie symbole podczas startu programu, a nie wtedy gdy będzie do nich
+pierwsze odniesienie.
+.TP 
+.B LD_AOUT_LIBRARY_PATH
+Oddzielona dwukropkami lista katalogów, w których szukać bibliotek a.out
+podczas wykonywania.
+Podobne do zmiennej środowiskowej
+.BR PATH .
+.TP 
+.B LD_AOUT_PRELOAD
+Nazwa dodatkowej, podanej przez użytkownika biblioteki dzielonej a.out,
+którą należy załadować po wszystkich innych.
+Może to być uzywane do przeciążania funkcji innych bibliotek dzielonych.
+.TP 
+.B LD_NOWARN
+Powstrzymaj ostrzeżenia o bibliotekach a.out o niekompatybilnych numerach
+minorowych wersji.
+.TP 
+.B LD_KEEPDIR
+Nie ignoruj katalogu w nazwach ładowanych bibliotek a.out. Używanie tej
+opcji nie jest zalecane.
+.SH "PLIKI"
+.PD 0
+.TP 20
+.B /lib/ld.so
+Dynamiczny konsolidator/ładowacz a.out
+.TP 20
+.B /lib/ld\-linux.so.*
+Dynamiczny konsolidator/ładowacz ELF
+.TP 
+.B /etc/ld.so.cache
+Plik zawierający skompilowaną listę katalogów, w których należy szukać
+bibliotek oraz uporządkowaną listę bibliotek kandydujących.
+.TP 
+.B /etc/ld.so.preload
+Plik zawierający oddzieloną spacjami listę bibliotek dzielonych ELF, które
+mają być załadowane przed programem.
+.TP 
+.B lib*.so*
+Biblioteki dzielone
+.PD
+.SH "ZOBACZ TAKŻE"
+.BR ldd (1),
+.BR ldconfig (8).
+.SH "BŁĘDY"
+.LP 
+Obecnie,
+.B ld.so
+nie ma narzędzi do usuwania i szukania kompatybilnych lub nowszych wersji
+bibliotek.
+.PP 
+Możliwości
+.B ld.so
+dostępne są tylko dla binariów, skompilowanych przy użyciu libc w wersji
+4.4.3 lub wyższej.
+.SH "AUTORZY"
+David Engel, Eric Youngdale, Peter MacDonald, Hongjiu Lu, Linus
+Torvalds, Lars Wirzenius i Mitch D'Souza (niekoniecznie w tej kolejności).

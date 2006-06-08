@@ -1,0 +1,111 @@
+.\" {PTM/WK/1999-XII}
+.\" -*- nroff -*-
+.TH MKDOSFS 8 "27 lutego 1997" "Version 0.4"
+.SH NAZWA
+.B mkdosfs
+\- pod kontrolą Linuksa twórz system plików FAT
+.SH SKŁADNIA
+.B mkdosfs
+.RB [ \-c | \-l
+.IR filename ]
+.RB [ \-f
+.IR number-of-FATs ]
+.RB [ \-F
+.IR FAT-size ]
+.RB [ \-i
+.IR volume-id ]
+.RB [ \-m
+.IR message-file ]
+.RB [ \-n
+.IR volume-name ]
+.RB [ \-r
+.IR root-dir-entries ]
+.RB [ \-s
+.IR sectors-per-cluster ]
+.RB [ \-v ]
+.I device
+.RI [ block-count ]
+.SH OPIS
+.B mkdosfs
+służy do tworzenia, pod kontrolą Linuksa, systemu plików MS-DOS na zadanym
+urządzeniu (zwykle partycji dysku).
+By utworzyć partycję
+.BR FAT32 ,
+posłuż się opcją
+.IR "-F 32" .
+.PP
+.I device
+jest plikiem specjalnym odpowiadającym danemu urządzeniu (np. /dev/hdXX).
+.PP
+.I block-count
+jest liczbą bloków urządzenia. Jeśli pominięto, to
+.B mkdosfs
+automatycznie określa rozmiar systemu plików.
+.SH OPCJE
+.TP
+.B \-c
+Sprawdź obecność błędnych bloków na urządzeniu przed tworzeniem systemu plików.
+.TP
+.BI \-f " number-of-FATs"
+Określ liczbę tablic alokacji plików (FAT) w systemie plików. Domyślnie 2.
+Obecnie linuksowy system plików MS-DOS nie obsługuje więcej niż dwu tablic
+FAT.
+.TP
+.BI \-F " FAT-size"
+Określa typ używanej tablicy alokacji plików (12-, 16-, lub 32-bitowa). Opcja
+wymagana do utworzenia partycji
+.BR FAT32 .
+W przeciwnym razie, nie jest zwykle przydatna, gdyż
+.B mkdosfs
+automatycznie wybiera zalecany rozmiar FAT dla danego systemu plików.
+.TP
+.BI \-i " volume-id"
+Ustawia identyfikator wolumenu nowo utworzonego systemu plików;
+.I volume-id
+jest 32-bitową liczbą szesnastkową (na przykład, 2e24ec82). Domyślnie jest to
+liczba zależna od czasu utworzenia systemu plików.
+.TP
+.BI \-l " filename"
+Odczytaj listę błędnych bloków z pliku o nazwie
+.IR filename .
+.TP
+.BI \-m " message-file"
+Ustawia komunikat, jaki otrzymuje użytkownik podczas próby startu (boot)
+tego systemu plików bez poprawnie zainstalowanego systemu operacyjnego.
+Komunikat nie może przekraczać 418 bajtów po konwersji znaków końca linii
+na kombinacje powrót karetki-koniec linii i rozwinięciu znaków tabulacji.
+Jeżeli nazwą pliku jest myślnik (-), to tekst jest pobierany ze standardowego
+wejścia.
+.TP
+.BI \-n " volume-name"
+Ustawia nazwę wolumenu (etykietę - label) systemu plików. Nazwa wolumenu może
+mieć długość do 11 znaków. Domyślnie brak etykiety.
+.TP
+.BI \-r " root-dir-entries"
+Określa liczbę pozycji dostępnych w głównym katalogu. Domyślnie jest to 112
+lub 224 dla dyskietek oraz 512 dla dysków twardych.
+.TP
+.BI \-s " sectors-per-cluster"
+Określa liczbę sektorów dysku przypadających na jeden cluster. Musi być
+potęgą 2, tj. 1, 2, 4, 8, ... 128.
+.TP
+.B \-v
+Wykonywanie gadatliwe.
+.SH BŁĘDY
+Na razie nie są znane. Jeśli jakieś znajdziesz, proszę zgłoś je
+[w jęz.angielskim]
+na adres <chaffee@bmrc.berkeley.edu>. Dołącz, proszę, numer wersji (0.4).
+.SH AUTOR
+Dave Hudson <dave@humbug.demon.co.uk>; modyfikacje: Peter Anvin
+<hpa@yggdrasil.com>; obsługę FAT32 dodał Gordon Chaffee
+<chaffee@bmrc.berkeley.edu>.
+.SH PODZIĘKOWANIA
+.B mkdosfs
+oparty jest o kod z
+.BR mke2fs
+(napisany przez: Remy Card - <card@masi.ibp.fr>), który z kolei oparto o
+.BR mkfs 
+(napisany przez: Linus Torvalds - <torvalds@cs.helsinki.fi>).
+.SH ZOBACZ TAKŻE
+.BR dosfsck (8),
+.BR mkfs (8).

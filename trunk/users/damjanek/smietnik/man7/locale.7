@@ -1,0 +1,205 @@
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Sat Jul 24 17:28:34 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Jun 01 17:16:34 1997 by Jochen Hein (jochen.hein@delphi.central.de)
+.\" Modified Sat Jul 24 17:28:34 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Sun Jun 01 17:16:34 1997 by Jochen Hein
+.\"   <jochen.hein@delphi.central.de>
+.\" Modified Thu Apr 25 00:43:19 2002 by Bruno Haible <bruno@clisp.org>
+.\"
+.\" Translation (c) 1998 "Gwidon S. Naskrent" <naskrent@hoth.amu.edu.pl>
+.\" updated to man-pages 1.52 - April 2003
+.\"                    Andrzej Krzysztofowicz <ankry@green.mif.pg.gda.pl>
+.\"
+.TH LOCALE 7  "20 września 1998" "Linux" "Podręcznik Programisty Linuksa"
+.SH NAZWA
+locale \- opis obsługi wielu języków
+.SH STRESZCZENIE
+.nf
+.B #include <locale.h>
+.fi
+.SH OPIS
+Locale to zestaw reguł językowych i kulturalnych.  Pokrywają one aspekty
+takie jak język komunikatów, różne zestawy znaków, konwencje leksykograficzne
+itd.  Program musi umieć określić swoje locale i zachowywać się odpowiednio,
+aby można go było przenieść do innych kultur.
+.PP
+Nagłówek
+.B <locale.h>
+deklaruje typy danych, funkcje i makra przydatne w tym przedsięwzięciu.
+.PP
+Funkcje deklarowane to
+.B setlocale()
+ustawiająca bieżące locale i
+.B localeconv()
+pobierająca informacje o formatowaniu liczb.
+.PP
+Istnieją różne kategorie lokalnej informacji której potrzebować może
+program; zadeklarowane są one jako makra. Używając ich jako pierwszy
+argument funkcji
+.B setlocale()
+możliwe jest ustawienie jednego z poniższych na żądane locale:
+.TP
+.B LC_COLLATE
+Używane do zmiany zachowania funkcji
+.B strcoll()
+i
+.BR strxfrm() ,
+które używane są do porównywania łańcuchów w alfabecie lokalnym.
+Na przykład niemieckie scharfes s sortowane jest jako "ss".
+.TP
+.B LC_CTYPE
+Zmienia zachowanie operacji na znakach i funkcji klasyfikacyjnych,
+takich jak
+.B isupper()
+i
+.BR toupper() , 
+oraz znakowych funkcji wielobajtowych takich jak
+.B mblen()
+i
+.BR wctomb()
+.TP
+.B LC_MONETARY
+Zmienia informację zwracaną przez
+.B localeconv()
+która opisuje sposób w jaki zwykle drukowane są liczby, ze szczegółami
+takimi jak kropka dziesiętna vs. przecinek dziesiętny.  Informacja ta
+jest używana wewnętrznie przez funkcję
+.B strfmon()
+.TP
+.B LC_MESSAGES
+Zmienia język w którym wyświetlane są komunikaty oraz to jak wygląda
+odpowiedź twierdząca i przecząca.  Biblioteka GNU C zawiera funkcje
+.BR gettext() ,
+.B ngettext()
+oraz
+.B rpmatch()
+ułatwiające użycie tych informacji. Funkcje GNU z rodziny gettext słuchają
+również zmiennej
+.BR LANGUAGE .
+.TP
+.B LC_NUMERIC
+Zmienia informacje używane przez rodzinę funkcji
+.B printf()
+i
+.B scanf() , 
+kiedy radzi im się żeby używały ustawień locale. Informacja ta może
+być także odczytana funkcją
+.B localeconv() .
+.TP
+.B LC_TIME
+Zmienia zachowanie funkcji
+.B strftime() ,
+wyświetlającej bieżący czas w formie lokalnie akceptowalnej; na przykład,
+większość Europy używa zegara 24-godzinnego, vs. 12-godzinnego w USA.
+.TP
+.B LC_ALL
+Wszystko powyżej.
+.PP
+Jeśli drugim argumentem
+.B setlocale()
+jest łańcuch pusty
+.BR """"""
+oznaczający locale domyślne, ustala się je wedle poniższych kroków:
+.IP 1.
+Jeśli istnieje niepusta zmienna środowiskowa
+.BR LC_ALL , 
+używana jest wartość
+.B LC_ALL
+.IP 2.
+Jeśli istnieje i jest niepusta zmienna środowiskowa o tej samej nazwie co 
+jedna z kategorii powyżej, dla tej kategorii używana jest jej wartość.
+.IP 3.
+Jeśli istnieje niepusta zmienna środowiskowa 
+.BR LANG , 
+używana jest wartość 
+.B LANG
+.PP
+Wartości dotyczące lokalnego formatowania dostępne są w strukturze
+.B lconv
+zwracanej przez funkcję
+.B localeconv() . 
+lconv ma następującą deklarację:
+.nf
+struct lconv
+{
+  /* Informacja numeryczna (nie-monetarna)  */
+
+  char *decimal_point;		/* Znak dziesiętny  */
+  char *thousands_sep;		/* Separator tysięcy  */
+  /* Każdy element to ilość cyfr w danej grupie, elementy z większymi
+     indeksami są bardziej na lewo.  Element o wartości CHAR_MAX
+     oznacza że nie następuje dalsze grupowanie.  Element o wartości
+     0 oznacza że dla wszystkich grup bardziej na lewo używany jest
+     element poprzedni. */
+  char *grouping;
+
+  /* Informacja monetarna  */
+
+  /* Pierwsze trzy znaki to symbol waluty z ISO 4217. Czwarty znak to
+     separator.  Piąty to '\0'.  */
+  char *int_curr_symbol;
+  char *currency_symbol;	/* Symbol lokalnej waluty  */
+  char *mon_decimal_point;	/* Znak dziesiętny  */
+  char *mon_thousands_sep;	/* Separator tysięcy  */
+  char *mon_grouping;		/* Jak element 'grupujący' (wyżej)  */
+  char *positive_sign;		/* Znak dla wartości dodatnich  */
+  char *negative_sign;		/* Znak dla wartości ujemnych  */
+  char int_frac_digits;		/* Międzynar. cyfry dziesiętne  */
+  char frac_digits;		/* Lokalne cyfry dziesiętne  */
+  /* 1 jeśli symbol waluty poprzedza wartość dodatnią, 0 jeśli następuje */
+  char p_cs_precedes;
+  /* 1 jeśli symbol waluty oddziela od wartości dodatniej spacja */
+  char p_sep_by_space;
+  /* 1 jeśli symbol waluty poprzedza wartość ujemną, 0 jeśli następuje */
+  char n_cs_precedes;
+  /* 1 jeśli symbol waluty oddziela od wartości ujemnej spacja */
+  char n_sep_by_space;
+  /* Dodatnie i ujemne pozycje znaku:
+     0 Wartość i symbol waluty w nawiasach
+     1 Znak poprzedza wartość i symbol waluty
+     2 Znak następuje po wartości i symbolu waluty
+     3 Znak następuje tuż przez symbolem waluty
+     4 Znak następuje tuż po symbolu waluty */
+  char p_sign_posn;
+  char n_sign_posn;
+};
+.fi
+.SH "ZGODNE Z"
+.nf
+POSIX.1
+.fi
+Funkcje GNU gettext są zdefiniowane w LI18NUX2000.
+.SH "ZOBACZ TAKŻE"
+.BR setlocale (3),
+.BR localeconv (3),
+.BR locale (1),
+.BR localedef (1),
+.BR nl_langinfo (3),
+.BR gettext (3),
+.BR ngettext (3),
+.BR rpmatch (3),
+.BR strfmon (3),
+.BR strcoll (3),
+.BR strxfrm (3),
+.BR strftime (3)

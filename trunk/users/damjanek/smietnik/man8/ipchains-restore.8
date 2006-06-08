@@ -1,0 +1,31 @@
+.\" Translation (C) 1999 Pawel Wilk <siewca@dione.ids.pl>
+.\" {PTM/PW/0.1/25-05-1999/"przywróć łańcuchy zapory ogniowej IP wczytane ze stdin"}
+.\" Translation update Robert Luberda <robert@debian.org>, Jul 2004, ipchains 1.3.10
+.\" $Id: ipchains-restore.8,v 1.3 2004/07/16 10:03:41 robert Exp $
+.\"
+.TH IPCHAINS-RESTORE 8 "8 lutego 1998" "" ""
+.SH NAZWA
+ipchains\-restore \- przywraca łańcuchy zapory ogniowej IP wczytane ze stdin
+.SH SKŁADNIA
+.BR "ipchains\-restore " "[ -f ] [ -v ]
+.SH OPIS
+ipchains\-restore przywraca (wczytuje) łańcuchy reguł zapory ogniowej IP
+korzystając ze standardowego wejścia.
+.SH OPCJE
+Opcje rozpoznawane przez
+.B ipchains-restore
+to:
+.TP
+.BR -f
+czyści łańcuchy bez żądania potwierdzenia
+.TP
+.BR -v
+drukuje każdą regułę
+.TP
+.BR -p
+tworzy każdy łańcuch, do którego reguły się odwołują, a który jeszcze nie istnieje
+(użyteczne, jeżeli ipchains\-save było użyte do zachowania pojedynczego łańcucha).
+.SH ZOBACZ TAKŻE
+ipchains(8)
+.SH AUTOR
+Paul ``Rusty'' Russell <ipchains@rustcorp.com>

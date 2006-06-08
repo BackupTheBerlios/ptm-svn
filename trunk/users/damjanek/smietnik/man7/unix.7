@@ -1,0 +1,264 @@
+.\" This man page is Copyright (C) 1999 Andi Kleen <ak@muc.de>.
+.\" Permission is granted to distribute possibly modified copies
+.\" of this page provided the header is included verbatim,
+.\" and in case of nontrivial modification author and date
+.\" of the modification is added to the header.
+.\"
+.\" Modified, 2 Dec 2002, Michael Kerrisk, mtk16@ext.canterbury.ac.nz
+.\"
+.\" Translation (c) 2003 "Andrzej M. Krzysztofowicz" <ankry@mif.pg.gda.pl>
+.\"             man-pages 1.60
+.\"
+.TH UNIX  7 2002-12-02 "Linux" "Podręcznik programisty Linuksa" 
+.SH NAZWA
+unix, PF_UNIX, AF_UNIX, PF_LOCAL, AF_LOCAL \- gniazda lokalnej komunikacji
+międzyprocesowej
+.SH SKŁADNIA
+.B #include <sys/socket.h>
+.br
+.B #include <sys/un.h>
+
+.IB unix_socket " = socket(PF_UNIX, type, 0);"
+.br
+.IB error " = socketpair(PF_UNIX, type, 0, int *" sv ");"
+
+.SH OPIS
+Rodzina gniazd
+.B PF_UNIX
+(znana również jako
+.BR PF_LOCAL )
+służy do wydajnej komunikacji pomiędzy procesami na tej samej maszynie.
+Gniazda uniksowe mogą być albo anonimowe (tworzone przez
+.BR socketpair (2)),
+albo skojarzone z plikiem typu gniazda. Linux wspiera również abstrakcyjną,
+niezależną od systemu plików przestrzeń nazw.
+
+Prawidłowe typy, to
+.B SOCK_STREAM 
+dla gniazd strumieniowych oraz
+.B SOCK_DGRAM
+dla gniazd datagramowych, które zachowują granice komunikatów. Gniazda
+uniksowe są zawsze niezawodne i nie zmieniaja kolejności datagramów.
+
+Za pośrednictwem pomocniczych danych można poprzez gniazda uniksowe
+przekazywać do innych procesów deskryptory plików i uwierzytelnianie procesów.
+
+.SH "FORMAT ADRESU"
+Adres gniazda uniksowego jest zdefiniowany jako nazwa pliku w systemie plików
+lub jako unikalny łańcuch w abstrakcyjnej przestrzeni nazw. Gniazda utworzone
+za pomocą
+.BR socketpair (2)
+są anonimowe. Dla gniazd nieanonimowych adres docelowy można ustawić za pomocą
+.BR connect (2). 
+Adres lokalny można ustawić za pomocą
+.BR bind (2). 
+Gdy gniazdo jest połączone ale nie posiada jeszcze adresu lokalnego, jest
+mu przypisywany automatycznie wygenerowany adres w abstrakcyjnej przestrzeni
+nazw.
+
+.RS
+.nf
+#define UNIX_PATH_MAX	108
+
+.ta 4n 17n 42n
+struct sockaddr_un {
+	sa_family_t	sun_family;	/* AF_UNIX */
+	char	sun_path[UNIX_PATH_MAX];	/* ścieżka dostępu */
+};
+.fi
+.RE 
+
+.B sun_family 
+zawsze ma wartość
+.BR AF_UNIX .
+.B sun_path
+zawiera zakończoną znakiem NULL nazwę ścieżki dostępu do gniazda w systemie
+plików. Gdy
+.B sun_path
+zaczyna się bajtem zerowym, odnosi się do abstrakcyjnej przestrzeni nazw,
+którą zarządza moduł protokołu Unix. Adres gniazda w tej przestrzeni nazw
+stanowią pozostałe bajty
+.BR sun_path .
+Należy zauważyć, że nazwy w abstrakcyjnej przestrzeni nazw nie są zakończone
+znakiem NULL.
+
+.SH "OPCJE GNIAZD"
+Ze względów historycznych następujące opcje gniazd są podawane przy typie
+SOL_SOCKET, pomimo że są one specyficzne dla PF_UNIX. Można je ustawić za
+pomocą
+.BR setsockopt (2)
+a odczytać za pomocą
+.BR getsockopt (2)
+podając SOL_SOCKET jako rodzinę gniazd.
+.TP
+.B SO_PASSCRED
+Włącza otrzymywanie uwierzytelnień od procesu wysyłającego komunikat
+pomocniczy. Przy włączonej tej opcji i nie połączonym jeszcze gnieździe,
+unikalna nazwa gniazda z abstrakcyjnej przestrzeni nazw jest generowana
+automatycznie. Oczekiwany jest logiczny znacznik typu całkowitego.
+
+.SH "KOMUNIKATY POMOCNICZE"
+Dane pomocnicze są wysyłane i odbierane za pomocą
+.BR sendmsg (2)
+i
+.BR recvmsg (2).
+Ze względów historycznych komunikaty pomocnicze poniższych typów są podawane
+przy typie SOL_SOCKET, pomimo że są one specyficzne dla PF_UNIX. Aby je wysłać
+należy ustawić pole
+.B cmsg_level
+struktury 
+.B cmsghdr
+na SOL_SOCKET a pole
+.B cmsg_type 
+na typ. Więcej informacji można znaleźć w
+.BR cmsg (3). 
+
+.TP
+.B SCM_RIGHTS
+Odbieranie od innego procesu lub wysyłanie do niego zbioru otwartych
+deskryptorów plików. Porcja danych zawiera tablicę liczb całkowitych będących
+deskryptorami plików. Przekazane deskryptory plików zachowują się tak, jakby
+zostały utworzone za pomocą
+.BR dup (2).
+
+.TP
+.B SCM_CREDENTIALS
+Odbieranie lub wysyłanie uwierzytelnień uniksowych. Może służyć do
+autoryzacji. Uwierzytelnienia są przekazywane jako komunikat pomocniczy
+typu
+.BR "struct ucred" .
+
+.RS
+.nf
+.ta 4n 11n 17n
+struct ucred {
+	pid_t	pid;	/* identyfikator procesu wysyłającego */  
+	uid_t	uid;	/* ident. użytkownika procesu wysyłającego */ 
+	gid_t	gid;	/* ident. grupy procesu wysyłającego */
+};
+.fi
+.RE 
+ 
+Jądro sprawdza uwierzytelnienia podane przez wysyłającego. Proces o efektywnym
+ID użytkownika równym 0 może podać wartości, które różnią się od jego
+własnych. W pozostałych przepadkach wysyłąjący musi podać swój własny
+identyfikator procesu (o ile nie ma ustawionego znacznika
+.BR CAP_SYS_ADMIN ),
+swój własny identyfikator użytkownika, efektywny identyfikator użytkownika lub
+ustawiony identyfikator użytkownika (o ile nie ma ustawionego znacznika
+.BR CAP_SETUID ),
+oraz swój własny identyfikator grupy, efektywny identyfikator grupy lub
+ustawiony identyfikator grupy (o ile nie ma ustawionego znacznika
+.BR CAP_SETGID ).
+Aby otrzymać komunikat typu
+.BR "struct ucred" ,
+dla gniazda musi być włączona opcja
+.BR SO_PASSCRED .
+
+.SH WERSJE
+.B SCM_CREDENTIALS 
+oraz abstrakcyjna przestrzeń nazw zostały wprowadzone w Linuksie 2.2 i nie
+należy ich używać w przenośnych programach.
+(Niektóre systemy wywodzące się z BSD również wspierają przekazywanie
+uwierzytelnień, ale implementacje różnią się w szczegółach.)
+
+.SH UWAGI
+W linuksowej implementacji, gniazda widoczne w systemie plików stosują się do
+uprawnień katalogu, w którym się znajdują. Ich właściciela, grupę oraz prawa
+dostępu można zmieniać. Gdy proces nie posiada praw zapisu i przeszukiwania
+(uruchamiania) do katalogu, wktórym tworzone jest gniazdo, jego utworzenie się
+nie powiedzie. Połączenie z obiektem gniazda wymaga praw odczytu/zapisu. Takie
+zachowanie różni się od zachowania wielu systemów wywodzących sie z BSD, które
+ignorują uprawnienia dla gniazd uniksowych. Programy przenośne ze względów
+bezpieczeństwa nie powinny polegac na tej cesze.
+
+W trakcie łączenia się z gniazdem posiadającym nazwę pliku, tworzone jest plik
+specjalny gniazda w systemie plików, który musi zostać skasowany przez
+wywołującego, gdy już nie bedzie potrzebny (za pomocą
+.BR unlink (2)).
+Staosuje się tu zwykła uniksowa składnia opóźnionego zamknięcia (ang.
+close-behind); gniazdo można skasować w dowolnym momencie, a zostanie ono
+ostatecznie usunięte z systemu plików po zamknięciu ostatniego odwołania do
+niego.
+
+Aby przekazać desktyptory plików lub uwierzytelnienia trzeba wysłać/odebrać co
+najmniej jeden bajt danych.
+
+Gniazda strumieniowe z domeny uniksowej nie obsługują zawiadomienia o danych
+autonomicznych.
+.SH BŁĘDY
+.TP
+.B ENOMEM
+Brak pamięci.
+.TP
+.B ECONNREFUSED
+Wywołano
+.BR connect (2)
+dla obiektu gniazda, który nie nasłuchuje. Może się to zdarzyć, gdy zdalne
+gniazdo nie istnieje lub nazwa pliku nie odnosi się do gniazda.
+.TP
+.B EINVAL
+Podano nieprawidłowy argument. Najczęstszą przyczyną jest brak ustawionego
+AF_UNIX w polu sun_type przekazywanych gniazdu adresów lub nieprawidłowy dla
+danej operacji stan gniazda.
+.TP
+.B EOPNOTSUPP
+Operacja strumieniowa wywołana dla gniazda niestrumieniowego lub próba użycia
+opcji danych autonomicznych.
+.TP
+.B EPROTONOSUPPORT
+Podanym protokołem nie jest PF_UNIX.
+.TP
+.B ESOCKTNOSUPPORT
+Nieznany typ gniazda.
+.TP 
+.B EPROTOTYPE
+Typ gniazda zdalnego różni się od typu gniazda lokalnego (SOCK_DGRAM wobec
+SOCK_STREAM)
+.TP
+.B EADDRINUSE
+Wybrany adres lokalny jest zajęty lub obiekt gniazda w systemie plików już
+istnieje.
+.TP
+.B EISCONN
+Wywołano
+.BR connect (2)
+dla już połączonego gniazda lub podano adres docelowy dla połączonego gniazda.
+.TP
+.B ENOTCONN
+Operacja na gnieździe wymaga adresu docelowego, a gniazdo nie jest połączone.
+.TP
+.B ECONNRESET
+Zdalne gniazdo zostało nieoczekiwanie zamknięte.
+.TP
+.B EPIPE
+Zdalne gniazdo strumieniowe zostało zamknięte. Gdy włączone, wysyłany jest
+jednocześnie sygnał
+.BR SIGPIPE .
+Można tego uniknąć przekazując znacznik
+.B MSG_NOSIGNAL
+do
+.BR sendmsg (2)
+lub
+.BR recvmsg (2).
+.TP
+.B EFAULT
+Nieprawidłowy adres pamięci użytkownika.
+.TP
+.B EPERM
+Wysyłający podał nieprawidłowe uwierzytelnienia w
+.BR "struct ucred" .
+.PP
+Inne błędy mogą zostać wygenerowane przez podstawową warstwę gniazd lub przez
+system plików podczas tworzenia obioektu gniazda w systemie plików. Więcej
+informacji można znaleźć na odpowiednich stronach podręcznika.
+.SH "ZOBACZ TAKŻE"
+.BR recvmsg (2),
+.BR sendmsg (2),
+.BR socket (2),
+.BR socketpair (2),
+.BR cmsg (3),
+.BR capabilities (7),
+.BR socket (7)
+.\" .SH PODZIĘKOWANIA
+.\" Tę stronę podręcznika napisał Andi Kleen. 

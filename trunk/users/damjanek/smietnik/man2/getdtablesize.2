@@ -1,0 +1,64 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified 2002-04-15 by Roger Luethi <rl@hellgate.ch> and aeb
+.\"
+.\" Translation (c) 1998 Przemek Borys <pborys@pdione.ids.pl>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jun 2002,
+.\"              manpages 1.49
+.\"
+.TH GETDTABLESIZE 2 2002-04-15 "Linux 2.4" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getdtablesize \- pobranie rozmiaru tabeli deskryptorów
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.B int getdtablesize(void);
+.SH OPIS
+.B getdtablesize
+zwraca maksymalną liczbę otwartych przez proces plików.
+o jeden więcej od największej możliwej wartości deskryptora pliku.
+.SH "WARTOŚĆ ZWRACANA"
+Aktualne ograniczenie liczby otwartych plików dla procesu.
+.SH UWAGI
+.B getdtablesize
+jest zaimplementowane jako funkcja biblioteczna libc. Wersja glibc wywołuje
+.BR getrlimit (2)
+i zwraca aktualną wartość ograniczenia
+.B RLIMIT_NOFILE
+lub 
+.BR OPEN_MAX ,
+gdy się zakończy niepomyślnie.
+Wersje z libc4 i libc5 zwracały
+.B OPEN_MAX
+(ustawione na 256 począwszy od Linuksa 0.98.4).
+.SH "ZGODNE Z"
+SVr4, 4.4BSD (funkcja
+.B getdtablesize
+pojawiła się pierwotnie w BSD 4.2).
+.SH "ZOBACZ TAKŻE"
+.BR close (2),
+.BR dup (2),
+.BR getrlimit (2),
+.BR open (2)

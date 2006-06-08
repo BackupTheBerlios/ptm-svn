@@ -1,0 +1,485 @@
+.\" Tłumaczenie wersji man-pages 1.45 - grudzień 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.\" Copyright (c) 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)dbopen.3	8.5 (Berkeley) 1/2/94
+.\"
+.TH DBOPEN 3 1994-01-02 
+.UC 7
+.SH NAZWA
+dbopen \- metody dostępu do baz danych
+.SH SKŁADNIA
+.nf
+.ft B
+#include <sys/types.h>
+#include <limits.h>
+#include <db.h>
+
+DB *
+dbopen(const char *plik, int znaczniki, int tryb, DBTYPE rodzaj,
+.ti +5
+const void *info_otw);
+.ft R
+.fi
+.SH OPIS
+.IR dbopen
+jest funkcją biblioteczną stanowiącą interfejs do plików baz danych.
+Obsługiwane formaty plików to: btree, rozproszony (hashed) i uniksowy
+zorientowany na pliki.
+Format btree stanowi reprezentację posortoanej, zrównoważonej struktury
+drzewa.
+Format rozproszony (hashed) jest rozszerzalnym, dynamicznym schematem
+mieszania.
+Format płaskiego pliku jest plikiem stanowiącym strumień bajtów z rekordami
+o stałej lub zmiennej długości.
+Informacje o formatach i specyficzne dla poszczególnych formatów plików są
+szczegółowo opisane na odpowiednich stronach podręcznika:
+.IR btree (3),
+.IR hash (3)
+i
+.IR recno (3).
+.PP
+dbopen otwiera
+.I plik
+do odczytu i/lub do zapisu.
+Pliki, których zachowywanie na dysku nie jest zamierzone, mogą być tworzone
+poprzez ustawienie parametru plik na NULL.
+.PP
+Argumenty
+.I znaczniki
+i
+.I tryb
+są takie same jak w funkcji
+.IR open (2),
+jednakże brane pod uwagę są jedynie znaczniki O_CREAT, O_EXCL, O_EXLOCK,
+O_NONBLOCK, O_RDONLY, O_RDWR, O_SHLOCK i O_TRUNC.
+(Należy zauważyć, że otwarcie pliku bazy danych jako O_WRONLY nie jest
+możliwe.)
+.\"Three additional options may be specified by
+.\".IR or 'ing
+.\"them into the
+.\".I flags
+.\"argument.
+.\".TP
+.\"DB_LOCK
+.\"Do the necessary locking in the database to support concurrent access.
+.\"If concurrent access isn't needed or the database is read-only this
+.\"flag should not be set, as it tends to have an associated performance
+.\"penalty.
+.\".TP
+.\"DB_SHMEM
+.\"Place the underlying memory pool used by the database in shared
+.\"memory.
+.\"Necessary for concurrent access.
+.\".TP
+.\"DB_TXN
+.\"Support transactions in the database.
+.\"The DB_LOCK and DB_SHMEM flags must be set as well.
+.PP
+Argument
+.I rodzaj
+jest typu DBTYPE (który jest zdefiniowany w pliku nagłówkowym <db.h>)
+i można przybierać wartości DB_BTREE, DB_HASH lub DB_RECNO.
+.PP
+Argument
+.I info_otw
+jest wskaźnikiem do struktury specyficznej dla metody dostępu, opisanej
+n stronie podręcznika danej metody dostępu.
+Jeśli
+.I info_otw
+jest równe NULL, każda z metod dostępu będzie korzystać z wartości
+domyślnych, właściwych dla systemy i tej metody dostępu.
+.PP
+.I dbopen
+przy pomyślnym zakończeniu zwraca wskaźnik do struktury DB, a NULL w
+przypadku błędu.
+Struktura DB jest zdefiniowana w pliku nagłówkowym <db.h> i zawiera co
+najmniej następujące pola:
+.sp
+.nf
+typedef struct {
+.RS
+DBTYPE type;
+int (*close)(const DB *db);
+int (*del)(const DB *db, const DBT *klucz, u_int znaczniki);
+int (*fd)(const DB *db);
+int (*get)(const DB *db, DBT *klucz, DBT *dane, u_int znaczniki);
+int (*put)(const DB *db, DBT *klucz, const DBT *dane,
+.ti +5
+u_int znaczniki);
+int (*sync)(const DB *db, u_int znaczniki);
+int (*seq)(const DB *db, DBT *klucz, DBT *dane, u_int znaczniki);
+.RE
+} DB;
+.fi
+.PP
+Elementy te opisują rodzaj bazy danych i zestaw funkcji wykonyjących różne
+operacje.
+Funkcje te biorą jako argument wskaźnik do struktury takiej, jak zwracana
+przez
+.I dbopen
+i, czasami, jeden lub więcej wskaźników do struktur klucz/dane oraz wartość
+znacznika.
+.TP
+type
+Rodzaj właściwej metody dostępu (i format plików).
+.TP
+close
+Wskaźnik do funkcji zrzucającej zbuforowane informacje ma dysk, zwalniającej
+przydzielone zasoby i zamykającej podległe pliki.
+Ze względu na to, że pary klucz/dane mogą być buforowane w pamięci,
+niepomyślne zrzucenie buforów pliku za pomocą funkcji
+.I close
+lub
+.I sync
+,oże prowadzić do niespójności lub utraty informacji.
+Funkcje
+.I close
+zwracają \-1 w przypadku błędu (ustawiając
+.IR errno ),
+a 0 w przypadku zakończenia pomyślnego.
+.TP
+del
+Wskaźnik do funkcji usuwającej pary klucz/dane z bazy danych.
+.IP
+Parametr
+.I znacznik
+może mieć jedną z następujących wartości:
+.RS
+.TP
+R_CURSOR
+Usuwa rekord wskazywany przez kursor.
+Kursor musi zostać wcześniej zainicjalizowany.
+.RE
+.IP
+Funkcje
+.I delete
+zwracają \-1 w przypadku błędu (ustawiając
+.IR errno ),
+0 w przypadku pomyślnego zakończenia, a 1 gdy podany
+.I klucz
+nie występuje w pliku.
+.TP
+fd
+Wskaźnik do funkcji zwracającej deskryptor pliku odpowiadający używanej
+bazie danych.
+Dla wszystkich procesów wywołujących
+.I dbopen
+dla tej samej nazwy pliku
+.I plik
+zostanie zwrócony deskryptor pliku wskazujący na ten sam plik.
+Tego deskryptora pliku można bezpiecznie używać jako argumentu funkcji
+blokujących
+.IR fcntl (2)
+i
+.IR flock (2).
+Deskryptor pliku nie musi być związany z którymkolwiek z plików używanych
+przez daną metodę dostępu.
+Deskryptor pliku nie jest dostępny dla baz danych zawartych w pamięci.
+Funkcje
+.I fd
+zwracają \-1 w przypadku błędu (ustawiając
+.IR errno ),
+a deskryptor pliku w przypadku pomyślnego zakończenia.
+.TP
+get
+Wskaźnik do funkcji stanowiącej interfejs dla pobierania danych z bazy
+według klucza.
+Adres i rozmiar danych związanych z podanym kluczem
+.I klucz
+są zwracane w strukturze wskazywanej przez
+.IR dane .
+Funkcje 
+.I get
+zwracają \-1 w przypadku błędu (ustawiając
+.IR errno ),
+0 w przypadku pomyślnego zakończenia, a 1 gdy podany
+.I klucz
+nie występuje w pliku.
+.TP
+put
+Wskaźnik do funkcji przechowującej pary klucz/dane w bazie danych.
+.IP
+Parametr
+.I znacznik
+może mieć jedną z następujących wartości:
+.RS
+.TP
+R_CURSOR
+Zastępuje parę klucz/dane wskazywaną przez kursor.
+Kursor musi zostać wcześniej zainicjalizowany.
+.TP
+R_IAFTER
+Dołącza dane bezpośrednio po danych wskazywanych przez
+.IR klucz ,
+tworząc nową parę klucz/dane.
+Numer rekordu dodanej pary klucz/dane jest zwracany w strukturze
+.IR klucz .
+(Dotyczy jedynie metody dostępu DB_RECNO.)
+.TP
+R_IBEFORE
+Wstawia dane bezpośrednio przed danymi wskazywanymi przez
+.IR klucz ,
+tworząc nową parę klucz/dane.
+Numer rekordu wstawionej pary klucz/dane jest zwracany w strukturze
+.IR klucz .
+(Dotyczy jedynie metody dostępu DB_RECNO.)
+.TP
+R_NOOVERWRITE
+Wprowadza nową parę klucz/dane tylko gdy klucz wcześniej nie istniał.
+.TP
+R_SETCURSOR
+Przechowuje parę klucz/dane, ustawiając lub inicjalizując pozycję kursora tak,
+aby na nią wskazywała.
+(Dotyczy jedynie metod dostępu DB_BTREE i DB_RECNO.)
+.RE
+.IP
+R_SETCURSOR jest dostępne jedynie dla metod dostępu DB_BTREE i DB_RECNO, gdyż
+zakłada, że klucze mają ustaloną, niezmienną kolejność.
+.IP
+R_IAFTER i R_IBEFORE są dostępne jedynie dla metody dostępu DB_RECNO, gdyż
+każde z nich zakłada, że metoda dostępu umożliwia tworzenie nowych kluczy.
+Jest to prawda jedynie w przypadku, gdy klucze są uporządkowane i niezależne,
+na przykład numery rekordów.
+.IP
+Domyślne zachowanie funkcji
+.I put
+polega na wprowadzeniu nowej pary klucz/dane, zastępując uprzednio
+istniejący klucz.
+.IP
+Funkcje
+.I put
+zwracają \-1 w przypadku błędu (ustawiając
+.IR errno ),
+0 w przypadku pomyślnego zakończenia, a 1 gdy ustawiony jest
+.I znacznik
+R_NOOVERWRITE, a klucz już istnieje w pliku.
+.TP
+seq
+Wskaźnik do funkcji stanowiącej interfejs dla sekwencyjnego pobierania
+danych z bazy.
+Adres i długość klucza są zwracane w strukturze wskazywanej przez
+.IR klucz ,
+zaś adres i rozmiar danych są zwracane w strukturze wskazywanej przez
+.IR dane .
+.IP
+Sekwencyjne pobieranie par klucz/dane może się rozpocząć w dowolnym momencie,
+a wywołania funkcji
+.IR del ,
+.IR get ,
+.IR put ,
+i
+.I sync
+nie mają wpływu na pozycję ``kursora''.
+Zmiany bazy danych podczas sekwencyjnego czytania będą odwzorowane podczas
+odczytów, tzn. rekordy wstawione za kursorem nie będą zwrócone, podczas gdy
+rekordy wstawione przed kursorem zostaną zwrócone.
+.IP
+Wartość znacznik
+.B musi
+być ustawiona jako jedna z poniższych wartości:
+.RS
+.TP
+R_CURSOR
+Zwracane są dane stowarzyszone z podanym kluczem.
+Różni się to od funkcji
+.I get
+tym, że również ustawia lub inicjalizuje kursor w pozycji klucza.
+(Należy zauważyć, że dla metody dostępu DB_BTREE, zwracany klucz nie musi być
+identyczny z kluczem podanym.
+Zwracany klucz jest najmniejszym kluczem większym lub równym podanemu
+kluczowi, dopuszczając częściowe dopasowywanie klucza i przeszukiwanie
+zakresów.)
+.TP
+R_FIRST
+Zwracana jest pierwsza para klucz/dane występująca w bazie danych. Kursor jest
+ustawiany lub inicjalizowany tak, by wskazywał tę parę.
+.TP
+R_LAST
+Zwracana jest ostatnia para klucz/dane występująca w bazie danych. Kursor jest
+ustawiany lub inicjalizowany tak, by wskazywał tę parę.
+(Dotyczy jedynie metod dostępu DB_BTREE i DB_RECNO.)
+.TP
+R_NEXT
+Pobiera parę klucz/dane znajdującą się bezpośrednio po pozycji kursora.
+Jeśli kursor nie został jeszcze ustawiony, zachowuje się tak samo jak znacznik
+R_FIRST.
+.TP
+R_PREV
+Pobiera parę klucz/dane znajdującą się bezpośrednio przed pozycją kursora.
+Jeśli kursor nie został jeszcze ustawiony, zachowuje się tak samo jak znacznik
+R_LAST.
+(Dotyczy jedynie metod dostępu DB_BTREE i DB_RECNO.)
+.RE
+.IP
+R_LAST i R_PREV są dostępne jedynie dla metod dostępu DB_BTREE i DB_RECNO,
+gdyż zakładają, że klucze mają ustaloną, niezmienną kolejność.
+.IP
+Funkcje
+.I seq
+zwracają \-1 w przypadku błędu (ustawiając
+.IR errno ),
+0 w przypadku pomyślnego zakończenia, a 1 gdy brak w bazie pary klucz/dane
+mniejszej lub większej niż podany lub aktualny klucz.
+Dla metody dostępu DB_RECNO, gdy plik bazy danych jest specjalnym plikiem
+znakowym, a żadna pełna para klucz/dane nie jest w danej chwili dostępna,
+funkcja
+.I seq
+zwraca 2.
+.TP
+sync
+Wskaźnik do funkcji zrzucającej zbuforowane informacje na dysk.
+Jeśli baza danych znajduje się wyłącznie w pamięci, to funkcja
+.I sync
+nic nie robi i kończy się zawsze pomyślnie.
+.IP
+Wartość znacznika może być jedną z następujących wartości:
+.RS
+.TP
+R_RECNOSYNC
+Jeśli używana jest metoda DB_RECNO, ten znacznik powoduje, że funkcja sync
+dotyczy pliku btree stanowiącego bazę pliku numerów rekordów, nie zaś
+samego pliku numerów rekordów.
+(Więcej informacji znajduje się w opisie pola
+.I bfname
+na stronie podręcznika
+.IR recno (3).)
+.RE
+.IP
+Funkcje
+.I sync
+zwracają \-1 w przypadku błędu (ustawiając
+.IR errno ),
+0 w przypadku pomyślnego zakończenia.
+.SH "Pary KLUCZ/DANE"
+Dostęp do wszystkich rodzajów plików jest oparty na parach klucz/dane.
+Zarówno klucze, jak i dane są reprezentowane za pomocą następującej struktury
+danych:
+.PP
+typedef struct {
+.RS
+void *data;
+.br
+size_t size;
+.RE
+} DBT;
+.PP
+Elementy stryktury DBT są zdefiniowane następująco:
+.TP
+data
+Wskaźnik do łańcucha bajtów.
+.TP
+size
+Długość łańcucha bajtów.
+.PP
+Łańcuchy bajtowe klucza i danych zasadniczo mogą wskazywać na łańcuchy
+o nieograniczonej długości, ale dowolne dwa z nich muszą się mieścić
+jednocześnie w dostępnej pamięci.
+Należy zauważyć, że metody dostępu nie dają żednych gwarancji dotyczących
+wyrównania łańcuchów bajtowych.
+.SH BŁĘDY
+Funkcja
+.I dbopen
+może zawieść i ustawić w
+.I errno
+dowolny z błędów określonych dla funkcji bibliotecznych
+.IR open (2)
+i
+.IR malloc (3)
+lub jeden z następujących:
+.TP
+[EFTYPE]
+Plik jest nieprawidłowo sformatowany.
+.TP
+[EINVAL]
+Podano parametr (funkcję mieszającą, bajt wyrównania, itp.) niezgodny z 
+aktualną specyfikacją pliku, lub który nie ma sensu dla funkcji (na przykład,
+użycie kursora bez uprzedniej inicjalizacji) lub występuje niezgodność wersji
+pomiędzy plikiem i oprogramowaniem.
+.PP
+Funkcje
+.I close
+mogą zawieść i ustawić w
+.I errno
+dowolny z błędów określonych dla funkcji bibliotecznych
+.IR close (2),
+.IR read (2),
+.IR write (2),
+.IR free (3)
+i
+.IR fsync (2).
+.PP
+Funkcje
+.IR del ,
+.IR get ,
+.I put
+i
+.I seq
+mogą zawieść i ustawić w
+.I errno
+dowolny z błędów określonych dla funkcji bibliotecznych
+.IR read (2),
+.IR write (2),
+.IR free (3)
+i
+.IR malloc (3).
+.PP
+Funkcje
+.I fd
+mogą zawieść i ustawić
+.I errno
+na ENOENT dla baz danych w pamięci.
+.PP
+Funkcje
+.I sync
+mogą zawieść i ustawić w
+.I errno
+dowolny z błędów określonych dla funkcji bibliotecznej
+.IR fsync (2).
+.SH "ZOBACZ TAKŻE"
+.IR btree (3),
+.IR hash (3),
+.IR mpool (3),
+.IR recno (3)
+.sp
+.IR "LIBTP: Portable, Modular Transactions for UNIX" ,
+Margo Seltzer, Michael Olson, USENIX proceedings, Winter 1992.
+.SH BUGS
+typedef DBT jest skrótem od ``data base thang'', który był używany tylko
+dlatego, że nikt nie wymyślił sensownej, jeszcze nie używanej nazwy.
+.PP
+Interfejs wykorzystujący deskryptory plików staonowi obejście i będzie
+w przyszłości usunięty.
+.PP
+Żadna z metod dostępu nie zapewnia jakiejkolwiek formy dostępu równoległego,
+blokowania ani transakcji.

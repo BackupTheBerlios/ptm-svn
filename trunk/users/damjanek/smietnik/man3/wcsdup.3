@@ -1,0 +1,38 @@
+.\" 2002 PTM Przemek Borys <pborys@dione.ids.pl>
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification http://www.UNIX-systems.org/online.html
+.\"
+.TH WCSDUP 3  1999-07-25 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+wcsdup \- duplikuje łańcuch szerokich znaków
+.SH SKŁADNIA
+.nf
+.B #include <wchar.h>
+.sp
+.BI "wchar_t *wcsdup(const wchar_t *" s );
+.fi
+.SH OPIS
+Funkcja \fBwcsdup\fP jest szerokoznakowym odpowiednikiem funkcji
+\fBstrdup\fP(3). Alokuje ona wymaganą ilość pamięci i zwraca nowy łańcuch
+szerokich znaków, o zawartości początkowej będącej duplikatem łańcucha
+\fIs\fP.
+.PP
+Pamięć dla nowego łańcucha jest uzyskiwana z pomocą \fBmalloc\fP(3) i może
+być zwalniana funkcją \fBfree\fP(3).
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBwcsdup\fP zwraca wskaźnik do nowego  łańcucha szerokich znaków
+lub NULL, jeśli braknie pamięci.
+.SH "ZGODNE Z"
+Funkcja ta jest rozszerzeniem GNU.
+.SH "ZOBACZ TAKŻE"
+.BR strdup (3),
+.BR wcscpy (3)

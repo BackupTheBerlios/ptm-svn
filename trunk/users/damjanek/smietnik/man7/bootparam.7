@@ -1,0 +1,768 @@
+.\" Copyright (c) 1995 Paul Gortmaker
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" This man page written 950814 by aeb, based on Paul Gortmaker's HOWTO
+.\" (dated v1.0.1, 15/08/95).
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\"
+.TH BOOTPARAM 7 "15 August 1995" "Linux 1.3.19" "Podręcznik linuksowego programisty"
+.SH NAZWA
+bootparam \- Wprowadzenie do parametrów bootujących jądra Linuksa.
+.SH OPIS
+Jądro (kernel) Linuksa przyjmuje pewne `opcje z linii komend', lub `parametry
+bootujące' podczas uruchamiania. Ogólnie jest to używane do przekazywania
+jądru informacji o parametrach sprzętu, których samodzielnie nie
+potrafi ono określić lub by zapobiec wartościom, które jądro by normalnie
+wykryło.
+
+Kiedy jądro jest bootowane bezpośrednio przez BIOS (powiedzmy, że z
+dyskietki, na którą je skopiowano używając `cp zImage /dev/fd0'), nie ma
+możliwości przekazywania żadnych parametrów. Tak więc, aby móc mieć tę
+możliwość, trzeba używać oprogramowania zdolnego do przekazywania
+parametrów, takiego jak LILO czy loadlin. Dla kilku parametrów można także
+zmodyfikować sam obraz jądra, przy użyciu rdev, zobacz
+.BR rdev (8) .
+
+Najpopularniejszym loaderem jest LILO (LInux LOader), napisany przez Wernera
+Almesberegera. Potrafi on bootować różne jądra i zachowuje informację o
+konfiguracji w pliku tekstowym. (Zobacz
+.BR lilo (8)
+i
+.BR lilo.conf (5).)
+LILO może bootować DOS, OS/2 Linux, FreeBSD, itd., i jest dość elastyczne.
+
+Innym popularnym loaderem Linuksa jest `LoadLin', który jest programem
+dosowym, który potrafi odpalać jądro Linuksa z dosa (z argumentami
+bootującymi), zakładając że pewne zasoby są osiągalne. Jest to dobre dla
+osób chcących odpalać Linuksa z dosa.
+
+Jest też bardzo przydatnym, jeśli masz określony sprzęt, który bazuje na
+określonym dosowym sterowniku, włączającym go w określony stan. Popularnym
+przykładem są karty `SoundBlaster Compatible', które wymagają dosowych
+sterowników do zamieszanie kilkoma mistycznymi rejestrami aby włączyć kartę w
+tryb kompatybilności z SB. Bootowanie dosa z załączonym sterownikiem i
+późniejsze ładowanie Linuksa z promptu dosowego zapobiega resetowaniu karty,
+co ma miejsce podczas rebootu komputera.
+
+.SH  LISTA ARGUMENTÓW
+
+Większość argumentów bootujących przyjmuje postać:
+.IP
+name[=value_1][,value_2]...[,value_11]
+.LP
+gdzie `name' jest unikalnym słowem kluczowym, które jest używane do
+określania, która część jądra ma otrzymać związane z nim wartości.
+Poszczególne argumenty bootujące są zwyczajnie oddzielone spacjami, w
+formacie wyżej podanym. Zauważ, że limit 11 wartości jest rzeczywisty, jako
+że obecnie kod obsługuje jedynie 11 oddzielonych przecinkami parametrów dla
+słowa kluczowego. (Jednak możesz użyć tego samego słowa kluczowego drugi
+raz, aby pomieścić dodatkowe parametry.)
+
+Większość pracy idzie do linux/init/main.c. Najpierw jądro sprawdza czy
+argument jest jednym ze specjalnych argumentów `root=', `ro', `rw', lub
+`debug'. Znaczenie tych specjalnych argumentów jest opisane dalej w tym
+dokumencie.
+
+Potem przechodzi przez listę funkcji konfigurujących, aby zobaczyć czy
+podany tekst argumentu (taki jak `foo') nie jest związany z funkcją
+konfigurującą (`foo_setup()') dla konkretnego urządzenia, lub części
+jądra. Jeśli przekazałeś jądru linię foo=3,4,5,6 to przeszuka ono
+tablice bootsetupowe aby sprawdzić, czy `foo' było zarejestrowane. Jeśli
+było, wywołuje funkcję konfigurującą związaną z `foo' (foo_setup()) i
+przekazuje jej argumenty 3, 4, 5 i 6 podane w linii poleceń jądra.
+
+Wszystko, co jest w postaci `foo=bar', co nie jest akceptowane jako funkcja
+konfigurująca, jak opisano powyżej, zostaje zinterpretowane jako zmienna
+środowiskowa, która ma być ustawiona. (Bezużytecznym?) przykładem może być
+użycie `TERM=vt100' jako argumentu bootującego.
+
+Wszelkie pozostałe argumenty, które nie były wybrane przez jądro i nie były
+zinterpretowane jako zmienne środowiskowe, zostają potem przekazane
+procesowi jeden, którym zwykle jest program init. Najpopularniejszym
+argumentem, który jest przekazywany procesowi init jest słowo `single',
+które mówi initowi, by bootował komputer w trybie pojedynczego użytkownika,
+żeby nie odpalał wszystkich normalnych demonów. Sprawdź na stronie
+podręcznika dla init, jakie argumenty przyjmuje.
+
+.SH "OGÓLNE NIEURZĄDZENIOWE ARGUMENTY BOOTUJĄCE"
+
+.SS  "`no387'"
+
+Niektóre koprocesory i386 mają błędy, które pojawiają się gdy używa się ich
+w 32 bitowym trybie chronionym. Np. niektóre wczesne chipy ULSI-387 miały
+wadliwe operacje zmiennoprzecinkowe. Używanie `no387' powoduje, że linux
+ignoruje koprocesor. Oczywiście w tym wypadku musisz mieć jądro skompilowane
+ze wsparciem dla emulacji koprocesora.
+
+.SS "`no-hlt'"
+
+Niektóre z pierwszych chipów i486DX-100 miały problem z instrukcją `hlt',
+przez co nie mogły normalnie powracać do trybu operacyjnego po jej użyciu.
+Używanie `no-hlt' mówi Linuksowi, by zwyczajnie wykonywał nieskończoną pętlę
+gdy nie ma nic do roboty, a nie mówił stop procesorowi. Pozwala to osobom z
+tym wadliwym chipem korzystać z Linuksa.
+
+.SS "`root=...'"
+
+Ten argument mówi jądru, którego urządzenia użyć do jako głównego
+systemu plików podczas bootowania. Domyślna wartość tego ustawienia jest
+skonfigurowana podczas kompilacji i zwykle jest wartością urządzenia
+głównego systemu, na którym zbudowano jądro. Aby nadpisać tę wartość i
+wybrać na urządzenie główne np. drugi napęd dyskietek, użyj `root=/dev/fd1'.
+(urządzenie główne może także być ustawione przy pomocy
+.BR rdev (8).)
+
+Urządzenie główne może zostać określone symbolicznie, lub numerycznie.
+Specyfikacja symboliczna ma format /dev/XXYN, gdzie XX określa typ
+urządzenia (`hd' dla dysków twardych kompatybilnych z ST-506, z Y w zakresie
+`a'-`h'; `sd' dla dysków SCSI, z Y w zakresie `a'-`e'; `xd' dla dysków
+kompatybilnych z XT, z Y `a' lub `b'; `fd' dla stacji dysków, z Y określającym
+numer stacji - fd0 będzie dosowym dyskiem `A:', a fd1 `B:'), Y literę napędu
+lub jego numer, a N numer partycji na tym urządzeniu (nieobecne w przypadku
+dyskietek).
+
+Zauważ, że nie ma to nic do czynienia z przeznaczeniem tych urządzeń na twoim
+systemie. Część `/dev/' jest tylko konwencją.
+
+Powyższe urządzenia można przekazywać także w reprezentacji numerycznej,
+która jest kombinacją numerów major/minor urządzeń. (np. /dev/sda ma numer
+major 8 i minor 3, więc można użyć `root=0x803' jako alternatywy.)
+
+.SS "`ro' i `rw'"
+
+Opcja `ro' mówi jądru, by zamontowało główny system plików jako
+przeznaczony tylko dla odczytu, aby fsck mógł pracować na nieruchomym
+systemie plików. Żaden proces nie może zapisywać plików na systemie plików,
+dopóki nie zostanie remontowany jako przeznaczony do odczytu i zapisu, np.
+poprzez `mount -w -n -o remount /'.
+(Zobacz także
+.BR mount (8).)
+
+Opcja `rw' mówi jądru, by zamontować główny system plików jako
+przeznaczony do odczytu/zapisu. Tak jest domyślnie.
+
+Wybór między r/o i r/w może być również dokonany przy użyciu
+.BR rdev (8).
+
+.SS "`debug'"
+
+Komunikaty jądra są przekazywane do klogd, demona logowania jądra, tak
+że mogą zostać zapisane na dysku. Wiadomości o priorytetach powyżej
+.I console_loglevel
+są także drukowane na konsoli. (Zobacz <linux/kernel.h> aby zobaczyć te
+poziomy priorytetów.) Domyślnie ta zmienna jest ustawiona na logowanie
+wszystkiego co ważniejsze niż wiadomości debugowe. Ten argument bootujący
+dodatkowo nakazuje drukowanie wiadomości o priorytecie DEBUG. Poziom
+logowania konsoli można również ustawić podczas pracy systemu dzięki opcjom
+klogd. Zobacz
+.BR klogd (8).
+
+.SS "`reserve=...'"
+
+Ta komenda jest używana do chronienia regionów portów I/O przed sondowaniem.
+Postać tej komendy to:
+.IP
+.BI reserve= iobase,extent[,iobase,extent]...
+.LP
+Na niektórych maszynach może być niezbędnym chronienie sterowników urządzeń od
+szukania urządzeń (autosondowanie) w określonych regionach. Może to wynikać
+z błędnej reakcji sprzętu, możliwej błędnej identyfikacji lub
+po prostu z tego, że nie chcesz tego sprzętu inicjalizować.
+
+Argument reserve podaje region portu I/O, który nie ma być sondowany. Sterownik
+urządzenia nie będzie sondować zarezerwowanego regionu, chyba że inny
+argument bootujący wyjątkowo mu to nakaże.
+
+Na przykład, linia bootująca
+.IP
+reserve=0x300,32  blah=0x300
+.LP
+powstrzymuje wszystkie sterowniki urządzeń, poza sterownikiem `blah' od sondowania
+0x300-0x31f.
+
+.SS "`ramdisk=...'
+
+Ta opcja jest przedawniona od Linuksa 1.3.48, lub okolic.
+Podawała w KB wielkość opcjonalnego urządzenia ramdysku. Na przykład, jeśli
+chciałeś załadować główny system plików z dyskietki 1.44MB, użyłbyś:
+.IP
+ramdisk=1440
+.LP
+Ta opcja jest ustawiana podczas kompilacji (domyślnie: brak ramdysku) i może
+być zmieniona przez
+.BR rdev (8).
+
+.SS "`mem=...'"
+
+Funkcja BIOS-a zdefiniowana w specyfikacji PC, która zwraca wielkość
+zainstalowanej pamięci była skonstruowana do zwracania wartości maksymalnie
+64MB. Linux używa tej funkcji podczas bootowania, aby sprawdzić ile jest
+zainstalowanej pamięci. Jeśli masz więcej niż 64MB, możesz użyć tego
+argumentu, aby powiedzieć Linuksowi ile masz pamięci. Wartości mogą być
+przekazywane dziesiętnie lub szesnastkowo (przedrostek 0x), z opcjonalnymi
+końcówkami `k' (razy 1024) lub `M' (razy 1046576).
+Oto cytat Linusa o używaniu parametru `mem='.
+
+\&``Jądro przyjmie dowolny parametr `mem=xx', jaki mu się poda, lecz jeśli
+okaże się, że je okłamałeś, wcześniej czy później załamie się straszliwie.
+Parametr wskazuje na najwyższy adresowalny adres RAM, więc
+\&`mem=0x1000000' oznacza na przykład, że masz 16MB pamięci. Na maszynie z
+96MB byłoby to `mem=0x6000000'.
+
+UWAGA UWAGA UWAGA: niektóre maszyny mogą używać górną część pamięci dla
+cache'owania BIOS-a, lub innych rzeczy, więc w rzeczywistości możesz mieć
+mniej niż pełne 96MB adresowalnej pamięci. Odwrotny przypadek też może być
+prawdziwy: niektóre chipsety mapują pamięć fizyczną, która jest przykryta
+przez obszar BIOS-a w obszar tuż za górą pamięci, więc wierzchołek pamięci
+będzie w tym wpadku wynosił np. 96MB + 384KB. Jeśli powiesz Linuksowi, że ma
+więcej pamięci niż w rzeczywistości, staną się złe rzeczy: może nie naraz,
+ale w końcu z pewnością.''
+
+.SH "ARGUMENTY BOOTUJĄCE DLA URZĄDZEŃ SCSI"
+
+Ogólne pojęcia w tej sekcji:
+
+.I iobase
+-- pierwszy port I/O, który zajmuje host SCSI. Są one podawane w notacji
+heksadecymalnej i zazwyczaj leżą w zakresie od
+0x200 do 0x3ff.
+
+.I irq
+-- przerwanie sprzętowe, które wykorzystuje karta. Prawidłowe wartości
+zależą od rozpatrywanej karty, lecz zwykle są to 4, 7, 9, 10, 11, 12 i 15.
+Inne wartości są zwykle używane w peryferiach takich jak dyski twarde IDE,
+stacje dysków, porty szeregowe, itp.
+
+.I scsi-id
+-- identyfikator, którego adapter używa do identyfikowania siebie na szynie
+SCSI. Tylko niektóre adaptery umożliwiają zmianę tej wartości, jako że
+większość ma ją trwale ustaloną wewnątrz. Częstą wartością domyślną jest 7,
+lecz zestawy Seagate i Future Domain TMC-950 używają 6.
+
+.I parity
+-- określa, czy adapter SCSI oczekuje od załączonych urządzeń dostarczania
+wartości parzystości przy wymianach informacji. Podanie jedynki oznacza, że
+sprawdzanie parzystości jest włączone, a zero ją wyłącza. Znowu jednak nie
+wszystkie adaptery przyjmują wybranie zachowania parzystości podczas
+bootowania.
+
+.SS "`max_scsi_luns=...'"
+
+Urządzenie SCSI może mieć wiele `podurządzeń' zawartych w nim samym.
+Najpopularniejszym przykładem jest jeden z nowych CD-ROM-ów SCSI, który
+obsługuje naraz więcej niż jeden dysk. Każdy CD jest adresowany jako
+`Logical Unit Number' (LUN) (ang. logiczny numer jednostki) tego urządzenia.
+Jednak większość urządzeń takich jak twarde dyski, napędy kasetowe i inne
+jest pojedynczymi urządzeniami z LUN równym zero.
+
+Niektóre słabo dopracowane urządzenia SCSI nie mogą obsłużyć sondowania LUN
+nierównego zeru. Dlatego, jeśli flaga kompilacji CONFIG_SCSI_MULTI_LUN nie
+była ustawiona, nowe jądra sondują domyślnie tylko LUN zero.
+
+Aby podać ilość sondowanych LUN-ów podczas bootowania, wpisuje się
+`max_scsi_luns=n' jako argument bootujący, gdzie n jest liczbą między 1 a 8.
+Aby zapobiec problemom opisanym wyżej, używa się n=1 aby zapobiec
+denerwowaniu nieprawidłowych urządzeń.
+
+.SS "Konfiguracja napędu kasetowego SCSI "
+
+Niektóre parametry konfiguracji sterownika kasetowego SCSI mogą być
+osiągnięte przez użycie następującego:
+.IP
+.BI st= buf_size[,write_threshold[,max_bufs]]
+.LP
+Pierwsze dwie liczby są podane w jednostkach kilobajtowych. Domyślna wartość
+.I buf_size
+to 32KB, a maksymalna wartość to 16384KB.  Wartość
+.I write_threshold
+jest wartością przy której bufor jest przekazywany na kasetę z domyślną
+wartością 30KB. Maksymalna liczba buforów zmienia się z liczbą wykrytych
+napędów, a domyślną wartością jest 2.
+Przykładowym użyciem może być:
+.IP
+st=32,30,2
+.LP
+Szczegóły można znaleźć w pliku README.st w katalogu scsi źródeł jądra.
+
+.SS "Konfiguracja Adapteca aha151x, aha152x, aic6260, aic6360, SB16-SCSI"
+
+Numery aha odnoszą się do kart, a numery aic odnoszą się do rzeczywistych
+chipów SCSI na tych kartach, włączając SoundBlaster-16 SCSI.
+
+Kod sondujący dla tych hostów SCSI szuka zainstalowanego BIOS-a, a jeśli nie
+ma takowego, sonda nie znajduje twojej karty. Wtedy możesz użyć argumentu
+bootującego w postaci:
+.IP
+.BI aha152x= iobase[,irq[,scsi-id[,reconnect[,parity]]]]
+.LP
+Jeśli sterownik był skompilowany z włączonym debuggowaniem, szósta wartość może
+ustawić poziom debuga.
+
+Wszystkie parametry są opisane na górze tej sekcji, a wartość
+.I reconnect
+umożliwia rozłączanie/podłączanie urządzenia jeśli użyto wartości
+niezerowej. Przykład:
+.IP
+aha152x=0x340,11,7,1
+.LP
+Zauważ, że parametry muszą być podane po kolei, co znaczy, że jeśli chcesz
+podać ustawienie parity, to musisz podać iobase, irq, scsi-id i wartość
+reconnect.
+
+.SS "Konfiguracja Adapteca aha154x"
+
+Seria kart aha1542 ma na pokładzie kontroler dyskietek i82077, podczas gdy
+aha1540 go nie ma. Są to karty rządzące szyną, i mają parametry określające
+``uczciwość'' z jaką dzielą szynę między innymi urządzeniami. Argument
+bootujący wygląda następująco:
+.IP
+.BI aha1542= iobase[,buson,busoff[,dmaspeed]]
+.LP
+Prawidłowe wartości iobase to zwykle jedno z: 0x130, 0x134, 0x230, 0x234,
+0x330, 0x334. Klony mogą dozwalać inne wartości.
+
+Wartości
+.IR buson ", " busoff
+odnoszą się do liczby mikrosekund, którymi dominuje na szynie ISA. Domyślnie
+jest tu 11us na parametr on i 4us na off, więc inne karty (takie jak ISA LANCE
+Ethernet) mają szansę na uzyskanie dostępu do szyny ISA.
+
+Wartość
+.I dmaspeed
+odnosi się do częstotliwości (w MB/s), z jaką następuje DMA (Direct Memory
+Access). Domyślnie jest to 5MB/s. Nowsze karty umożliwiają wybranie tej
+wartości jako części konfiguracji programowej, starsze karty poprzez zworki.
+Możesz używać wartości do 10MB/s, zakładając, że twoja płyta główna potrafi
+tyle obsłużyć. Eksperymentuj z rezerwą jeśli używasz wartości ponad 5MB/s.
+
+.SS "Konfiguracja Adapteca aha274x, aha284x, aic7xxx"
+
+Urządzenia te mogą przyjmować argument postaci:
+.IP
+.BI aic7xxx= extended,no_reset
+.LP
+Wartość
+.I extended
+o ile jest niezerowa, wskazuje że translacja rozszerzona (extended
+translation) dla dużych dysków jest włączona. Wartość
+.I no_reset
+o ile jest niezerowa, mówi sterownikowi by nie resetował szyny SCSI kiedy
+konfiguruje adaptor podczas bootowania.
+
+.SS "Konfiguracja hostów SCSI BusLogic (`buslogic=')"
+
+Obecnie, sterownik buslogic przyjmuje tylko jeden parametr, bazę  I/O.
+Oczekuje, że będzie to jedna z następujących prawidłowych wartości:
+0x130, 0x134, 0x230, 0x234, 0x330, 0x334.
+
+.SS "Konfiguracja Future Domain TMC-8xx, TMC-950"
+
+Jeśli twoja karta nie jest wykrywana podczas bootowania, musisz użyć
+argumentu bootującego postaci:
+.IP
+.BI tmc8xx= mem_base,irq
+.LP
+Wartość
+.I mem_base
+jest wartością mapowanego w pamięci regionu I/O, którego używa karta. Jest
+to zwykle jedna z następujących wartości:
+0xc8000, 0xca000, 0xcc000, 0xce000, 0xdc000, 0xde000.
+
+.SS "Konfiguracja Pro Audio Spectrum"
+
+PAS16 używa chipa SCSI NC5380, a nowsze modele wspierają bezzworkową
+konfigurację. Argument bootujący ma postać:
+.IP
+.BI pas16= iobase,irq
+.LP
+Jedyną różnicą jest to, że musisz podać wartość IRQ 255, która mówi
+sterownikowi by pracował bez przerwań, choć ze stratą wydajności. iobase zwykle
+wynosi 0x388.
+
+.SS "Konfiguracja Seagate ST-0x"
+
+Jeśli twoja karta nie jest wykrywana podczas bootowania, musisz użyć
+argumentu następującej postaci:
+.IP
+.BI st0x= mem_base,irq
+.LP
+Wartość
+.I mem_base
+jest wartością mapowanego w pamięci regionu I/O, którego używa karta. Jest
+to zwykle jedna z następujących wartości:
+0xc8000, 0xca000, 0xcc000, 0xce000, 0xdc000, 0xde000.
+
+.SS "Konfiguracja Trantor T128"
+
+Te karty również bazują na chipie NCR5380 i przyjmują następujące opcje:
+.IP
+.BI t128= mem_base,irq
+.LP
+Prawidłowe wartości dla
+.I mem_base
+to: 0xcc000, 0xc8000, 0xdc000, 0xd8000.
+
+.SS "Karty, które nie przyjmują argumentów bootujących"
+
+Obecnie, następujące karty SCSI nie używają żadnych argumentów bootujących.
+W niektórych wypadkach możesz na twardo dopisać wartości poprzez
+bezpośrednią edycję samego sterownika, jeśli to konieczne.
+
+Always IN2000, Adaptec aha1740, EATA-DMA, EATA-PIO, Future Domain
+16xx, NCR5380 (generic), NCR53c7xx to NCR53c8xx, Qlogic, Ultrastor
+(incl. u?4f), Western Digital wd7000.
+
+.SH "DYSKI TWARDE"
+
+.SS "Parametry sterownika dysków/CD-ROM-ów IDE"
+
+Sterownik IDE przyjmuje wiele parametrów, od specyfikacji geometrii dysku do
+wsparcia dla wadliwych chipów kontrolera. Specyficzne opcje dysku mogą być
+podawane poprzez użycie `hdX=' z X pomiędzy `a'-`h'.
+
+Opcje niespecyficzne napędom są przekazywane z przedrostkiem `hd='. Zauważ,
+że używanie przedrostka specyficznego dyskowi dla niespecyficznej opcji
+także zadziała, a opcja zostanie zaaplikowana tak jak oczekiwano.
+
+Zauważ także, że `hd=' może być użyty w odniesieniu do następnego
+niepodanego napędu w sekwencji (a, ..., h). W następujących omówieniach,
+opcja `hd=' będzie cytowana dla zwięzłości. Zobacz plik README.ide w
+linux/drivers/block jeśli interesują cię szczegóły.
+
+.SS "Opcje `hd=cyls,heads,sects[,wpcom[,irq]]'"
+
+Tych opcji używa się do przekazywania fizycznej geometrii dysku. Jedynie
+pierwsze trzy wartości są wymagane. Wartości cylinder/head/sectors będą tymi
+używanym przez fdisk. Wartość wpcom (write precompensation) jest ignorowana
+dla dysków IDE. Podana wartość IRQ będzie używana dla interfejsu, na którym
+rezyduje napęd i nie jest tak naprawdę parametrem specyficznym napędowi.
+
+.SS "Opcja `hd=serialize'"
+
+Chip CMD-640 interfejsu dual IDE jest wadliwy; zaprojektowano go tak, że gdy
+napędy z drugiego interfejsu są używane równocześnie z napędami pierwszego,
+dane ulegają zniszczeniu. Używanie tej opcji mówi sterownikowi by upewnił się,
+że oba interfejsy nigdy nie są używane naraz.
+
+.SS "Opcja `hd=dtc2278'"
+
+Opcja ta mówi sterownikowi, że masz interfejs IDE DTC-2278D. Sterownik próbuje
+dokonać wtedy specyficznych DTC operacji, aby włączyć drugi interfejs i
+włączyć szybsze tryby transferu.
+
+.SS "Opcja `hd=noprobe'"
+
+Nie sonduj tego dysku. Np.
+.IP
+hdb=noprobe hdb=1166,7,17
+.LP
+wyłączy sondowanie, lecz wciąż poda geometrię dysku, więc będzie
+zarejestrowany jako prawidłowe urządzenie blokowe, a więc będzie się nadawać
+do użytku.
+
+.SS "Opcja `hd=nowerr'"
+
+Niektóre napędy czasami mają trwale załączony bit WRERR_STAT. To usprawnia
+działanie tych wadliwych urządzeń.
+
+.SS "Opcja `hd=cdrom'"
+
+Mówi to sterownikowi IDE, że w miejscu normalnego dysku IDE mamy CD-ROM typu
+ATAPI . W większości wypadków, CD-ROM jest wykrywany automatycznie, lecz
+jeśli tak nie jest, to to powinno pomóc.
+
+.SS "Opcje Standardowego Sterownika Dysków ST-506 (`hd=')"
+
+Standardowy sterownik dysków może przyjmować argumenty geometrii dla dysków
+podobnie do sterownika IDE. Zauważ jednak, że oczekuje on jedynie trzech
+wartości (C/H/S) -- więcej lub mnie spowoduje ciche zignorowanie twojego
+polecenia. Podobnie też, przyjmuje jedynie `hd=' jako argument, np. `hda='
+jest tu nieprawidłowe. Format jest następujący:
+.IP
+hd=cyls,heads,sects
+.LP
+Jeśli są tam zainstalowane dwa dyski, powyższe jest powtarzane z parametrami
+geometrii dla drugiego dysku.
+
+.SS "Opcje Sterownika Dysków XT (`xd=')"
+
+Jeśli masz pecha i używasz jednej z tych starych 8 bitowych kart, które
+transferują dane z szybkością 125KB/s, to oto coś dla ciebie.
+Jeśli karta nie jest rozpoznawana, musisz użyć argumentu bootującego
+postaci:
+.IP
+xd=type,irq,iobase,dma_chan
+.LP
+Wartość type określa konkretnego producenta karty i może mieć wartość:
+0=generic; 1=DTC; 2,3,4=Western Digital, 5,6,7=Seagate; 8=OMTI.
+Jedyna różnica między typami tego samego producenta polega na łańcuchu
+BIOS-a użytym do detekcji, który nie jest używany jeśli podano typ.
+
+Funkcja xd_setup() nie sprawdza wartości i przyjmuje, że wprowadziłeś
+wszystkie cztery wartości. Nie zawiedź jej. Oto przykład dla kontrolera
+WD1002 z wyłączonym/usuniętym BIOS-em, przy użyciu `domyślnych' parametrów
+kontrolera XT:
+.IP
+xd=2,5,0x320,3
+.LP
+
+.SH "CD-ROM-y (Non-SCSI/ATAPI/IDE)"
+
+.SS "Interfejs Aztech"
+
+Składnia dla karty tego typu to:
+.IP
+aztcd=iobase[,magic_number]
+.LP
+Jeśli ustawisz magic_number na 0x79, to sterownik spróbuje i ruszy nawet mimo
+wszystko w przypadku nieznanej wersji firmware. Wszystkie inne wartości
+są ignorowane.
+
+Oryginalny komentarz (bo tekst 'will try and run anyway' jest wieloznaczny):
+If you set the magic_number to 0x79 then the driver will try and run
+anyway in the event of an unknown firmware version. All other values
+are ignored.
+
+.SS "Interfejs Sony CDU-31A i CDU-33A"
+
+Ten interfejs CD-ROM można znaleźć na niektórych kartach Pro Audio Spectrum
+i innych kartach z interfejsami Sony. Składnia jest następująca:
+.IP
+cdu31a=iobase,[irq[,is_pas_card]]
+.LP
+Podanie wartości IRQ zero mówi sterownikowi, że przerwania sprzętowe nie są
+wspierane (jak na niektórych kartach PAS). Jeśli twoja karta wspiera
+przerwania, powinieneś użyć ich, bo zmniejszają użycie CPU przez sterownik.
+
+Parametr
+.I is_pas_card
+powinien być wprowadzony jako `PAS', jeśli używana jest karta Pro Audio
+Spectrum, lub nie powinien być podawany w ogóle.
+
+.SS "Interfejs Sony CDU-535"
+
+Składnia dla tego interfejsu CD-ROM to:
+.IP
+sonycd535=iobase[,irq]
+.LP
+Zero może być użyte dla bazy I/O jako `wypełniacz miejsca', jeśli chcesz
+podać wartość IRQ.
+
+.SS "Interfejs GoldStar"
+
+Składnia dla tego interfejsu CD-ROM to:
+.IP
+gscd=iobase
+.LP
+
+.SS "Interfejs Standardowy Mitsumi"
+
+Składnia dla tego interfejsu CD-ROM to:
+.IP
+mcd=iobase,[irq[,wait_value]]
+.LP
+Wartość
+.I wait_value
+jest używana jako wewnętrzna wartość timeouta dla ludzi, którzy mają
+problemy ze swoimi napędami i może lecz nie musi być zaimplementowana,
+zależnie od #define podczas kompilacji.
+Mitsumi FX400 jest odtwarzaczem CD-ROM IDE/ATAPI i nie używa sterownika mcd.
+
+.SS "Interfejs Mitsumi XA/MultiSession (`mcdx=')"
+
+Obecnie ten `eksperymentalny' sterownik ma funkcję konfigurującą, lecz nie ma
+jeszcze (1.3.15) zaimplementowanych żadnych parametrów. Jest to dla takiego
+samego sprzętu jak powyżej, lecz sterownik ma rozszerzone właściwości.
+
+.SS "Interfejs nośników optycznych"
+
+Składnia dla tego rodzaju karty to:
+.IP
+optcd=iobase
+.LP
+
+.SS "Interfejs Phillips CM206"
+
+Składnia dla tego rodzaju karty to:
+.IP
+cm206=[iobase][,irq]
+.LP
+
+Sterownik zakłada, że numery pomiędzy 3 a 11 są wartościami IRQ, a numery
+między 0x300 i 0x370 są portami I/O, więc możesz podać jeden, lub dwa numery
+w dowolnym porządku. Przyjmuje też `cm206=auto', włączające autosondowanie.
+
+.SS "Interfejs Sanyo"
+
+Składnia dla tego rodzaju karty to:
+.IP
+sjcd=iobase[,irq[,dma_channel]]
+.LP
+
+.SS "Interfejs SoundBlaster Pro"
+
+Składnia dla tego rodzaju karty to:
+.IP
+sbpcd=iobase,type
+.LP
+gdzie typ jest jednym z następujących (uwaga małe/duże litery) określeń:
+`SoundBlaster', `LaserMate', lub `SPEA'. Baza I/O jest bazą interfejsu
+CD-ROM, a nie tą z części dźwiękowej karty.
+
+.SH "Urządzenia Ethernet"
+
+Różne sterowniki używają różnych parametrów, ale wszystkie przynajmniej dzielą
+IRQ, wartość bazowego portu I/O i nazwę. W najogólniejszej formie wygląda to
+tak:
+.IP
+ether=irq,iobase[,param_1[,param_2,...param_8]],name
+.LP
+Pierwszy nienumeryczny argument jest pobierany jako nazwa. Wartości param_n
+(jeśli mają zastosowanie) zwykle mają różne znaczenia dla różnych
+kart/sterowników. Typowe wartości param_n są używane do podawania rzeczy takich
+jak adres pamięci dzielonej, wyboru interfejsu, kanału DMA i podobnych.
+
+Najpopularniejszym wykorzystaniem tego parametru jest wymuszenie sondowania
+drugiej karty ethernetowej, jako że domyślnie sondowana jest tylko jedna.
+Można tego dokonać prostym:
+.IP
+ether=0,0,eth1
+.LP
+Zauważ, że wartości zera dla IRQ i bazy I/O w powyższym przykładzie mówią
+sterownikowi, by je wysondował automatycznie.
+
+Ethernet-Howto zawiera rozległą dokumentację o używaniu wielorakich kart i o
+specyficznych implementacjach karta/sterownik wartości param_n. Zainteresowani
+powinni odnieść się do odpowiedniej sekcji w tamtym dokumencie.
+
+.SH "Sterownik Stacji Dysków"
+
+Istnieje wiele opcji sterownika stacji dysków i wszystkie są wymienione w
+README.fd w linux/drivers/block. Tutejsze informacje pochodzą bezpośrednio z
+tamtego pliku.
+
+.SS "floppy=mask,allowed_drive_mask"
+
+Ustawia maskę bitową dozwolonych napędów na maskę. Domyślnie, dozwolone są
+jedynie jednostki 0 i 1 dla każdego kontrolera stacji dysków. Jest tak
+ponieważ niektóre niestandardowe urządzenia (płyty główne ASUS PCI) mieszają
+z klawiaturą, jeśli odwołuje się do jednostek 2 lub 3. Ta opcja jest niejako
+przedawniona dzięki opcji cmos.
+
+.SS "floppy=all_drives"
+
+Ustawia maskę bitową dozwolonych napędów na wszystkie napędy. Użyj tego,
+jeśli masz więcej niż dwa napędy podłączone do kontrolera stacji dysków.
+
+.SS "floppy=asus_pci"
+
+Ustaw maskę bitową aby dozwolić tylko jednostki 0 i 1. (Domyślne)
+
+.SS "floppy=daring"
+
+Mówi, że sterownik stacji dysków, że masz dobrze zachowujący się kontroler
+stacji dysków. Umożliwia to efektywniejsze i łagodniejsze operacje, lecz
+może nie przejść na niektórych kontrolerach. 
+
+.SS "floppy=0,daring"
+
+Mówi sterownikowi, że kontroler stacji dysków powinien być używany ostrożnie.
+
+.SS "floppy=one_fdc"
+
+Mówi sterownikowi, że masz tylko jeden kontroler stacji dysków (domyślne)
+
+.SS "floppy=two_fdc lub floppy=address,two_fdc"
+
+Mówi sterownikowi, że masz dwa kontrolery stacji stacji dysków. Drugi kontroler
+powinien być pod podanym adresem . Jeśli adres nie jest podany, zakłada się
+0x370.
+
+.SS "floppy=thinkpad"
+
+Mówi sterownikowi, że masz Thinkpada. Thinkpady używają odwróconej konwencji
+linii zmiany dysku.
+
+.SS "floppy=0,thinkpad"
+
+Mówi sterownikowi, że nie masz Thinkpada.
+
+.SS "floppy=drive,type,cmos"
+
+Ustawia typ cmos napędu na typ. Dodatkowo ten napęd jest dozwolony przez
+maskę bitową. Jest to przydatne jeśli masz więcej niż dwie stacje dysków
+(tylko dwie mogą być opisane przez fizyczny cmos), lub jeśli twój BIOS używa
+niestandardowych typów CMOS. Ustawienie CMOS na 0 dla pierwszych dwóch
+napędów (domyślne) powoduje, że sterownik stacji dysków odczytuje
+dla nich fizyczne dane cmos.
+
+.SS "floppy=unexpected_interrupts"
+
+Wypisz wiadomość ostrzegawczą jeśli otrzymasz nieoczekiwane przerwanie
+(domyślne zachowanie)
+
+.SS "floppy=no_unexpected_interrupts lub floppy=L40SX"
+
+Nie drukuj wiadomości kiedy pojawi się nieoczekiwane przerwanie. Jest to
+potrzebne laptopom IBM L40SX przy niektórych trybach video. (Wydaje się być
+tam interakcja między video a stacją dysków. Nieoczekiwane przerwania
+zawalają tylko wydajność i mogą być spokojnie ignorowane.)
+
+.SH "Sterownik dźwięku"
+
+Sterownik dźwięku może także akceptować argumenty bootujące do nadpisania
+wartości wkompilowanych. Nie jest to zalecane i jest raczej złożone. Jest to
+opisane w pliku Readme.Linux w katalogu linux/drivers/sound. 
+Przyjmuje parametr bootujący postaci:
+.IP
+sound=device1[,device2[,device3...[,device11]]]
+.LP
+gdzie każda wartość deviceN jest formatu 0xTaaaId, a bajty są użyte
+następująco:
+
+T - rodzaj urządzenia: 1=FM, 2=SB, 3=PAS, 4=GUS, 5=MPU401, 6=SB16,
+7=SB16-MPU401
+
+aaa - heksadecymalnie zapisany adres I/O.
+
+I - heksadecymalnie zapisana linia przerwań (np. 10=a, 11=b, ...)
+
+d - kanał DMA.
+
+Jak widzisz, jest to całkiem bałaganiarskie i lepiej wkompilować swoje
+własne wartości do sterownika. Używanie argumentu `sound=0' wyłączy sterownik
+dźwięku.
+
+.SH "Sterownik myszy Bus Mouse (`bmouse=')"
+
+Sterownik myszy busmouse przyjmuje jeden parametr, będący numerem sprzętowego
+IRQ, z którego ma korzystać.
+
+.SH AUTORZY
+Linus Torvalds (i wielu innych)
+
+.SH ZOBACZ TAKŻE
+klogd(8), lilo.conf(5), lilo(8), mount(8), rdev(8)
+
+Ta strona została napisana na podstawie Boot Parameter HOWTO (v1.0.1)
+napisanego przez Paula Gortmakera. W HOWTO można znaleźć minimalnie więcej
+informacji niż w tym dokumencie.

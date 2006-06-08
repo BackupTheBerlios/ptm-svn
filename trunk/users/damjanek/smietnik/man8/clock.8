@@ -1,0 +1,105 @@
+.\" 1999 PTM Przemek Borys
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH CLOCK 8 "24 grudnia 1992" "Linux 0.99" "Podręcznik programisty Linuksa"
+.SH NAZWA
+clock \- obsłuż zegar CMOS
+.SH SKŁADNIA
+.B "/sbin/clock [ -u ] -r"
+.br
+.B "/sbin/clock [ -u ] -w"
+.br
+.B "/sbin/clock [ -u ] -s"
+.br
+.B "/sbin/clock [ -u ] -a"
+.SH OPIS
+.B clock
+obsługuje na różne sposoby zegar CMOS, umożliwiając jego odczyt lub zapis
+oraz synchronizację między zegarem CMOS i jądrem.
+.SH OPTIONS
+.TP
+.B \-u
+Wskazuje, że zegar CMOS jest ustawiony na Czas Uniwersalny (Universal Time).
+.TP
+.B \-r
+Odczytaj zawartość zegara CMOS i wydrukuj na stdout.
+.TP
+.B \-w
+Zapisz czas systemowy do zegara CMOS.
+.TP
+.B \-s
+Ustaw czas systemowy z zegara CMOS.
+.TP
+.B \-a
+Ustaw czas systemowy z zegara CMOS, poprawiając czas dla błędu
+systematycznego na prawidłowy i zapisując go z powrotem do CMOS.
+.sp
+Opcja ta używa
+.I /etc/adjtime
+do określenia zmian zegara. Zawiera to trzy liczby:
+.RS
+Pierwsza liczba jest poprawką w sekundach na dzień (np. jeśli twój zegar
+przyspiesza codziennie o 5 sekund, pierwsza liczba powinna być -5.0).
+.LP
+Następna liczba mówi, kiedy 
+.B clock
+był ostatnio użyty, licząc w sekundach od 1/1/1970.
+.LP
+Trzecia liczba to liczba sekund, która pozostała po ostatniej poprawce.
+.LP
+Następujące instrukcje są z kodu źródłowego:
+.TP
+a)
+utwórz plik
+.I /etc/adjtime
+zawierający w pierwszej i jedynej linii: '0.0 0 0.0'
+.TP
+b)
+uruchom
+.I "clock -au"
+lub
+.IR "clock -a" ,
+zależnie od tego, czy twój CMOS jest w czasie uniwersalnym, czy lokalnym.
+Poprawia to liczbę sekund.
+.TP
+c)
+ustaw czas systemowy przy użyciu komendy
+.IR date .
+.TP
+d)
+odśwież swój czas CMOS przy użyciu
+.I "clock -wu"
+lub
+.I clock -w
+.TP
+e)
+Zamień pierwszą liczbę z
+.I /etc/adjtime
+swoją poprawką.
+.TP
+f)
+wstaw komendę
+.I "clock -au"
+lub
+.I "clock -a"
+do swojego
+.IR /etc/rc.local ,
+lub nakaż jej uruchamianie programowi
+.BR cron (8).
+.RE
+.SH PLIKI
+.I /etc/adjtime
+.br
+.I /etc/rc.local
+.SH AUTORZY
+.TP
+.B V1.0
+Charles Hedrick, hedrick@cs.rutgers.edu, kwiecień 1992
+.TP
+.B V1.1
+Zmodyfikowane dla poprawek zegara, Rob Hooft, hooft@chem.ruu.nl, listopad 1992
+.TP
+.B V1.2 
+Łaty Haralda Koeniga, koenig@nova.tat.physik.uni-tuebingen.de, 
+dodane przez Roba Hoofta, hooft@EMBL-Heidelberg.DE, wrzesień 1993
+.sp

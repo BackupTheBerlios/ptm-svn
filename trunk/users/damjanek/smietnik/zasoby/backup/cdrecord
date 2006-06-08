@@ -1,0 +1,15 @@
+# Lista polskich stron man dla pakietu
+# Cdrecord 1.8.1a07
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+cdda2wav.1	man1/cdda2wav.1
+cdrecord.1	man1/cdrecord.1
+makefiles.5	man5/makefiles.5
+makerules.5	man5/makerules.5
+isoinfo.8	man8/isoinfo.8
+mkhybrid.8	man8/mkhybrid.8
+mkisofs.8	man8/mkisofs.8
+#
+# koniec listy

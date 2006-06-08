@@ -1,0 +1,94 @@
+.\" Translation: Robert Luberda <robert@debian.org>, Oct 2003, dpkg 1.10.15
+.\" Translation update: Robert Luberda <robert@debian.org>, Jul 2004, dpkg 1.10.22
+.\" $Id: dpkg-query.8,v 1.2 2004/07/09 13:22:54 robert Exp $
+.TH DPKG\-QUERY 8 "sierpień 2001" "Projekt Debiana" "użytki dpkg"
+.SH NAZWA
+dpkg\-query \- narzędzie przepytywania bazy danych dpkg
+
+.SH SKŁADNIA
+.B dpkg\-query
+
+.SH OPIS
+\fBdpkg\-query\fP jest narzędziem służącym do pokazywania informacji o pakietach
+wymienionych w bazie danych \fBdpkg\fP.
+
+
+.SH POLECENIA
+.TP
+\fB\-l\fP | \fB\-\-list\fP \fIwzorzec-nazwy-pakietu\fP ...
+Wypisuje listę pakietów o podanym wzorcu nazwy. Jeśli nie podano
+\fIwzorca-nazwy-pakietu\fP, wypisuje listę wszystkich pakietów z pliku
+\fI/var/lib/dpkg/status\fP. Do \fIwzorca-nazwy-pakietu\fP
+można wpisać zwykłe operatory powtórzenia. Prawdopodobnie potrzebne będzie
+zacytowanie \fIwzorca-nazwy-pakietu\fP, aby powłoka nie rozwinęła tego wzorca.
+Na przykład, poniższe polecenie wypisze nazwy wszystkich pakietów zaczynających
+się od \*(lqlibc5\*(rq:
+
+.T
+.nf
+  \fBdpkg\-query \-l 'libc5*'\fP
+.fi
+.TP
+\fB\-W\fP | \fB\-\-show\fP \fIwzorzec-nazwy-pakietu\fP ...
+Zupełnie tak jak opcja \fB\-\-list\fP, ta opcja wyświetli wszystkie pakiety
+pasujące do danego wzorca. Jednakże użytkownik może dostosować format wyjścia
+do swoich potrzeb za pomocą opcji \fB\-\-showformat\fP.
+.TP
+\fB\-s\fP | \fB\-\-status\fP \fInazwa-pakietu\fP ...
+Podanie stanu pakietu o podanej nazwie. Polecenie po prostu
+wyświetli informacje, które znajdują się w bazie danych pakietów.
+.TP
+\fB\-L\fP | \fB\-\-listfiles\fP \fIpakiet\fP ...
+Podanie listy plików zainstalowanych z \fBpakietu\fP.
+Pliki, które zostały utworzone przez skrypty instalacyjne,
+nie będą podane.
+.TP
+\fB\-S\fP | \fB\-\-search\fP \fIwzorzec-wyszukiwania-nazwy-pliku\fP ...
+Szukanie pliku o podanym wzorcu pośród zainstalowanych pakietów.
+Wzorzec może zawierać zwykłe operatory powtórzenia.
+Polecenie to nie wyszuka dodatkowych plików tworzonych przez skrypty
+instalacyjne pakietów oraz nie wyświetli alternatyw.
+.TP
+\fB\-p\fP |\fB\-\-print\-avail\fP pakiet
+Pokazanie szczegółowych informacji o \fIpakiecie\fP, znalezionych w pliku
+\fI/var/lib/dpkg/available\fP.
+.TP
+\fB\-\-licence\fP | \fB\-\-license\fP
+Wyświetlenie informacji o licencji i prawach autorskich.
+.TP
+\fB\-\-version\fP
+Wyświetlenie informacji o wersji
+
+.SH OPCJE
+.TP
+\fB\-\-admindir=\fIkatalog\fP
+Zmienia położenie bazy danych \fBdpkg\fR. Domyślnie jest to
+\fI/var/lib/dpkg\fP.
+.TP
+\fB\-\-showformat=\fP\fIformat\fR
+Ta opcja określa format wyjścia opcji \fB\-\-show\fP. Format jest łańcuchem znaków,
+który będzie użyty dla każdego wypisanego pakietu i może zawierać standardowe sekwencje
+specjalne \en (znak nowej linii), \er (powrót karetki) lub \e\e (odwrotny ukośnik).
+Informacje o pakietach mogą być wypisane przy pomocy zmiennych odwołujących się do
+pól pakietów za pomocą składni ${pole[;szerokość]}. Pola są wypisywane z wyrównaniem do
+prawej, chyba że szerokość jest liczbą ujemną - w tym wypadku pole będzie
+wyrównane do lewej.
+
+.SH ŚRODOWISKO
+.TP
+\fBCOLUMNS\fP
+Zmienna ta wpływa na wyjście polecenia \fB\-\-list\fP, zmieniając jego szerokość.
+
+.SH AUTOR
+Copyright 2001 Wichert Akkerman
+.UR mailto:wakkerma@debian.org
+<wakkerma@debian.org>
+.UE
+.sp
+Ten program jest wolnym oprogramowaniem, proszę zobaczyć Licencję Publiczną GNU
+w wersji 2 po warunki licencji. NIE MA żadnych gwarancji.
+
+
+.SH SEE ALSO
+.BR dpkg (8)
+

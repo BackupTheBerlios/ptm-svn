@@ -1,0 +1,84 @@
+.\" {PTM/WK/0.1/15-07-1999/"kopiuj pliki pomiędzy DOSem a Unixem"}
+.TH mcopy 1 "15 marca 1999" mtools-3.9.4
+.SH NAZWA
+mcopy - kopiuj pliki pomiędzy DOSem a Unixem
+.SH SKŁADNIA
+.BR mcopy " [" \-b/ptnvmoQOsSrRA ]
+.I plik_źródłowy plik_wynikowy
+.br
+.BR mcopy " [" \-b/ptnvmoQOsSrRA ]
+.I plik_źródłowy... katalog_docelowy
+.br
+.BR mcopy " [" \-tnv ]
+.IR plik_źródłowy
+.SH OPIS
+\fBmcopy\fR kopiuje podany plik na plik o zadanej nazwie lub kopiuje
+wiele plików do podanego katalogu. Źródło jak i cel mogą być
+zarówno plikami DOSu jak i Unixa.
+.PP
+Użycie litery napędu dla plików MS-DOSu, na przykład `a:',
+określa kierunek translacji. Brak określenia napędu oznacza plik Unixa,
+którego ścieżka rozpoczyna się w bieżącym katalogu. Jeśli podano literę
+napędu bez dołączenia do niej nazwy pliku, np.
+.RS
+.RS
+.B mcopy a: .
+.RE
+.RE
+to kopiowane są wszystkie pliki z tego napędu.
+.PP
+Jeżeli podano jeden parametr źródła DOSu, np.
+.RS
+.RS
+.BI "mcopy " a:foo.exe
+.RE
+.RE
+to domniemanym celem jest katalog bieżący (`.'). 
+.PP
+Podanie jako nazwy pliku \fR-\fP oznacza standardowe wejście lub standardowe
+wyjście, w zależności od położenia w linii poleceń.
+.SH OPCJE
+.TP
+. BR \-b
+Tryb wsadowy. Zoptymalizowany dla wielkich kopii rekurencyjnych, ale mniej
+bezpieczny w przypadku załamania podczas kopiowania.
+.TP
+.BR \-/
+Kopiowanie rekurencyjne. Kopiuje również podkatalogi i ich zawartość. 
+.TP
+.BR \-p 
+Zachowuje atrybuty kopiowanych plików.
+.TP
+.BR \-Q
+Przy kopiowaniu wielu plików kończy pracę natychmiast po pierwszej
+nieudanej kopii (na przykład z powodu braku miejsca na dysku docelowym).
+.TP
+.BR \-t
+Transfer plików tekstowych. \fBmcopy\fP zamienia napotkane znaki CR/LF
+(kończące linię w DOSie) na pojedynczy LF (kończący linię w Uniksie).
+.TP
+.BR \-n
+Bez potwierdzania przy nadpisywaniu plików unixowych. \fBmcopy\fP nie
+ostrzega użytkownika o nadpisywaniu istniejącego pliku unixowego.
+Możesz wyłączyć potwierdzanie dla plików DOSu używając opcji \fB\-o\fP.
+.TP
+.BR \-m 
+Zachowaj czas modyfikacji pliku. Jeśli plik docelowy istnieje a nie użyto
+opcji \fB\-n\fP, to \fBmcopy\fP pyta czy nadpisywać plik czy też zmienić
+nazwę nowego pliku (patrz sekcja \fBKolizje nazw\fR w \fBmtools\fR(1)).
+.PP
+.SH BŁĘDY
+W odróżnieniu od MS-DOSu nie jest obsługiwany operator \fB+\fR (dołącz).
+Można jednak użyć \fBmtype\fR, by osiągnąc ten sam efekt:
+.RS 
+.BI mtype " a:plik1 a:plik2 a:plik3 " > plikunixa
+.br
+.BI mtype " a:plik1 a:plik2 a:plik3" " | mcopy \- " a:plikdosu
+.RE
+.SH UWAGI
+Niniejsza, polska wersja dokumentacji, powstała jako tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. W stosunku do automatycznie generowanej
+z Textinfo dokumentacji oryginalnej dokonano przesunięcia sekcji opisującej
+konwersję dokumentacji do \fBmtools\fR(1). Tam też znajdziesz notę prawną
+dotyczącą rozpowszechniania, modyfikacji i tłumaczenia dokumentacji pakietu
+mtools

@@ -1,0 +1,70 @@
+.\" Translation 2002 Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"             quota 3.04
+.\"
+.TH CONVERTQUOTA 8 "Pią 20 sierpnia 1999"
+.UC 4
+.SH NAZWA
+convertquota \- konwersja starego formatu plików kwot na nowy
+.SH SKŁADNIA
+.B convertquota
+[
+.B -ug
+] [
+.B -e
+|
+.B -f
+]
+.I system-plików
+.SH OPIS
+.B convertquota
+przetwarza na systemie plików
+.I system-plików
+stare pliki kwot
+.BR quota.user
+i
+.BR quota.group
+na pliki
+.BR aquota.user
+i
+.BR aquota.group
+w nowym formacie, którego aktualnie używają jądra Linuksa 2.4.0-ac? i nowsze
+oraz jądra Linuksa z Red Hat.
+.PP
+Nowy format plików umożliwia korzystanie z kwot dla 32-bitowych
+identyfokatorów użytkowników / grup, ustawianie kwot dla root-a, zliczanie
+używanej przestrzeni w bajtach (i wobec tego umożliwia korzystanie z kwot na
+ReiserFS) i jest niezależny od architektury. Format wprowadza drzewo
+podstawowe (Radix Tree - prostą postać struktury drzewiastej) w pliku kwot.
+.SH OPCJE
+.TP
+.B -u
+konwersja pliku kwot dyskowych użytkowników. Jest to zachowanie domyślne.
+.TP
+.B -g
+konwersja pliku kwot dyskowych grup.
+.TP
+.B -f
+konwersja ze starego formatu pliku na nowy. Jest to zachowanie domyślne.
+.TP
+.B -e
+konwersja nowego formatu pliku z grubokońcego (big endian) do ostrokońcego
+(little endian).
+.TP
+.B -V
+wypisanie informacji o wersji.
+.SH PLIKI
+.TP 20
+.B aquota.user
+nowy plik kwot dyskowych użytkowników
+.TP
+.B aquota.group
+nowy plik kwot dyskowych grup
+.SH "ZOBACZ TAKŻE"
+.BR quota (1),
+.BR setquota (8),
+.BR edquota (8),
+.BR quotacheck (8),
+.BR quotaon (8),
+.BR repquota (8)
+.SH AUTOR
+Jan Kara \<jack@suse.cz\>

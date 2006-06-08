@@ -1,0 +1,64 @@
+.\" {PTM/AB/0.1/11-12-1998/"__setfpucw - zmiana słowa kontrolnego koprocesora w architekturze i386"}
+.\" tłumaczenie Adam Byrtek (abyrtek@priv.onet.pl)
+.\" Aktualizacja do man-pages-1.44 - A. Krzysztofowicz (ankry@mif.pg.gda.pl)
+.\" ------------
+.\" Written Sat Mar  8 10:35:08 MEZ 1997 by J. "MUFTI" Scheurich (mufti@csv.ica.uni-stuttgart.de)
+.\" ------------
+.TH __SETFPUCW 3 "1997-03-08" "Linux i386" "Podręcznik programisty Linuksa"
+.SH NAZWA
+__setfpucw \- zmiana słowa kontrolnego koprocesora w architekturze i386
+(przestarzałe)
+.SH SKŁADNIA
+.B #include <i386/fpu_control.h>
+.sp
+.BI "void __setfpucw((unsigned short) " slowo_kontrolne );
+.br
+.SH OPIS
+Funkcja
+.B __setfpucw()
+wpisuje
+.I slowo_kontrolne
+do rejestrów fpu (floating point unit - jednostki zmiennoprzecinkowej)
+w architekturze i386. Słowo to było używane do zmiany dokładności
+zmiennoprzecinkowej, zaokrąglania oraz wyjątków zmiennoprzecinkowych.
+.SH PRZYKŁAD
+
+.B __setfpucw(0x1372)
+
+ustawia słowo koprocesora w architekturze i386 na
+.br
+    - rozszerzoną dokładność
+.br
+    - zaokrąglanie do najbliższego
+.br
+    - wyjątki podczas przepełnienia, dzielenia przez zero oraz gdy
+wartość nie jest liczbą
+.br 
+.SH DOSTĘPNOŚĆ
+W glibc 2.1 ta funkcja już nie istnieje. Dostępne są nowe funkcje zgodne z
+ISO C99 o prototyoach w
+.IR /usr/include/fenv.h ,
+takie jak
+.IR fegetround ,
+.IR fesetround ,
+służące do ustawiania trybów zaokrąglania koprocesora; takie jak
+.IR fegetenv ,
+.IR feholdexcept ,
+.IR fesetenv ,
+.IR feupdateenv
+służące do ustawiania środowiska zmiennoprzecinkowego; takie jak
+.IR feclearexcept ,
+.IR fegetexceptflag ,
+.IR feraiseexcept ,
+.IR fesetexceptflag ,
+.IR fetestexcept ,
+służące do obsługi wyjątków zmiennoprzecinkowych.
+.PP
+Jeśli mimo wszystko potrzebny jest bezpośredni dostęp do słowa kontrolnego
+FPU, można posłużyć się zdefiniowanymi w
+.I /usr/include/fpu_control.h
+makrami _FPU_GETCW i _FPU_SETCW.
+.SH "ZOBACZ TAKŻE"
+.BR feclearexcept (3)
+.br
+.I /usr/include/i386/fpu_control.h

@@ -1,0 +1,69 @@
+.\" Tłumczenie Maciej Wojciechowski     wojciech@staszic.waw.pl
+.TH mcserv 8 "16 maja 1995"
+.SH NAZWA
+mcserv \- serwer plików Midnight Commandera.
+.SH SKŁADNIA
+.B mcserv
+.RB [ \-diqvf ]
+.RB [ \-p
+.IR nr_portu ]
+.SH OPIS
+.LP
+mcserv jest programem typu serwer dla sieciowego systemu plików Midnight 
+Commmandera. Pozwala na dostęp do systemu plików serwera, przez programy 
+klienckie używające systemu plików Midnighta (Midnight file system) 
+(aktualnie tylko menedżer plików Midnight Commander).
+.PP
+Jeśli program jest uruchamiany przez roota, będzie starał się użyć jednego 
+z zarezerwowanych portów. W przeciwnym razie, użyje portu numer 9876.
+.PP
+Jeśli system ma uruchomionego portmappera, port będzie automatycznie 
+rejestrowany i dzięki temu klienci będą automatycznie podłączani do 
+odpowiedniego portu. Jeśli system nie obsługuje portmappera, port powinien 
+być podany ręcznie przy użyciu parametru -p (zobacz poniżej).
+.PP
+.SH OPCJE
+.TP
+.B "-d"
+Staje się demonem. Powinieneś używać tego argumentu jeśli uruchaomiasz 
+program z jednego ze skryptów startowych. Ten argument wymusi na programie 
+odbieranie dowolnej ilości przychodzących zapytań, przez rozwidlanie się 
+w procesy potomne i tworzenie swoich nowych kopii dla każdego klienta.
+.TP
+.B "-q"
+Tryb cichy.
+.TP
+.BI "-p " nr_portu
+Serwer będzie nasłuchiwał na porcie o numerze \fInr_portu\fP.
+.TP
+.B "-f"
+Wymusza autoryzację ftp, jeśli typowa zawiodła. To jest użyteczne tylko na 
+systemach, na których metoda sprawdzania haseł nie jest obsługiwana przez 
+tę wersję mcserv. Autoryzacja jest wtedy dokonywana przez łączenie się na 
+lokalny serwer ftp i próbę zalogowania się na użytkownika z użyciem hasła. 
+Serwer ftp powie wtedy, czy zalogowałeś się poprawnie, czy też podałeś 
+niewłaściwe hasło. Używaj tego ostrożnie i tylko w razie konieczności.
+.TP
+.B "-v"
+Przełącza w tryb gadatliwości.
+.SH LICENCJA
+Ten program jest rozpowszechmiany na warunkach licencji GNU General Public 
+License, opublikowanej przez Free Software Foundation. We wbudowanej
+pomocy znajdziesz szczegóły na temat licencji i warunki gwarancji.
+.SH BŁĘDY
+Program używa aktualnie portu 9876 i nie używa chronionych portów 
+systemu. To jest potencjalny problem bezpieczeństwa, ponieważ może być
+uruchomiony przez dowolnego użytkownika systemu, jeśli demon nie jest
+uruchomiony.
+.SH ZOBACZ TAKŻE
+.BR mc(1),
+.BR portmap (8)
+.PP
+.nf
+Strona Midnight Commandera w World Wide Web:
+	http://mc.blackdown.org/mc/
+.fi
+.PP
+.SH AUTOR
+Miguel de Icaza (miguel@roxanne.nuclecu.unam.mx).
+

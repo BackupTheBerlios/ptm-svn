@@ -1,0 +1,221 @@
+.\" Tłumaczenie wersji z modutils-2.4.10 - październik 2001 PTM
+.\" częściowo oparte na depmod.1 z PTM autorstwa Marcina Mazurka
+.\" Andrzej Krzysztofowicz <ankry@green.mif.pg.gda.pl>
+.\"
+.\" Copyright (c) 1994, 1995 Jacques Gelinas (jacques@solucorp.qc.ca)
+.\" Copyright (c) 1995 Bjorn Ekwall (bj0rn@blox.se)
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory /linux
+.\" $Id: depmod.8 1.5 Tue, 02 Oct 2001 11:22:51 +1000 kaos $
+.\"
+.TH DEPMOD 8 "2 października 2001" Linux "Wsparcie dla modułów"
+.SH NAZWA
+depmod \- obsługa opisu zależności pomiędzy modułami jądra
+.SH SKŁADNIA
+.B depmod
+\-[aA] [\-enqsvVru]
+[\-C\ plikkofiguracyjny] [\-F\ symbolejądra] [\-b\ katalogbazowy]
+[wymuszona_wersja]
+.br
+.B depmod
+[\-enqsvru] [\-F\ symbolejądra] moduł1.o moduł2.o ...
+.SH OPCJE
+.TP
+.I \-a
+Poszukuje modułów we wszystkich katalogach wymienionych w (opcjonalnym)
+pliku kofiguracyjnym
+.I /etc/modules.conf\fR.
+.TP
+.I \-A
+Porównuje znaczniki czasowe plików i, jeśli trzeba, działa jak
+.B depmod 
+\-a. Ta opcja aktualizuje zależności jedynie, gdy coś się zmieniło.
+.TP
+.I \-e
+Pokazuje wszystkie nierozwiązane symbole dla poszczególnych modułów.
+.TP
+.I \-n
+Wypisuje plik zależności na standardowe wyjście, zamiast do drzewa
+.BR /lib/modules .
+.TP
+.I \-s
+Wypisuje komunikaty o błędach za pośrednictwem demona syslog, zamiast na
+standardową diagnostykę.
+.TP
+.I \-v
+Wypisuje nazwy poszczególnych modułów podczas ich przetwarzania.
+.TP
+.I \-q
+Każe depmodowi zamilknąć i nie narzekać na brakujące symbole.
+.TP
+.I \-V
+Wypisuje numer wersji programu
+.B depmod
+.TP
+.I \-r
+Niektórzy użytkownicy kompilują moduły jako użytkownik inny niż root,
+a następnie instalują je jako root. W wyniku tego właścicielem modułów
+nie będzie root, nawet jeśli jest on właścicielem katalogu modułów.
+Jeśli dopuści się innego użytkownika niż root jako właściciela modułów,
+umożliwi się nieproszonemu gościowi nadpisanie istniejących modułów
+będących własnością tego użytkownika i wykorzystanie załadowania go
+do uzyskania uprawnień roota.
+.TP
+.I ""
+Domyślnie, modutils odrzucą próbę załadowania modułu nie należącego do
+root-a. Podanie \-r zniesie błąd i pozwoli root-owi załadować moduły, które
+nie są jego własnością.
+.TP
+.I ""
+.B Używanie
+.I -r
+.B jest poważnym naruszeniem bezpieczeństwa i nie jest zalecane.
+.TP
+.I \-u
+depmod 2.4 nie ustawia kodu powrotu, gdy występują nierozwiązane symbole.
+Następna główna wersja modutils (2.5) będzie to robić. Niektóre dystrybucje
+wymagają niezerowego kodu powrotu przy nierozwiązanych symbolach, ale taka
+zmiana mogłaby spowodować problemy u użytkowników oczekujących starego
+zachowania. Jeśli niezerowy kodu powrotu jest potrzebny w depmod 2.4,
+należy podać
+.IR -u .
+depmod 2.5 będzie milcząco ignorować flagę
+.I -u
+i będzie zawsze zwracać niezerowy kodu powrotu przy nierozwiązanych
+symbolach.
+.PP
+Następujące opcje są przydatne dla osób zarządzających dystrybucjami:
+.TP
+.I "\-b katalogbazowy"
+Jeśli drzewo katalogów
+.B /lib/modules
+zawierające poddrzewa modułów zostanie przeniesione gdzie indziej, aby
+obsługiwać moduły w innym środowisku, opcja
+.I katalogbazowy
+mówi depmodowi, gdzie szukać przeniesionego obrazu drzewa
+.BR /lib/modules .
+Odwołania do plików w pliku wynikowym depmoda,
+.I modules.dep,
+który zostanie utworzony nie będą zawierać ścieżki
+.IR katalogbazowy .
+Oznacza to, że gdy drzewo plików zostanie przeniesione z powrotem z
+.B katalogbazowy/lib/modules
+do
+.B /lib/modules
+w ostatecznej dystrybucji, wszystkie odwołania będą poprawne.
+.TP
+.I "\-C plikkofiguracyjny"
+Każe korzystać z pliku
+.I plikkofiguracyjny
+zamiast /etc/modules.conf.
+.br
+Do wybrania innego pliku konfiguracyjnego niż domyślny /etc/modules.conf
+(lub /etc/conf.modules (przestarzałe)) można również wykorzystać zmienną
+środowiska
+.BR MODULECONF .
+.TP
+.I "\-F symbolejądra"
+Podczas budowania pliku zależności dla innego jądra niż aktualnie
+działąjące ważne jest, aby
+.B depmod
+korzystał z właściwego zbioru symboli jądraa przy rozwiązywaniu odwołań do
+jądra z poszczególnych modułów. Symbole te mogą być kopią albo kopią pliku
+.I System.map
+z właściwego jądra, albo kopią zawartości
+.IR /proc/ksyms .
+Jeśli jądro używa a wersjonowanych symboli, najlepiej korzystać z kopii
+zawartości
+.IR /proc/ksyms ,
+gdyż plik ten zawiera wersje symboli jądra. Jednakże, nawet z
+wersjonowanymi symbolami, można używać
+.IR System.map .
+.SH OPIS
+Programy narzędziowe
+.B depmod
+i
+.B modprobe
+służą do zarządzania zmodularyzowanym jądrem Linuksa przez
+zwykłych użytkowników, administratorów i twórców dystrybucji.
+.PP
+.B depmod
+tworzy podobny do "Makefile" plik z zależnościami, oparty na symbolach,
+które znajdzie w zbiorze modułów podanych w linii poleceń lub w katalogach
+wymienionych w pliku konfiguracyjnym.
+Plik zależności może być potem wykorzystany przez
+.B modprobe
+w celu automatycznego ładowania odpowiednich modułów lub zestawów modułów.
+.PP
+Typowe użycie
+.B depmod
+polega na umieszczeniu linii
+.I "/sbin/depmod \-a"
+gdzieś w skryptach startowych w /etc/rc.d tak, aby odpowiednie powiązania
+modułów były dostępne zaraz po uruchomieniu się systemu.
+Należy zauważyć, że parametr
+.I \-a
+jest obecnie opcjonalny.
+Dla stosowania podczas startu systemu opcja
+.I \-q
+może być bardziej właściwa, gdyż wycisza ona depmoda w kwestii
+nierozwiązanych symboli.
+.PP
+Istnieje także możliwość utworzenia pliku zależności zaraz po skompilowaniu
+nowego jądra. Wydanie polecenia "depmod -a 2.2.99" po wcześniejszej kompilacji
+jądra 2.2.99 i jego modułów po raz pierwszy, używając wciąż jądra 2.2.98,
+spowoduje utworzenie pliku we właściwym miejscu.
+Jednakże w tym przypadku, wygenerowane zależności mogą nie być poprawne.
+Zobacz opis opcji
+.IR \-F ,
+.I \-C
+i
+.I \-b
+powyżej aby uzyskać więcej informacji na temat obsługi tej sytuacji.
+.PP
+Podczas tworzenia związków pomiędzy modułami i symbolami udostępnionymi
+przez inne moduły
+.B depmod
+nie bierze pod uwagę stosunku modułu lub udostępnionych syboli do licencji
+GPL. To znaczy, depmod nie zgłosi błędu jeśli moduł na licencji niezgodnej
+z GPL będzie się odwoływać to symboli zastrzeżonych dla GPL (EXPORT_SYMBOL_GPL
+w jądrze). Jednakże, insmod odmówi rozwiązania symboli zastrzeżonych dla GPL
+dla modułów nie-GPL, więc modułu nie uda się załadować.
+.SH KONFIGURACJA
+Zachowanie się
+.B depmod
+i
+.B modprobe
+może być dostosowane przez (opcjonalny) plik konfiguracyjny
+.BR /etc/modules.conf .
+.br
+Zajrzyj do
+.I modprobe(8)
+i
+.I modules.conf(5)
+po pełny opis.
+.PP
+.SH STRATEGIA
+Za każdym razem podczas kompilacji nowego jądra, polecenie
+.B "make modules_install"
+stworzy nowy katalog, ale nie zmieni katalogu domyślnego.
+.PP
+Kiedy otrzyma się moduł nie związany z konkretnym jądrem należy go umieścić
+w jednym z katalogów nie zależnych od wersji jądra w /lib/modules.
+.PP
+Takie jest standardowe zachowanie, które jednakże może być zmienione poprzez
+odpowiednie wpisy do /etc/modules.conf.
+.SH PLIKI
+.nf
+/etc/modules.conf (alternatywnie, przestarzały /etc/conf.modules)
+/lib/modules/*/modules.dep,
+/lib/modules/*
+.fi
+.SH "ZOBACZ TAKŻE"
+modules.conf(5),
+modprobe(8),
+modinfo(8),
+lsmod(8),
+ksyms(8)
+.SH AUTOR
+Jacques Gelinas (jack@solucorp.qc.ca)
+.br
+Bjorn Ekwall (bj0rn@blox.se)

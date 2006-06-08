@@ -1,0 +1,50 @@
+.\" Tłumaczenie wersji man-pages 1.53 - sierpień 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" -----------
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Distributed under GPL
+.\" Based on glibc infopages
+.\"
+.\" Corrections by aeb
+.TH NAN 3 2002-08-10 "GNU" "funkcje matematyczne libc"
+.SH NAZWA
+nan, nanf, nanl \- zwracają wartość 'nie jest liczbą'
+.SH SKŁADNIA
+.B #include <math.h>
+.sp
+.BI "double nan(const char *" tagp );
+.sp
+.BI "float nanf(const char *" tagp );
+.sp
+.BI "long double nanl(const char *" tagp );
+.SH OPIS
+Funkcje te zwracają (zależną od
+.IR tagp )
+reprezentację cichej wartości NaN (nie-jest-liczbą). Jeśli implementacja nie
+wspiera cichych wartości NaN, funkcje te zwracają zero.
+.LP
+Wywołanie
+.I nan("ciąg-znaków")
+jest równoważne
+.I strtod ("NAN(ciąg-znaków)",NULL)
+oraz podobnie, wywołania
+.I nanf
+i
+.I nanl
+są równoważne analogicznym wywołaniom
+.I strtof
+i
+.IR strtold .
+.PP
+Argument
+.I tagp
+jest wykorzestywany w sposób nieokreślony. W systemach zgodnych z IEEE 754
+istnieje wiele reprezentacji NaN, a
+.I tagp
+wybiera jedną z nich. W innych systemach parametr ten nie ma znaczenia.
+.SH "ZGODNE Z"
+C99. Zobacz także IEC 559 oraz dodatek w IEEE 754/IEEE 854 zawierający
+zalecane funkcje.
+.SH "ZOBACZ TAKŻE"
+.BR isnan (3),
+.BR strtod (3)

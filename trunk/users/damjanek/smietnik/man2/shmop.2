@@ -1,0 +1,287 @@
+.\" Copyright 1993 Giorgio Ciucci (giorgio@crcc.it)
+.\" 
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\" 
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" 
+.\" Modified Sun Nov 28 17:06:19 1993, Rik Faith (faith@cs.unc.edu)
+.\"          with material from Luigi P. Bai (lpb@softint.com)
+.\" Portions Copyright 1993 Luigi P. Bai
+.\" Modified Tue Oct 22 22:04:23 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified, 5 Jan 2002, Michael Kerrisk <mtk16@ext.canterbury.ac.nz>
+.\" Modified, 19 Sep 2002, Michael Kerrisk <mtk16@ext.canterbury.ac.nz>
+.\"    Added SHM_REMAP flag description
+.\"
+.\" Translated by Rafał Lewczuk, 24 Aug 1999
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Apr 2003,
+.\"              manpages 1.54
+.\" 
+.TH SHMOP 2 2002-01-05 "Linux 2.5" "Podręcznik programisty Linuksa" 
+.SH NAZWA
+shmop \- operacje na segmentach pamięci wspólnej
+.SH SKŁADNIA
+.nf
+.B
+#include <sys/types.h>
+.B
+#include <sys/shm.h>
+.fi
+.sp
+.BI "void *shmat(int " shmid ,
+.BI "const void *" shmaddr ,
+.BI "int " shmflg );
+.sp
+.BI "int shmdt(const void *" shmaddr );
+.SH OPIS
+Funkcja
+.B shmat
+dołącza segment pamięci wspólnej o deskryptorze 
+.B shmid
+do przestrzeni adresowej procesu, który ją wywołał.
+Adres, pod którym segment ma być widoczny jest przekazywany parametrem
+.IR shmaddr ,
+przy czym system może przetworzyć ten adres w następujący sposób:
+.LP
+Jeśli 
+.I shmaddr
+jest równy
+.BR NULL ,
+wówczas system sam wybierze odpowiedni (nieużywany) adres, pod którym segment
+będzie widoczny.
+.LP
+Jeśli
+.I shmaddr
+nie jest równy
+.B NULL
+i w
+.I shmflg
+przekazany został znacznik 
+.BR SHM_RND , 
+wówczas segment zostanie dołączony pod adresem
+.I shmaddr
+zaokrąglonym w dół do wielokrotności
+.BR SHMLBA .
+W innym razie
+.I shmaddr
+musi być wyrównanym do granicy strony adresem, pod którym nastąpi dołączenie
+segmentu.
+.PP
+Jeśli w
+.I shmflg
+przekazany zostanie znacznik 
+.BR SHM_RDONLY ,
+wówczas segment zostanie odwzorowany z zabezpieczeniem przed zapisem. Proces
+wywołujący
+.B shmat 
+musi mieć prawa odczytu segmentu.
+W przeciwnym razie w dołączanym segmencie możliwe są zarówno odczyt, jak
+i zapis, przy czym proces musi mieć prawa do odczytu i zapisu segmentu.
+Nie istnieje pojęcie segmentu pamięci wspólnej tylko do zapisu.
+.PP
+Znacznik (specyficzny dla Linuksa)
+.BR SHM_REMAP ,
+który może zostać przekazany w
+.I shmflg
+oznacza, że odwzorowanie tego segmentu powinno zastąpić jakiekolwiek
+istniejące wcześniej odwzorowanie w zakresie rozpoczynającym się od
+.I shmaddr
+i rozciągającym na rozmiar segmentu.
+(Normalnie, gdy odwzorowanie w tym zakresie adresów już istnieje, powinien
+wystąpić błąd
+.BR EINVAL .)
+W tym przypadku
+.I shmaddr
+nie może byc równe
+.BR NULL .
+.PP
+Wartość
+.B brk
+procesu wywołującego funkcję nie jest zmieniana podczas dołączania segmentu.
+Segment zostanie automatycznie odłączony, gdy proces zakończy się.
+Ten sam segment może być dołączony do przestrzeni adresowej procesu jako
+"tylko do odczytu" lub "do odczytu i zapisu" więcej niż raz.
+.PP
+W wyniku pomyślnego wywołania
+.B shmat
+system operacyjny aktualizuje pola struktury
+.B shmid_ds
+opisującej segment w następujący sposób:
+.IP
+.B shm_atime
+zostaje przypisany aktualny czas.
+.IP
+.B shm_lpid
+zostanie przypisany identyfikator procesu wywołującego 
+.BR shmat .
+.IP
+.B shm_nattch
+zostanie zwiększone o jeden.
+.PP
+Należy zwrócić uwagę, że operacja powiedzie się nawet jeśli dołączany segment
+pamięci wspólnej jest zaznaczony do usunięcia.
+.PP
+Funkcja
+.B shmdt
+wyłącza segment pamięci wspólnej odwzorowany pod adresem podanym w
+.I shmaddr
+z przestrzeni adresowej procesu wywołującego tę funkcję.
+Przekazany funkcji w parametrze
+.I shmaddr
+adres musi być równy adresowi zwróconemu wcześniej przez wywołanie
+.B shmat .
+.PP
+W wyniku pomyślnego wywołania
+.B shmdt
+pola struktury
+.B shmid_ds
+opisującej segment aktualizowane są w następujący sposób:
+.IP
+.B shm_dtime
+przypisywany jest aktualny czas.
+.IP
+.B shm_lpid
+przypisywany jest identyfikator procesu wywołującego
+.BR shmdt .
+.IP
+.B shm_nattch
+jest zmniejszane o jeden. Jeśli pole to osiągnie 0 i segment jest zaznaczony
+do usunięcia, wówczas zostanie on usunięty.
+.PP
+Obszar w przestrzeni adresowej procesu wywołującego funkcję jest zwalniany.
+.PP
+.SH "WYWOŁANIA SYSTEMOWE"
+.TP
+.B fork()
+W wyniku wywołania
+.B fork()
+proces potomny dziedziczy dołączone segmenty pamięci wspólnej.
+.TP
+.B exec()
+Po wykonaniu 
+.B exec()
+wszystkie odwzorowane segmenty są odłączane (nie są usuwane).
+.TP
+.B exit()
+Po wykonaniu 
+.B exit()
+wszystkie dołączone segmenty pamięci wspólnej są odłączane (nie są usuwane).
+.SH "WARTOŚĆ ZWRACANA"
+W przypadku wystąpienia błędu opydwie funkcje zwracają
+.B \-1
+przypisując zmiennej
+.B errno
+kod błędu.
+W wyniku poprawnego wykonania funkcja
+.B shmat
+zwraca adres początku obszaru odwzorowania segmentu, natomiast funkcja
+.B shmdt
+zwraca wartość 
+.BR 0 .
+.SH BŁĘDY
+Gdy 
+.B shmat
+zakończy się niepomyślnie, zmiennej
+.B errno
+przypisywana jest jedna z następujących wartości:
+.TP 11
+.B EACCES
+Proces wywołujący funkcję nie ma uprawnień do dołączenia segmentu w zadany
+sposób (do odczytu lub odczytu / zapisu).
+.TP
+.B EINVAL
+Niewłaściwa wartość parametru
+.IR shmid ,
+niewyrównana do granicy strony (i nie podano \fBSHM_RND\fP), niepoprawna
+wartość
+.IR shmaddr ,
+nieudane dołączenie pod adresem
+.B brk
+.\" FIXME What does "failing attach at brk" mean?
+lub został podany znacznik
+.BR SHM_REMAP ,
+podczas gdy
+.I shmaddr
+jest równe
+.BR NULL .
+.TP
+.B ENOMEM
+Brak pamięci na deskryptor lub tablice stron.
+.PP
+Funkcja
+.B shmdt
+może zakończyć się niepomyślnie tylko w sytuacji, gdy pod adresem
+.I shmaddr
+nie istnieje segment pamięci wspólnej. Wowczas zmienna 
+.B errno
+przyjmie wartość
+.BR EINVAL .
+.\" W rzeczywistości, powyższy opis dotyczy tego co *powinno* się dziać
+.\" zgodnie z POSIX. Jednakże zarówno przy jądrze 2.2.19, jak i przy 2.4.15
+.\" shmdt() nigdy nie zwraca błędu, nawet gdy shmaddr jest niepoprawny.
+.\" (MTK, Jan 2002)
+.\" Has been fixed in 2.4.19 - shmdt() now returns EINVAL (MTK, Sep 2002)
+.SH UWAGI
+Używanie
+.B shmat
+z
+.I shmaddr
+równym
+.B NULL
+jest zalecaną, przenośną motodą dołączania segmentu pamięci wspólnej.
+Trzeba jednak być świadomym, że ta metoda dołączania segmentu pamięci wspólnej
+może spowodować jego dołączenie pod różnymi adresami w różnych procesach.
+W związku z tym wszystkie wskaźniki obsługiwane w pamięci wspólnej muszą
+być względne (zazwyczaj względem adresu początkowego segmentu), nie zaś
+bezwzględne.
+.LP
+Dla wywołania
+.B shmat
+obowiązuje następujące ograniczenie systemowe:
+.TP 11
+.B SHMLBA
+Wartość, której wielokrotnością musi być adres dolnej granicy segmentu.
+Musi być wyrównana do granicy strony.
+W aktualnej implementacji
+.B SHMLBA
+jest równe
+.BR PAGE_SIZE .
+.PP
+Aktualna implementacja nie ma wewnętrznego ograniczenia na ilość segmentów
+pamięci wspólnej dołączanych do jednego procesu
+.RB ( SHMSEG ).
+.SH "ZGODNE Z"
+SVr4, SVID. SVr4 dokumentuje dodatkowy kod błędu EMFILE.
+W SVID-v4 typ parametru \fIshmaddr\fP został zmieniony z
+.B "char *"
+na
+.BR "const void *" ,
+a typ wyniku zwracanego przez \fIshmat\fP() z
+.B "char *"
+na
+.BR "void *" .
+(Linuksowe libc4 i libc5 zawierają prototypy
+.BR "char *" ;
+glibc2 zawiera
+.BR "void *" .)
+.SH "ZOBACZ TAKŻE"
+.BR brk (2),
+.BR ipc (5),
+.BR mmap (2),
+.BR shmctl (2),
+.BR shmget (2).

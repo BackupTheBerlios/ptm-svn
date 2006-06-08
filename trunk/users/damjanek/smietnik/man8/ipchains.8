@@ -1,0 +1,550 @@
+.\" Translation (C) 1999 Pawel Wilk <siewca@dione.ids.pl>
+.\" {PTM/PW/0.1/25-05-1999/"administracja zaporą ogniową IP"}
+.\" Translation update Robert Luberda <robert@debian.org>, Jul 2004, ipchains 1.3.10
+.\" $Id: ipchains.8,v 1.24 2004/07/16 10:03:41 robert Exp $
+.\"
+.\" Heavily modified by Paul ``Rusty'' Russell March 1997
+.\"
+.\" Based on the original ipfwadm man page by Jos Vos <jos@xos.nl> (see README)
+.\"
+.\"	This program is free software; you can redistribute it and/or modify
+.\"	it under the terms of the GNU General Public License as published by
+.\"	the Free Software Foundation; either version 2 of the License, or
+.\"	(at your option) any later version.
+.\"
+.\"	This program is distributed in the hope that it will be useful,
+.\"	but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"	GNU General Public License for more details.
+.\"
+.\"	You should have received a copy of the GNU General Public License
+.\"	along with this program; if not, write to the Free Software
+.\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.\"
+.TH IPCHAINS 8 "8 lutego 1998" "" ""
+.SH NAZWA
+ipchains \- administracja zaporą ogniową IP (IP firewall)
+.SH SKŁADNIA
+.BR "ipchains -[ADC] " "łańcuch specyfikacja-reguły [opcje]"
+.br
+.BR "ipchains -[RI] " "łańcuch num-reg specyfikacja-reguły [opcje]"
+.br
+.BR "ipchains -D " "łańcuch num-reg [opcje]"
+.br
+.BR "ipchains -[LFZNX] " "[łańcuch] [opcje]"
+.br
+.BR "ipchains -P " "łańcuch cel [opcje]"
+.br
+.BR "ipchains -M " "[ -L | -S ] [opcje]"
+.SH OPIS
+.B Ipchains
+jest używany do ustawiania, podtrzymywania i przeglądania reguł zapory ogniowej
+w jądrze Linuksa. Te reguły możemy podzielić na 4 różne kategorie:
+łańcuch wejściowy (IP input chain), łańcuch wyjściowy (IP output chain), łańcuch
+przekazowy (IP forwarding chain) i łańcuchy zdefiniowane przez użytkownika.
+
+Dla każdej z tych kategorii utrzymywana jest oddzielna tabela reguł, z których
+każda może odnosić się do jakiegoś łańcucha reguł zdefiniowanego przez
+użytkownika.
+
+Zobacz
+.IR ipfw (4),
+by dowiedzieć się więcej szczegółów.
+.SH CELE
+Reguła ścianki ogniowej określa kryteria dotyczące pakietu i celu.
+Jeśli pakiet nie pasuje do danej regułki, to sprawdzana jest następna w danym
+łańcuchu; jeśli pakiet pasuje wtedy następna regułka jest określana
+przez wartość celu, która może być nazwą łańcucha zdefiniowanego przez
+użytkownika albo też jedną ze specjalnych wartości
+.IR ACCEPT ,
+.IR DENY ,
+.IR REJECT ,
+.IR MASQ ,
+.IR REDIRECT
+lub
+.IR RETURN .
+.sp 0.5
+.I ACCEPT
+oznacza, że należy przepuścić pakiet.
+.I DENY
+oznacza, że należy pakiet odrzucić.
+.I REJECT
+działa podobnie jak odrzucenie, ale jest bardziej "uprzejmy" i łatwiejszy do
+wyśledzenia, ponieważ dodatkowo wysyłany jest do nadawcy zwrotny komunikat
+ICMP informujący go, że pakiet nie został przyjęty.
+(Zauważ, że
+.I DENY
+i
+.I REJECT
+są tożsame jeśli mamy do czynienia z pakietami ICMP).
+.sp 0.5
+.I MASQ
+jest właściwy tylko dla łańcuchów przekazowych (forwarding) i
+zdefiniowanych przez użytkownika. Może być użyty tylko
+kiedy jądro jest skompilowane z włączoną definicją
+\fBCONFIG_IP_MASQUERADE\fP.
+Przy użyciu tego rodzaju celu wychodzące (lub przechodzące przez maszynę,
+np. pełniącą funkcję bramki) pakiety będą maskowane, tzn. w ten sposób zostaną
+podmienione ich adresy nadawcy jakby pochodziły one z maszyny lokalnej.
+Potem przychodzące, zwrotne pakiety stanowiące odpowiedzi na podmienione
+będą automatycznie rozpoznawane i "demaskowane" z pominięciem łańcucha
+przekazowego.
+.sp 0.5
+.I REDIRECT
+jest właściwy tylko dla łańcuchów wejściowych i zdefiniowanych przez
+użytkownika i może być użyty tylko kiedy jądro jest skompilowane z
+włączoną definicją
+\fBCONFIG_IP_TRANSPARENT_PROXY\fP.
+W związku z tym pakiety będą przekierowywane do lokalnego gniazda,
+nawet jeśli były one skierowane do odległej maszyny.
+Jeśli podany jest port przekierowania 0, który jest domyślną wartością
+to port docelowy pakietu będzie użyty jako port przekierowawczy.
+Kiedy ten cel jest użyty to podany może być opcjonalnie dodatkowy
+argument (numer portu właśnie).
+.sp 0.5
+Jeśli osiągnięty zostaje koniec zdefiniowanego przez użytkownika łańcucha
+albo wystąpi regułka z celem o nazwie
+.I RETURN
+to sprawdzana jest następna reguła w poprzednim (wywołującym) łańcuchu.
+Jeśli osiągnięty zostaje koniec wbudowanego łańcucha, albo też
+wystąpi reguła z celem o nazwie
+.I RETURN
+to dalszy los pakietu zależy od celu określonego przez politykę łańcucha.
+.SH OPCJE
+Opcje, które są rozpoznawane przez
+.BR ipchains ,
+możemy podzielić na kilka różnych grup.
+.SS KOMENDY
+Te opcje określają specyficzne działanie, które ma być dokonane;
+tylko jedna z tych opcji może być podana w linii komend, z wyjątkiem
+opcji opisanych poniżej. Dla wszystkich tzw. długich opcji i długich
+wersji komendy musisz wprowadzić jedynie tyle pierwszych znaków, żeby
+.B ipchains
+potrafiło odróżnić nazwę podawanej opcji od innych.
+.TP
+.BR "-A, --append"
+Dołącza jedną lub więcej reguł do końca podanego łańcucha.
+Kiedy nazwy źródeł i/lub celów odnoszą się do więcej niż jednego adresu
+to reguła będzie dodana dla każdej możliwej kombinacji tego adresu.
+.TP
+.BR "-D, --delete"
+Usuwa jedną lub więcej reguł z podanego łańcucha. Są tu dwie wersje
+tej komendy: reguła może być określona za pomocą jej numeru w łańcuchu
+(zaczynając od 1 dla pierwszej reguły) lub za pomocą podanej reguły,
+do której usuwana pasuje.
+.TP
+.B "-R, --replace"
+Zamienia regułę w wybranym łańcuchu. Jeśli nazwy źródła i/lub przeznaczenia
+odnoszą się do wielu różnych adresów to komenda zawiedzie. Reguły są
+ponumerowane poczynając od 1.
+.TP
+.B "-I, --insert"
+Wstawia jedną lub więcej reguł do określonego łańcucha. Regułę wskazuje się
+za pomocą jej numeru. Jeśli więc numerem reguły jest 1 to reguła lub reguły
+są wstawiane na początek łańcucha.
+.TP
+.B "-L, --list"
+Wypisuje wszystkie reguły w podanym łańcuchu. Jeżeli nie wyszczególniono
+żadnego łańcucha, to pokazywane są wszystkie. Jest poprawne podanie opcji
+.B -Z
+(zero), by nie istniała konieczność/możliwość podawania łańcucha.
+Dokładne wyjście zależy od innych wprowadzonych argumentów.
+.TP
+.B "-F, --flush"
+Opróżnia podany łańcuch. Jest to odpowiednik usunięcia wszystkich reguł po
+kolei.
+.TP
+.B "-Z, --zero"
+Zeruje liczniki pakietów i bajtów we wszystkich regułkach. Jest poprawne
+podanie opcji
+.B "-L, --list"
+(list), aby ujrzeć zawartości liczników tuż przed ich oczyszczeniem;
+jeśli jest to wykonane, to nie może być podany żaden konkretny łańcuch.
+(będą one
+.I wszystkie
+wyświetlone i oczyszczone).
+.TP
+.B "-N, --new-chain"
+Tworzy nowy, zdefiniowany przez użytkownika łańcuch pod podaną nazwą.
+Musi to być nazwa unikatowa, nie przypisana do żadnego istniejącego
+łańcucha.
+.TP
+.B "-X, --delete-chain"
+Usuwa podany łańcuch zdefiniowany przez użytkownika. Nie może być
+żadnych odnośników do łańcucha w innych regułkach (jeśli są to trzeba
+je usunąć lub zastąpić odpowiednimi regułkami zanim łańcuch będzie
+można usunąć). Jeśli nie podany jest żaden argument to potraktowane zostanie
+to jako żądanie usunięcia wszystkich niewbudowanych łańcuchów.
+.TP
+.B "-P, --policy"
+Ustawia politykę łańcucha podanego celu. Obejrzyj sekcję
+.BR CELE ,
+żeby poznać możliwe cele. Tylko łańcuchy niedefiniowane przez użytkownika
+mogą mieć tzw. polityki, jednakże ani łańcuchy wbudowane, ani łańcuchy zdefiniowane przez
+użytkownika nie mogą być celami polityki.
+.TP
+.B "-M, --masquerading"
+Opcja ta umożliwia przeglądanie połączeń obecnie maskowanych
+(w połączeniu z opcją \fB-L\fP) lub ustawianie parametrów maskujących jądra
+(w połączeniu z opcją \fB-S\fP).
+.TP
+.BI "-S, --set tcp tcpfin udp"
+Zmienia wartość czasu oczekiwania używaną przy maskowaniu.
+Polecenie to wymaga zawsze 3 parametrów, reprezentujących wartości
+czasów przeterminowania (w sekundach) dla sesji TCP, sesji TCP po odebraniu
+pakietu FIN i tak samo dla pakietów UDP.
+Wartość czasu ustawiona na 0 oznacza, że powinien zostać niezmieniony
+poprzednio ustawiony parametr.
+Opcja ta jest dopuszczalna tylko w kombinacji z flagą
+\fB-M\fP.
+.TP
+.B "-C, --check"
+Sprawdza jak podany pakiet byłby obsłużony przez podany łańcuch. Jest to
+niezwykle użyteczne, gdy chodzi o testy, ponieważ wykonywane są te same
+działania, których normalnie dokonuje jądro by sprawdzić "prawdziwy" pakiet.
+Może być to użyteczne, gdy trzeba sprawdzić łańcuchy zdefiniowane przez
+użytkownika jak też łańcuchy wbudowane. Przy konstruowaniu kontrolnego pakietu
+używać można takich samych argumentów jak przy określaniu reguł zapory ogniowej.
+W szczególności wymaganymi flagami są
+.B -s
+(adres źródła),
+.B -d
+(adres przeznaczenia),
+.B -p
+(protokół) i
+.B -i
+(interfejs).
+.TP
+.B "-h, --help"
+Pomoc.
+Podaje (na razie bardzo uproszczony) opis składni komendy. Użycie ze słowem
+.IR icmp ,
+spowoduje wypisanie listy nazw ICMP.
+.TP
+.B "-V, --version"
+Wyświetla numer wersji ipchains.
+.SS PARAMETRY
+Poniższe parametry dopełniają określanie reguł (używane z poleceniami
+add, delete, replace, append i check).
+.TP
+.BI "-p, --protocol" "[!] protokół"
+Protokół reguły lub pakietu do sprawdzenia.
+Podany protokół może być jednym z
+.IR tcp ,
+.IR udp ,
+.IR icmp ,
+lub
+.IR all ,
+lub może być wartością liczbową, reprezentującą jeden z tych lub inny
+protokół. Dopuszczalna jest też nazwa protokołu z pliku /etc/protocols.
+Argument "!" przez protokołem odwraca próbę. Wartość 0 odpowiada nazwie
+.IR all .
+Protokół
+.I all
+odpowiada wszystkim protokołom i jest ustawieniem domyślnym,
+gdy opcja ta jest pominięta.
+.I All
+nie może być użyte w połączeniu z komendą check.
+.TP
+.BR "-s, --source, --src " "[!] \fIadres\fP[/\fImaska\fP] [!] [\fIport[:port]\fP]"
+Określenie źródła.
+.I Adres
+może być nazwą hosta, nazwą sieci lub też samym adresem IP.
+Parametr
+.I maska
+może być zarówno maską sieci jak i samym numerem, określającym
+pierwszą liczbę z lewej strony maski sieci.
+Wobec tego, maska
+.I 24
+odpowiada
+.IR 255.255.255.0 .
+Argument "!" przed podanym adresem odwraca znaczenie tego adresu.
+.sp 0.5
+W skład źródła może wchodzić określenie numeru portu lub typu komunikatu ICMP.
+Może to być zarówno nazwa usługi, numeru portu, typu ICMP w postaci liczby,
+jak i jedna z nazw typów ICMP, które można uzyskać wydając polecenie
+.br
+ ipchains -h icmp
+.br
+Zauważ, że wiele z tych nazw ICMP odnosi się do obydwu - typu i kodu, to znaczy,
+że każdy kod ICMP po fladze
+.B -d
+jest niepoprawny. W dalszej części tego paragrafu,
+.I port
+oznacza zarówno określenie numeru portu, jak i typ komunikatu ICMP.
+Może być również podany zakres alternatywny, zapisywany w formacie
+.IR port : port .
+Jeśli pierwszy port jest pominięty to przypisywana jest mu wartość "0";
+jeśli drugi jest ominięty to przypisywana jest wartość "65535".
+.sp 0.5
+Porty mogą być podane tylko w połączeniu z protokołami
+.IR tcp ,
+.IR udp ,
+lub
+.IR icmp .
+Znak "!" przed określeniem portu odwraca znaczenie.
+Gdy podano komendę check, wymagającą tylko jednego portu, i jeżeli
+podano flagę
+.B -f
+(fragmentuj) to nie są dopuszczalne żadne porty.
+.TP
+.BR "--source-port " "[!] [\fIport[:port]\fP]"
+To pozwala na osobne podanie portu źródłowego lub zakresu portów.
+Patrz opis flagi
+.B -s
+powyżej po więcej szczegółów. Flaga
+.B --sport
+jest zamiennikiem dla tej opcji.
+.TP
+.BR "-d, --destination, --dst " "[!] \fIadres\fP[/\fImaska\fP] [!] [\fIport[:port]\fP]"
+Określenie miejsca przeznaczenia.
+Obejrzyj opis flagi
+.B -s
+(źródło), by uzyskać szczegółowy opis składni. W przypadku ICMP,
+w którym nie istnieje pojęcie portów, "port docelowy" odnosi się do
+liczbowego kodu ICMP.
+.TP
+.BR "--destination-port " "[!] [\fIport[:port]\fP]"
+To pozwala na osobne podawanie portów.
+Obejrzyj opis flagi
+.B -s
+po więcej szczegółów. Flaga
+.B --dport
+jest zamiennikiem dla tej opcji.
+.TP
+.BR "--icmp-type " "[!] typename"
+Pozwala to na podanie typu ICMP (użyj w połączeniu z opcją
+.BR "-h icmp" ,
+by ujrzeć poprawne nazwy typów ICMP). Jest często bardziej wygodne dołączać
+tę opcję przy podawaniu miejsc przeznaczenia.
+.TP
+.BR "-j, --jump " "\fIcel\fP"
+Określa cel reguły; np. co zrobić jeśli pakiet spełnia podane w regule
+kryteria. Celem może być łańcuch zdefiniowany przez użytkownika (oczywiście
+nie ten, w którym jest ta reguła) lub jeden z celów specjalnych, które
+natychmiast decydują o losie pakietu. Jeśli pominiemy w regule tę opcję, to
+spełnienie przez pakiet podanych kryteriów nie będzie miało wpływu na jego los,
+ale liczniki tej reguły będą zwiększone.
+.TP
+.BI "-i, --interface " "[!] nazwa"
+Opcjonalna nazwa interfejsu, przez który pakiet jest odbierany bądź przez
+który pakiet będzie wysłany. Gdy tej opcji nie podamy to rozważany jest ciąg
+pusty, który ma specjalne znaczenie i pasuje do każdej nazwy interfejsu. Gdy
+przed nazwą interfejsu użyjemy argumentu "!" to odwraca to sens opcji. Jeśli
+nazwa interfejsu kończy się znakiem "+" to spełnione jest to dla wszystkich
+interfejsów rozpoczynających się podaną nazwą.
+.TP
+.B "[!] " "-f, --fragment"
+A to oznacza, że reguła odnosi się jedynie do drugiego i kolejnych fragmentów
+sfragmentowanych pakietów. Odkąd nie ma możliwości by powiedzieć o
+źródle lub portach docelowych takiego pakietu (albo typu ICMP), pakiet ten
+nie będzie pasował do żadnych reguł określających go. Gdy argument "!"
+poprzedza flagę "-f" sens jest odwrócony.
+.SS "INNE OPCJE"
+Poniższe dodatkowe opcje mogą także być użyte:
+.TP
+.BI "-b, --bidirectional"
+Tryb dwukierunkowy.
+Reguła będzie pasować do pakietów IP w dwie strony; da to taki sam efekt jak
+powtarzanie tej samej reguły dla źródła i przeznaczenia zamienionych ze sobą.
+Proszę zauważyć, że NIE oznacza to, że jeżeli pakiety TCP SYN będą dopuszczone na
+wyjściu, to reguła -b puści pakiety nie-SYN na wejściu: reguła odwrotna jest
+dokładnie taka sama jak reguła, która została wprowadzona. Oznacza to, że
+zazwyczaj lepiej jest po prostu unikać flagi -b i otwarcie podawać
+wszystkie reguły.
+.TP
+.BI "-v, --verbose"
+Krzykliwe wyjście. Opcja ta powoduje, że komenda list pokazuje
+adres interfejsu, opcje reguły (jeśli są) i maski TOS. Pakiet i liczniki
+bajtów są także wypisywane, z przedrostkiem 'K', 'M' lub 'G' odpowiednio dla
+1000, 1,000,000 i 1,000,000,000 multiplikatorów (ale spójrz jeszcze na flagę
+.B -x
+aby to zmienić). Gdy użyte jest to w kombinacji z
+.BR -M ,
+to podana będzie też informacja odnosząca się do numerów sekwencji delta.
+Przy dołączaniu, wstawianiu, usuwaniu i zastępowaniu, powoduje to
+wyświetlenie szczegółowej informacji dotyczącej reguły lub reguł.
+.TP
+.BI "-n, --numeric"
+Wyjście numeryczne.
+Adresy IP i numery portów będą wypisywane w formacie liczbowym.
+Domyślnie, program będzie próbował wyświetlać je jako nazwy hostów,
+nazwy sieci lub usług (kiedy tylko dają się zastosować).
+.TP
+.BI "-l, --log"
+Włącza w jądrze logowanie pasujących pakietów.
+Gdy ta opcja jest ustawiona dla reguły, jądro Linuksa wypisze
+informację dotyczącą wszystkich pasujących pakietów
+(często np. pasujących nagłówków IP) poprzez
+.IR printk ().
+.TP
+.BI "-o, --output" " [maxsize]"
+Kupiuje pasujące pakiety do urządzenia w przestrzeni użytkownika.
+Jest to obecnie czymś istotnym dla twórców, którzy chcą bawić się
+w efekty zapory ogniowej w przestrzeni użytkownika. Opcjonalny argument
+maxsize może być użyty by limitować maksymalną liczbę bajtów z pakietu,
+z którego zostaną skopiowane. Opcja ta jest poprawna tylko wtedy, gdy jądro
+zostało skompilowane z ustawieniem CONFIG_IP_FIREWALL_NETLINK.
+.TP
+.BI "-m, --mark" " markvalue"
+Zaznacza pasujące pakiety. Pakiety mogą być oznaczone 32-bitową
+wartością bez znaku, który może (pewnego dnia) zmienić metodę ich
+wewnętrznego traktowania. Jeśli nie jesteś kernel hackerem nie powinieneś
+zawracać sobie tym głowy. Jeśli ciąg
+.I markvalue
+zaczyna się znakiem + albo - to wtedy wartość będzie dodana lub też
+odjęta do/od obecnej wartości zaznaczenia pakietu (która zaczyna się zerem).
+.TP
+.BI "-t, --TOS" " andmask xormask"
+Maski używane przy modyfikowaniu pola TOS w nagłówku IP. Gdy pakiet pasuje
+do reguły, na jego polu TOS i pierwszej masce jest najpierw obliczany iloczyn
+bitowy, a nastepnie różnica symetryczna z drugą maską. Maski powinny być
+podane jako szesnastkowe wartości ośmiobitowe. Jako że nie wolno zmieniać LSB
+pola (RFC 1349), wartości TOS, które spowodują taką zmianę są odrzucane tak
+samo, jak dowolne reguły ustawiające zawsze więcej niż jeden bit TOS. Reguły,
+które mogą ustawiać więcej niż jeden bit TOS dla niektórych pakietów powodują
+ostrzeżenia (wysyłane na standardową diagnostykę), które można zignorować,
+jeśli wiadomo, że pakiety o takich wartościach TOS nigdy nie osiągną danej
+reguły. Oczywiście manipulacja TOS jest nieistotna, gdy celem danej reguły
+jest
+.I DENY
+lub
+.IR REJECT .
+.TP
+.BI "-x, --exact"
+Rozszerzone wartości numeryczne.
+Wyświetla dokładną wartość pakietu i liczników bajtów,
+zamiast tylko podawać zaokrągloną wartość w K (wielokrotności 1000),
+M (wielokrotności 1000K) czy G (wielokrotności 1000M). Opcja jest
+odpowiednia tylko dla polecenia
+.BR -L .
+.TP
+.BI "[!] -y, --syn"
+Dopasowuje tylko te pakiety TCP, które mają ustawiony bit SYN oraz wyczyszczone
+bity ACK i FIN. Takie pakiety są używane do inicjalizacji połączenia TCP,
+więc na przykład blokowanie takich pakietów docierających do interfejsu
+spowoduje, że przychodzące połączenia TCP będą odrzucane, ale nie będzie
+miało żadnego wpływu na połączenia wychodzące.
+Opcja ta ma znaczenia tylko jeżeli typem protokołu jest TCP. Jeżeli "-y"
+zostanie poprzedzone przez flagę "!", to sens tej opcji zostanie odwrócony.
+.TP
+.BI "--line-numbers"
+Wyświetlając reguły, wyświetla - na początku każdej reguły - numery linii
+odpowiadające pozycji reguły w łańcuchu.
+.TP
+.BI "--no-warnings"
+Wyłącza wypisywanie ostrzeżeń.
+.SH PLIKI
+.I /proc/net/ip_fwchains
+.br
+.I /proc/net/ip_masquerade
+.SH DIAGNOSTYKA
+Różne komunikaty o błędach są wypisywane na standardowe wyjście błędów.
+Kodem wyjścia jest 0, jeżeli wszystko się powiedzie.
+Błędy, które wydają się być spowodowane błędnymi lub źle użytymi
+argumentami linii poleceń, spowodują zwrócenie kodu wyjścia 2, a
+wszystkie inne błędy powodują zwrócenie kodu wyjścia 1.
+.SH USTERKI
+.PP
+Jeżeli wejście programu jest terminalem, reguła jest dokładana bądź dołączana do
+łańcucha przekazowego, a przekazywanie IP nie wydaje się być włączone
+i nie podano opcji --no-warnings, to na standardowe wyjście jest wypisywane
+ostrzeżenie o tym, że przekazywanie nie będzie działać, dopóki nie zostanie
+poprawione. Jest to po to, aby pomóc użytkownikom nieświadomym tego wymogu
+(którego nie było w jądrach serii 2.0).
+.PP
+Nie można skasować liczników pakietów i bajtów w jednym tylko łańcuchu.
+Wynika to z ograniczeń jądra.
+.PP
+Wykrywanie zapętleń nie jest obsługiwane w ipchains; pakiety w pętli
+są upuszczane i notowane, lecz jest to jedyna rzecz jakiej się o tym
+dowiesz jeśli przypadkowo wytworzysz jakąś pętlę.
+.PP
+Opis efektów zaznaczenia pakietu jest ogólnikowy, dopóki nie zostanie wydana
+dokumentacja opisująca nowe procedury obsługi pakietów jądra 2.1.
+.PP
+Nie ma sposobu na to by wyzerować liczniki polityki (np. te we wbudowanych
+łańcuchach).
+.SH UWAGI
+To
+.B ipchains
+bardzo się różni od ipfwadm autorstwa Josa Vosa, jako że używa
+nowo powstałych tak zwanych drzew zapory ogniowej IP. Funkcjonalnie jest
+zastępnikiem ipfwadm i generalnie zawsze obsługuje tamte polecenia.
+Wierzę, że nowe nazwy poleceń są bardziej racjonalne. Jest też jednakże
+parę zmian, których powinieneś być świadom.
+.PP
+Fragmenty są obsługiwane w inny sposób. Wszystkie fragmenty po pierwszym
+są zazwyczaj przepuszczane (co zwykle jest bezpieczne); wtedy mogą być
+filtrowane. Oznacza to, że prawdopodobnie powinieneś dodać jawną regułę
+akceptującą fragmenty jeśli dokonujesz konwersji.
+Spójrz więc na stare reguły zliczające, które sprawdzają porty źródłowe
+i docelowe 0xFFFF (0xFF w przypadku pakietów ICMP) - był to stary sposób
+rozliczania fragmentów.
+.PP
+Reguły zliczające są teraz w prosty sposób zintegrowane z łańcuchami
+wejściowym i wyjściowym; możesz symulować dawne zachowanie w taki sposób:
+.br
+ ipchains -N acctwe
+.br
+ ipchains -N acctwy
+.br
+ ipchains -N acctwewy
+.br
+ ipchains -I input -j acctwewy
+.br
+ ipchains -I input -j acctwe
+.br
+ ipchains -I output -j acctwewy
+.br
+ ipchains -I output -j acctwy
+.br
+Stworzy to trzy zdefiniowane przez użytkownika łańcuchy,
+.IR acctwe ,
+.I acctwy
+i
+.IR acctwewy ,
+które mogą zawierać dowolne reguły zliczające (reguły te powinny być
+podane bez flagi
+.BR -j ,
+więc pakiety te są w prosty sposób przepuszczane w nienaruszonej
+postaci).
+.PP
+Cel
+.I MASQ
+lub
+.I REDIRECT
+przy starciu z brakiem miejsca na operacje jądra (np. przy regule
+przekazującej lub wejściowej) sprawi, że do syslog zostanie wysłana odpowiednia
+wiadomość a pakiet będzie odrzucony.
+.PP
+Stary sposób rozpoznawania SYN i ACK (który był poprzednio ignorowany dla
+pakietów innych niż TCP) uległ zmianie; opcja SYN nie jest już poprawna dla
+reguł innych niż dotyczących TCP.
+.PP
+Opcja rozpoznawania ACK (
+.BR -k )
+nie jest już wspierana; kombinacja
+.B !
+i
+.B -y
+jest jej zastępnikiem).
+.PP
+Nie jest już możliwe określenie maski TOS, która ustawi lub wyzeruje
+ostatni znaczący bit TOS; poprzednio maski TOS były po cichu zerowane
+przez jądro jeśli próbowały tego dokonać.
+.PP
+Flaga
+.B -b
+jest teraz w prosty sposób obsługiwana poprzez wstawienie lub usunięcie
+pary reguł, w tym jednej z odwróconym określeniem adresu źródła i adresu
+docelowego.
+.PP
+Nie ma możliwości określenia interfejsu za pomocą jego adresu: użyj nazwy.
+.SH ZOBACZ TAKŻE
+ipfw_chains(4), ipchains-save(8), ipchains-restore(8)
+.SH AUTOR
+Paul ``Rusty'' Russell <ipchains@rustcorp.com>.
+Podziękowania dla Hansa Perssona za dokonanie szczegółowej
+korekty; chciałbym, aby poprawiał wszystkie moje przyszłe dokumenty!

@@ -1,0 +1,80 @@
+.TH Spectemu 1 "14 Listopada 2001" "Wersja 0.95.3"
+
+.SH NAZWA
+xspect, vgaspect \- emulator ZX Spectrum
+.SH SKŁADNIA
+.B xspect
+.RI [ opcje ]
+.RI [[ typ_pliku ]
+.IR nazwa_pliku ]
+.PP
+.B vgaspect
+.RI [ opcje ]
+.RI [[ typ_pliku ] 
+.IR nazwa_pliku ]
+.SH OPIS
+Spectemu jest emulatorem ZX Spectrum 48k dla Linuksa i innych
+Uniksopodobnych systemów operacyjnych.
+.PP
+.I xspect
+uruchamia się w X11.  Po uruchomieniu wyświetla się ekran powitalny
+ZX Spectrum.  Nie uruchamiaj  
+.I xspect
+w tle, ponieważ terminal jest używany do wpisywania nazw plików
+i wypisywania informacji o stanie emulatora.
+.PP
+Program
+.I vgaspect
+używa SVGALIB i może być używany tylko na linuksowej konsoli.
+Na systemach nielinuksowych ten program nie jest dostępny.
+.SH LINIA KOMEND
+Dla obydwu 
+.I xspect
+i
+.I vgaspect
+"snapshot" lub plik z obrazem spectrumowej taśmy może być podany
+w linii komend.  Plik ten może mieć rozszerzenie:
+.I .z80
+, 
+.I .sna
+,
+.I .tap
+lub
+.I .tzx
+(rozszerzenie może być pominięte). 
+.PP
+Opcja
+.I -help
+wyświetla listę możliwych opcji.  Żeby dowiedzieć się więcej
+przeczytaj plik README.
+.PP
+.I xspect
+rozpoznaje także następujące opcje:
+.TP
+.B \-display DISPLAYNAME
+Otwiera okno na DISPLAYNAME zamiast na domyślnym
+.TP
+.B \-name WINDOWNAME
+Zmienia tytuł okna na WINDOWNAME
+.SH KLAWISZE
+Po naciśnięciu Ctrl\-H wyświetlana jest lista skrótów klawiszowych.
+.PP
+Więcej informacji znajdziesz w pliku README.
+.SH ZOBACZ TAKŻE
+tapeout(1)
+.PP
+http://www.inf.bme.hu/~mszeredi/spectemu/spectemu.html
+.SH BŁĘDY
+Starałem się paskudne błędy typu "Segmentation Fault" trzymać zdala od
+Spectemu, więc jeśli znajdziesz taki błąd, STEP ON IT! (od tłum.
+nie wiedziałem jak to przetłumaczyć).  W Spectemu jest jeszcze parę
+ładniejszych i delikatniejszych błędów, które są po to, żeby zadziwić
+użytkownika (zobacz TODO).
+.SH AUTOR
+Miklos Szeredi (EMAIL: mszeredi@inf.bme.hu)
+.SH COPYRIGHT
+Copyright (C) 1996\-1998 Miklos Szeredi
+.SH LICENCJA
+GPL
+.SH TŁUMACZENIE
+Witold Filipczyk <juandon@poczta.onet.pl>

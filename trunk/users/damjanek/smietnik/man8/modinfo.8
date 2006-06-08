@@ -1,0 +1,58 @@
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory
+.\" $ Id: modinfo.8 1.4 Wed, 26 Sep 2001 12:00:28 +1000 kaos $
+.\"
+.\" $Id: modinfo.8,v 1.2 2001/11/13 13:43:00 ankry Exp $
+.\"
+.TH MODINFO 8 "26 września 2001" Linux "Wsparcie dla modułow"
+.SH NAZWA
+modinfo \- wypisuje informacje o module jądra
+.SH SKŁADNIA
+.B modinfo
+[ opcje ] <plik_modułu>
+.SH OPIS
+Program narzędziowy
+.B modinfo
+bada plik obiektowy
+.I module_file
+związany z modułem jądra i wypisuje wszelkie zebrane informacje.
+.SS OPCJE
+.TP
+.BR \-a ", " \-\-author
+Wypisuje autora modułu.
+.TP
+.BR \-d ", " \-\-description
+Wypisuje opis modułu.
+.TP
+.BR \-a ", " \-\-license
+Wypisuje licencję modułu.
+.TP
+.BR \-n ", " \-\-filename
+Wypisuje nazwę pliku modułu.
+.TP
+.BI \-f " łańcuch_formatu\fR, " \-\-format " łańcuch_formatu
+Pozwala użytkownikowi na podanie dowolnego łańcucha formatu, wydobywającego
+wartości z sekcji ELF pliku
+.I plik_modułu
+zawierającej informacje o module.
+Zastępowane są nazwy cech ujęte w nawiasy klamrowe i poprzedzone znakiem
+procentu.
+Nazwa cechy %{filename} jest wspierana zawsze, nawet gdy moduł nie zawiera
+sekcji modinfo.
+.TP
+.BR \-p ", " \-\-parameters
+Wypisuje parametry wspierane przez moduł i ich typy.
+.TP
+.BR \-h ", " \-\-help
+Wypisuje mały ekran o użyciu.
+.TP
+.BR \-V ", " \-\-version
+Wypisuje wersję
+.BR modinfo .
+.PP
+Jeśli nie podano żadnych opcji, domyślnymi są filename, description,
+author, license i parameters.
+.SH "ZOBACZ TAKŻE"
+.BR insmod "(8), " modprobe "(8), " depmod "(8), " rmmod "(8), "
+.BR lsmod "(8), " ksyms "(8), " modules "(2) "

@@ -1,0 +1,47 @@
+.\" {PTM/PW/0.1/10-09-1999/"jeszcze jeden super-serwer Internetu"}
+.\" Translation update: Robert Luberda <robert@debian.org>, Aug 2001, rlinetd 0.5.4
+.\" {$Id: rlinetd.8,v 1.6 2001/08/25 12:58:05 robert Exp $
+.\"
+.TH RLINETD 8 "8 lipca 2001" "Debian" "rlinetd"
+.SH NAZWA
+rlinetd - jeszcze jeden super-serwer Internetu
+.SH SKŁADNIA
+.B rlinetd
+.RB [ -d ]
+.RB [ -h ]
+.RB [ -f
+.IR "<plik konfiguracyjny>" ]
+.RB [ -p
+.IR "<moduł parsera>" ]
+.SH OPIS
+.B rlinetd
+jest zarządcą połączeń, który podłącza się i nasłuchuje na
+pewnych portach, podejmując określone działania, gdy dokonywane
+jest połączenie. 
+.SH OPCJE
+Program akceptuje kilka parametrów:
+.TP
+.B -d
+zwiększa poziom debugowania. Między innymi zapobiega odłączeniu się programu
+od jego terminala sterującego i wypisuje komunikaty do stderr.
+.TP
+.B -h
+wyświetla krótkie podsumowania opcji programu.
+.TP
+.BI -f " <plik konfiguracyjny>"
+określa alternatywny plik konfiguracyjny, który będzie czytany. 
+.TP
+.BI -p " <moduł parsera>"
+określa alternatywny moduł moduł analizujący składnię używany do parsowania
+pliku konfiguracyjnego.
+.SH PLIKI
+.TP
+.I /etc/rlinetd.conf
+domyślny plik konfiguracyjny.
+.TP
+.I /usr/lib/rlinetd/libparse.so
+domyślny moduł analizy składni.
+.SH ZOBACZ TAKŻE
+.BR rlinetd.conf (5)
+.SH AUTOR
+Ten podręcznik ekranowy napisał Mikolaj J. Habryn <dichro-doc@rcpt.to>

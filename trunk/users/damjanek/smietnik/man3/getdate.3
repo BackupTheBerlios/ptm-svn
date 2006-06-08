@@ -1,0 +1,174 @@
+.\"  Copyright 2001 walter harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified, 2001-12-26, aeb
+.\" 
+.\" Tłumaczenie wersji man-pages 1.50 - czerwiec 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH GETDATE 3 2001-12-26 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getdate() \- przekształca łańcuch w strukturę struct tm 
+.br
+.SH SKŁADNIA
+.B "#define _XOPEN_SOURCE"
+.br
+.B "#define _XOPEN_SOURCE_EXTENDED
+.br
+.B "#include <time.h>"
+.sp
+.BI "struct tm *getdate (const char *" string );
+.sp
+.BI "extern int getdate_err;"
+.sp 2
+.B "#define _GNU_SOURCE"
+.br
+.B "#include <time.h>"
+.sp
+.BI "int getdate_r (const char *" string ", struct tm *" res );
+.br
+.SH OPIS
+Funkcja
+.B getdate() 
+przekształca łańcuch wskazywany przez
+.I string
+w strukturę tm, która jest zwracana.
+Zwracana struktura tm może się znajdować w pamięci statycznej, wobec czego
+zostanie nadpisana przez następne wywołanie funkcji.
+
+W odróżnieniu od
+.BR strptime (3),
+(która posiada argument
+.IR format ),
+.B getdate()
+posługuje się formatami znajdującymi się w pliku, do którego pełna ścieżka
+jest podana w zmiennej środowiskowej
+.BR DATEMSK .
+Do konwersji stosowana jest pierwsza z linii pliku, która pasuje do zadanego
+łańcucha.
+
+Podczas dopasowywania ignorowana jest wielkość liter. Ignorowane są również
+nadmiarowe białe znaki, zarówno we wzorcu, jak i w przekształcanym łańcuchu.
+
+Specyfikacje przekształceń, które mogą być zawarte we wzorcu są takie same,
+jak dla
+.BR strptime (3).
+Akceptowana jest jedna dodatkowa specyfikacja przekształcenia:
+.TP
+.B %Z
+Nazwa strefy czasowej.
+.LP
+Gdy podano
+.BR %Z ,
+zwracana wartość jest inicjalizowana jako rozłożony czas bieżący w podanej
+strefie czasowej. W przeciwnym przypadku, jest inicjalizowana jako rozłożony
+czas odpowiadający bieżącemu czasowi lokalnemu.
+.LP
+Gdy podany jest tylko dzień tygodnia, brany jest pierwszy taki dzień
+przypadający w dniu bieżącym lub później.
+.LP
+Gdy podany jest jedynie miesiąc (bez roku), brany jest pierwszy taki miesiąc
+przypadający w miesiącu bieżącym lub po nim. Gdy nie podano dnia, brany jest
+pierwszy dzień miesiąca.
+.LP
+Gdy nie podano godziny, minuty ani sekundy, brana jest bieżąca godzina,
+minuta i sekunda.
+.LP
+Gdy nie podano daty, ale znana jest godzina, brana jest pierwsza taka godzina
+przypadająca w bieżącej godzinie lub później.
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu funkcja ta zwraca wskaźnik do struktury
+.BR "struct tm" .
+W przeciwnym razie, zwraca NULL i ustawia zmienną globalną
+.BR getdate_err .
+Zmiany
+.I errno
+nie są określone. Zdefiniowano następujące wartości
+.BR getdate_err :
+.TP 4n
+.B 1
+Zmienna środowiska DATEMSK ma wartość pustą lub nie jest zdefiniowana.
+.TP
+.B 2
+Nie udało się otworzyć pliku wzorców w trybie do odczytu.
+.TP
+.B 3
+Nie udało się pobrać informacji o stanie.
+.TP
+.B 4
+Plik wzorców nie jest zwykłym plikiem.
+.TP
+.B 5
+Wystąpił błąd podczas odczytu pliku wzorców.
+.TP
+.B 6
+Nie udało się przydzielić pamięci (brak dostępnej pamięci).
+.TP
+.B 7
+Brak w pliku linii pasującej do podanych danych.
+.TP
+.B 8
+Niewłaściwa specyfikacja wejściowa.
+.SH UWAGI
+Jako że funkcja
+.B getdate() 
+nie jest wielowejściowa ze względu na korzystanie z
+.B getdate_err
+i statycznego bufora do zwracania wyniku, glibc udostępnia jej wariant
+przystosowany do wielowątkowości. Obie funkcje zapewniają tę samą
+funkcjonalność. Wynik jest zwracany w buforze wskazywanym przez
+.IR res ,
+a w przypadku błędu, zwracana jest niezerowa wartość, taka sama jak podano
+powyżej dla
+.IR getdate_err .
+.LP
+Specyfikacja POSIX 1003.1-2001 dla
+.B strptime()
+zawiera specyfikacje przekształceń korzystające z modyfikatorów
+.B %E
+lub
+.BR %O ,
+podczas gdy takie specyfikacje nie zostały podane dla
+.BR getdate() .
+Implementacja w glibc realizuje
+.B getdate()
+za pomocą
+.BR strptime() ,
+więc, automatycznie, obie funkcje wspierają te same specyfikacje
+przekształceń.
+.LP
+Implementacja w glibc nie wspiera specyfikacji przekształcenia
+.BR %Z .
+.SH ŚRODOWISKO
+.TP
+.B DATEMSK 
+Plik zawierający wzorce formatów.
+.TP
+.BR TZ ", " LC_TIME 
+Zmienne używane przez \fBstrptime()\fP.
+.SH "ZGODNE Z"
+ISO 9899, POSIX 1003.1-2001
+.SH "ZOBACZ TAKŻE"
+.BR localtime (3),
+.BR strftime (3),
+.BR strptime (3),
+.BR time (3)

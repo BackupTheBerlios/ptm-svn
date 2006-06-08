@@ -1,0 +1,265 @@
+.\" {PTM/WK/2000-VII}
+.\" Copyright (c) 1983, 1991 Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)printcap.5	6.6 (Berkeley) 5/10/91
+.\"
+.Dd May 10, 1991
+.Dt PRINTCAP 5
+.Os BSD 4.2
+.Sh NAZWA
+.Nm printcap
+.Nd baza danych właściwości drukarek
+.Sh SKŁADNIA
+.Nm printcap
+.Sh OPIS
+Plik
+.Nm Printcap
+jest uproszczoną wersją bazy danych
+.Xr termcap 5
+stosowaną do opisu drukarek wierszowych. System buforowania druku sięga do
+.Nm printcap
+za każdym razem, gdy jest używany, umożliwiając dynamiczne dodawanie i usuwanie
+drukarek. Każdy wpis w bazie danych stosowany jest do opisania jednej drukarki.
+Tej bazy danych nie można zastąpić inną, jak jest to możliwe w przypadku
+.Xr termcap ,
+gdyż może ona zezwalać na ominięcie rozliczania kosztów.
+.Pp
+Drukarkę domyślną jest zwykle
+.Em lp ,
+choć można zastosować zmienną środowiska
+.Ev PRINTER
+by to przesłonić. Każde narzędzie obsługi buforowania wydruków udostępnia
+opcję
+.Fl P Ar drukarka ,
+pozwalającą na jawne nazwanie drukarki docelowej.
+.Pp
+W
+.%T "4.3 BSD Line Printer Spooler Manual"
+można znaleźć pełne omówienie sposobu konfiguracji bazy danych dla danej
+drukarki.
+.Sh WŁAŚCIWOŚCI
+Opis formatu pliku znaleźć można w
+.Xr termcap 5 .
+.Bl -column Nazwaxx Typxx "/var/spool/lpdxx"
+.Sy Nazwa	Typ	Opis
+.It "af	str" Ta Dv NULL Ta No "nazwa pliku rozliczeniowego"
+.It "br	num	none	jeśli lp jest tty, ustawia prędkość
+transmisji"
+.Pf ( funkcja Xr ioctl 2 )
+.It "cf	str" Ta Dv NULL Ta No "filtr danych cifplot"
+.It "df	str" Ta Dv NULL Ta No "filtr danych tex"
+.Pf ( format Tn DVI )
+.It "fc	num	0	jeśli lp jest tty, czyści bity flag"
+.Pq Pa sgtty.h
+.It "ff	str" Ta So Li \ef Sc Ta No "łańcuch do wysłania dla wysuwu strony"
+.It "fo	bool	false	drukuje wysuw strony przy otwarciu urządzenia"
+.It "fs	num	0	jak `fc', ale ustawia bity"
+.It "gf	str" Ta Dv NULL Ta No "filtr danych grafiki"
+.Pf ( format Xr plot 3 )
+.It "hl	bool	false	drukuje stronę rozdzielającą jako ostatnią"
+.It "ic	bool	false	sterownik obsługuje (nie standardowe) ioctl do wcięcia wydruku"
+.It "if	str" Ta Dv NULL Ta No "nazwa wejściowego filtru tekstowego wykonującego rozliczanie"
+.It "lf	str" Ta Pa /dev/console Ta No "nazwa pliku, w którym rejestrowane są błędy"
+.It "lo	str" Ta Pa lock Ta No "nazwa pliku blokującego"
+.It "lp	str" Ta Pa /dev/lp Ta No "nazwa urządzenie otwieranego jako wyjście"
+.It "mx	num	1000	maksymalny rozmiar pliku (w blokach"
+.Dv BUFSIZ), zero = bez ograniczeń
+.It "nd	str" Ta Dv NULL Ta No "następny katalog z listą kolejek (niezaimplementowane)"
+.It "nf	str" Ta Dv NULL Ta No "filtr danych ditroff (device independent troff)"
+.It "of	str" Ta Dv NULL Ta No "nazwa wyjściowego programu filtrującego"
+.It "pc	num	200	cena za stopę lub stronę w setnych centów"
+.It "pl	num	66	długość strony (w wierszach)"
+.It "pw	num	132	szerokość strony (w znakach)"
+.It "px	num	0	szerokość strony w pikselach (poziomo)"
+.It "py	num	0	długość strony w pikselach (pionowo)"
+.It "rf	str" Ta Dv NULL Ta No "filtr dla drukowania plików tekstowych typu"
+.Tn FORTRAN-u
+.It "rg	str" Ta Dv NULL Ta No "grupa zastrzeżona. Tylko jej członkowie mają dozwolony dostęp"
+.It "rm	str" Ta Dv NULL Ta No "nazwa maszyny dla drukarki zdalnej"
+.It "rp	str	``lp''	argument nazwy drukarki zdalnej"
+.It "rs	bool	false	ogranicza możliwych zdalnych użytkowników do posiadających konta lokalne"
+.It "rw	bool	false	otwiera urządzenie druku do odczytu i zapisu"
+.It "sb	bool	false	krótki nagłówek (tylko jeden wiersz)"
+.It "sc	bool	false	eliminuje druk wielokrotnych kopii"
+.It "sd	str" Ta Pa /var/spool/lpd Ta No "katalog buforowania wydruków"
+.It "sf	bool	false	zaniechanie wysuwu strony"
+.It "sh	bool	false	zaniechanie nagłówkowej strony rozdzielającej"
+.It "st	str" Ta Pa status Ta No "nazwa pliku statusu"
+.It "tf	str" Ta Dv NULL Ta No "filtr danych troff (cat fotonaświetlarki)"
+.It "tr	str" Ta Dv NULL Ta No "łańcuch końcowy do wydruku po opróżnieniu kolejki"
+.It "vf	str" Ta Dv NULL Ta No "filtr obrazu rastrowego"
+.El
+.Pp
+Jeżeli lokalna drukarka wierszowa obsługuje wcięcia, to demon musi wiedzieć
+jak to wywołać.
+.Sh FILTRY
+Demon
+.Xr lpd 8a
+tworzy potok
+.Em filtrów
+by przetworzyć pliki dla rozmaitych typów drukarek.
+Wybrane filtry zależą od flag przesłanych do
+.Xr lpr 1a .
+Ustawienie potoku to:
+.Bd -literal -offset indent
+p	pr | if zwykły tekst + pr(1)
+nic	if	zwykły tekst
+c	cf	cifplot
+d	df	DVI (tex)
+g	gf	plot(3)
+n	nf	ditroff
+f	rf	Fortran
+t	tf	troff
+v	vf	obraz rastrowy
+.Ed
+.Pp
+Flitr
+.Sy if
+wywoływany jest z argumentami:
+.Bd -filled -offset indent
+.Cm if
+.Op Fl c
+.Fl w Ns Ar szerokość
+.Fl l Ns Ar długość
+.Fl i Ns Ar wcięcie
+.Fl n Ar login
+.Fl h Ar host plik-rozliczeń
+.Ed
+.Pp
+Flaga
+.Fl c
+przekazywana jest tylko wtedy, gdy przy wywołaniu
+.Xr lpr
+podano flagę 
+.Fl l
+(dosłowne wysyłanie znaków sterujących).
+.Ar Szerokość
+i
+.Ar długość
+podają szerokość i długość strony
+(odpowiednio z
+.Cm pw
+i
+.Cm pl )
+w znakach.
+Parametry
+.Fl n
+i
+.Fl h
+określają odpowiednio: nazwę zgłoszeniową i nazwę hosta właściciela zadania.
+Argument
+.Ar plik-rozliczeń
+przekazywany jest z
+.Cm af
+odpowiedniej pozycji w
+.Nm printcap .
+.Pp
+Jeżeli nie podano
+.Cm if ,
+to zamiast tego używane jest
+.Cm of ,
+z tą różnicą, że 
+.Cm of
+otwierany jest tylko raz, podczas gdy
+.Cm if
+otwierany jest dla każdego poszczególnego zadania.
+Zatem,
+.Cm if
+jest odpowiedniejsze do wykonywania rozliczeń.
+.Cm of
+przyjmuje tylko flagi
+.Ar szerokość
+i
+.Ar długość .
+.Pp
+Wszystkie pozostałe filtry wołane są jako:
+.Bd -filled -offset indent
+.Nm filtr
+.Fl x Ns Ar szerokość
+.Fl y Ns Ar długość
+.Fl n Ar login
+.Fl h Ar host plik-rozlicz
+.Ed
+.Pp
+gdzie
+.Ar szerokość
+i
+.Ar długość
+przedstawiane są w pikselach, określone odpowiednio przez pozycje
+.Cm px
+i
+.Cm py .
+.Pp
+Wszystkie filtry biorą
+.Em stdin
+za plik,
+.Em stdout
+za drukarkę, mogą zapisywać raporty albo na
+.Em stderr
+albo wykorzystując
+.Xr syslog 3 ,
+i nie mogą ignorować
+.Dv SIGINT . 
+.Sh RAPORTOWANIE
+Komunikaty o błędach generowane przez same programy drukarki (to jest,
+programy
+.Xr lp Ns * )
+rejestrowane są przez
+.Xr syslog 3
+używając podsystemu
+.Dv LPR .
+Komunikaty wypisywane na
+.Em stderr
+przez któryś z filtrów wysyłane są do odpowiedniego pliku
+.Cm lf .
+Filtry mogą, oczywiście, samodzielnie wykorzystywać
+.Xr syslog .
+.Pp
+Komunikaty o błędach wysyłane na konsolę mają na końcu dołączone znaki
+powrotu karetki i wysuwu wiersza zamiast po prostu wysuwu wiersza (LF - nowa
+linia.
+.Sh ZOBACZ TAKŻE
+.Xr termcap 5 ,
+.Xr lpc 8a ,
+.Xr lpd 8a ,
+.Xr pac 8a ,
+.Xr lpr 1a ,
+.Xr lpq 1a ,
+.Xr lprm 1a
+.Rs
+.%T "4.3 BSD Line Printer Spooler Manual"
+.Re
+.Sh HISTORIA
+Format pliku
+.Nm
+pojawił się w
+.Bx 4.2 .

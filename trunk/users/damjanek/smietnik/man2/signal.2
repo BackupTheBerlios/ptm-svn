@@ -1,0 +1,167 @@
+.\" Polish translation (c) 2002 Andrzej M Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" (based on man-pages 1.50 and previous translation by Przemek Borys
+.\" 
+.\" Copyright (c) 2000 Andries Brouwer <aeb@cwi.nl>
+.\" based on work by Rik Faith <faith@cs.unc.edu>
+.\" and Mike Battersby <mike@starbug.apana.org.au>.
+.\" 
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\" 
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" 
+.TH SIGNAL 2 2000-04-28 "Linux 2.2" "Podręcznik programisty Linuksa"
+.SH NAZWA
+signal \- obsługa sygnałów ANSI C
+.SH SKŁADNIA
+.B #include <signal.h>
+.sp
+.B typedef void (*sighandler_t)(int);
+.sp
+.BI "sighandler_t signal(int " signum ", sighandler_t " handler );
+.SH OPIS
+Funkcja systemowa
+.BR signal ()
+instaluje nową obsługę sygnału dla sygnału o numerze
+.IR signum .
+Obsługa sygnału ustawiana jest na
+.IR sighandler ,
+który może być funkcją podaną przez użytkownika lub
+.B SIG_IGN
+albo
+.BR SIG_DFL .
+
+Po przysłaniu sygnału o numerze
+.I signum
+dzieje się, co następuje.
+Jeśli obsługa odpowiedniego sygnału została ustawiona na
+.BR SIG_IGN ,
+to sygnał jest ignorowany.
+Jeśli obsługa została ustawiona na
+.BR SIG_DFL ,
+to podejmowana jest domyślna akcja skojarzona z sygnałem (patrz
+.BR signal (7)).
+Ostatecznie, Jeśli jako obsługa sygnału została ustawiona function
+.IR sighandler ,
+to najpierw albo obsługa sygnału jest inicjowana na SIG_DFL albo odbywa się
+zależne od implementacji blokowanie sygnału, a następnie wywoływana jest
+funkcja
+.I sighandler
+z argumentem
+.IR signum .
+
+Używanie funkcji obsługi sygnału jest nazywane "przechwytywaniem sygnału".
+Sygnały
+.B SIGKILL
+i
+.B SIGSTOP
+nie mogą być ani przechwycone, ani zignorowane.
+
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja
+.BR signal ()
+zwraca poprzednią wartość obsługi sygnału, lub
+.B SIG_ERR
+w przypadku błędu.
+
+.SH PRZENOŚNOŚĆ
+Oryginalne uniksowe
+.BR signal ()
+zainicjalizowałoby obsługę sygnału na SIG_DFL i to samo robi System V (oraz
+jądro Linuksa i libc4,5). Z drugiej strony, BSD nie inicjalizuje obsługi
+sygnału, ale blokuje nowopojawiające się egzemplarze tego sygnału podczas
+wywoływania funkcji obsługi. Biblioteka glibc2 naśladuje zachowanie BSD.
+
+Jeśli w systemie opartym o libc5 zostanie włączone
+.B "<bsd/signal.h>"
+zamiast
+.BR "<signal.h>" ,
+to
+.B signal
+zostanie przedefiniowane jako
+.B __bsd_signal
+i będzie miało semantykę BSD. Nie jest to zalecane.
+
+Jeśli w systemie opartym o glibc2 zdefiniowane zostanie makro testowania
+cechy, takie jak
+.B _XOPEN_SOURCE
+lub zostanie użyta osobna funkcja
+.BR sysv_signal ,
+otrzyma się zachowanie klasyczne. Nie jest to zalecane.
+
+Próba zmiany semantyki tej funkcji za pomocą przedefiniowywania i włączania
+plików nagłówkowych nie jest dobrym pomysłem. Lepiej w ogóle unikać funkcji
+.B signal
+i posługiwać się zamiast niej
+.BR sigaction (2).
+
+.SH UWAGI
+Zgodnie ze standardem POSIX, zachowanie procesu po zignorowaniu sygnału
+.BR SIGFPE ,
+.B SIGILL
+lub
+.BR SIGSEGV ,
+który nie był wygenerowany przez funkcję
+.BR kill (2)
+ani
+.BR raise (3),
+jest niezdefiniowane.
+Dzielenie przez zero liczby całkowitej nie ma określonego wyniku. Na
+niektórych architekturach generuje to sygnał
+.BR SIGFPE .
+(Również dzielenie najmniejszej liczby ujemnej przez \-1 może spowodować
+wygenerowanie
+.BR SIGFPE .)
+Ignorowanie tego sygnału może doprowadzić do pętli nieskończonej.
+.PP
+Zgodnie ze standardem POSIX (3.3.1.3) nie jest określone, co sie stanie gdy
+.B SIGCHLD
+zostanie ustawiony na
+.BR SIG_IGN .
+W tym miejscu zachowanie BSD i SYSV różni się, powodując nie działanie na
+Linuksie oprogramowania BSD, które ustawia akcję dla
+.B SIGCHLD
+na
+.BR SIG_IGN .
+.PP
+Użycie
+.B sighandler_t
+jest rozszerzeniem GNU.
+Różne wersje libc predefiniują ten typ; libc4 i libc5 definiują
+.IR SignalHandler ,
+glibc definiuje
+.IR sig_t ,
+a gdy zdefiniowane jest
+.BR _GNU_SOURCE ,
+również
+.IR sighandler_t .
+.SH "ZGODNE Z"
+ANSI C
+
+.SH "ZOBACZ TAKŻE"
+.BR kill (1),
+.BR kill (2),
+.BR killpg (2),
+.BR pause (2),
+.BR raise (3), 
+.BR sigaction (2),
+.BR signal (7),
+.BR sigsetops (3),
+.BR sigvec (2),
+.BR alarm (2)
+

@@ -1,0 +1,169 @@
+.\" Translation (c) 1999 Paweł Wilk <siewca@dione.ids.pl>
+.\" {PTM/PW/0.1/10-11-1999/"zaawansowany klient IRC"}
+.TH BitchX 1 "Piątek, 23 Grudnia, 1998" "Slackware GNU/Linux" ""
+.SH NAZWA
+BitchX \- zaawansowany klient Internet Relay Chat
+.SH SKŁADNIA
+.B BitchX
+[-aAbdfqxvBFRZP] [-R tty][-H nazwa_hosta] [-c kanał] [-p port] [-r plik] [-n ksywa] [-l plik] [-L plik] [ksywa] [lista serwerów]
+.SH OPIS
+.B BitchX
+jest bardzo zmodyfikowanym klientem ircII. Zawiera wiele rzeczy takich jak
+wbudowane oferowanie CDCC (XDCC), wbudowana ochrona przed flood-em, itd.
+Łatwiejszym jest pisanie skryptów pod
+.B BitchX
+ponieważ w przeciwieństwie do czystego, vanilla ircII, połowa skryptu nie musi być
+poświęcona na zmiany wyglądu ircII. Zawiera też wiele nowych udogodnień,
+takich jak skanowanie portów, zaawansowany TCL, odtwarzacz CD, klient poczty
+elektronicznej, odłączanie od terminala sterującego, itp.
+
+.B BitchX 
+- Bazuje na 
+.B EPIC 
+Software Labs 
+.B epic ircII (1998).
+Wersja (BitchX-75p2-8) -- Data (19980708).
+
+Ta strona jest zmodyfikowaną wersją istniejącej strony dla
+.BR Debiana ,
+ponieważ była przestarzała, a potrzebna była jakaś nowsza.
+.SH OPCJE
+.TP
+.I -A 
+Nie wyświetla początkowej grafiki ansi.
+.TP
+.I -R <tty>
+Nadmierne przywracanie odwieszonych procesów, nie używane obecnie
+.TP
+.I -H <nazwa_hosta>
+Używa wirtualnej nazwy hosta, jeśli to tylko możliwe.
+.TP
+.I -c <kanał>
+Automatycznie wchodzi na kanał
+.I <kanał>
+po podłączeniu się do serwera
+.TP
+.I -b
+Ładuje
+.I .bitchxrc
+lub
+.I .ircrc
+po podłączeniu się do serwera.
+.TP
+.I -p <port>
+Używa
+.I <port>
+do zainicjowania połączenia z serwerem (normalnie 6667).
+.TP
+.I -f
+Mówi
+.B BitchX-owi
+o tym, że twój terminal używa sterowania przepływem (^S/^Q), więc BitchX 
+nie powinien używać tych kodów.
+.TP
+.I -F
+Mówi
+.B BitchX-owi
+o tym, że twój terminal nie używa sterowania przepływem (co jest opcją domyślną).
+.TP
+.I -d
+Instruuje, że używamy "głupiego" terminala.
+.TP
+.I -Z
+Używa adresu 
+.B NAT
+podczas wykonywania dcc. Pozwala ci określić twój prawdziwy adres jeśli
+używasz maszyny będącej NAT-owaną (tłumaczenie adresów). Jeśli np.
+twój adres jest mapowany N-do-M (IP-masquerading jest szczególnym
+przypadkiem tłumaczenia adresów w stylu N-to-1).
+Odwiedź
+.B http://www.csn.tu-chemnitz.de/HyperNews/get/linux-ip-nat.html 
+po więcej informacji na ten temat.
+.TP
+.I -P
+Włącza lub wyłącza tworzenie pliku pid.ksywa dla działającego programu.
+.TP
+.I -q
+Nie ładuje przy starcie pliku
+.I ~/.ircrc
+.TP
+.I -r <plik>
+Czyta
+.I <plik>
+by otrzymać listę serwerów IRC.
+.I <plik>
+jest oddzieloną białymi znakami listą nazw serwerów.
+.TP
+.I -n <ksywa>
+Ustawia twoją ksywkę na
+.IR <ksywa> .
+.TP
+.I -a
+Używa domyślnej listy serwerów podanej w linii poleceń.
+.TP
+.I -x
+Uruchamia
+.B BitchX
+w trybie śledzenia (debug mode).
+.TP
+.I -v
+Pokazuje numer wersji.
+.TP
+.I -B
+Zmusza
+.B BitchX
+by wykonał fork i powrócił do powłoki.
+.TP
+.I -l <plik>
+Używa
+.I <pliku>
+zamiast .ircrc
+.TP
+.I -L <plik>
+Używa
+.I <pliku>
+zamiast 
+.I .ircrc
+i korzysta z rozszerzeń $ .
+.SH ZOBACZ TAKŻE
+Jak wszystkie klienty IRC
+.B BitchX
+posiada mnóstwo wewnętrznej dokumentacji. Spróbuj czasem użyć opcji
+.I /help
+Jest tam równierz mnóstwo innego typu rzeczy w twoim katalogu instalacyjnym,
+pod nazwą docs
+.SH PLIKI
+.TP
+.I /usr/local/lib/irc/
+Globalny, systemowy katalog konfiguracyjny.
+.TP
+.I ~/.BitchX/BitchX.sav
+Osobisty plik konfiguracyjny.
+.TP
+.I ~/.BitchX/BitchX.ircnames
+Domyślne, losowo wybierane prawdziwe imiona.
+.TP
+.I ~/.BitchX/BitchX.formats
+Osobiste formaty wyświetlania BitchX-a.
+.TP
+.I ~/.BitchX/BitchX.reasons
+Domyślna losowa wiadomość przy kopaniu.
+.TP
+.I ~/.BitchX/BitchX.quit
+Domyślna losowa wiadomość przy wyjściu.
+.TP
+.I ~/.Bitchx/BitchX.help
+Plik pomocy użytkownika.
+.TP
+.I ~/.Bitchx/screens
+Pamięć dla BitchX-owych sesji screen.
+.SH ORYGINALNY AUTOR STRONY MAN
+Wichert Akkerman
+.B <wakkerma@debian.org>
+.SH ODPOWIEDZIALNY ZA NOWE WERSJE
+Robert Durdle
+.B <dragoon@nightmail.com>
+.SH Autor BitchX-a
+Colten Edwards
+.B <panasync@bitchx.com> 
+

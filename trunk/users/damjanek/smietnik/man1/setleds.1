@@ -1,0 +1,80 @@
+.\" Translation (c) 1999 by Paweł Wilk <siewca@dione.ids.pl>
+.TH SETLEDS 1 "9 lutego 1997" "Narzędzia konsoli" "Podręcznik użytkownika Linuksa"
+
+.SH NAZWA
+setleds \- ustaw diody klawiatury
+
+.SH SKŁADNIA
+.B setleds
+.BI [ "-v" "] [" "-L" "] [" "-D" "] [" "-F" ]
+.BI [ {+|-}num "] [" {+|-}caps "] [" {+|-}scroll ]
+.IX "setleds komenda" "" "\fLsetleds\fR komenda"  
+
+.SH OPIS
+.PP
+.B setleds
+odczytuje i zmienia ustawienia światełek LED aktualnego VT (zwanych NumLock,
+CapsLock i ScrollLock). Bez argumentów polecenie
+.B setleds
+wypisuje obecne ustawienia. Z argumentami ustawia lub wyłącza wskazane flagi
+(pozostawiając inne niezmienione). Ustawienia przed i po zmianie są zgłaszane
+jeśli podano flagę
+.B \-v
+.SH OPCJE
+.TP
+.I \-F
+Jest ustawiona domyślnie. Tylko zmienia flagi VT (i jej ustawienie może wpłynąć
+na diody klawiatury).
+.TP
+.I \-D
+Zmienia obydwie flagi VT i ich domyślne ustawienia (a więc subsekwencyjny
+reset nie odwoła zmiany). Może to być użyteczne dla ludzi, którzy zawsze
+chcą mieć włączony numlock.
+.TP
+.I \-L
+Nie rusza flag VT, a jedynie zmienia stan diod. Od tej chwili diody
+nie będą oddawać rzeczywistego stanu flag VT (ale zareagują na każdą zmianę).
+Komenda
+.B "setleds \-L"
+(bez późniejszych argumentów) przywróci sytuację, w której diody oddają stan
+flag VT.
+.TP
+.I \-num \+num
+Wyzeruj lub ustaw NumLock.
+(Od teraz, ustawienie NumLock wpływa na interpretację klawiszy
+numerycznych. 
+Wciśnięcie klawisza NumLock uzupełnia ustawienie NumLock.)
+.TP
+.I \-caps \+caps
+Wyzeruj lub ustaw CapsLock.
+(Od teraz, ustawienie CapsLock dodaje klawisz Shift w stosunku do 
+wprowadzanych liter.
+Wciśnięcie klawisza CapsLock uzupełnia ustawienie CapsLock.)
+.TP
+.I \-scroll \+scroll
+Wyzeruj lub ustaw ScrollLock.
+(Od teraz, poprzez wciśnięcie klawisza ScrollLock (lub ^S/^Q) zatrzymuje/wznawia
+wyjście konsoli.)
+
+.SH PRZYKŁAD
+.PP
+Można na przykład użyć
+.B setleds
+w /etc/rc by zdefiniować początkowy i domyślny stan NumLock poprzez
+.PP
+.RS
+INITTY=/dev/tty[1\-8]
+.br
+for tty in $INITTY; do
+.RS
+setleds \-D \+num < $tty
+.RE
+done
+.RE
+
+.SH USTERKI
+W trybie aplikacji klawiatury klawisz NumLock nie wpływa na ustawienie
+flagi NumLock.
+
+.SH "ZOBACZ TAKŻE"
+.BR loadkeys (1).

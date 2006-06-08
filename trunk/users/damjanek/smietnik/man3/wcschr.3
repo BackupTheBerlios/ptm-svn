@@ -1,0 +1,38 @@
+.\" 2002 PTM Przemek Borys <pborys@dione.ids.pl>
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH WCSCHR 3  1999-07-25 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+wcschr \- odszukuje szeroki znak w łańcuchu szerokich znaków
+.SH SKŁADNIA
+.nf
+.B #include <wchar.h>
+.sp
+.BI "wchar_t *wcschr(const wchar_t *" wcs ", wchar_t " wc );
+.fi
+.SH OPIS
+Funkcja ta jest szerokoznakowym odpowiednikiem \fBstrchr\fP(3). Szuka ona
+pierwszego wystąpienia \fIwc\fP w łańcuchu \fIwcs\fP.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBwcschr\fP zwraca wskaźnik do pierwszego wystąpienia znaku
+\fIwc\fP w łańcuchu \fIwcs\fP. Jeśli znak taki nie występuje w łańcuchu,
+zwracana jest wartość NULL.
+.SH "ZGODNE Z"
+ISO/ANSI C, UNIX98
+.SH "ZOBACZ TAKŻE"
+.BR strchr (3),
+.BR wcsrchr (3),
+.BR wcspbrk (3),
+.BR wcsstr (3),
+.BR wmemchr (3)

@@ -1,0 +1,218 @@
+'\" t
+.\" Copyright (c) 1993 Michael Haardt (michael@cantor.informatik.rwth-aachen.de)
+.\" and 1994,1995 Alain Knaff (Alain.Knaff@imag.fr)
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified, Sun Feb 26 15:00:02 1995, faith@cs.unc.edu
+.\"
+.\" Tłumaczenie na język polski: Paweł Olszewski (alder@amg.net.pl)
+.\" {PTM/PO/0.2/02-06-1998/"urządzenie stacji dyskietek"}
+.\" Aktualność: man-pages 1.48
+.\"
+.TH FD 4 1995-01-29 "Linux" "Pliki specjalne"
+.SH NAZWA
+fd \- urządzenie stacji dyskietek
+.SH KONFIGURACJA
+Napędy dyskietek są urządzeniami blokowymi o numerze głównym 2. Zazwyczaj
+ich właścicielem jest root.floppy (tzn. użytkownik root, grupa floppy) i mają
+prawa dostępu 0660 (kontrola dostępu za pośrednictwem przynależności do grupy)
+lub 0666 (swobodny dostęp dla każdego). Numery poboczne symbolizują typ
+urządzenia, numer napędu i numer kontrolera. Dla każdego typu
+urządzenia (tj. kombinacji gęstości i liczby ścieżek) istnieje podstawowy
+numer poboczny. Do tego numeru podstawowego dodaje się numer napędu na
+kontrolerze i 128 jeśli napęd jest podłączony do drugiego
+kontrolera. W podanych dalej tablicach urządzeń \fIn\fP reprezentuje
+numer napędu.
+.PP
+\fBUwaga: Jeśli używa się formatów z większą ilością ścieżek, niż ta, którą
+jest w stanie obsłużyć napęd, można spowodować jego fizyczne uszkodzenie.\fP
+Jednorazowa próba, czy napęd obsługuje więcej niż zwykłe 40/80 ścieżek nie
+powinna go uszkodzić, ale nie ma na to gwarancji. Lepiej nie tworzyć plików
+urządzeń dla tych formatów, aby zapewnić, że nikt ich nie użyje.
+.PP
+Niezależne od napędu pliki urządzeń, które automatycznie wykrywają
+format i pojemność dyskietki:
+.PP
+.TS
+l l.
+Nazwa	Podst. nr pob.
+_
+\fBfd\fP\fIn\fP	0
+.TE
+.PP
+Pliki urządzeń napędu 5.25 cala o podwójnej gęstości:
+.PP
+.TS
+lw(1i) l l l l l.
+Nazwa	Pojemn.	Cyl.	Sekt.	Głow.	Podst. nr pob.
+_
+\fBfd\fP\fIn\fP\fBd360\fP	360K	40	9	2	4
+.TE
+.PP
+Pliki urządzeń napędu 5.25 cala o wysokiej gęstości:
+.PP
+.TS
+lw(1i) l l l l l.
+Nazwa	Pojemn.	Cyl.	Sekt.	Głow.	Podst. nr pob.
+_
+\fBfd\fP\fIn\fP\fBh360\fP	360K	40	9	2	20
+\fBfd\fP\fIn\fP\fBh410\fP	410K	41	10	2	48
+\fBfd\fP\fIn\fP\fBh420\fP	420K	42	10	2	64
+\fBfd\fP\fIn\fP\fBh720\fP	720K	80	9	2	24
+\fBfd\fP\fIn\fP\fBh880\fP	880K	80	11	2	80
+\fBfd\fP\fIn\fP\fBh1200\fP	1200K	80	15	2	8
+\fBfd\fP\fIn\fP\fBh1440\fP	1440K	80	18	2	40
+\fBfd\fP\fIn\fP\fBh1476\fP	1476K	82	18	2	56
+\fBfd\fP\fIn\fP\fBh1494\fP	1494K	83	18	2	72
+\fBfd\fP\fIn\fP\fBh1600\fP	1600K	80	20	2	92
+.TE
+.PP
+Pliki urządzeń napędu 3.5 cala o podwójnej gęstości:
+.PP
+.TS
+lw(1i) l l l l l.
+Nazwa	Pojemn.	Cyl.	Sekt.	Głow.	Podst. nr pob.
+_
+\fBfd\fP\fIn\fP\fBD360\fP	360K	80	9	1	12
+\fBfd\fP\fIn\fP\fBD720\fP	720K	80	9	2	16
+\fBfd\fP\fIn\fP\fBD800\fP	800K	80	10	2	120
+\fBfd\fP\fIn\fP\fBD1040\fP	1040K	80	13	2	84
+\fBfd\fP\fIn\fP\fBD1120\fP	1120K	80	14	2	88
+.TE
+.PP
+Pliki urządzeń napędu 3.5 cala o wysokiej gęstości:
+.PP
+.TS
+lw(1i) l l l l l.
+Nazwa	Pojemn.	Cyl.	Sekt.	Głow.	Podst. nr pob.
+_
+\fBfd\fP\fIn\fP\fBH360\fP	360K	40	9	2	12
+\fBfd\fP\fIn\fP\fBH720\fP	720K	80	9	2	16
+\fBfd\fP\fIn\fP\fBH820\fP	820K	82	10	2	52
+\fBfd\fP\fIn\fP\fBH830\fP	830K	83	10	2	68
+\fBfd\fP\fIn\fP\fBH1440\fP	1440K	80	18	2	28
+\fBfd\fP\fIn\fP\fBH1600\fP	1600K	80	20	2	124
+\fBfd\fP\fIn\fP\fBH1680\fP	1680K	80	21	2	44
+\fBfd\fP\fIn\fP\fBH1722\fP	1722K	82	21	2	60
+\fBfd\fP\fIn\fP\fBH1743\fP	1743K	83	21	2	76
+\fBfd\fP\fIn\fP\fBH1760\fP	1760K	80	22	2	96
+\fBfd\fP\fIn\fP\fBH1840\fP	1840K	80	23	2	116
+\fBfd\fP\fIn\fP\fBH1920\fP	1920K	80	24	2	100
+.TE
+.PP
+Pliki urządzeń napędu 3.5 cala o gęstości extra:
+.PP
+.TS
+lw(1i) l l l l l.
+Nazwa	Pojemn.	Cyl.	Sekt.	Głow.	Podst. nr pob.
+_
+\fBfd\fP\fIn\fP\fBE2880\fP	2880K	80	36	2	32
+\fBfd\fP\fIn\fP\fBCompaQ\fP	2880K	80	36	2	36
+\fBfd\fP\fIn\fP\fBE3200\fP	3200K	80	40	2	104
+\fBfd\fP\fIn\fP\fBE3520\fP	3520K	80	44	2	108
+\fBfd\fP\fIn\fP\fBE3840\fP	3840K	80	48	2	112
+.TE
+.SH OPIS
+Pliki specjalne \fBfd\fP udostępniają dyskietki w trybie surowym.
+Następujące odwołania
+.IR ioctl (2)
+obsługiwane są przez urządzenia \fBfd\fP:
+.IP \fBFDCLRPRM\fP
+usuwa informacje o nośniku (geometrii dyskietki w stacji).
+.IP \fBFDSETPRM\fP
+ustawia informacje o nośniku. Informacje te giną wraz ze zmianą dyskietki.
+.IP \fBFDDEFPRM\fP
+ustawia informacje o nośniku (geometrii dyskietki w
+stacji). Informacje te nie giną po zmianie dyskietki. Oznacza to
+wyłączenie automatycznego rozpoznawania nośnika w razie jego
+zmiany. Aby włączyć autodetekcję z powrotem, należy użyć
+\fBFDCLRPRM\fP.
+.IP \fBFDGETDRVTYP\fP
+zwraca typ napędu (parametr nazwy). Dla formatów, które działają w
+różnych typach napędów, \fBFDGETDRVTYP\fP zwraca nazwę, która
+odpowiada najstarszemu typowi napędu obsługującemu ten format.
+.IP \fBFDFLUSH\fP
+dezaktualizuje bufory cache dla danego napędu.
+.IP \fBFDSETMAXERRS\fP
+ustawia progi błędów dla ich zgłaszania, anulowania operacji,
+rekalibracji, resetowania i odczytu sektor po sektorze.
+.IP \fBFDSETMAXERRS\fP
+zwraca bieżące progi błędów.
+.IP \fBFDGETDRVTYP\fP
+zwraca wewnętrzną nazwę napędu.
+.IP \fBFDWERRORCLR\fP
+czyści statystyki błędów zapisu.
+.IP \fBFDWERRORGET\fP
+odczytuje statystyki błędów zapisu. Należą do nich: całkowita liczba
+błędów zapisu, położenie i dysk, na którym wystąpił pierwszy błąd
+zapisu oraz położenie i dysk, na którym wystąpił ostatni błąd zapisu.
+Dyski identyfikowane są przez generowany numer, zwiększany po każdej
+(niemal) zmianie dyskietki.
+.IP \fBFDTWADDLE\fP
+Wyłącza silnik napędu na kilka mikrosekund. Może to być niezbędne dla
+uzyskania dostępu do dyskietki, której sektory są zbyt blisko siebie.
+.IP \fBFDSETDRVPRM\fP
+ustawia różne parametry napędu.
+.IP \fBFDGETDRVPRM\fP
+odczytuje te parametry.
+.IP \fBFDGETDRVSTAT\fP
+zwraca buforowany stan napędu (dyskietka zmieniona, zabezpieczenie
+przed zapisem, itd.)
+.IP \fBFDPOLLDRVSTAT\fP
+odpytuje napęd i zwraca jego stan.
+.IP \fBFDGETFDCSTAT\fP
+zwraca stan kontrolera napędu dyskietek.
+.IP \fBFDRESET\fP
+resetuje kontroler napędu dyskietek w konkretnych warunkach.
+.IP \fBFDRAWCMD\fP
+wysyła surowe polecenie do kontrolera napędu.
+.PP
+Aby uzyskać bardziej szczegółowe informacje, zajrzyj również do plików
+nagłówkowych <linux/fd.h> i <linux/fdreg.h>, jak również do strony man
+dla floppycontrol.
+.SH UWAGI
+Różne formaty pozwalają na zapis i odczyt wielu typów
+dysków. Jednakże, jeśli dyskietka jest sformatowana ze zbyt małym
+odstępem między sektorami, wydajność może spaść nawet do poziomu, w
+którym napęd będzie potrzebował kilku sekund na odczytanie całej
+ścieżki. Aby tego uniknąć, należy używać formatów z przeplotem. Niemożliwy
+jest odczyt dyskietek sformatowanych przy użyciu GCR (group code
+recording - grupowe nagrywanie kodu), stosowanego w komputerach Apple II
+i Macintosh (dyskietki 800k). Nie działa również odczyt z
+dyskietek z twardymi sektorami (jedna przerwa na sektor, przerwa
+indeksowa nieco przesunięcia). Było to powszechne na starych 8-mio
+calowych dyskietkach.
+.SH PLIKI
+/dev/fd*
+.SH AUTORZY
+Alain Knaff (Alain.Knaff@imag.fr), David Niemi (niemidc@clark.net),
+Bill Broadhurst (bbroad@netcom.com). 
+.SH TŁUMACZ
+Paweł Olszewski (alder@amg.net.pl).
+.SH "ZOBACZ TAKŻE"
+.BR floppycontrol (1),
+.BR mknod (1),
+.BR chown (1),
+.BR getfdprm (1),
+.BR superformat (1),
+.BR mount (8),
+.BR setfdprm (8)

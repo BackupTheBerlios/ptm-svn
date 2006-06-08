@@ -1,0 +1,10 @@
+# Lista polskich stron man dla pakietu
+# rlinetd
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+rlinetd.conf.5	man5/rlinetd.conf.5
+rlinetd.8	man8/rlinetd.8
+#
+# koniec listy

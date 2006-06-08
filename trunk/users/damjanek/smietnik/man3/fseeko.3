@@ -1,0 +1,65 @@
+.\" Tłumaczenie na podstawie wersji man-pages 1.45
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 2001 Andries Brouwer <aeb@cwi.nl>.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.TH FSEEKO 3 2001-11-05 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fseeko, ftello \- ustawienie lub odczytanie pozycji pliku
+.SH SKŁADNIA
+.nf
+.B #include <stdio.h>
+.sp
+.BI "int fseeko(FILE *" stream ", off_t " offset ", int " whence );
+.sp
+.BI "off_t ftello(FILE *" stream );
+.BI 
+.fi
+.SH OPIS
+Funkcje \fBfseeko()\fP i \fBftello()\fP są identyczne z \fBfseek()\fP
+i \fBftell()\fP (patrz
+.BR fseek (3)),
+odpowiednio, z tą różnicą, że argument \fIoffset\fP \fBfseeko()\fP
+i wartość zwracana przez \fBftello()\fP są typu \fBoff_t\fP zamiast
+\fBlong\fP.
+.LP
+Na wielu architekturach zarówno \fBoff_t\fP, jak i \fBlong\fP są typami
+32-bitowymi, ale kompilacja z
+.RS
+.nf
+#define _FILE_OFFSET_BITS 64
+.fi
+.RE
+przełącza \fBoff_t\fP w typ 64-bitowy.
+.SH UWAGI
+Funkcje te można znaleźć w systemach typu SysV.
+Nie występują one w libc4, libc5 i glibc 2.0, ale są dostępne począwszy od
+glibc 2.1.
+.SH "ZGODNE Z"
+Funkcje
+.B fseeko
+i
+.B ftello
+odpowiadają wymaganiom SUSv2.
+.SH "ZOBACZ TAKŻE"
+.BR fseek (3)

@@ -1,0 +1,15 @@
+# Lista polskich stron man dla pakietu
+# ldso
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+dlclose.3	man3/dlclose.3
+dlerror.3	man3/dlerror.3
+dlopen.3	man3/dlopen.3
+dlsym.3		man3/dlsym.3
+ld.so.8		man8/ld.so.8
+ldconfig.8	man8/ldconfig.8
+ldd.1		man1/ldd.1
+#
+# koniec listy

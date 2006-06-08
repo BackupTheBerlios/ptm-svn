@@ -1,0 +1,58 @@
+.\" Tłumaczenie wersji man-pages 1.39 - wrzesień 2001 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:15:31 1993 by Rik Faith (faith@cs.unc.edu)
+.\" --------
+.TH SQRT 3 1993-06-21 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+sqrt \- funkcja pierwiastek kwadratowy
+.SH SKŁADNIA
+.nf
+.B #include <math.h>
+.sp
+.BI "double sqrt(double " x );
+.fi
+.SH OPIS
+Funkcja \fBsqrt()\fP zwraca
+.ig
+.\" nieujemny
+ WK: w Polsce, inaczej niż w krajach anglosaskich, pierwiastek
+ kwadratowy jest funkcją; ZAWSZE ma wartość nieujemną
+..
+pierwiastek kwadratowy z \fIx\fP.
+Kończy się niepowodzeniem i ustawia \fIerrno\fP na EDOM, gdy \fIx\fP jest
+ujemne.
+.SH BŁĘDY
+.TP
+.B EDOM
+\fIx\fP jest ujemne.
+.SH "ZGODNE Z"
+SVID 3, POSIX, BSD 4.3, ISO 9899
+.SH "ZOBACZ TAKŻE"
+.BR hypot (3)

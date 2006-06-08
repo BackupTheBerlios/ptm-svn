@@ -1,0 +1,50 @@
+.\" {PTM/PB/0.1/02-10-1998/"znajdź pid pracującego programu"}
+.TH PIDOF 8 "1 września 1998" "" "Podręcznik administratora Linuksa"
+.SH NAZWA
+pidof - znajdź pid działającego programu.
+.SH SKŁADNIA
+.B pidof
+.RB [ \-s ]
+.RB [ \-x ]
+.RB [ \-o
+.IR pomińpid ]
+.RB [ \-o
+.IR pomińpid.. ]
+.B program
+.RB [ program.. ]
+.SH OPIS
+.B Pidof
+wyszukuje identyfikatory procesów (PID-y) wskazanych programów. Drukuje je
+następnie na standardowe wyjście. Program ten jest na ogół używany w
+skryptach zmian poziomu pracy (runlevel change scripts), szczególnie jeśli
+system ma strukturę \fIrc\fP typu \fISystem-V\fP. Skrypty te są wtedy
+zlokalizowane w /etc/rc.?d, gdzie ? oznacza poziom pracy.
+Jeżeli system posiada program \fBstart-stop-daemon\fP(8), to powinien być on
+stosowany zamiast \fBpidof\fP.
+.SH OPCJE
+.IP -s
+Pojedynczy strzał - mówi to programowi, by wyświetlił tylko jeden \fIpid\fP.
+.IP -x
+Skrypty również - to powoduje, że program zwraca również identyfikatory
+procesów powłok, pracujących z podanymi skryptami.
+.IP "-o \fIpomińpid\fP"
+Mówi programowi, by ominął procesy z podanym identyfikatorem procesu.
+Istnieje specjalny pid \fB%PPID\fP, który może być używany do wskazywania
+procesu rodzicielskiego programu \fIpidof\fP, czyli innymi słowy do
+wywołującej powłoki lub skryptu.
+.SH UWAGI
+\fIpidof\fP jest po prostu dowiązaniem symbolicznym do programu
+\fIkillall5\fP,
+który powinien też być zlokalizowany w \fP/sbin\fP.
+.PP
+Gdy \fPpidof\fP jest wywoływany z pełną, ścieżkową nazwą programu, którego pid
+ma znaleźć, jest rozsądnie bezpieczny. W przeciwnym razie możliwe, że
+zwróci identyfikatory pid programów, które przypadkowo mają tę samą nazwę,
+co szukany przez nas, ale faktycznie są innymi programami.
+.SH ZOBACZ TAKŻE
+.BR shutdown (8),
+.BR init (8),
+.BR halt (8),
+.BR reboot (8).
+.SH AUTOR
+Miquel van Smoorenburg, miquels@cistron.nl

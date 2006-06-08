@@ -1,0 +1,40 @@
+.\" 2002 PTM Przemek Borys <pborys@dione.ids.pl>
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH WCSNCAT 3  1999-07-25 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+wcsncat \- łączy dwa łańcuchy szerokich znaków
+.SH SKŁADNIA
+.nf
+.B #include <wchar.h>
+.sp
+.BI "wchar_t *wcsncat(wchar_t *" dest ", const wchar_t *" src ", size_t " n );
+.fi
+.SH OPIS
+Funkcja \fBwcsncat\fP jest szerokoznakowym odpowiednikiem funkcji
+\fBstrncat\fP(3). Kopiuje ona co najwyżej \fIn\fP szerokich znaków z
+łańcucha \fIsrc\fP i dokleja je na koniec łańcucha szerokoznakowego
+okreslonego przez \fIdest\fP. Dodaje na koniec również kończący znak L'\\0'.
+.PP
+Łańcuchy nie mogą zachodzić na siebie.
+.PP
+Programista musi zagwarantować, że jest miejsce na przynajmniej
+\fIwcslen(dest)+n+1\fP szerokich znaków w \fIdest\fP.
+.SH "WARTOŚĆ ZWRACANA"
+\fBwcsncat\fP zwraca \fIdest\fP.
+.SH "ZGODNE Z"
+ISO/ANSI C, UNIX98
+.SH "ZOBACZ TAKŻE"
+.BR strncat (3),
+.BR wcscat (3)

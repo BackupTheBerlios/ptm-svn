@@ -1,0 +1,59 @@
+.\" 2002 PTM Przemek Borys <pborys@dione.ids.pl>
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH WCRTOMB 3  1999-07-25 "GNU" "Podręcznik programisty linuksowego"
+.SH NAZWA
+wcrtomb \- konwertuje szerokie znaki na sekwencje wielobajtowe
+.SH SKŁADNIA
+.nf
+.B #include <wchar.h>
+.sp
+.BI "size_t wcrtomb(char *" s ", wchar_t " wc ", mbstate_t *" ps );
+.fi
+.SH OPIS
+Podstawowym zastosowaniem tej funkcji jest to, gdy \fIs\fP nie jest NULL i
+\fIwc\fP nie jest L'\\0'.
+W tym przypadku, funkcja ta konwertuje szeroki znak \fIwc\fP na jego
+wielobajtową reprezentację i zachowuje ją na początku tablicy znakowej,
+wskazywanej przez \fIs\fP. Aktualizuje stan przesunięcia \fI*ps\fP i zwraca
+długość reprezentacji wielobajtowej, tj. ilość bitów zapisanych do \fIs\fP.
+.PP
+Innym przypadkiem jest sytuacja, gdy \fIs\fP również nie jest NULL, lecz
+\fIwc\fP jest L'\\0'. W tym przypadku, funkcja ta zachowuje w \fIs\fP
+sekwencję przesunięcia, wymaganą do przeniesienia \fI*ps\fP z powrotem do
+stanu początkowego. Za sekwencją doklejony będzie bajt '\\0'.
+Aktualizuje stan przesunięcia \fI*ps\fP (tj. przenosi go do stanu
+początkowego) i zwraca długość sekwencji przesunięcia plus jeden, tj. liczbę
+bajtów zapisanych do \fIs\fP.
+.PP
+Trzecim przypadkiem jest gdy \fIs\fP jest NULL. W tym przypadku, \fIwc\fP
+jest ignorowane, a funkcja zwraca wcrtomb(buf,L'\\0',\fIps\fP), gdzie buf
+jest wewnętrznym anonimowym buforem.
+.PP
+We wszystkich powyższych przypadkach, jeśli \fIps\fP jest wskaźnikiem NULL,
+w jego miejscu używany jest anonimowy stan, znany tylko funkcji wcrtomb.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBwcrtomb\fP zwraca liczbę bajtów, które zostały (lub zostałyby)
+zapisane do tablicy bajtowej \fIs\fP. Jeśli \fIwc\fP nie może być
+reprezentowane w sekwencji wielobajtowej (według obecnych locale), zwracane
+jest (size_t)(-1) i \fBerrno\fP jest ustawiane na \fBEILSEQ\fP.
+.SH "ZGODNE Z"
+ISO/ANSI C, UNIX98
+.SH "ZOBACZ TAKŻE"
+.BR wcsrtombs (3)
+.SH UWAGI
+Zachowanie tej funkcji zależy od kategorii LC_CTYPE aktualnych ustawień
+locale.
+.PP
+Podawanie NULL jako \fIps\fP nie jest bezpieczne w trybie wielowątkowym.

@@ -1,0 +1,110 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:26:03 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.\" Tłumaczenie wersji man-pages 1.50 - czerwiec 2002 PTM
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.TH GETPROTOENT 3 1993-04-24 "BSD" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getprotoent, getprotobyname, getprotobynumber, setprotoent,
+endprotoent \- odczytanie wpisu dotyczącego protokołu
+.SH SKŁADNIA
+.nf
+.B #include <netdb.h>
+.sp
+.B struct protoent *getprotoent(void);
+.sp
+.BI "struct protoent *getprotobyname(const char *" name );
+.sp
+.BI "struct protoent *getprotobynumber(int " proto );
+.sp
+.BI "void setprotoent(int " stayopen );
+.sp
+.B void endprotoent(void);
+.fi
+.SH OPIS
+Funkcja \fBgetprotoent()\fP odczytuje następną linię z pliku 
+\fI/etc/protocols\fP i zwraca strukturę \fIprotoent\fP zawierającą pola
+otrzymane w wyniku rozłożenia linii. Plik  \fI/etc/protocols\fP jest
+otwierany, jeśli jest to potrzebne.
+.PP
+Funkcja \fBgetprotobyname()\fP zwraca strukturę \fIprotoent\fP zawierającą
+wartości z tej linii pliku \fI/etc/protocols\fP, która odpowiada protokołowi
+o nazwie \fIname\fP.
+.PP
+Funkcja \fBgetprotobynumber()\fP zwraca strukturę \fIprotoent\fP zawierającą
+wartości z linii odpowiadającej protokołowi o numerze \fInumber\fP.
+.PP
+Funkcja \fBsetprotoent()\fP otwiera plik \fI/etc/protocols\fP i ustawia
+wskaźnik pliku na jego początek. Jeśli \fIstayopen\fP będzie prawdziwe (1), to
+plik nie będzie zamykany pomiędzy wywołaniami \fBgetprotobyname()\fP
+i \fBgetprotobynumber()\fP.
+.PP
+Funkcja \fBendprotoent()\fP zamyka \fI/etc/protocols\fP.
+.PP
+Struktura \fIprotoent\fP jest zdefiniowana w \fI<netdb.h>\fP następująco:
+.sp
+.RS
+.nf
+.ne 5
+.ta 8n 16n 32n
+struct protoent {
+	char	*p_name;		/* oficjalna nazwa protokołu */
+	char	**p_aliases;		/* lista aliasów */
+	int	p_proto;		/* numer protokołu */
+}
+.ta
+.fi
+.RE
+.PP
+Polami struktury \fIprotoent\fP są:
+.TP
+.I p_name
+Oficjalna nazwa protokołu.
+.TP
+.I p_aliases
+Zakończona zerem lista alternatywnych nazw tego protokołu.
+.TP
+.I p_proto
+Numer protokołu.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcje \fBgetprotoent()\fP, \fBgetprotobyname()\fP i \fBgetprotobynumber()\fP
+zwracają strukturę \fIprotoent\fP, lub wskaźnik NULL gdy wystąpi błąd lub
+napotkany zostanie koniec pliku.
+.SH PLIKI
+.PD 0
+.TP
+.I /etc/protocols
+plik bazy danych dla protokołów
+.PD
+.SH "ZGODNE Z"
+BSD 4.3
+.SH "ZOBACZ TAKŻE"
+.BR getservent (3),
+.BR getnetent (3),
+.BR protocols (5)

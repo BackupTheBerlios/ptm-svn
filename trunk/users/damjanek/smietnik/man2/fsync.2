@@ -1,0 +1,109 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified 21 Aug 1994 by Michael Chastain <mec@shell.portal.com>:
+.\"   Removed note about old libc (pre-4.5.26) translating to 'sync'.
+.\" Modified 15 Apr 1995 by Michael Chastain <mec@shell.portal.com>:
+.\"   Added `see also' section.
+.\" Modified 13 Apr 1996 by Markus Kuhn <mskuhn@cip.informatik.uni-erlangen.de>
+.\"   Added remarks about fdatasync.
+.\" Modified 31 Jan 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 18 Apr 2001 by Andi Kleen
+.\"   Fix description to describe what it really does; add a few caveats.
+.\" Translation (c) 1998 Przemek Borys <pborys@dione.ids.pl>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\"
+.TH FSYNC 2 2001-04-18 "Linux 1.3.85" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fsync, fdatasync \- synchronizacja pełnego wewnątrzrdzeniowego stanu pliku
+z zapisanym na dysku
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.BI "int fsync(int " fd );
+.sp
+.BI "int fdatasync(int " fd );
+.SH OPIS
+.B fsync
+kopiuje wszystkie wewnątrzrdzeniowe części pliku na dysk i czeka na zgłoszenie
+przez urządzenie, że wszystkie dane znajdują się na trwałym nośniku.
+Aktualizuje również informacje statystyczne o metadanych. Nie gwarantuje, że
+wpis w katalogu zawierający informacje o pliku również zostanie zapisany na
+dysku. Aby to osiągnąć, wymagane jest jawne wywołanie
+.B fsync
+dla deskryptora katalogu.
+
+.B fdatasync
+robi to samo, co
+.BR fsync ,
+lecz zapisuje jedynie dane użytkownika, bez metadanych, takich jak mtime czy
+atime.
+
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracane jest zero. Po błędzie zwracane jest \-1
+i odpowiednio ustawiane
+.IR errno .
+.SH BŁĘDY
+.TP
+.B EBADF
+.I fd
+nie jest prawidłowym deskryptorem pliku otwartego do zapisu.
+.TP
+.BR EROFS ", " EINVAL
+.I fd
+jest powiązany ze specjalnym plikiem, który nie wspiera synchronizacji.
+.TP
+.B EIO
+Pojawił się błąd podczas synchronizacji.
+.SH UWAGI
+W sytuacji, gdy twardy dysk ma włączone buforowanie zapisów, dane mogą
+w rzeczywistości nie zostać zapisane na trwałym nośniku do chwili powrotu z
+.BR fsync / fdatasync .
+.\" W
+.\" .BR hdparm (8)
+.\" jest wyjaśnione, jak wyłączyć to buforowanie dla dysków IDE.
+.LP
+Gdy system plików ext2 jest zamontowany z opcją
+.IR sync ,
+wpisy w katalogach są również jawnie zapisywane przez
+.BR fsync .
+.LP
+W kernelach przed 2.4,
+.B fsync
+na dużych plkach mogło być niewydajne.
+Alternatywą mogło być używanie znacznika
+.I O_SYNC
+dla
+.BR open (2).
+.SH "ZGODNE Z"
+POSIX.1b (wcześniej POSIX.4) 
+.SH "ZOBACZ TAKŻE"
+.BR bdflush (2),
+.BR open (2),
+.BR sync (2),
+.\" .BR hdparm (8),
+.BR mount (8),
+.BR update (8),
+.BR sync (8)

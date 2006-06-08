@@ -1,0 +1,60 @@
+.\" Tłumaczenie wersji man-pages 1.39 - wrzesień 2001 PTM
+.\" aktualizacja do man-pages 1.45 - grudzień 2001
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" (c) 1995 by Jim Van Zandt <jrv@vanzandt.mv.com>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" --------
+.TH GETW 3  1995-09-16 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getw, putw \- odczytywanie i wyprowadzanie słów (wartości typu int)
+.SH SKŁADNIA
+.nf
+.B #include <stdio.h>
+.sp
+.BI "int getw(FILE *" stream );
+.nl
+.BI "int putw(int " w ", FILE *" stream );
+.nl
+.SH OPIS
+\fBgetw\fP odczytuje słowo (tzn. wartość typu \fBint\fP) ze \fIstream\fP.
+Jest ona udostępniona dla zgodności z SVID. Zaleca się korzystanie zamiast
+niej z \fBfread\fP(3).
+.P
+\fBputw\fP zapisuje słowo \fIw\fP (tzn. wartość typu \fBint\fP) do
+\fIstream\fP. Jest ona udostępniona dla zgodności z SVID, ale zaleca się
+korzystanie zamiast niej z \fBfwrite\fP(3).
+.SH "WARTOŚĆ ZWRACANA"
+Normalnie, \fBgetw\fP zwraca przeczytane słowo, a \fBputw\fP zwraca 0.
+W przypadku błędu, zwracają \fBEOF\fP.
+.SH BŁĘDY
+Wartość zwracana w przypadku błędu jest również prawidłową wartością dla
+danych. Można korzystać z \fBferror\fP(3), aby rozróżnić te dwa przypadki.
+.SH "ZGODNE Z"
+SVID
+.SH "ZOBACZ TAKŻE"
+.BR fread (3),
+.BR fwrite (3),
+.BR ferror (3),
+.BR getc (3),
+.BR putc (3)

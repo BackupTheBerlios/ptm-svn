@@ -1,0 +1,42 @@
+.\" {PTM/WK/0.1/15-07-1999/"wyświetl katalog DOS"}
+.TH mdir 1 "15 lipca 1999" mtools-3.9.6
+.SH NAZWA
+mdir - wyświetl katalog DOSu
+.SH SKŁADNIA
+.BR mdir " [" \-/ "] [" \-s "] [" \-f "] [" \-w "] [" \-X ]
+.IR plikDOS " [" plikiDOS ...]
+.SH OPIS
+Polecenie \fBmdir\fP używane jest do wyświetlania katalogów MS-DOSu lub
+list wybranych grup plików DOSu.
+Jeśli składowa ścieżki nie jest katalogiem to jest to błąd.
+.SH OPCJE
+.TP
+.BR \-/
+Wyświetlanie rekurencyjne. Jak DOSowa opcja \fB-s\fR (z podkatalogami).
+.TP
+.BR \-a 
+Wyświetl również pliki ukryte.
+.TP
+.BR \-f 
+Szybkie (fast). Nie próbuj znajdować informacji o wolnym miejscu. Na
+większych dyskach dowiedzenie się, ile jest obecnie wolnego miejsca
+zabiera całkiem sporo czasu, gdyż musi być wczytana i przeglądnięta cała
+tablica alokacji plików (FAT). Opcja \fB\-f\fP pomija ten krok. Nie jest
+ona potrzebna dla systemów FAT32, które przechowują rozmiar wprost.
+.TP
+.BR \-w 
+Wyświetlanie w formie szerokiej listy. Przy użyciu tej opcji \fBmdir\fP
+wyświetla nazwy plików na szerokości strony bez wyświetlania rozmiarów czy
+dat utworzenia plików.
+.TP
+.BR \-X 
+Lista zwięzła. Wyświetla tylko nazwy plików ze ścieżką bez ozdobników czy
+informacji dodatkowych.
+.RE
+.SH UWAGI
+Niniejsza, polska wersja dokumentacji, powstała jako tłumaczenie pliku
+Texinfo pakietu mtools wersji 3.9.6. W stosunku do automatycznie generowanej
+z Textinfo dokumentacji oryginalnej dokonano przesunięcia sekcji opisującej
+konwersję dokumentacji do \fBmtools\fR(1). Tam też znajdziesz notę prawną
+dotyczącą rozpowszechniania, modyfikacji i tłumaczenia dokumentacji pakietu
+mtools

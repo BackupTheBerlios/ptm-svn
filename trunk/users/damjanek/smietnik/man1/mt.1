@@ -1,0 +1,204 @@
+.\" {PTM/WK/1999-XII}
+.TH MT 1L \" -*- nroff -*-
+.SH NAZWA
+mt \- sterowanie działaniem napędu taśm magnetycznych
+.SH SKŁADNIA
+.TP 4
+.B mt
+.RB [ \-V ]
+.RB [ \-f
+.IR urządzenie ]
+.RB [ \-\-file= \fIurządzenie\fP]
+.RB [ \-\-version ]
+.I działanie
+.RI [ licznik ]
+.SH OPIS
+Ta strona podręcznika man opisuje polecenie \fBmt\fP w wersji GNU.
+.PP
+.B mt
+wykonuje zadane
+.IR działanie ,
+dla napędu taśmy. Działanie musi być jednym z podanych poniżej.
+.PP
+Domyślne urządzenie taśmowe, którego dotyczą działania pobierane jest z pliku
+.I /usr/include/sys/mtio.h
+podczas kompilacji
+.BR mt .
+Może być unieważnione przez podanie nazwy pliku urządzenia w zmiennej
+środowiskowej
+.B TAPE
+lub w wierszu poleceń (patrz niżej), który z kolei unieważnia również zmienną
+środowiska.
+.PP
+Urządzenie musi być albo specjalnym plikiem znakowym albo zdalnym napędem
+taśmowym. Chcąc posłużyć się jako archiwum napędem taśmowym umiejscowionym
+na innej maszynie, powinieneś użyć nazwy pliku rozpoczynającej się od
+`NAZWAHOSTA:'. Nazwa hosta może być poprzedzona nazwą użytkownika i znakiem
+`@'. Zapewnia to dostęp do zdalnego napędu taśmowego w imieniu danego
+użytkownika, jeżeli tylko posiadasz odpowiednie uprawnienia (zwykle wpis
+w pliku `~/.rhosts' tego użytkownika).
+.PP
+Poniżej podano dostępne działania. Akceptowane są jednoznaczne skróty.
+Nie wszystkie działania są dostępne na wszystkich systemach, nie wszystkie
+też działają ze wszystkimi typami napędów taśmowych.
+Niektóre z działań opcjonalnie przyjmują licznik powtórzeń, który można podać
+po nazwie działania. Domyślną wartością licznika jest 1.
+.TP
+.BR eof ", " weof
+Zapisz
+.I licznik
+znaczników EOF na bieżącej pozycji.
+.TP
+.B fsf
+Przesuń w przód o
+.I licznik
+plików.
+Taśma ustawiana jest na pierwszym bloku następnego pliku.
+.TP
+.B bsf
+Przesuń wstecz o
+.I licznik
+plików.
+Taśma ustawiana jest na pierwszym bloku następnego pliku.
+.TP
+.B fsr
+Przesuń w przód o
+.I licznik
+rekordów (zapisów).
+.TP
+.B bsr
+Przesuń wstecz o
+.I licznik
+rekordów.
+.TP
+.B bsfm
+Przesuń wstecz o
+.I licznik
+znaczników plików.
+Taśma ustawiana jest na znaczniku pliku, od strony początku taśmy.
+.TP
+.B fsfm
+Przesuń w przód o
+.I licznik
+znaczników plików.
+Taśma ustawiana jest na znaczniku pliku, od strony początku taśmy.
+.TP
+.B asf
+Przesunięcie bezwzględne do pliku numer
+.IR licznik .
+Równoważnik przewinięcia wstecz całości taśmy, a następnie wykonania `fsf
+licznik'.
+.TP
+.B eom
+Przesuń na koniec zapisanego nośnika taśmy (w celu dopisywania plików do taśmy).
+.TP
+.B rewind
+Przewiń taśmę (na początek).
+.TP
+.BR offline ", " rewoffl
+Przewiń taśmę i, jeśli to możliwe, wysuń taśmę.
+.TP
+.B status
+Wyświetl informację o stanie jednostki taśmowej.
+.TP
+.B retension
+Przewiń taśmę, następnie przewiń ją w przód do końca szpuli, i powtórnie wstecz.
+.TP
+.B erase
+Wymaż taśmę.
+.TP
+.B fss
+(taśmy SCSI) W przód o
+.I licznik
+znaczników (setmarks).
+.TP
+.B bss
+(taśmy SCSI) Wstecz o
+.I licznik
+znaczników.
+.TP
+.B wset
+(taśmy SCSI) Zapisz
+.I licznik
+znaczników (setmarks) od bieżącej pozycji (tylko taśmy SCSI).
+.TP
+.BR eod ", " seod
+Na koniec poprawnych danych. Używany dla napędów taśmowych streamerów w celu
+dopisywania danych do logicznego końca taśmy.
+.TP
+.B setblk
+(taśmy SCSI) Ustaw rozmiar bloku dla napędu na
+.I licznik
+bajtów na rekord.
+.TP
+.B setdensity
+(taśmy SCSI) Ustaw kod gęstości (density) taśmy na
+.IR licznik .
+Poprawnych wartości kodów dla konkretnego napędu należy szukać w jego
+dokumentacji.
+.TP
+.B drvbuffer
+(taśmy SCSI) Ustaw kod bufora napędu taśmowego na
+.IR licznik .
+Poprawną wartością dla operacji niebuforowanych jest zero a "zwyczajnie"
+buforowanych jeden. Znaczenie innych wartości można znaleźć w dokumentacji
+napędu lub, w przypadku napędu SCSI-2, w opisie standardu SCSI-2.
+.TP
+.B stoptions
+(taśmy SCSI) Ustaw bity opcji sterownika urządzenia na
+.IR licznik .
+Bity można ustawiać jako alternatywę logiczną następujących wartości:
+1 włączenie buforowania zapisu, 2 włączenie zapisu asynchronicznego,
+4 włączenie odczytu z wyprzedzeniem (read ahead), 8 włączenie wyjścia
+diagnostycznego (jeśli zostało wkompilowane w sterownik).
+.TP
+.B stwrthreshold
+(taśmy SCSI) Próg zapisu dla urządzenia taśmowego ustawiany jest na
+.I licznik
+kilobajtów. Wartość ta musi być mniejsza lub równa rozmiarowi bufora
+sterownika.
+.TP
+.B seek
+(taśmy SCSI) Wyszukaj do
+.I licznik
+bloku taśmy. Działanie to jest dostępne na niektórych streamerach
+Tandberg i Wangtek oraz niektórych napędach taśmowych SCSI-2.
+.TP
+.B tell
+(taśmy SCSI) Podaj bieżący blok taśmy. Działanie to jest dostępne
+na niektórych streamerach Tandberg i Wangtek oraz niektórych napędach
+taśmowych SCSI-2.
+.TP
+.B densities
+(taśmy SCSI) Wyświetl na standardowym wyjściu objaśnienie niektórych
+powszechnych kodów gęstości.
+.TP
+.B datcompression
+(niektóre taśmy SCSI-2 DAT) Zapytaj lub ustaw stan kompresji (on/off). Jeżeli
+.I licznik
+wynosi jeden, to wyświetlany jest stan kompresji. Jeśli
+.I licznik
+jest równy zero, to kompresja jest wyłączana. W innych przypadkach kompresja
+jest włączana. Polecenie to wykorzystuje ioctl SCSI do odczytu i zapisu
+Data Compression Characteristics mode page (15). TYLKO UŻYTKOWNIK ROOT
+MOŻE KORZYSTAĆ Z TEGO POLECENIA.
+.PP
+.B mt
+kończy pracę z kodem 0, jeśli działanie się powiodło; 1 jeżeli podano
+niepoprawną nazwę działania lub urządzenia, zaś 2 jeśli działanie nie
+się udało.
+.SS OPCJE
+.TP
+.BR \-f ", " \-\-file=\fIurządzenie\fP
+Użyj
+.I urządzenia
+jako nazwy pliku napędu taśmowego, którego mają dotyczyć działania.
+Możesz posłużyć się napędem taśmowym innej maszyny używając nazwy pliku
+rozpoczynającej się od `NAZWAHOSTA:'. Nazwa hosta może być poprzedzona
+nazwą użytkownika i znakiem `@'. Zapewnia to dostęp do zdalnego napędu
+taśmowego w imieniu danego użytkownika, jeżeli tylko posiadasz odpowiednie
+uprawnienia (zwykle wpis w pliku `~/.rhosts' tego użytkownika).
+.TP
+.BR \-V ", " \-\-version
+Wyświetl numer wersji
+.BR mt .

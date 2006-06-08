@@ -1,0 +1,397 @@
+.\" {PTM/PB/0.1/28-09-1998/"opis tabeli klawiatury dla loadkeys i dumpkeys"}
+.\" Translation (c) 1998 Przemek Borys <pborys@p-soft.silesia.linux.org.pl>
+.\" @(#)keytables.5 1.10 940130 aeb
+.TH KEYTABLES 5 "30 Jan 1994"
+.SH NAZWA
+keytables \- opisy tabeli klawiaturowych dla loadkeys i dumpkeys
+.SH OPIS
+Pliki te są używane przez
+.BR loadkeys (1)
+do modyfikowania tablic translacji używanych przez sterownik klawiatury.
+Pliki te mogą być generowane na podstawie tych tabel przez program
+.BR dumpkeys (1).
+.LP
+Format tych plików jest dośc podobny do formatu
+.BR xmodmap (1).
+Plik składa się z linii charsetu, definicji klawiszy lub napisów,
+przeplecionych komentarzami.
+.LP
+Komentarze rozpoczynają się od znaków
+.B !
+lub
+.B #
+i trwają do końca linii. Wszystko co następuje za tymi znakami jest
+ignorowane. Zauważ, że komentarze nie muszą zaczynać się w pierwszej
+kolumnie jak w
+.BR xmodmap (1).
+.LP
+Składnia tablicy klawiszy jest zorientowana liniowo; całkowita definicja
+musi zmieścić się w pojedynczej linii logicznej. Jednak linie logiczne mogą
+dzielić się na wiele linii fizycznych dzięki zastosowaniu znaku odwrotnego
+ukośnika (\\).
+.LP
+Linia definiująca zestaw znaków (charset) ma postać:
+.LP
+.RS
+.EX
+charset "iso-8859-x"
+.EE
+.RE
+.LP
+Definiuje w jaki sposób interpretować następujące keysymy.
+.LP
+Każda kompletna definicja linii ma postać:
+.LP
+.RS
+.nf
+.BI keycode " keynumber " = " keysym keysym keysym" \fR...
+.fi
+.RE
+.LP
+.I keynumber
+jest wewnętrznym numerem identyfikującym klawisz, mniej więcej
+odpowiadającym jego kodowi scancode.
+.I keynumber
+może zostać podany w postaci dziesiętnej, ósemkowej lub szesnastkowej.
+Postać ósemkowa jest poprzedzona zerem, a szesnastkowa prefiksem
+.B 0x.
+.LP
+Każdy z
+.I keysymów
+reprezentuje akcję klawiaturową, z których do 256 można podwiązać do
+pojedynczego klawisza. Dostępne akcje zawierają kody znaków Latin1 lub
+sekwencje znakowe, przełączanie konsol lub keymap, bootowanie maszyny, itd.
+(kompletną listę można uzyskać z dumpkeys(1) przez wydanie komendy
+.BI " dumpkeys -l"
+\&.)
+.LP
+Każdy
+.I keysym
+może zostać poprzedzony znakiem '+' (plus), w którym wypadku keysym jest
+traktowany jako "litera", czyli znak dotknięty przez "CapsLock" w ten sam
+sposób jak przez "Shift" (aby być dokładnym, CapsLock odwraca stan Shift).
+Znaki ASCII ('a'-'z' i 'A'-'Z') są domyślnie CapsLock'owalne. Jesli
+Shift+CapsLock nie powinny produkować "małych" liter, użyj linii o
+następującej semantyce
+.LP
+.RS
+.nf
+.BI "keycode 30 = +a  A"
+.fi
+.RE
+.LP
+w pliku z mapą.
+.LP
+To, która z akcji dla danego klawisza jest wybierana podczas jego wciśnięcia
+zależy od modyfikatorów, które są czynne w danej chwili. Sterownik
+klawiatury wspiera 8 modyfikatorów. Modyfikatory te są oznaczone
+(zdecydowanie arbitralnie) jako Shift, AltGr, Controlm Alt, ShiftL, ShiftR,
+CtrlL, CtrlR.
+Każdy z tych modyfikatorów ma związaną wagę, która jest potegą dwójki, wg
+następującej tabeli:
+.LP
+.RS
+.TP 24
+.I modyfikator
+.I waga
+.TP 24
+Shift
+  1
+.PD 0
+.TP 24
+AltGr
+  2
+.TP 24
+Control
+  4
+.TP 24
+Alt
+  8
+.TP 24
+ShiftL
+ 16
+.TP 24
+ShiftR
+ 32
+.TP 24
+CtrlL
+ 64
+.TP 24
+CtrlR
+128
+.PD
+.RE
+.LP
+Efektywna akcja klawisza jest znajdywana przez dodawanie wag wszystkich
+modyfikatorów. Domyślnie żaden z nich nie jest używany, więc podczas
+naciskania lub opuszczania klawisza pobierana jest np. akcja numer
+zero; ta w pierwszej kolumnie linii definicji klawisza. Gdy użyto np.
+klawiszy Shift+Alt, użyta zostaje akcja numer 9 (z 10 kolumny).
+.LP
+Zmiana stanu tego, które modyfikatory jak działają może być dokonana przez
+powiązanie odpowiednich akcji klawiszowych z żądanymi klawiszami. Np.
+przywiązywanie symbolu Shift do klawisza ustawia modyfikator Shift podczas
+naciskania klawisza i unieważnia działanie tego modyfikatora podczas
+zwolnienia klawisza. Przywiązanie AltGr_Lock do klawisza ustawia AltGr po
+naciśnięciu tego klawisza, a anuluje to po ponownym naciśnięciu. (Domyślnie,
+Shift, AltGr, Control i Alt są przywiązane do klawiszy, które noszą podobną
+etykietę; AltGr może oznacać prawy klawisz Alt.)
+.LP
+Zauważ, że powinieneś być bardzo ostrożnym podczas przywiązywania klawiszy
+modyfikujących. W przeciwnym wypadku może się to skończyć bezużyteczną mapą
+klawiatury. Jeśli na przykład zdefiniujesz Control w jego pierwszej kolumnie
+i zostawisz resztę kolumn jako PusteSymbole (VoidSymbols), to masz problem.
+Dlatego, że naciskanie klawisza włącza modyfikator Control, a następne akcje
+będą podglądane w piątej kolumnie (zobacz tabelę powyżej). Tak więc, jeśli
+puścisz klawisz, pobierana będzie akcja z piątej kolumny. Ma ona na sobie
+PustySymbol, więc nic się nie dzieje. Znaczy to, że modyfikator Control
+wciąż pracuje, chociaż puściłeś klawisz. Ponowne naciskanie i opuszczanie
+klawisza nie daje rezultatów. Aby temu zapobiec, powinieneś zawsze
+definiować wszystkie kolumny tak, aby miały ten sam symbol modyfikujący.
+Istnieje dla tego poręczna notacja short-hand, o której niżej.
+.LP
+.I keysymy
+mogą być podawane w notacji dziesiętnej, ósemkowej, szesnastkowej, lub
+symbolicznej. Numeryczne notacje używają tego samego formatu co
+.IR keynumber .
+Notacja symboliczna jest podobna do tej z
+.BR xmodmap (1).
+Zauważalnymi różnicami są symbole numeryczne. Symbole '0', ..., '9' w
+.BR xmodmap (1)
+są zamieniane na odpowiadające słowa 'zero', 'one', ..., 'nine' aby zapobiec
+niejednoznacznościom z notacją numeryczną.
+.LP
+Powinno się zaznaczyć, że używanie notacji numerycznej dla
+.I keysymów
+jest mocno nieportowalne, jako że numery akcji klawiszy mogą się różnić z
+jednej wersji jądra na drugą, z czego wynika powyższe. Notacja ta może być
+używana tylko jeśli wiesz, że istnieje określona akcja klawiaturowa w twoim
+jądrze, dla której twoja wersja
+.BR loadkeys (1)
+nie posiada nazwy symbolicznej.
+.LP
+Jest wiele notacji short-hand, poprawiających czytelność i redukujących
+pracę i prawdopodobieństwo błędów przy wpisywaniu.
+.LP
+Przede wszystkim, możesz podać linię specyfikacji mapy w postaci
+.LP
+.RS
+.EX
+keymaps 0-2,4-5,8,12
+.EE
+.RE
+.LP
+aby wskazać, że te linie mapy klawiaturowej nie będą wyszczególniały
+wszystkich 256 kolumn, lecz tylko jedną ze wskazanych. (Np: sam Shift,
+AltGr, Control, Control+Shift, Alt i Control+Alt, czyli 7 zamiast 256
+kolumn.)
+Jeśli nie poda się takiej linii, mapy klawiaturowe 0-M będą zdefiniowane.
+M+1 to maksymalna ilość wpisów linii definicyjnej.
+.LP
+Następnie, możesz porzucić wszelkie końcowe wpisy PustychSymboli z definicji
+klawisza. PustySymbol oznacza akcję klawiaturową, która nie powoduje efektu.
+Np. aby zdefiniować klawisz numer 30 do wyprowadzania 'a' bez shiftu i 'A' z
+shiftem, niczego zaś przy wciśniętym AltGr i innych modyfikatorach, możesz
+napisać
+.LP
+.RS
+.nf
+keycode  30 = a	A
+.fi
+.RE
+.LP
+zamiast bardziej "gadatliwego"
+.LP
+.RS
+.nf
+keycode  30 = a	A	VoidSymbol	VoidSymbol \\
+		VoidSymbol VoidSymbol VoidSymbol ...
+.fi
+.RE
+.LP
+Zwykle możesz użyć jeszcze innych definicji. Jeśli wprowadzisz linię
+definicji klawisza z tylko jednym kodem akcji po znaku równości, to ma to
+specjalne znaczenie. Jeśli kod (numeryczny lub symboliczny) nie jest literą
+ASCII, znaczy to, że kod jest wyjątkowo replikowany na wszystkie
+zdefiniowane kolumny. Jeśli, z drugiej strony, kod jest znakiem ASCII w
+zasięgu 'a', ..., 'z' lub 'A', ..., 'Z', to robione są następujące definicje
+dla różnych kombinacji modyfikatorów. (Tabela listuje dwa możliwe przypadki:
+zarówno z pojedynczym kodem akcji dla małej litery, oznaczonej przez 'x',
+jak i dla dużej litery, oznaczonej przez 'Y'.)
+.LP
+.RS 4
+.TP 24
+.I modifier
+.I symbol
+.TP 24
+brak
+x			Y
+.PD 0
+.TP 24
+Shift
+X			y
+.TP 24
+AltGr
+x			Y
+.TP 24
+Shift+AltGr
+X			y
+.TP 24
+Control
+Control_x		Control_y
+.TP 24
+Shift+Control
+Control_x		Control_y
+.TP 24
+AltGr+Control
+Control_x		Control_y
+.TP 24
+Shift+AltGr+Control
+Control_x		Control_y
+.TP 24
+Alt
+Meta_x		Meta_Y
+.TP 24
+Shift+Alt
+Meta_X		Meta_y
+.TP 24
+AltGr+Alt
+Meta_x		Meta_Y
+.TP 24
+Shift+AltGr+Alt
+Meta_X		Meta_y
+.TP 24
+Control+Alt
+Meta_Control_x	Meta_Control_y
+.TP 24
+Shift+Control+Alt
+Meta_Control_x	Meta_Control_y
+.TP 24
+AltGr+Control+Alt
+Meta_Control_x	Meta_Control_y
+.TP 24
+Shift+AltGr+Control+Alt
+Meta_Control_x	Meta_Control_y
+.PD
+.RE
+.LP
+
+Wszystkie poprzednie formy linii definicji klawiszy zawsze definiowały
+wszystkie M+1 możliwych kombinacji modyfikatorów, niezależnie od ilości
+rzeczywistych kodów akcji.
+Istnieje jednak wariacja składni definicji dla definiowania pojedynczych
+akcji dla określonych kombinacji modyfikatora i klawisza. Jest to
+szczególnie użyteczne, jeśli ładujesz talicę klawiaturową, która nie
+odpowiada twoim potrzebom w niektórych kombinacjach modyfikatorów, jak np.
+AltGr+klawisze funkcyjne. Możesz utworzyć wtedy mały lokalny plik,
+redefiniujący tylko te kombinacje modyfikatorów i ładować go po załadowaniu
+pliku głównego. Składnia tego formatu to:
+.LP
+.BR "" { " plain " "| <sekwencja modyfikatorów> } " keycode
+.I keynumber
+.B =
+.I keysym
+.LP
+, n.p.,
+.RS
+.EX
+.nf
+plain keycode 14 = BackSpace
+control alt keycode 83 = Boot
+alt keycode 105 = Decr_Console
+alt keycode 106 = Incr_Console
+.fi
+.EE
+.RE
+Użycie "plain" zdefiniuje tylko podstawowy wpis klawisza (np. ten, przy
+którym nie ma włączonych modyfikatorów), bez dotykania powiązań innych
+kombinacji tego klawisza.
+.LP
+Dodatkowo do komentarzy i linii definicji klawiszy, pliki tablic
+klawiaturowych mogą zawierać definicje napisów. Są one używane do
+definiowania, co wysyła kod akcji każdego klawisza funkcyjnego. Składnia
+definicji napisu to:
+.LP
+.RS
+.B string
+.I keysym
+.B =
+.BI
+"tekst"
+.RE
+.LP
+.I tekst
+może zawierać literalne znaki, kody ósemkowe w formacie odwrotnego ukośnika, za
+którym podąża do trzech cyfr ósemkowych, a także trzy sekwencje eskejpowe
+\fB\\n\fP, \fB\\\\\fP, i \fB\\"\fP,
+odpowiednio dla nowej linii, odwrotnego ukośnika i cytatu.
+.LP
+Aby znaleźć, które
+.I keysymy
+są dostępne do użytku w plikach klawiaturowych, użyj komendy
+.LP
+.RS
+.nf
+.B dumpkeys --long-info
+.fi
+.RE
+.LP
+Niestety, obecnie nie ma opisu, co który symbol robi. Trzeba to zgadywać z
+nazwy, wydedukowanej ze źródeł jądra.
+.LP
+.SH PRZYKŁADY
+Następujący wpis wymienia ze sobą lewy klawisz Control i CapsLock:
+.LP
+.RS
+.nf
+keycode  58 = Control
+keycode  29 = Caps_Lock
+.fi
+.RE
+.LP
+Klawisz o numerze 58 jest normalnie Caps Lockiem, a klawisz numer 29 jest
+zwykle klawiszem Control.
+.LP
+Następujący wpis ustawia milsze zachowanie klawiszy Shift i Caps Lock, jak
+w starych maszynach do pisania. To znaczy, wciśnięcie klawiszu Caps Lock
+jeden, lub więcej razy, włącza klawiaturę w stan CapsLock, a wciśnięcie
+dowolnego z Shiftów wyłącza go.
+.LP
+.RS
+.nf
+keycode  42 = Uncaps_Shift
+keycode  54 = Uncaps_Shift
+keycode  58 = Caps_On
+.fi
+.RE
+.LP
+Następujący wpis ustawia układ bloku edycyjnego na rozszerzonych
+klawiaturach, aby były bardziej podobne do terminali serii VT200:
+.LP
+.RS
+.nf
+keycode 102 = Insert
+keycode 104 = Remove
+keycode 107 = Prior
+shift keycode 107 = Scroll_Backward
+keycode 110 = Find
+keycode 111 = Select
+control alt   keycode 111 = Boot
+control altgr keycode 111 = Boot
+.fi
+.RE
+.LP
+Oto przykład na przywiązanie napisu "du\\ndf\\n" do klawisza AltGr-D.
+Używamy "wolnego" kodu akcji F100, nie przywiązywanego normalnie do żadnego
+klawisza.
+.LP
+.RS
+.nf
+altgr keycode 32 = F100
+string F100 = "du\\ndf\\n"
+.LP
+.SH "ZOBACZ TAKŻE"
+.BR loadkeys (1),
+.BR dumpkeys (1),
+.BR showkey (1),
+.BR xmodmap (1)

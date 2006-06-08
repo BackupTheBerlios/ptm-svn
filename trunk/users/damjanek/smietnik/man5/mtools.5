@@ -1,0 +1,606 @@
+.\" {PTM/WK/0.1/19-07-1999/"pliki konfiguracyjne mtools"}
+.TH mtools 5 "19 lipca 1999" MTOOLS MTOOLS
+.SH NAZWA
+mtools.conf - pliki konfiguracyjne mtools
+.SH OPIS
+Niniejsza strona podręcznika opisuje pliki konfiguracyjne pakietu
+\fBmtools\fR. Pliki konfiguracyjne noszą nazwy
+\fI/usr/local/etc/mtools.conf\fR oraz \fI~/.mtoolsrc\fR.
+.PP
+Jeśli określono zmienną środowiska \fBMTOOLSRC\fR, to jej wartość jest
+używana jako nazwa trzeciego pliku konfiguracyjnego. Pliki konfiguracyjne
+opisują następujące pozycje:
+.TP
+* Ogólne flagi i zmienne konfiguracji
+.TP
+* Flagi i zmienne dla napędu
+.TP
+* Tablice translacji znaków
+.RE
+.SS Położenie plików konfiguracyjnych
+Ogólnym, systemowym plikiem konfiguracyjnym jest
+\fI/usr/local/etc/mtools.conf\fR, zaś \fI~/.mtoolsrc\fR jest prywatnym
+plikiem konfiguracyjnym użytkownika.
+.PP
+W niektórych systemach plikiem
+konfiguracyjnym o zasięgu ogólnosystemowym jest jednak
+\fI/etc/defaults/mtools.conf\fR.
+.SS Ogólna składnia pliku konfiguracyjnego
+Pliki konfiguracyjne złożone są z sekcji. Każda sekcja rozpoczyna się
+identyfikującym ją słowem kluczowym zakończonym dwukropkiem.
+Po identyfikacji sekcji następują przypisania zmiennych i flag.
+Przypisania zmiennych posiadają poniższą postać:
+.RS
+.BI  nazwa= wartość
+.RE
+Flagi są pojedynczymi słowami kluczowymi bez znaku równości i przypisanej
+wartości. Sekcja kończy się z końcem pliku lub z rozpoczęciem kolejnej
+sekcji.
+.PP
+Linie rozpoczynające się od znaku krzyżyka (\fB#\fR) są komentarzami. Znaki nowej
+linii są równoważne białym znakom (z wyjątkiem kończących komentarz).
+Wielkość liter w pliku konfiguracyjnym nie ma znaczenia, z wyjątkiem
+pozycji ujętych w znaki cytowania (jak np. nazwy plików).
+.SS Domyślne wartości
+Dla większości platform \fBmtools\fR posiadają rozsądne wkompilowane
+parametry domyślne dla napędów dyskietek. Zwykle zatem, nie ma potrzeby
+zajmowania się plikiem konfiguracyjnym, jeśli chcemy jedynie wykorzystywać
+mtools do uzyskania dostępu do dyskietek. Z drugiej strony jednak, plik
+konfiguracyjny jest niezbędny przy użyciu mtools również do partycji dysku
+twardego i plików obrazu \fBdosemu\fR.
+.SS Zmienne globalne
+Przełączniki (flagi) globalne mogą być ustawione na 1 lub 0.
+.PP
+Rozpoznawane są następujące flagi globalne:
+.TP
+.B MTOOLS_SKIP_CHECK
+Ustawienie na 1 powoduje, że mtools pomijają większość testów kontrolnych.
+Potrzebne przy odczycie niektórych dyskietek Atari, zrobionych z użyciem
+wcześniejszych wersji ROM, które w inny sposób nie byłyby rozpoznawane.
+.TP
+.B MTOOLS_FAT_COMPATIBILITY
+Przy ustawieniu na 1, mtools pomijają sprawdzenie rozmiaru FAT. Niektóre
+dyski mają FAT większy niż faktycznie tego potrzebują. Są one odrzucane,
+jeśli niniejsza opcja nie jest ustawiona.
+.TP
+.B MTOOLS_LOWER_CASE
+Ustawienie na 1 powoduje, że mtools wyświetlają małymi literami krótkie
+nazwy plików, w których wszystkie litery są duże. Stworzone dla uzyskania
+zgodności z poprzednimi wersjami mtools, które nie rozpoznawały bitu
+dużych/małych liter (patrz \fBmtools\fR(1), sekcja \fBRozróżnianie dużych
+i małych liter w systemie VFAT\fR).
+.TP
+.B MTOOLS_NO_VFAT
+Przy ustawieniu na 1 mtools nie będą tworzyć wpisów VFAT dla nazw plików
+o mieszanych, dużych/małych literach, które poza tym są poprawnymi nazwami
+plików DOSu. Przydatne przy pracy z wersjami DOSu nie obsługującymi długich
+nazw VFAT, jak np. FreeDos.
+.TP
+.B MTOOLS_DOTTED_DIR
+Przy szerokim listowaniu katalogu, pokazuje nazwy plików z kropką zamiast
+odstępów oddzielających nazwę od rozszerzenia.
+.TP
+.B MTOOLS_NAME_NUMERIC_TAIL
+Domyślnie ustawione na jeden, decyduje o tworzeniu numerycznych przyrostków
+we wszystkich długich nazwach plików (~1). Ustawienie na zero oznacza, że 
+przyrostki numeryczne nie będą tworzone, chyba że spowodowałoby to kolizję
+nazw.
+.TP
+.B MTOOLS_TWENTY_FOUR_HOUR_CLOCK
+Przy ustawieniu na jeden używany jest europejski sposób zapisu czasu (zegar
+24-godzinny). W przeciwnym przypadku wykorzystywana jest notacja
+anglosaska (am/pm).
+.PP
+Przykład:
+Wstawienie poniższej linii do pliku konfiguracyjnego nakazuje mtools
+pominięcie testów poprawności:
+.RS 
+.B MTOOLS_SKIP_CHECK=1
+.RE
+Zmienne globalne mogą być również ustawiane poprzez środowisko:
+.RS
+.B export MTOOLS_SKIP_CHECK=1
+.RE
+.PP
+Globalne zmienne znakowe mogą mieć przypisaną dowolną wartość:
+.TP
+.B MTOOLS_DATE_STRING
+Format używany do wyświetlania dat plików. Domyślnie jest to dd-mm-yyyy.
+.SS Flagi i zmienne napędów
+.PP
+.B " "
+.SS Informacje ogólne
+W sekcji napędu mogą być użyte przełączniki i wartości odnoszące się
+do tego napędu. Sekcja opisująca napęd rozpoczyna się od napisu:
+.RS
+.BI "drive " litera_napędu :
+.RE
+następnie występują pary zmienna-wartość oraz flagi. A oto przykładowy opis
+napędu:
+.RS
+.B drive a:
+.br
+\fB  file="/dev/fd0" use_xdf=1\fR
+.RE
+.SS Konfiguracja geometrii dysku
+Informacja o geometrii opisuje fizyczną charakterystykę dysku. Ma ona
+trojakie zastosowanie:
+.TP
+formatowanie 
+Informacja o geometrii zapisywana jest w sektorze startowym (boot-sector)
+nowo utworzonego dysku. Można jednak opisać geometrię dysku z linii poleceń
+(patrz polecenie \fBmformat\fR).
+.TP
+filtrowanie
+W niektórych Unixach węzły urządzeń (device nodes) obsługują wyłącznie jedną
+geometrię fizyczną. Na przykład, możesz potrzebować innego węzła dla dostępu
+do dyskietki dużej gęstości niż do dyskietki o małej gęstości. Aby zapewnić
+możliwość poprawnego odczytu dysku przez węzeł, geometria porównywana jest
+z faktyczną geometrią zapisaną w sektorze startowym. Jeżeli nie pasują, to
+odpowiedni zapis charakteryzujący napęd zawodzi i testowany jest kolejny
+wpis z tą samą literą napędu. Sekcja \fBWielokrotne opisy\fR wyjaśnia
+bliżej posługiwanie się wieloma opisami dla jednej litery napędu.
+.IP
+Gdy w pliku konfiguracyjnym nie podano żadnej informacji o geometrii, to
+akceptowane są wszystkie dyski. W Linuksie (również na Sparc) istnieją węzły
+urządzeń o konfigurowalnej geometrii (\fB/dev/fd0\fR, \fB/dev/fd1\fR itd.),
+zatem filtrowanie napędów dyskowych jest zbędne (i jest ignorowane). (mtools
+wykonują jednak filtrowanie plików zwykłych (obrazów dysków) w Linuksie:
+przeznaczono to głównie do testowania, gdyż nie mam dostępu do Unixa,
+który faktycznie potrzebowałby filtrowania).
+.IP
+Jeśli nie potrzebujesz filtrowania, a chcesz używać domyślnej geometrii przy
+formatowaniu (z użyciem \fBmformat\fR), możesz wyłączyć filtrowaniu flagą
+\fBmformat_only\fR.
+.IP
+Jeśli chcesz filtrowania - powinieneś użyć flagi \fBfilter\fR. Podając
+geometrię musisz podać również jedną z tych dwu flag.
+.TP
+geometria początkowa
+W urządzeniach obsługujących tę możliwość (zwykle napędy dyskietek),
+informacja o geometrii używana jest też do ustawienia geometrii początkowej.
+Geometria początkowa stosowana jest przy odczycie sektora startowego,
+zawierającego rzeczywistą geometrię.
+Początkowe konfigurowanie nie jest wykonywane, gdy w pliku konfiguracyjnym
+brak jest opisu geometrii lub gdy użyto flagi \fBmformat_only\fR.
+.IP
+W Linuksie geometria początkowa nie jest faktycznie potrzebna, gdyż
+urządzenia konfigurowalne potrafią samoczynnie wykryć dostatecznie dokładnie
+typ dysku (dla większości powszechnych formatów) by móc odczytać sektor
+startowy.
+.PP
+Zły opis geometrii może prowadzić do bardzo poważnych błędów. Dlatego też
+.\" .. may lead tovery bizzare errors
+usilnie zaleca się dodanie flagi \fBmformat_only\fR do opisu napędu, chyba
+iż faktycznie występuje potrzeba filtrowania czy geometrii początkowej.
+.PP
+Dostępne są następujące zmienne związane z geometrią dysków:
+.TP
+.BR cylinders " [" tracks ]
+Liczba cylindrów. Forma zalecana; \fBtracks\fR (ścieżki) jest formą
+przestarzałą.
+.TP
+.B heads
+Liczba głowic (stron).
+.TP
+.B sectors
+Liczba sektorów na ścieżkę.
+.PP
+Przykład: poniższa sekcja opisuje napęd 1.44MB:
+.RS
+.B drive a:
+\fB  file="/dev/fd0H1440"\fR
+\fB  fat_bits=12\fR
+\fB  cylinders=80 heads=2 sectors=18\fR
+\fB  mformat_only\fR
+.RE
+.PP
+Dostępne są następujące skrócone opisy geometrii:
+.TP
+.B 1.44m
+dyskietka 3,5" wysokiej gęstości. Równoważne:
+\fRfat_bits=12 cylinders=80 heads=2 sectors=18\fR
+.TP
+.B 1.2m
+dyskietka 5,25" wysokiej gęstości. Równoważne:
+\fRfat_bits=12 cylinders=80 heads=2 sectors=15\fR
+.TP
+.B 720k
+dyskietka 3,5" podwójnej gęstości. Równoważne:
+\fRfat_bits=12 cylinders=80 heads=2 sectors=9\fR
+.TP
+.B 360k
+dyskietka 5,25" podwójnej gęstości. Równoważne:
+\fRfat_bits=12 cylinders=40 heads=2 sectors=9\fR
+.PP
+Skrócone opisy formatów mogą być zmieniane, zdefiniując inny format.
+Na przykład, \fB360k sectors=8\fR opisuje dyskietkę 320k i jest równoważne
+zapisowi:
+\fRfat_bits=12 cylinders=40 heads=2 sectors=8\fR.
+.SS Flagi otwarcia
+Dostępne są ponadto następujące flagi:
+.TP
+.B sync
+Wszystkie operacje wejścia/wyjścia wykonywane są synchronicznie.
+.TP
+.B nodelay
+Urządzenie lub plik jest otwierane z flagą O_NDELAY. Niezbędne przy
+niektórych systemach nie-Linuksowych. 
+.TP
+.B exclusive
+Urządzenie lub plik jest otwierane z flagą O_EXCL. W Linuksie zapewnia to
+dostęp do napędu dyskietek w trybie wyłączności. W większości innych
+architektur oraz dla zwykłych plików nie daje żadnego efektu.
+.SS Ogólne zmienne napędu
+.\" .SS General\ Purpose\ Drive\ Variables
+Dostępne są poniższe ogólne zmienne napędu. W zależności od typu, zmiennym
+tym może być przypisany łańcuch znakowy (\fBfile\fR, \fBprecmd\fR) lub
+liczba całkowita (pozostałe).
+.TP
+.B file
+Nazwa pliku lub urządzenia przechowującego obraz dysku/dyskietki.
+Zmienna obowiązkowa. Nazwa pliku powinna być ujęta w cudzysłowy.
+.TP
+.B partition
+Sygnalizuje mtools traktowanie napędu jak urządzenia spartycjonowanego i
+użycie zadanej partycji. Przy zastosowaniu tej metody dostępne są wyłącznie
+partycje główne (primary), numerowane od 1 do 4. Dla partycji logicznych
+należy posłużyć się ogólniejszą zmienną \fBoffset\fR. Zmienna
+\fBpartition\fR przeznaczona jest do obsługi nośników wyjmowalnych takich
+jak napędy Syquest, ZIP czy dyski maagneto-optyczne. Mimo, iż tradycyjny DOS
+postrzega dyski Syquest i dyski magneto-optyczne jako \fIogromne
+dyskietki\fR, które nie są partycjonowane, to OS/2 oraz Windows NT traktują
+je jak dyski twarde, tj. urządzenia partycjonowane. Flaga \fBpartition\fR
+przydaje się dla obrazów dysków twardych DOSEMU. Nie jest zalecana dla
+dysków twardych, dla których możliwy jest bezpośredni dostęp do partycji
+poprzez montowanie (mount).
+.TP
+.B offset
+Opisuje, gdzie w pliku rozpoczyna się system plików MS-DOS. Przydatna w
+obsłudze partycji logicznych wewnątrz obrazów dysków twardych (hdimages)
+DOSEMU oraz ram-dysków Atari. Domyślnie ustawiona na zero, co oznacza, że
+system plików zaczyna się na samym początku urządzenia lub pliku.
+.TP
+.B fat_bits
+Liczba bitów tablicy alokacji plików (FAT). Może to być 12 lub 16. Rzadko
+potrzebna, gdyż prawie zawsze może być uzyskana z informacji w sektorze
+startowym. I przeciwnie, podanie liczby bitów FAT może być przyczyną
+kłopotów, jeśli jest ona zła. Powinna być używana wyłącznie w przypadku
+niewłaściwego rozpoznawania automatycznego przez mtools liczby bitów FAT.
+Przydatna również przy formatowaniu z wykorzystaniem polecenia
+\fBmformat\fR dyskietki z nietypową liczbą bitów FATu.
+.TP
+.B precmd
+W niektórych odmianach Solaris niezbędne jest wywołanie
+\fBvolcheck -v\fR przed otwarciem urządzenia dyskietek, co ma na celu
+wymuszenie na systemie zauważenia, że w napędzie rzeczywiście jest dyskietka.
+\fBprecmd="volcheck -v"\fR umieszczone w sekcji opisującej napęd powoduje
+pożądane zachowanie.
+.TP
+.B blocksize
+Parametr ten określa domyślny rozmiar bloku, jaki będzie zawsze używany
+dla danego urządzenia. Wszystkie operacje wejścia/wyjścia wykonywane są
+z wielokrotnością tego rozmiaru bloku, niezależnie od rozmiaru sektora
+zapisanego w sektorze startowym systemu plików. Rozwiązanie to jest przydatne
+do obsługi urządzeń znakowych, gdzie rozmiar sektora jest inny niż 512, jak
+na przykład napędy CD-ROM w systemie Solaris.
+.PP
+Obowiązkowa jest tylko zmienna \fBfile\fR. Inne parametry mogą zostać
+pominięte. W takim przypadku przyjmowane są wartości domyślne lub automatycznie
+wykrywane.
+.PP
+.SS Ogólne flagi napędu
+.\" .SS General\ Purpose\ Drive\ Flags
+Flaga może być albo ustawiona na 1 (włączone) albo na 0 (wyłączone). Jeśli
+pominięto wartość, to jest ona włączana. Na przykład, \fBscsi\fR jest
+równoważne \fBscsi=1\fR.
+.TP
+.B nolock
+Poleca mtools nie używać blokady (locking) dla tego napędu. Przydatne
+w systemach z nienajlepszą semantyką blokowania.
+.\" "buggy locking semantics".
+Włączenie tego przełącznika powoduje jednak, że operacje są mniej
+bezpieczne w przypadkach, gdy kilku użytkowników może korzystać z tego
+samego napędu w tym samym czasie.
+.TP
+.B scsi
+Ustawiona na 1 nakazuje mtools użycie przy dostępie do urządzenia
+surowego wejścia/wyjścia SCSI (raw SCSI I/O) zamiast standardowych
+funkcji read/write. Obecnie jest to obsługiwane na HP/UX, Solaris i SunOs.
+Przełącznik jest tam niezbędny, gdyż w niektórych architekturach, jak SunOS
+czy Solaris, nie można korzystać z nośników PC przy użyciu funkcji systemowych
+\fBread\fR i \fBwrite\fR, gdyż system operacyjny oczekuje, że będą one zawierać
+specyficzną dla Suna "etykietę dysku".
+.IP
+Ponieważ surowy dostęp do SCSI zawsze posługuje się całym
+urządzeniem, musisz podać dodatkowo flagę \fBpartition\fR.
+.IP
+Na niektórych systemach, jak Solaris, mtools potrzebują uprawnień
+superużytkownika (root), by móc wykorzystać opcję \fBscsi\fR. Zatem, jeśli
+chcesz korzystać z napędów Zip/Jaz w systemie Solaris, powinieneś zainstalować
+mtools z uprawnieniem SUID root. Stąd też, jeśli podano flagę \fBscsi\fR, to
+automatycznie używana jest też \fBprivileged\fR, chyba że zostanie jawnie
+wyłączona przez \fBprivileged=0\fR.
+.IP
+mtools używają swoich uprawnień superużytkownika do otwarcia urządzenia
+oraz wywołania rzeczywistych funkcji wejścia/wyjścia SCSI. Co więcej,
+uprawnienia roota używane są wyłącznie dla napędów opisanych w pliku
+konfiguracyjnym o zasięgu ogólnosystemowym, jak \fI/usr/local/mtools.conf\fR,
+nie zaś dla napędów opisanych w \fI~/.mtoolsrc\fR czy też \fB$MTOOLSRC\fR.
+.TP
+.B privileged
+Ustawiona na 1 nakazuje mtools użycie posiadanych przez nie uprawnień SUID
+oraz SGID przy otwieraniu danego napędu. Opcja ta jest poprawna tylko dla
+napędów opisanych w ogólnosystemowym pliku konfiguracyjnym
+(jak np. \fI/usr/local/mtools.conf\fR, nie zaś dla napędów opisanych
+w \fI~/.mtoolsrc\fR czy też \fB$MTOOLSRC\fR). Naturalnie, opcja ta nie działa
+również jeśli mtools nie zostały zainstalowane z ustawionym SUID lub SGID.
+Jest automatycznie ustawiana przez \fBscsi=1\fR, ale również wyłącznie
+dla napędów zdefiniowanych w plikach konfiguracyjnych o zasięgu
+ogólnosystemowym. Flaga ta może być jawnie ustawiona na zero w celu zakazania
+mtools używania uprawnień do danego napędu, nawet jeśli ustawione jest
+\fBscsi=1\fR.
+.IP
+mtools potrzebują ustawienia dostępu SUID tylko wtedy, gdy planuje się
+wykorzystanie zmiennych \fBprivileged\fR lub \fBscsi\fR dla któregoś
+z napędów. Jeżeli opcje te nie są używane, mtools działa prawidłowo nawet
+bez ustawiania SUID root.
+.TP
+.B vold
+Poleca mtools interpretację nazwy urządzenia jako identyfikatora "vold"
+[tłum.:volume daemon - demon mechanizmu zarządzania woluminami systemu
+Solaris],
+nie zaś jako nazwy pliku. Identyfikator "vold" jest tłumaczony na faktyczną
+nazwę pliku przy użyciu funkcji \fBmedia_findname()\fR oraz
+\fBmedia_oldaliases()\fR z biblioteki \fBvolmgt\fR. Przełącznik ten jest
+dostępny tylko w przypadku skonfigurowania mtools z opcją
+\fB--enable-new-vold\fR przed kompilacją.
+.TP
+.B use_xdf
+Ustawienie na wartość niezerową powoduje, że mtools próbuje również dostępu
+do tej dyskietki jak do dyskietki XDF. XDF jest formatem dużej gęstości
+wykorzystywanym przez OS/2. Przełącznik ten jest domyślnie wyłączony. Więcej
+informacji znajdziesz w sekcji \fBXDF\fR dokumentacji \fBmtools(1)\fR.
+.TP
+.B mformat_only
+mtools powinny użyć geometrii tego napędu tylko do formatowania (mformat),
+ale nie do filtrowania.
+.TP
+.B filter
+mtools użyją geometrii tego napędu zarówno do formatowania jak
+i do filtrowania.
+.TP
+.B remote
+nakazuje mtools podłączenie się do floppyd (patrz \fBfloppyd\fR(1)).
+.SS Wielokrotne opisy napędu
+.\" .SS \ \ Supplying\ multiple\ descriptions\ for\ a\ drive
+Możliwe jest podanie wielu opisów dla danego napędu. W takim przypadku, opisy
+są wypróbowywane po kolei, aż do znalezienia pasującego. Opisy mogą nie pasować
+z kilku powodów:
+.RS
+1. nieodpowiednia geometria,
+.br
+2. brak dysku w napędzie,
+.br
+3. inne kłopoty.
+.RE
+Wielość opisów jest przydatna przy wykorzystywaniu urządzeń fizycznych
+potrafiących obsługiwać tylko jedną geometrię pojedynczego dysku.
+.\" Multiple definitions are useful when using physical devices which are
+.\" only able to support one single disk geometry.
+Przykład:
+.RS 
+.B drive a: file="/dev/fd0H1440" 1.44m
+.br
+.B drive a: file="/dev/fd0H720" 720k
+.RE
+Powyższe linie nakazują mtools użycie /dev/fd0H1440 dla dyskietek 1.44MB
+(dużej gęstości) oraz /dev/fd0H720 dla dyskietek 720KB (podwójnej
+gęstości). W Linuksie cecha ta nie jest faktycznie potrzebna, gdyż urządzenie
+/dev/fd0 jest w stanie obsługiwać dowolną geometrię.
+.PP
+Można też użyć wielu opisów napędu, by korzystać z obu napędów fizycznych
+za pośrednictwem jednej litery napędu:
+.RS 
+.B  drive z: file="/dev/fd0"
+.br
+.B  drive z: file="/dev/fd1"
+.RE
+Z takim opisem \fBmdir z:\fR wykorzystuje pierwszy napęd fizyczny, jeśli
+zawiera on dyskietkę. Jeśli w pierwszym napędzie nie ma dyskietki, to
+mtools sprawdzają drugi napęd.
+.PP
+Przy użyciu wielu plików konfiguracyjnych opisy napędu występujące jako
+ostatnie przesłaniają uprzednie opisy dla tego samego napędu
+z wcześniejszych plików. Można tego uniknąć posługując się słowami kluczowymi
+\fBdrive+\fR lub \fB+drive\fR zamiast \fBdrive\fR. Pierwsza składnia dodaje
+opis na końcu listy (tzn.będzie wypróbowany jako ostatni), zaś druga
+na początek listy.
+.\" The first adds a description to the
+.\" end of the list (i.e. it will be tried last), and the first adds it to
+.\" the start of the list.
+.SS Tablice translacji zestawów znaków
+.\" .SS Character\ set\ translation\ tables
+Jeśli mieszkasz w USA, Europie Zachodniej lub Australii, możesz pominąć
+tę sekcję.
+.PP
+.SS Dlaczego potrzebne są tablice translacji znaków
+DOS używa odmiennego mapowania kodów znaków niż Unix. Znaki 7-bitowe
+mają to samo znaczenie, różnice dotyczą tylko znaków z ustawionym ósmym bitem.
+Co gorsza, istnieje kilkanaście tablic translacji, w zależności od kraju.
+Wygląd znaków definiowany jest przy użyciu stron kodowych (code pages).
+Strony kodowe nie są takie same dla wszystkich krajów. Na przykład,
+niektóre strony kodowe nie zawierają dużych liter akcentowanych.
+Z drugiej strony, niektóre z nich zawierają znaki nie istniejące w Uniksie,
+jak znaki ramek czy "spółgłoski akcentowane" używane w niektórych krajach
+Europy Wschodniej. Dotyczy to dwu rzeczy związanych z nazwami plików:
+.TP
+duże litery 
+W nazwach krótkich dozwolone są tylko duże znaki. Dotyczy to również znaków
+akcentowanych. Na przykład, przy stronie kodowej, która nie zawiera
+akcentowanych dużych znaków, małe znaki akcentowane zostaną zamienione
+na ich nieakcentowane odpowiedniki.
+.TP
+długie nazwy plików 
+.\" Micro$oft has finally come to their senses and ..
+Micro$oft wreszcie się opamiętał i używa bardziej standardowego mapowania
+w długich nazwach plików. Używają Unicodu, który w uproszczeniu jest
+32 bitową wersją ASCII. Pierwszych jego 256 znaków jest identycznych
+z Uniksowym ASCII. Stąd też, strona kodowa ma również wpływ na powiązania
+pomiędzy kodami użytymi w długich nazwach plików a kodami użytymi
+w krótkich nazwach.
+.PP
+mtools uważają, że nazwy plików wprowadzone w linii poleceń mają
+mapowanie unixowe i zamienia znaki dla uzyskania nazw krótkich.
+Domyślnie używana jest strona kodowa 850 ze szwajcarskim odwzorowaniem
+duże liter na małe.
+Wybrano tę stronę kodową gdyż jej zestaw znaków jest najbliższy unixowemu.
+Ponadto, zawiera ona większość znaków używanych w USA, Australii i Europie
+Zachodniej. Niemniej jednak, możliwy jest wybór innego odwzorowania.
+Istnieją dwie metody: zmienna \fBcountry\fR (kraj) i bezpośrednie tablice.
+.SS Konfiguracja przy użyciu zmiennej Country
+Zmienna \fBCOUNTRY\fR polecana jest dla tych, którzy mają dostęp do plików
+systemowych MS-DOS i dokumentacji. Jeżeli się ich nie posiada, to lepiej
+jest użyć bezpośrednich tablic translacji.
+.PP
+Składnia:
+.PP
+\fBCOUNTRY="\fIcountry\fR[,[\fIcodepage\fR],\fIcountry-file\fR]\fB"\fR
+.PP
+Zapis ten powoduje użycie przez mtools tablicy translacji Unix-na-DOS pasującej
+do strony kodowej \fIcodepage\fR i tablicy małe-na-duże dla kraju
+\fIcountry\fR oraz zastosowanie pliku \fIcountry-file\fR do uzyskania tablicy
+duże-na-małe. Kod kraju jest najczęściej telefonicznym przedrostkiem tego
+kraju. Więcej szczegółów znaleźć można w pomocy DOS dla "country". Parametry
+\fIcodepage\fR i \fIcountry-file\fR są opcjonalne. Plik \fRcountry-file\fR
+dostarczany jest z DOSem, zwykle nazywa się \fICOUNTRY.SYS\fR i znajduje się
+w katalogu \fBC:\\DOS\fR. W większości przypadków będzie zbędny, gdyż 
+najczęściej występujące tablice translacji są wkompilowane w mtools. Nie ma
+zatem problemu, jeśli w Uniksie brakuje tego pliku.
+.PP
+Jeżeli nie podano strony kodowej (\fIcodepage\fR), to używana jest domyślna
+strona kodowa kodowa dla danego kraju. Jeśli nie podano parametru
+\fIcountry-file\fR, to dla tablicy małe-na-duże użyte będą wkompilowane
+wartości domyślne. Cecha ta jest przydatna w Unixach innych niż Linuks, gdzie
+może nie być dostępny plik \fICOUNTRY.SYS\fR.
+.PP
+Tablice Unix-na-DOS nie są zawarte w \fICOUNTRY.SYS\fR, zatem mtools zawsze
+posługują się wkompilowanymi wartościami domyślnymi. Stąd też, obsługiwana
+jest tylko ograniczona ilość stron kodowych. Jeśli brak jest używanej przez
+ciebie strony kodowej lub jeśli znasz nazwę pliku Windows 95 przechowującego
+to odwzorowanie, to napisz do autora: \fBalain@linux.lu\fR.
+.PP
+Zmienna \fBCOUNTRY\fR może być także ustawiona przez zdefiniowanie jej
+w środowisku.
+.SS Konfiguracja przy użyciu bezpośrednich tablic translacji
+Tablice translacji mogą być opisane wprost w pliku konfiguracyjnym.
+Niezbędne są dwie tablice: pierwsza to tablica DOS-na-Unix, druga to
+tablica małe-na-duże. tablica DOS_na-Unix zaczyna się od słowa kluczowego
+\fBtounix\fR zakończonego dwukropkiem, o którym następuje 128 liczb
+szesnastkowych.
+Tablica małe-na-duże rozpoczyna się słowem kluczowym \fBfucase\fR zakończonym
+dwukropkiem, po którym następuje 128 liczb szesnastkowych.
+.PP
+Tablice określają translację dla znaków o kodach większych od 128, gdyż
+translacja dla niższych kodów jest banalna.
+.PP
+Przykład:
+.IP
+\fB tounix:
+   0xc7 0xfc 0xe9 0xe2 0xe4 0xe0 0xe5 0xe7 
+   0xea 0xeb 0xe8 0xef 0xee 0xec 0xc4 0xc5 
+   0xc9 0xe6 0xc6 0xf4 0xf6 0xf2 0xfb 0xf9 
+   0xff 0xd6 0xdc 0xf8 0xa3 0xd8 0xd7 0x5f 
+   0xe1 0xed 0xf3 0xfa 0xf1 0xd1 0xaa 0xba 
+   0xbf 0xae 0xac 0xbd 0xbc 0xa1 0xab 0xbb 
+   0x5f 0x5f 0x5f 0x5f 0x5f 0xc1 0xc2 0xc0 
+   0xa9 0x5f 0x5f 0x5f 0x5f 0xa2 0xa5 0xac 
+   0x5f 0x5f 0x5f 0x5f 0x5f 0x5f 0xe3 0xc3 
+   0x5f 0x5f 0x5f 0x5f 0x5f 0x5f 0x5f 0xa4 
+   0xf0 0xd0 0xc9 0xcb 0xc8 0x69 0xcd 0xce 
+   0xcf 0x5f 0x5f 0x5f 0x5f 0x7c 0x49 0x5f 
+   0xd3 0xdf 0xd4 0xd2 0xf5 0xd5 0xb5 0xfe 
+   0xde 0xda 0xd9 0xfd 0xdd 0xde 0xaf 0xb4 
+   0xad 0xb1 0x5f 0xbe 0xb6 0xa7 0xf7 0xb8 
+   0xb0 0xa8 0xb7 0xb9 0xb3 0xb2 0x5f 0x5f 
+
+ fucase:
+   0x80 0x9a 0x90 0xb6 0x8e 0xb7 0x8f 0x80 
+   0xd2 0xd3 0xd4 0xd8 0xd7 0xde 0x8e 0x8f 
+   0x90 0x92 0x92 0xe2 0x99 0xe3 0xea 0xeb 
+   0x59 0x99 0x9a 0x9d 0x9c 0x9d 0x9e 0x9f 
+   0xb5 0xd6 0xe0 0xe9 0xa5 0xa5 0xa6 0xa7 
+   0xa8 0xa9 0xaa 0xab 0xac 0xad 0xae 0xaf 
+   0xb0 0xb1 0xb2 0xb3 0xb4 0xb5 0xb6 0xb7 
+   0xb8 0xb9 0xba 0xbb 0xbc 0xbd 0xbe 0xbf 
+   0xc0 0xc1 0xc2 0xc3 0xc4 0xc5 0xc7 0xc7 
+   0xc8 0xc9 0xca 0xcb 0xcc 0xcd 0xce 0xcf 
+   0xd1 0xd1 0xd2 0xd3 0xd4 0x49 0xd6 0xd7 
+   0xd8 0xd9 0xda 0xdb 0xdc 0xdd 0xde 0xdf 
+   0xe0 0xe1 0xe2 0xe3 0xe5 0xe5 0xe6 0xe8 
+   0xe8 0xe9 0xea 0xeb 0xed 0xed 0xee 0xef 
+   0xf0 0xf1 0xf2 0xf3 0xf4 0xf5 0xf6 0xf7 
+   0xf8 0xf9 0xfa 0xfb 0xfc 0xfd 0xfe 0xff 
+\fR
+.PP
+Pierwsza tablica odwzorowuje kody znaków DOSu na kody znaków Unixa.
+Na przykład, znak DOSu numer 129. Jest to litera u z kropkami nad nią.
+Aby wykonać translację do Unixa, szukamy znaku numer 1 w pierwszej tablicy
+(1=129-128). Jest to 0xfc. (Uwaga! numeracja zaczyna się od zera).
+Druga tablica odwzorowuje małe znaki DOSu na duże znaki DOSu. Ta sama
+mała litera u z kropkami przekształcona będzie na 0x9a, co jest dużym U
+z kropkami w DOSie.
+.PP
+.SS Znaki Unicodu większe niż 256
+Jeśli istniejąca nazwa MS-DOS zawiera znaki Unicodu większe niż 256, to są
+one tłumaczone na podkreślenia lub znaki wyglądające podobnie. Na przykład,
+spółgłoski akcentowane odwzorowywane są na swe nieakcentowane odpowiedniki.
+Tłumaczenie to używane jest przez mdir i unixowe nazwy plików generowane
+przez mcopy. Linux również obsługuje Unicode, ale niestety zbyt mało aplikacji
+go jeszcze używa, by zajmować się tym w mtools. Co najistotniejsze, xterm
+nie potrafi jeszcze wyświetlać Unicodu. Jeśli będzie odpowiednie
+zapotrzebowanie, autor mtools dołączy obsługę Unicodu również w unixowych
+nazwach plików.
+.PP
+\fBOstrzeżenie:\fR
+Przy usuwaniu plików przez mtools znak podkreślenia oznacza wszystkie znaki,
+które nie mogą być przedstawione w Unixie. 
+.B Ostrożnie z mdel !
+.SS Położenie plików konfiguracyjnych i kolejność przetwarzania
+Pliki konfiguracyjne przetwarzane są w następującej kolejności:
+.TP
+1. wkompilowane wartości domyślne
+.TP
+2. \fI/usr/local/etc/mtools.conf\fR
+.TP
+3. \fI/etc/mtools\fR
+Do celów zgodności wstecznej i wyłącznie wtedy, gdy nie istnieje
+\fImtools.conf\fR.
+.TP
+4. \fI~/.mtoolsrc\fR.
+.TP
+5. \fB$MTOOLSRC\fR
+(plik wskazywany przez zawartość zmiennej
+środowiska \fBMTOOLSRC\fR)
+.PP
+Opcje opisywane w późniejszych plikach unieważniają opcje opisane
+w plikach wcześniejszych. Napędy zdefiniowane w późniejszych plikach
+pozostają zdefiniowane jeśli nie są unieważnione w plikach czytanych
+później. Na przykład, napędy A i B mogą być zdefiniowane w pliku
+\fI/usr/local/etc/mtools.conf\fR, zaś napędy C i D zdefiniowane
+w \fI~/.mtoolsrc\fR. Jeżeli jednak \fI~/.mtoolsrc\fR definiuje również
+napęd A, to ta nowa definicja unieważnia poprzedni opis napędu A
+w \fI/usr/local/etc/mtools.conf\fR zamiast uzupełnienia go.
+W celu dodania nowego opisu do napędu już opisanego we wcześniejszym pliku
+należy posłużyć się słowem kluczowym \fB+drive\fR bądź \fBdrive+\fR.
+.SH Wsteczna zgodność ze starą składnią plików konfiguracyjnych
+Składnia opisana w niniejszym dokumencie obowiązuje w nowej wersji
+\fBmtools-3.0\fR. Stara zorientowana liniowo składnia jest nadal obsługiwana.
+W starej składni każda linia rozpoczynająca się pojedynczą literą uważana
+jest za opis napędu. Sekcje napędów w starej i nowej składni mogą być mieszane
+w tym samym pliku konfiguracyjnym, co powinno ułatwić upgrade. Obsługa starej
+składni będzie z czasem zaniechana, a w celu zniechęcenia do jej używania
+celowo pominięto tu jej opis.
+
+.SH ZOBACZ TAKŻE
+.BR mtools (1).

@@ -1,0 +1,541 @@
+%& -translate-file=il2-pl
+\def\fontprefix{pl}
+\input texinfo  @c -*-texinfo-*-
+@c %**start of header
+@setfilename dc.info
+@settitle dc, kalkulator dowolnej precyzji
+@documentencoding ISO-8859-2
+@documentlanguage pl
+@c %**end of header
+
+@c This file has the new style title page commands.
+@c Run `makeinfo' rather than `texinfo-format-buffer'.
+
+@c smallbook
+
+@c tex
+@c \overfullrule=0pt
+@c end tex
+
+@c Combine indices.
+@synindex cp fn
+@syncodeindex vr fn
+@syncodeindex ky fn
+@syncodeindex pg fn
+@syncodeindex tp fn
+
+@ifinfo
+@direntry
+* dc: (dc).                   Kalkulator dowolnej precyzji RPN.
+@end direntry
+Niniejszy plik opisuje @sc{dc}, kalkulator dowolnej precyzji.
+
+Published by the Free Software Foundation, Inc.
+59 Temple Place, Suite 330
+Boston, MA 02111 USA
+
+Copyright (C) 1984, 1994, 1997, 1998, 2000 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+@end ifinfo
+
+@setchapternewpage off
+
+@titlepage
+@title dc, kalkulator dowolnej precyzji
+
+@author Ken Pizzini
+@author pierwotny podręcznik autorstwa Richarda Stallmana
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1994, 1997, 1998 Free Software Foundation, Inc.
+
+@sp 2
+Published by the Free Software Foundation, @*
+59 Temple Place, Suite 330 @*
+Boston, MA 02111 USA
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+
+@end titlepage
+@page
+
+@node Top, Od tłumacza, (dir), (dir)
+
+@menu
+* Wprowadzenie::                Wprowadzenie
+* Od tłumacza::                 Parę słów od tłumacza
+* Wywołanie::                   Wywołanie dc
+* Polecenia wypisywania::       Polecenia wypisywania
+* Artymetyka::                  Artymetyka
+* Kontrola stosu::              Kontrolowanie stosu
+* Rejestry::                    Rejestry
+* Parametry::                   Parametry
+* Łańcuchy::                    Łańcuchy znakowe
+* Informacja o stanie::         Informacja o stanie
+* Różne::                       Inne polecenia
+* Zgłaszanie błędów::           Zgłaszanie błędów
+@end menu
+
+@node Od tłumacza, Wprowadzenie, Top, Top
+@comment  node-name,  next,  previous,  up
+@unnumbered Od tłumacza
+Niniejszy przekład powstał w ramach Projektu Tłumaczenia Manuali
+(@uref{http://ptm.linux.pl/, http://ptm.linux.pl/}).  Zgłoszenia błędów,
+komentarze i sugestie proszę przesyłać na listę dyskusyjną Projektu:
+@email{ptm@@amg.net.pl} lub ewentualnie do autora tłumaczenia.
+
+W.Kotwica (@email{wkotwica@@post.pl})
+
+@unnumberedsec Rozpowszechnianie
+To jest nieoficjalne tłumaczenie warunków rozpowszechniania na język polski.
+Nie zostało ono opublikowane przez Free Software Foundation
+i pod względem prawnym nie stanowi warunków rozpowszechniania -- ustanawia
+je wyłącznie oryginalny tekst angielski.  Jednak tłumacz ma nadzieję, że
+pomoże ono lepiej zrozumieć warunki rozpowszechniania osobom mówiącym
+po polsku.
+
+This is an unofficial translation of the distribution terms into
+Polish language. It was not published by the Free Software Foundation, and
+does not legally state the distribution terms--only the original English text
+does that. However, the translator hopes that it will help Polish language
+speakers understand distribution terms better.
+
+Zezwala się na tworzenie i rozpowszechnianie wiernych kopii
+tego podręcznika, pod warunkiem, że na wszystkich kopiach zostanie zachowana
+informacja o prawach autorskich i niniejsze zezwolenie.
+
+Zezwala się na kopiowanie i rozpowszechnianie zmienionych wersji
+tego podręcznika na warunkach jak dla wiernych kopii, pod warunkiem, że
+cała praca pochodna będzie rozpowszechniana na warunkach zezwolenia
+identycznego jak niniejsze.
+
+Zezwala się na kopiowanie i rozpowszechnianie tłumaczeń tego
+podręcznika na inny język, pod wyżej podanymi warunkami dla zmienionych
+wersji, z wyjątkiem tego, że niniejsze zezwolenie może być ustanowione
+w tłumaczeniu zaakceptowanym przez Fundację.
+
+@node Wprowadzenie, Wywołanie, Od tłumacza, Top
+@chapter Wprowadzenie
+
+@sc{dc} jest kalkulatorem pracującym w odwrotnej notacji polskiej,
+obsługującym arytmetykę nieograniczonej precyzji.
+Pozwala również na definiowanie i wywoływanie makr.
+Zwykle @sc{dc} czyta ze standardowego wejścia. Jeśli użyto argumentów
+polecenia @sc{dc}, to są one traktowane jak nazwy plików. Zawartość tych
+plików jest odczytywana i wykonywana przez @sc{dc} zamiast czytania
+standardowego wejścia.
+Wszystkie zwykłe wyniki kierowane są na standardowe wyjście; wszystkie
+komunikaty o błędach kierowane są na standardowe wyjście błędów.
+
+Koniec działania programu uzyskujemy za pomocą @samp{q}.
+@kbd{C-c} nie powoduje zakończenia pracy;
+jest wykorzystywane do przerwania zapętlonych makr itp. celów
+(Obecnie nie jest to już prawdą: @kbd{C-c} powoduje zakończenie
+działania.)
+
+Kalkulator odwrotnej notacji polskiej przechowuje liczby na stosie.
+Wprowadzenie liczby odkłada ją na stos.
+Operacje arytmetyczne pobierają argumenty ze stosu i odkładają na nim wyniki.
+
+W celu wprowadzenia liczby do @sc{dc} wpisujemy cyfry z opcjonalną
+kropką dziesiętną. Nie jest rozpoznawana notacja wykładnicza.
+Liczbę ujemną poprzedzamy znakiem podkreślenia @samp{_}. Nie można posłużyć
+się w tym celu znakiem @samp{-} (minus), gdyż jest to dwuargumentowy
+operator odejmowania.  Dwie kolejne liczby wprowadzamy oddzielając je
+spacjami lub znakami nowej linii.  Nie mają one znaczenia jako polecenia.
+
+@node Wywołanie, Polecenia wypisywania, Wprowadzenie, Top
+@chapter Wywołanie @sc{dc}
+
+@sc{dc} można wywoływać z następującymi opcjami wiersza poleceń:
+@table @samp
+
+@item -e @var{wyraż}
+@item --expression=@var{wyraż}
+Wykonuje @var{wyraż} jako polecenia @sc{dc}.
+
+@item -f @var{plik}
+@item --file=@var{plik}
+Czyta i wykonuje polecenia @sc{dc} z @var{pliku}.
+
+@item -h
+@item --help
+Wypisuje komunikat o sposobie wywołania, podając w skrócie opcje wiersza
+poleceń, a następnie kończy działanie.
+
+@item -V
+@item --version
+Wypisuje informację o wersji tego programu, a następnie kończy działanie.
+@end table
+
+Jeżeli po przetworzeniu powyższych opcji pozostaną jeszcze jakieś parametry
+wiersza poleceń, to są one interpretowane jako nazwy @var{plików}
+wejściowych, które należy wykonać.  Nazwa @code{-} odnosi się do
+standardowego strumienia wejściowego.  Jeśli nie podano ani opcji
+@code{-e} ani żadnych plików, to polecenia do wykonania będą czytane ze
+standardowego wejścia.
+
+@node Polecenia wypisywania, Artymetyka, Wywołanie, Top
+@chapter Polecenia wypisywania
+
+@table @samp
+@item p
+Wypisuje wartość z wierzchołka stosu, bez jego zmiany. Po wartości wypisywany
+jest znak nowej linii.
+
+@item n
+Wypisuje wartość z wierzchołka stosu, zdejmując ją równocześnie ze stosu.
+Nie wypisuje po niej znaku nowej linii.
+(To polecenie jest rozszerzeniem GNU.)
+
+@item P
+Zdejmuje wartość z wierzchołka stosu.
+Jeśli jest to łańcuch, to jest on po prostu wypisywany bez końcowego znaku
+nowej linii. W przeciwnym razie jest to liczba, a część całkowita jej
+wartości bezwzględnej wypisywana jest jako strumień bajtów "o podstawie
+(UCHAR_MAX+1)". Zakładając, że (UCHAR_MAX+1) wynosi 256 (jak to jest
+w większości maszyn o 8-bitowych bajtach), funkcję tę realizuje także
+sekwencja @code{KSK 0k1/ [_1*]sx d0>x [256~aPd0<x]dsxx sxLKk}, z wyjątkiem
+skutku ubocznego, jakim jest nadpisanie wartości z rejestru @var{x}.
+(Szczegóły zachowania się przy liczbach są rozszerzeniem GNU.)
+
+@item f
+Wypisuje całą zawartość stosu
+@c i zawartość wszystkich rejestrów,
+nie zmieniając niczego.
+Jest polecenie przydatne w sytuacji, gdy się pogubiliśmy lub chcemy się
+zorientować, jaki był efekt pewnych poleceń.
+@end table
+
+@node Artymetyka, Kontrola stosu, Polecenia wypisywania, Top
+@chapter Artymetyka
+
+@table @samp
+@item +
+Zdejmuje ze stosu dwie wartości, dodaje je i odkłada wynik na stos.
+Dokładność wyniku zależy wyłącznie od wartości argumentów i jest
+wystarczająco ścisła.
+
+@item -
+Zdejmuje ze stosu dwie wartości, odejmuje pierwszą zdjętą od drugiej
+i składa wynik ponownie na stos.
+
+@item *
+Zdejmuje ze stosu dwie wartości, mnoży je i odkłada wynik na stos.
+Liczba cyfr ułamkowych wyniku jest największą spośród: aktualnej
+wartości dokładności (patrz niżej) oraz liczby cyfr ułamkowych mnożnej
+i mnożnika.  Nigdy jednak nie przekracza liczby cyfr niezbędnej w dokładnym
+wyniku.
+
+@item /
+Zdejmuje ze stosu dwie wartości, dzieli drugą zdjętą przez pierwszą
+i odkłada wynik ponownie na stos.
+Liczba cyfr ułamkowych wyniku określana jest przez wartość dokładności.
+
+@item %
+Zdejmuje ze stosu dwie wartości, oblicza resztę z dzielenia, jakie byłoby
+wykonane przez @samp{/} i odkłada wynik na stos.
+Obliczona wartość jest tą samą, co otrzymana z sekwencji @code{Sd dld/ Ld*-}.
+
+@item ~
+Zdejmuje ze stosu dwie wartości, dzieli drugą zdjętą przez pierwszą.
+Odkłada na stos iloraz, a następnie resztę z dzielenia.
+Dzielenie wykonywane jest z liczbą cyfr ułamkowych określoną wartością
+dokładności.
+(Funkcję tę może też spełniać sekwencja @code{SdSn lnld/ LnLd%}, z nieco
+odmiennym sprawdzaniem błędów.)
+(To polecenie jest rozszerzeniem GNU.)
+
+@item ^
+Zdejmuje ze stosu dwie wartości i wykonuje potęgowanie, posługując się
+pierwszą zdjętą jako wykładnikiem, zaś drugą jako podstawą potęgowania.
+Ułamkowa część wykładnika jest ignorowana.
+Wartość dokładności określa liczbę cyfr ułamkowych wyniku.
+
+@item |
+Zdejmuje ze stosu trzy wartości i oblicza potęgowanie modulo
+[od tłum: modular exponentiation == @code{(a^b) mod c}].
+.br
+Pierwsza ze zdjętych wartości używana jest jako dzielnik operacji
+(reduction modulus).
+Wartość ta musi być niezerowa i powinna być liczbą całkowitą.
+Druga używana jest jako wykładnik i musi być liczbą nieujemną,
+a jej część ułamkowa zostanie zignorowana.
+Trzecia z pobranych ze stosu wartości określa podstawę potęgowania,
+powinna ona być całkowita.
+Dla małych liczb jest to zbliżone do sekwencji @code{Sm^Lm%}, ale,
+w odróżnieniu od @code{^}, polecenie to działa z dowolnie dużymi wykładnikami.
+(To polecenie jest rozszerzeniem GNU.)
+
+@item v
+Zdejmuje ze stosu pojedynczą wartość, oblicza jej pierwiastek kwadratowy
+i odkłada go na stos.
+Wartość dokładności określa liczbę cyfr ułamkowych wyniku.
+@end table
+
+Na większość operacji arytmetycznych wpływa @emph{wartość dokładności}, którą
+ustala się za pomocą polecenia @samp{k}.
+Domyślną wartością dokładności jest zero, co oznacza, że wszystkie działania
+arytmetyczne z wyjątkiem dodawania i odejmowania dają wyniki całkowite.
+
+@node Kontrola stosu, Rejestry, Artymetyka, Top
+@chapter Kontrolowanie stosu
+
+@table @samp
+@item c
+Czyści stos, powoduje, że będzie on pusty.
+
+@item d
+Powiela wartość na wierzchołku stosu, odkładając na stos jej kopię.
+Zatem @samp{4d*p} oblicza 4 podniesione do kwadratu i wypisuje wynik.
+
+@item r
+Zamienia miejscami dwie górne wartości na stosie.
+(To polecenie jest rozszerzeniem GNU.)
+@end table
+
+@node Rejestry, Parametry, Kontrola stosu, Top
+@chapter Rejestry
+
+@sc{dc} udostępnia co najmniej 256 rejestrów pamięciowych, każdy nazwany
+pojedynczym znakiem. W rejestrze można przechować liczbę lub łańcuch znakowy
+i później je odtworzyć.
+
+@table @samp
+@item s@var{r}
+Zdejmuje wartość z wierzchołka stosu i zapisuje w rejestrze @var{r}.
+
+@item l@var{r}
+Kopiuje wartość zawartą w rejestrze @var{r} i odkłada ją na stos.
+Nie zmienia to zawartości @var{r}.
+
+Każdy z rejestrów posiada również swój własny stos. Bieżącą wartością rejestru
+jest wierzchołek stosu rejestru.
+
+@item S@var{r}
+Zdejmuje wartość z wierzchołka stosu (głównego) i odkłada ją na stosie
+rejestru @var{r}. Poprzednia wartość rejestru staje się niedostępna.
+
+@item L@var{r}
+Zdejmuje wartość z wierzchołka stosu rejestru @var{r} i odkłada ją
+na głównym stosie. Poprzednia wartość stosu rejestru @var{r},
+jeśli była takowa, jest teraz dostępna poprzez polecenie @samp{l@var{r}}.
+@end table
+@c
+@c Polecenie @samp{f} wypisuje listę wszystkich rejestrów zawierających
+@c przechowywane wartości, razem z tymi zawartościami. Wypisywana jest tylko
+@c bieżąca zawartość każdego z rejestrów (wierzchołek jego stosu).
+
+@node Parametry, Łańcuchy, Rejestry, Top
+@chapter Parametry
+
+@sc{dc} posiada trzy parametry kontrolujące jego pracę:
+dokładność, podstawę systemu pozycyjnego wejścia i podstawę wyjścia.
+Dokładność określa liczbę cyfr dziesiętnych, jaka będzie zachowana w wyniku
+większości operacji arytmetycznych.
+Podstawa wejścia odpowiada za interpretację wprowadzanych liczb;
+@emph{wszystkie} wprowadzane liczby używają tej podstawy.  Podstawa wyjścia
+używana jest do wypisywania liczb.
+
+Podstawa wejścia i wyjścia są odrębnymi parametrami; można spowodować,
+że będą różne, co może być użyteczne lub mylące.
+Podstawa wejścia musi być liczbą z zakresu od 2 do 16.
+Podstawa wyjścia musi wynosić co najmniej 2.
+Dokładność musi być równa zeru lub większa. Dokładność zawsze określana jest
+jako liczba cyfr dziesiętnych, niezależnie od bieżącej podstawy wejścia czy
+wyjścia.
+
+@table @samp
+@item i
+Zdejmuje wartość z wierzchołka stosu i posługuje się nią do ustawienia
+podstawy wejścia.
+
+@item o
+Zdejmuje wartość z wierzchołka stosu i posługuje się nią do ustawienia
+podstawy wyjścia.
+
+@item k
+Zdejmuje wartość z wierzchołka stosu i posługuje się nią do ustawienia
+dokładności.
+
+@item I
+Odkłada bieżącą wartość podstawy wejścia na stosie.
+
+@item O
+Odkłada bieżącą wartość podstawy wyjścia na stosie.
+
+@item K
+Odkłada bieżącą dokładność na stosie.
+
+@end table
+
+@node Łańcuchy, Informacja o stanie, Parametry, Top
+@chapter Łańcuchy znakowe
+
+@sc{dc} oprócz pracy z liczbami może też działać na łańcuchach znakowych.
+Łańcuchy można jedynie wypisywać i wykonywać jako makra (co oznacza,
+że zawartość łańcucha przetwarzana jest jako polecenia @sc{dc}).
+Stos i wszystkie rejestry mogą przechowywać łańcuchy, a @sc{dc} zawsze wie,
+czy dany obiekt jest łańcuchem czy liczbą.
+Niektóre z poleceń, jak np. operacje arytmetyczne, wymagają liczb jako swych
+argumentów i wyświetlają błędy, jeśli dostarczono im łańcuch.  Inne
+akceptują zarówno liczby, jak i łańcuchy znakowe. Na przykład, polecenie
+@samp{p} akceptuje oba rodzaje argumentów i wypisuje obiekt stosownie do
+jego typu.
+
+@table @samp
+@item [@var{znaki}]
+Tworzy łańcuch zawierający @var{znaki} i odkłada go na stos.
+Na przykład, @samp{[foo]P} wypisuje znaki @samp{foo} (bez zakończenia
+znakiem nowej linii).
+
+@item a
+Mneminik tego polecenia jest nieco mylący: zamiana na Ascii.
+Zdejmowany jest wierzchołek stosu.
+Jeżeli jest to liczba, to młodszy bajt (low-order byte) tej liczby zamieniany
+jest na łańcuch i odkładany na stos. W przeciwnym przypadku, wierzchołek stosu
+był łańcuchem, a z powrotem na stos odkładany jest pierwszy znak tego
+łańcucha.
+(To polecenie jest rozszerzeniem GNU.)
+
+@item x
+Zdejmuje wartość ze stosu i wykonuje ją jako makro. Zwykle powinien to być
+łańcuch znakowy. Jeżeli jest to liczba, to zostanie po prostu zwrócona na stos.
+Na przykład, @samp{[1p]x} wykonuje makro @samp{1p}, które odkłada 1 na stosie
+i wypisuje @samp{1} w osobnym wierszu.
+
+Makra są najczęściej przechowywane w rejestrach: @samp{[1p]sa} składuje
+makro do wypisania @samp{1} w rejestrze @samp{a}, zaś @samp{lax} wywołuje to
+makro.
+
+@item >@var{r}
+Zdejmuje dwie wartości ze stosu i porównuje je, zakładając, że są one liczbami,
+wykonując zawartość rejestru @var{r} jako makro, jeśli pierwotny wierzchołek
+stosu jest większy.  Tak więc, @samp{1 2>a} wywoła zawartość rejestru
+@samp{a}, zaś @samp{2 1>a} nie wywoła.
+
+@item !>@var{r}
+Podobnie, ale wywołuje makro jeśli pierwotny wierzchołek stosu nie jest
+większy (jest mniejszy bądź równy) od liczby występującej pod nim.
+
+@item <@var{r}
+Podobnie, ale wywołuje makro jeśli pierwotny wierzchołek stosu jest mniejszy
+od liczby występującej pod nim.
+
+@item !<@var{r}
+Podobnie, ale wywołuje makro jeśli pierwotny wierzchołek stosu nie jest
+mniejszy (jest większy bądź równy) od liczby występującej pod nim.
+
+@item =@var{r}
+Podobnie, ale wywołuje makro, gdy obie zdjęte ze stosu liczby są równe.
+@c Jest to również poprawna forma sprawdzenia równości dwu łańcuchów.
+
+@item !=@var{r}
+Podobnie, ale wywołuje makro, gdy obie zdjęte ze stosu liczby nie są równe.
+@c Jest to również poprawna forma sprawdzenia równości dwu łańcuchów.
+
+@item ?
+Czyta wiersz z terminala i wykonuje go. Polecenie to umożliwia makru
+pobieranie danych od użytkownika.
+
+@item q
+Podczas wykonywania makra, powoduje zakończenie pracy tego makra i makra,
+z którego było ono wywołane.  Polecenie @samp{q} wywołane na najwyższym
+poziomie lub z makra wywołanego bezpośrednio z najwyższego poziomu spowoduje
+zakończenie pracy @sc{dc}.
+
+@item Q
+Zdejmuje ze stosu wartość i używa jej jako liczby poziomów wykonania makr,
+jakie mają zostać zakończone.
+Tak więc, @samp{3Q} kończy pracę trzech poziomów makr.
+@end table
+
+@node Informacja o stanie, Różne, Łańcuchy, Top
+@chapter Informacja o stanie
+
+@table @samp
+@item Z
+Zdejmuje wartość ze stosu, oblicza liczbę jej cyfr (lub liczbę znaków, jeśli
+jest to łańcuch) i odkłada tę liczbę na stos.
+
+@item X
+Zdejmuje wartość ze stosu, oblicza liczbę jej cyfr ułamkowych i odkłada tę
+liczbę na stos. Dla łańcuchów wartością odkładaną na stos jest
+@c -1.
+0.
+
+@item z
+Odkłada na stos bieżącą wysokość stosu: liczbę obiektów na stosie przed
+wykonaniem polecenia @samp{z}.
+@end table
+
+@node Różne, Zgłaszanie błędów, Informacja o stanie, Top
+@chapter Różne
+
+@table @samp
+@item !
+Uruchamia resztę wiersza jako polecenie systemu.
+Zauważ, że pierwszeństwo w analizie składni mają polecenia @samp{!<},
+@samp{!=} i @samp{!>}, więc jeśli chcemy uruchomić polecenie systemu
+zaczynające się od @samp{<}, @samp{>} lub @samp{=}, to po @samp{!} musimy
+dodać odstęp.
+
+@item #
+Interpretuje resztę wiersza jako komentarz.
+(To polecenie jest rozszerzeniem GNU.)
+
+@item :@var{r}
+Zdejmuje ze stosu dwie górne wartości. Wartość, która była drugą od góry
+stosu zostanie zachowana w tablicy @var{r}, indeksowanej wartością byłego
+wierzchołka stosu.
+
+@item ;@var{r}
+Zdejmuje wierzchołek stosu i posługuje się nim jako indeksem tablicy @var{r}.
+Wybrana w ten sposób wartość jest następnie odkładana na stos.
+@end table
+
+Zauważ, że każda ze składowanych na stosie instancji rejestru ma swoją
+własną, skojarzoną z nią tablicę.
+Zatem, @samp{1 @var{0:a} 0S@var{a} 2 @var{0:a} L@var{a} @var{0;a}p}
+wypisze 1, gdyż 2 zostało zapamiętane w instancji @var{0:a}, która została
+później odłożona na stos.
+
+@node Zgłaszanie błędów, , Różne, Top
+@chapter Zgłaszanie błędów
+
+Błędy proszę zgłaszać (w jęz.angielskim) na adres @email{bug-dc@@gnu.org}.
+
+@contents
+@bye

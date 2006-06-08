@@ -1,0 +1,203 @@
+''' $Id: uucp.1,v 1.5 2001/09/16 09:38:33 wojtek2 Exp $
+.\" {PTM/PB/0.1/25-04-1998/"Kopiowanie z Unixa na Unix"}
+.TH uucp 1 "Taylor UUCP 1.06"
+.SH NAZWA
+uucp \- Unix to Unix copy (kopiowanie z Unixa na Unix)
+.SH SKŁADNIA
+.B uucp
+.RI [ opcje ]
+.I plik-źródłowy plik-docelowy
+.PP
+.B uucp
+.RI [ opcje ]
+.I plik-źródłowy... katalog-docelowy
+.SH OPIS
+Polecenie
+.I uucp
+kopiuje pliki między dwoma systemami. Każdy argument plikowy może być albo
+ścieżką do pliku na lokalnej maszynie, albo może mieć postać
+.IP
+system!ścieżka
+.LP
+która jest odczytywana jako plik na zdalnym systemie. W pierwszej postaci,
+zawartość pierwszego pliku jest kopiowana do drugiego. W drugim wypadku,
+każdy plik źródłowy jest kopiowany do katalogu docelowego.
+
+Plik może być przeniesiony z, lub do
+.I systemu2
+poprzez
+.I system1
+przy użyciu
+.IP
+system1!system2!ścieżka.
+.LP
+
+Każda ścieżka, która nie zaczyna się od / lub ~, będzie doklejona do
+bieżącego katalogu roboczego (chyba że użyto opcji
+.B \-W
+lub
+.BR "\--noexpand" );
+tak powstała ścieżka niekoniecznie musi istnieć na maszynie
+zdalnej. Ścieżka rozpoczynająca się od ~ wskazuje na katalog publiczny UUCP;
+ścieżka zaczynająca się od ~nazwa wskazuje na katalog domowy podanego
+użytkownika. ~ jest interpetowane na odpowiednim systemie. Zauważ, że
+niektóre powłoki interpretują tyldę ~ jako katalog domowy zanim zostanie
+przekazana do
+.IR uucp ;
+aby temu zapobiec, ~ powinno być cytowane.
+
+Metaznaki ? * [ ] powłoki są interpretowane na odpowiednim systemie, przy
+założeniu, że są zacytowane, aby zapobiec ich interpretacji przez lokalną
+powłokę.
+
+Kopiowanie nie następuje natychmiastowo, lecz jest kolejkowane dla demona
+.IR uucico (8);
+demon jest uruchamiany natychmiastowo, chyba że podano przełączniki
+.B \-r
+lub
+.BR \-\-nouucico .
+W każdym wypadku, podczas następnej sesji połączeniowej ze zdalnym systemem,
+pliki zostaną skopiowane.
+.SH OPCJE
+.I uucp
+można przekazać następujące opcje:
+.TP 5
+.B \-c, \-\-nocopy
+Zakazuje kopiowania lokalnych plików źródłowych do katalogu kolejkowego. Jeśli
+zostaną one usunięte przed obróbką przez demona
+.IR uucico (8),
+to kopiowanie się nie powiedzie. Pliki muszą być odczytywalne przez demona
+.IR uucico (8),
+oraz wywołującego użytkownika.
+.TP 5
+.B \-C, \-\-copy
+Kopiuje lokalne pliki źródłowe do katalogu kolejkowego. Tak jest domyślnie.
+.TP 5
+.B \-d, \-\-directories
+Podczas kopiowania tworzy wszystkie potrzebne katalogi. Tak jest domyślnie.
+.TP 5
+.B \-f, \-\-nodirectories
+Jeśli potrzebne katalogi nie istnieją w ścieżce docelowej, przerywa
+kopiowanie.
+.TP 5
+.B \-R, \-\-recursive
+Jeśli jakaś z nazw plików źródłowych wskazuje na katalog, kopiuje rekurencyjnie
+jego zawartość.
+.TP 5
+.B \-g stopień, \-\-grade stopień
+Ustawia poziom polecenia transferu plików. Zadania o wyższym poziomie są
+wywoływane jako pierwsze. Poziomy odpowiadają 0 ... 9 A ... Z a ... z od
+najwyższego do najniższego.
+.TP 5
+.B \-m, \-\-mail
+Zgłasza zakończenie lub błąd transferu za pomocą
+.IR mail (1).
+.TP 5
+.B \-n user, \-\-notify użytkownik
+Zgłasza zakończenie lub błąd transferu za pomocą
+.IR mail (1)
+wskazanemu użytkownikowi systemu zdalnego.
+.TP 5
+.B \-r, \-\-nouucico
+Nie uruchamia demona
+.IR uucico (8)
+natychmiast; zamiast tego po prostu kolejkuje zadanie na przyszłość.
+.TP 5
+.B \-j, \-\-jobid
+Wypisuje na standardowym wyjściu identyfikator zadania. Zadanie może być
+potem odwołane przez przekazanie identyfikatora przełącznikowi
+.B \-k
+polecenia
+.IR uustat (1).
+W przypadku złożonych operacji możliwe jest utworzenie więcej niż jednego
+identyfikatora; wówczas zostaną one wypisane w oddzielnych wierszach. Np.
+.br
+.in +0.5i
+.nf
+uucp sys1!~user1/file1 sys2!~user2/file2 ~user3
+.fi
+.in -0.5i
+wygeneruje dwa oddzielne zadania, jedno dla systemu
+.IR sys1 ,
+a drugie dla systemu
+.IR sys2 .
+.TP 5
+.B \-W, \-\-noexpand
+Nie dopisuje zdalnych względnych ścieżek do katalogu bieżącego.
+.TP 5
+.B \-t, \-\-uuto
+Opcja ta jest używana przez skrypt powłoki
+.IR uuto .
+Powoduje ona, że
+.I uucp
+interpretuje ostatni argument jako
+.IR system!user .
+Pliki są wysyłane do
+.I ~/receive/USER/LOCAL
+zdalnego systemu, gdzie
+.I USER
+jest ostatnim argumentem, a
+.I LOCAL
+jest lokalną nazwą systemu UUCP. Dodatkowo,
+.I uucp
+będzie się zachowywać tak, jakby podano
+.IR \-\-notify user .
+.TP 5
+.B \-x typ, \-\-debug typ
+Włącza dany rodzaj diagnostyki. Rozpoznawane są następujące:
+abnormal, chat, handshake, uucp-proto, proto, port, config, spooldir, 
+execute, incoming, outgoing.  Znaczenie dla uucp mają tylko abnormal, config,
+spooldir i execute.
+
+Można podać wiele typów rozdzielonych przecinkami, a opcja
+.B \-\-debug
+może pojawić się wiele razy. Można podac również liczbę, która włączy
+kolejne opcje listy, na przykład
+.B \-\-debug 2
+jest równoważne
+.B \-\-debug abnormal,chat.
+.TP 5
+.B \-I plik, \-\-config plik
+Wskazuje plik konfiguracyjny, z którego ma korzystać program.
+Opcja ta może być niedostępna, zależnie od tego, jak skompilowano
+.IR uucp .
+.TP 5
+.B \-v, \-\-version
+Wypisuje wersję i kończy pracę.
+.TP 5
+.B \-\-help
+Wypisuje informację o sposobie użycia i kończy pracę.
+.SH PLIKI
+Nazwy plików można zmieniać podczas kompilacji lub w pliku
+konfiguracyjnym, więc poniższe są tylko przybliżeniami.
+
+.br
+/usr/lib/uucp/config - Plik konfiguracyjny.
+.br
+/usr/spool/uucp -
+Katalog kolejkowy UUCP.
+.br
+/usr/spool/uucp/Log -
+Plik logu UUCP.
+.br
+/usr/spool/uucppublic -
+Domyślny katalog publiczny UUCP.
+.SH ZOBACZ TAKŻE
+mail(1), uux(1), uustat(1), uucico(8)
+.SH BŁĘDY
+Niektóre opcje zależą od właściwości demona
+.IR uucico (8)
+zdalnego systemu.
+
+Przełączniki
+.I \-n
+i
+.I \-m
+nie działają podczas transferowania pliku z jednego zdalnego systemu na
+inny.
+
+Nie są chronione prawa plików, poza bitem wykonania. Właścicielem pliku
+wynikowego jest użytkownik uucp.
+.SH AUTOR
+Ian Lance Taylor
+<ian@airs.com>

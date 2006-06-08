@@ -1,0 +1,71 @@
+.\" Written by Ralf Baechle (ralf@waldorf-gmbh.de),
+.\" Copyright (c) 1994, 1995 Waldorf GMBH
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Translation (c) 1998 Przemek Borys <pborys@dione.ids.pl>
+.\" Last Update: Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\"
+.TH CACHEFLUSH 2 1995-06-27 "Linux 2.0.32" "Podręcznik programisty Linuksa"
+.SH NAZWA
+cacheflush \- wypróżnienie zawartości bufora podręcznego z instrukcjami i/lub z danymi
+.SH SKŁADNIA
+.nf
+.B #include <asm/cachectl.h>
+.sp
+.BI "int cacheflush(char *" addr ", int "nbytes ", int "cache );
+.fi
+.SH OPIS
+.B cacheflush
+wypróżnia zawartość wskazanego(-ych) bufora(-ów) podręcznego(-ych) dla adresów
+przestrzeni użytkownika w zakresie od addr do (addr+nbytes-1). Parametr cache
+może być jednym z:
+.TP
+.B ICACHE
+Wypróżnia bufor z instrukcjami.
+.TP
+.B DCACHE
+Zapisuje z powrotem do pamięci i unieważnia dotknięte tym prawidłowe linie
+buforowe.
+.TP
+.B BCACHE
+Identyczne z
+.B (ICACHE|DCACHE).
+.PP
+.SH "WARTOŚĆ ZWRACANA"
+.B cacheflush
+zwraca 0 po pomyślnym zakończeniu, a \-1 w wypadku błędu. Jeśli wystąpi
+błąd, errno będzie wskazywać jego rodzaj.
+.SH BŁĘDY
+.TP
+.B EINVAL
+parametr cache nie jest jednym z ICACHE, DCACHE lub BCACHE.
+.TP
+.B EFAULT
+Część lub cała przestrzeń od addr do (addr+nbytes-1) jest niedostępna.
+.PP
+.SH BŁĘDY
+Obecna implementacja ignoruje parametry addr i nbytes. Dlatego zawsze
+wypróżniane są wszystkie bufory.
+.SH UWAGA
+To wywołanie jest dostępne tylko na systemach opartych o MIPS. Nie Powinno
+ono być używane w przenośnych programach.

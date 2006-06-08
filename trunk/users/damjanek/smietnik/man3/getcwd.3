@@ -1,0 +1,181 @@
+.\" Tłumaczenie wersji man-pages 1.39 - wrzesień 2001 PTM
+.\" aktualizacja do man-pages 1.50 - czerwiec 2002
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Wed Jul 21 22:35:42 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 18 Mar 1996 by Martin Schulze (joey@infodrom.north.de):
+.\"   Corrected description of getwd().
+.\" Modified Sat Aug 21 12:32:12 MET 1999 by aeb - applied fix by aj
+.\" Modified Mon Dec 11 13:32:51 MET 2000 by aeb
+.\" Modified Thu Apr 22 03:49:15 CEST 2002 by Roger Luethi <rl@hellgate.ch>
+.\"
+.TH GETCWD 3 2002-04-22 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getcwd, get_current_dir_name, getwd \- odczytanie bieżącego katalogu roboczego
+.SH SKŁADNIA
+.nf
+.B #include <unistd.h>
+.sp
+.BI "char *getcwd(char *" buf ", size_t " size );
+.B "char *get_current_dir_name(void);"
+.BI "char *getwd(char *" buf );
+.fi
+.SH OPIS
+Funkcja
+.BR getcwd ()
+kopiuje nazwę bezwzględnej ścieżki dostępu dla bieżącego katalogu roboczego do
+tablicy wskazywanej przez
+.IR buf ,
+która to tablica ma długość
+.IR size .
+.PP
+Jeśli nazwa bieżącej bezwzględnej ścieżki dostępu wymaga bufora dłuższego niż
+.I size
+elementów, to zwracane jest
+.B NULL
+a
+.I errno
+jest ustawiane na
+.BR ERANGE ;
+aplikacja powinna sprawdzać, czy nie wystąpił ten błąd i przydzielać większy
+bufor, jeśli jest to potrzebne.
+.PP
+Jeśli
+.I buf
+jest równe NULL, zachowanie
+.BR getcwd ()
+jest nieokreślone.
+.PP
+Jako rozszerzenie standardu POSIX.1, linuksowe (libc4, libc5, glibc)
+.B getcwd()
+przydziela bufor dynamicznie korzystając z
+.BR malloc() ,
+jeśli
+.I buf
+jest równe
+.B NULL
+podczas wywołania. W tym przypadku przydzielony bufor ma długość
+.IR size ,
+chyba że
+.I size
+jest równe zero. Wówczas dla
+.I buf
+jest przydzielane tyle, ile potrzeba. Jest możliwe (i naprawdę zalecane)
+zwalnianie otrzymanych w ten sposób buforów za pomocą
+.BR free() .
+
+.BR get_current_dir_name ,
+które jest jedynie prototypem gdy
+.B _GNU_SOURCE
+jest zdefiniowane, przydzieli za pomocą
+.BR malloc (3)
+tablicę dostatecznie dużą, aby przechować nazwę bieżącego katalogu. Jeśli
+zmienna środowiskowa
+.B PWD
+jest ustawiona, a jej wartość prawidłowa, to zostanie zwrócona ta wartość.
+
+.BR getwd ,
+które jest jedynie prototypem gdy
+.B _BSD_SOURCE
+lub
+.B _XOPEN_SOURCE_EXTENDED
+jest zdefiniowane, nie przydzieli żadnej pamięci za pomocą
+.BR malloc (3).
+Argument
+.I buf
+powinien być wskaźnikiem do tablicy o długości co najmniej
+.B PATH_MAX
+bajtów.
+.BR getwd
+zwróci jedynie pierwsze
+.B PATH_MAX
+bajtów nazwy bieżącej ścieżki dostępu.
+Należy zwrócić uwagę, że
+.B PATH_MAX
+nie musi być stałą określaną podczas kompilacji; może ona zależeć od systemu
+plików, a nawet być nieograniczona. Ze względu na przenośność i bezpieczeństwo
+używanie
+.B getwd
+nie jest zalecane.
+.SH "WARTOŚĆ ZWRACANA"
+.B NULL
+w przypadku błędu, przy jednoczesnym ustawieniu
+.IR errno ,
+a
+.I buf
+w przypadku pomyślnego zakończenia. Zawartość tablicy wskazywanej przez
+.IR buf
+w przypadku błędu jest nieokreślona.
+.SH BŁĘDY
+.TP
+.B EACCES
+Brak praw do odczytu lub przeszukiwania składnika nazwy pliku.
+.TP
+.B EFAULT
+.IR buf
+wskazuje na niewłaściwy adres.
+.TP
+.B EINVAL
+Argument
+.IR size
+jest zerowy, a
+.IR buf
+nie jest wskaźnikiem NULL.
+.TP
+.B ENOENT
+Bieżący katalog roboczy został skasowany.
+.TP
+.B ERANGE
+Argument
+.IR size
+jest mniejszy od długości nazwy katalogu roboczego.
+Trzeba przydzielić większą tablicę i spróbować ponownie.
+.SH UWAGI
+Pod Linuksem, funkcja
+.BR getcwd ()
+jest funkcją systemową (od 2.1.92).
+W starszych systemach mogła ona odpytywać
+.IR /proc/self/cwd .
+Gdy nie ma ani funkcji systemowej, ani systemu plików /proc, wywoływana jest
+implementacja ogólna. Jedynie w takiej sytuacji wywołanie tych funkcji może
+w razie niepomyślnego zakończenia zwrócić błąd
+.BR EACCES .
+.LP
+Funkcje te są często używane do zapamiętywania położenia bieżącego katalogu
+roboczego w celu późniejszego powrotu do niego. Gdy dostępnych jest
+dostatecznie wiele deskryptorów plików, otwarcie bieżącego katalogu (".")
+i wywołanie
+.BR fchdir (2),
+aby wrócić jest zazwyczaj szybszą i bardziej niezawodną alternatywą, zwłaszcza
+na platformach innych niż Linux.
+.SH "ZGODNE Z"
+POSIX.1
+.SH "ZOBACZ TAKŻE"
+.BR chdir (2),
+.BR fchdir (2),
+.BR open (2),
+.BR unlink (2),
+.BR free (3),
+.BR malloc (3)

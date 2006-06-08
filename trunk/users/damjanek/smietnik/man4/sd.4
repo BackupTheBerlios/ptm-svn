@@ -1,0 +1,131 @@
+.\" sd.4
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Tłumaczenie na język polski: Paweł Olszewski (alder@amg.net.pl)
+.\" {PTM/PO/0.2/02-06-1998/"sterownik dysków twardych SCSI"}
+.\" Aktualność: man-pages 1.48
+.\"
+.TH SD 4 1992-12-17 "" "Podręcznik Programisty Linuksa"
+.SH NAZWA
+sd \- sterownik dysków twardych SCSI
+.SH DEFINICJA
+#include <linux/hdreg.h>        /* for HDIO_GETGEO */
+#include <linux/fs.h>           /* for BLKGETSIZE and BLKRRPART */
+.SH KONFIGURACJA
+Nazwa tego urządzenia blokowego ma następującą postać:
+.BI sd lp,
+gdzie 
+.I l
+jest literą oznaczającą fizyczny dysk, a 
+.I p
+jest cyfrą oznaczającą partycję na tym fizycznym dysku. Często numer partycji 
+.IR p
+jest opuszczany, jeśli nazwa urządzenia odnosi się do całego dysku.
+
+Dyski SCSI mają główny numer urządzenia równy 8, a numer poboczny w postaci
+(16 *
+.IR numer_dysku ") + " numer_partycji ,
+gdzie
+.I numer_dysku
+jest numerem fizycznego dysku wg kolejności wykrywania, a 
+.I numer_partycji
+jest następujący:
+.sp
+partycja 0 to cały dysk
+.br
+partycje 1-4 to "podstawowe" partycje DOS
+.br
+partycje 5-8 to "rozszerzone" ("logiczne") partycje DOS
+
+Dla przykładu,
+.B /dev/sda
+ma numer główny 8, poboczny 0 i odnosić się będzie do całego
+pierwszego dysku SCSI w systemie; 
+.B /dev/sdb3
+ma numer główny 8, poboczny 19 i odnosić się będzie do trzeciej
+"podstawowej" partycji DOS na drugim dysku SCSI w systemie.
+
+W chwili obecnej, obsługiwane są jedynie urządzenia
+blokowe. Urządzenia surowe nie zostały jeszcze zaimplementowane.
+.SH OPIS
+Obsługiwane są następujące
+.IR ioctl e:
+.TP
+HDIO_GETGEO
+.RS
+Zwraca parametry dysku z BIOS w następującej strukturze:
+.RS
+.nf
+.ft B
+struct hd_geometry {
+      unsigned char heads;
+      unsigned char sectors;
+      unsigned short cylinders;
+      unsigned long start;
+};
+.ft R
+.fi
+.RE
+
+Wskaźnik do tej struktury przekazywany jest jako parametr funkcji
+.BR ioctl (2).
+
+Informacja zwracana do parametru jest geometrią dysku
+.I "w rozumieniu systemu DOS!"
+Owa geometria
+.I nie
+jest fizyczną geometrią dysku. Jest jednak używana przy konstruowaniu
+tablicy partycji danego dysku i jest niezbędna dla poprawnego
+działania programów
+.BR fdisk (1),
+.BR efdisk (1)
+i
+.BR lilo (1).
+Jeśli informacja o geometrii jest niedostępna, zwrócona będzie wartość
+zero dla wszystkich parametrów.
+.RE
+.TP
+BLKGETSIZE
+Zwraca rozmiar urządzenia w sektorach. Parametr funkcji 
+.BR ioctl (2)
+powinien być wskaźnikiem do zmiennej typu
+.BR long .
+.TP
+BLKRRPART
+Wymusza ponowny odczyt tablicy partycji dysku SCSI. Nie są wymagane żadne
+parametry.
+
+.IR ioctl e
+dla
+.BR scsi (4)
+są również obsługiwane. Jeśli wymagany jest parametr funkcji
+.BR ioctl (2)
+i ma on wartość NULL, wówczas
+.IR ioctl ()
+zwróci wartość -EINVAL.
+.SH PLIKI
+/dev/sd[a-h]: całe urządzenie
+.br
+/dev/sd[a-h][0-8]: poszczególne partycje blokowe
+.SH "ZOBACZ TAKŻE"
+.BR scsi (4)

@@ -1,0 +1,135 @@
+.\" {PTM/WK/1999-XII}
+.TH SHUTDOWN 8 "22 czerwca 1998" "" "Podręcznik Administratora Linuksa"
+.SH NAZWA
+shutdown \- wyłączanie systemu
+.SH SKŁADNIA
+.B /sbin/shutdown
+.RB [ \-t
+.IR sek ]
+.RB [ \-arkhncfF ]
+.I czas
+.RI [ ostrzeżenie ]
+.SH OPIS
+\fBshutdown\fP w bezpieczny sposób wyłącza system. Wszyscy zalogowani
+użytkownicy powiadamiani są o rozpoczętym wyłączaniu, zaś rozpoczynanie nowych
+sesji pracy przez \fBlogin\fP(1) jest blokowane.
+Możliwe jest zamknięcie i wyłączenie systemu natychmiastowe lub po zadanym
+czasie. W pierwszej kolejności wszystkie procesy powiadamiane są o wyłączaniu
+systemu sygnałem \s-2SIGTERM\s0. Daje to programom takim jak \fBvi\fP(1) czas
+na zachowanie edytowanego pliku, programom przetwarzającym pocztę i grupy
+dyskusyjne szansę na czyste zakończenie pracy itd.
+\fBshutdown\fP wykonuje swe zadanie sygnalizując procesowi \fBinit\fP prośbę
+o zmianę poziomu pracy.
+Poziom pracy (runlevel) \fB0\fP używany jest do zatrzymywania systemu, zaś
+poziom \fB1\fP służy do przełączenia go w stan, w którym mogą być wykonywane
+zadania administracyjne i konserwacja systemu; jest to poziom domyślny jeżeli
+nie podano ani flagi \fB-h\fP ani \fB-r\fP polecenia \fBshutdown\fP.
+Jakie czynności wykonywane są podczas zatrzymywania bądź przeładowywania
+systemu możesz zobaczyć przeglądając odpowiednie dla danych poziomów pracy
+wpisy w pliku \fI/etc/inittab\fP.
+.SH OPCJE
+.IP "\fB\-a\fP
+Użyj \fB/etc/shutdown.allow\fP.
+.IP "\fB\-t\fP \fIsek\fP"
+Nakaż \fBinit\fP(8) odczekanie \fIsek\fP sekund pomiędzy wysłaniem procesom
+ostrzeżenia i sygnału kill a zmianą na inny poziom pracy.
+.IP \fB\-k\fP
+Nie wykonuj faktycznego wyłączenia; wyślij tylko do wszystkich komunikaty
+ostrzegawcze.
+.IP \fB\-r\fP
+Przeładuj (reboot) po wyłączeniu systemu.
+.IP \fB\-h\fP
+Zatrzymaj (halt) po wyłączeniu systemu.
+.IP \fB\-n\fP
+[ODRADZANE] Nie wywołuj \fBinit\fP(8) do wykonania wyłączenia, ale zrób
+to samodzielnie. Odradza się używania tej opcji, zaś jej wyniki nie zawsze są
+zgodne z oczekiwaniami.
+.IP \fB\-f\fP
+Pomiń fsck (sprawdzanie systemów plików) podczas przeładowania.
+.IP \fB\-F\fP
+Wymuś fsck przy przeładowaniu.
+.IP \fB\-c\fP
+Anuluj już rozpoczęte wyłączanie systemu. Przy tej opcji nie jest, oczywiście,
+możliwe podanie argumentu \fBczas\fP, ale możesz wprowadzić w wierszu poleceń
+komunikat wyjaśniający, który zostanie przesłany do wszystkich użytkowników.
+.IP \fIczas\fP
+Kiedy wyłączyć system.
+.IP \fIostrzeżenie\fP
+Komunikat ostrzegawczy, jaki ma zostać wysłany do wszystkich użytkowników.
+.PP
+Argument \fIczas\fP może posiadać różne formaty. Po pierwsze, może to być czas
+absolutny (ustalona godzina) w formacie \fIhh:mm\fP, gdzie \fIhh\fP jest godziną (1 lub 2 cyfry)
+a \fImm\fP minutami godziny (dwucyfrowo). Po drugie, może być w formacie
+\fB+\fP\fIm\fP, gdzie \fIm\fP jest liczbą minut do odczekania.
+Słowo \fBnow\fP (teraz) jest równoważnikiem \fB+0\fP.
+.PP
+Jeśli shutdown wywoływany jest z czasem opóźnienia, to tworzy plik
+sygnalizacyjny (advisory file)
+.I /etc/nologin
+powodujący, że programy takie jak \fIlogin(1)\fP nie zezwalają na nowe
+logowania użytkowników. Shutdown usuwa ten plik tylko wtedy, gdy zostanie
+zatrzymany przed wysłaniem sygnału do init (tj. zostanie anulowany lub coś
+się nie udało). W przeciwnym wypadku za usunięcie tego pliku, by użytkownicy
+mogli się logować, odpowiedzialne są systemowe skrypty inicjujące i kończące.
+.PP
+Flaga \fB\-f\fP oznacza `reboot fast' (szybkie przeładowanie). Tworzy
+plik sygnalizacyjny \fI/fastboot\fP, który może być testowany przez system
+przy ponownym uruchamianiu. Plik startowy rc może sprawdzać, czy powyższy plik
+istnieje i decydować o zaniechaniu uruchamiania \fBfsck\fP(1), gdyż system
+został wyłączony prawidłowo. Następnie proces startowy powinien usunąć
+\fI/fastboot\fP.
+.PP
+Flaga \fB\-F\fP oznacza `force fsck' (wymuś fsck). Tworzy plik sygnalizacyjny
+\fI/forcefsck\fP, który może być testowany przez system przy ponownym
+uruchamianiu. Plik startowy rc może sprawdzać, czy powyższy plik
+istnieje i decydować o uruchomieniu \fBfsck\fP(1) ze specjalną flagą `force',
+tak by zostały sprawdzone nawet poprawnie odmontowane systemy plików.
+Następnie proces startowy powinien usunąć \fI/forcefsck\fP.
+.PP
+Flaga \fB-n\fP powoduje, że \fBshutdown\fP nie będzie wywoływać \fBinit\fP, 
+ale zabije samodzielnie wszystkie działające procesy.
+\fBshutdown\fP wyłączy następnie obsługę udziałów (quota), rozliczeń
+i obszaru wymiany (swap) oraz odmontuje wszystkie systemy plików.
+.SH KONTROLA DOSTĘPU
+\fBshutdown\fP może być wywoływane z \fBinit\fP(8), gdy zostaną wciśnięte
+magiczne klawisze \fBCTRL-ALT-DEL\fP, przez utworzenie odpowiedniego wpisu
+w \fI/etc/inittab\fP. Oznacza to, że każdy, kto posiada fizyczny dostęp
+do klawiatury konsoli może wyłączyć system. By zapobiec takiej sytuacji,
+\fBshutdown\fP może sprawdzać, czy na jednej z wirtualnych konsoli zalogowany
+jest upoważniony użytkownik. Jeżeli \fBshutdown\fP zostanie wywołany
+z argumentem \fB-a\fP (dodaj go do wywołania shutdown w /etc/inittab), to
+sprawdza czy istnieje plik \fI/etc/shutdown.allow\fP. Następnie porównuje
+nazwy użytkowników z tego pliku z listą osób zalogowanych na wirtualnej konsoli
+(z \fI/var/run/utmp\fP). Shutdown będzie kontynuować pracę tylko wtedy, gdy
+zalogowany jest jeden z upoważnionych użytkowników \fBlub root\fP.
+W przeciwnym wypadku wyświetli komunikat
+.sp 1
+.nf
+\fBshutdown: no authorized users logged in\fP
+[shutdown: brak zalogowanych upoważnionych użytkowników]
+.fi
+.sp 1
+na (fizyczną) konsolę systemową. Plik \fI/etc/shutdown.allow\fP zawiera po
+jednej nazwie (loginname) użytkownika w wierszu. Dozwolone są wiersze puste
+i wiersze komentarzy (poprzedzone znakiem \fB#\fP).
+Obecnie dla tego pliku istnieje ograniczenie do 32 użytkowników.
+.SH PLIKI
+.nf
+.I /fastboot
+.I /etc/inittab
+.I /etc/init.d/halt
+.I /etc/init.d/reboot
+.I /etc/shutdown.allow
+.fi
+.SH BŁĘDY
+Nie jest to faktycznie błąd, ale większość użytkowników zapomina o podaniu
+argumentu \fIczas\fP i jest zakłopotana komunikatem o błędzie dawanym przez
+\fBshutdown\fP. Argument \fIczas\fP jest obowiązkowy; w 90 procentach
+przypadków argumentem tym będzie słowo \fBnow\fP.
+.SH AUTOR
+Miquel van Smoorenburg, miquels@cistron.nl
+.SH "ZOBACZ TAKŻE"
+.BR fsck (8),
+.BR init (1),
+.BR halt (8),
+.BR reboot (8).

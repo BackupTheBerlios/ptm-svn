@@ -1,0 +1,61 @@
+.\" Tłumaczenie na podstawie wersji man-pages 1.47 - grudzień 2001
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\" ------------
+.TH FWIDE 3  1999-11-17 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fwide \- ustawienie i określenie orientacji strumienia FILE
+.SH SKŁADNIA
+.nf
+.B #include <wchar.h>
+.sp
+.BI "int fwide(FILE *" stream ", int " mode );
+.fi
+.SH OPIS
+Gdy \fImode\fP jest zerem, funkcja \fBfwide\fP podaje aktualną orientację
+strumienia \fIstream\fP. Zwraca ona wartość > 0, gdy \fIstream\fP jest
+zorientowany szerokoznakowo, tzn. gdy we/wy dla szerokich znaków jest
+dozwolone, a we/wy dla znaków typu char nie jest dozwolone. Wartość < 0
+zwraca, gdy \fIstream\fP jest zorientowany bajtowo, tzn. gdy we/wy dla znaków
+typu char jest dozwolone, a we/wy dla szerokich znaków nie jest dozwolone.
+Zero jest zwracane, gdy strumień \fIstream\fP nie posiada jeszcze orienatcji;
+w tym przypadku następna operacja we/wy może zmienić orientację (na bajtową,
+jeśli będzie to operacja we/wy dla znaków typu char, a na szerokoznakową,
+jeśli będzie to operacja we/wy dla szerokich znaków).
+.PP
+Raz uzyskana przez strumień orientacja nie może zostać zmieniona aż do
+zamknięcia strumienia.
+.PP
+Gdy \fImode\fP jest różne od zera, to funkcja \fBfwide\fP najpierw próbuje
+ustawić orientację strumienia \fIstream\fP (na szerokoznakową, gdy
+\fImode\fP > 0, a na bajtową, gdy \fImode\fP < 0). Następnie zwraca wartość
+określającą aktualną orientację, jak powyżej.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBfwide\fP zwraca orientację strumienia, po jej ewentualnej zmianie.
+Zwrócenie wartości > 0 oznacza orientację szerokoznakową. Zwrócenie wartości
+< 0 oznacza orientację bajtową. Zwrócenie wartości zero oznacza orientację
+nieokreśloną.
+.SH "ZGODNE Z"
+ISO/ANSI C, UNIX98
+.SH "ZOBACZ TAKŻE"
+.BR fprintf (3),
+.BR fwprintf (3)
+.SH UWAGI
+Wyprowadzanie szerokich znaków do zorientowanego bajtowo strumienia może być
+wykonane za pomocą funkcji \fBfprintf\fP przy użyciu dyrektyw %lc i %ls.
+.PP
+Wyprowadzanie zorientowane na znakoi typu char do zorientowanego
+szerokoznakowo strumienia może być wykonane za pomocą funkcji \fBfwprintf\fP
+przy użyciu dyrektyw %c i %s.

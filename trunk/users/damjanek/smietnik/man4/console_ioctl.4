@@ -1,0 +1,587 @@
+.\" Copyright (c) 1995 Jim Van Zandt <jrv@vanzandt.mv.com> and aeb
+.\" Sun Feb 26 11:46:23 MET 1995
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified, Sun Feb 26 15:04:20 1995, faith@cs.unc.edu
+.\" Modified, Thu Apr 20 22:08:17 1995, jrv@vanzandt.mv.com
+.\" Modified, Mon Sep 18 22:32:47 1995, hpa@storm.net (H. Peter Anvin)
+.\" 
+.\" 
+.\" Polish translation (c) nov.1996 piotr.pogorzelski@ippt.gov.pl
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Mar 2002,
+.\"              manpages 1.48
+.\" "
+.TH CONSOLE_IOCTL 4 1995-09-18 "Linux" "Linux - Podręcznik programisty Linuksa"
+.SH NAZWA
+konsolowe ioctl'e \- funkcje ioctl konsoli i konsoli wirtualnych
+.SH OPIS
+Przedstawione poniżej argumenty funkcji \fBioctl()\fP są specyficzne
+dla Linuksa. Wymagają trzeciego parametru, nazywanego tu \fIargp\fP.
+.IP \fBKDGETLED\fP
+Pobiranie stanu diod LED. \fIargp\fP wskazuje na zmienną typu long int. Trzy
+najmniej znaczące bity \fI*argp\fP wskazują aktualny stan diod wg schematu:
+
+    LED_CAP       0x04   dioda caps lock 
+    LEC_NUM       0x02   dioda num lock 
+    LED_SCR       0x01   dioda scroll lock 
+
+.IP \fBKDSETLED\fP
+Ustienie diod LED. Diody są ustawiane odpowiednio do wartości trzech najmniej
+znaczących bitów \fIargp\fP. Jednakże jeśli ustawiony jest najbardziej
+znaczacy bit, stan diod wraca do stanu normalnego: odzwierciedla stan funkcji
+klawiatury caps lock, num lock i scroll lock.
+.LP
+W jądrach przed 1.1.54 diody odzwierciedlały jedynie stan znaczników
+klawiatury, a ioctl KDGETLED/KDSETLED zmieniały również stan tych znaczników.
+Od wersji 1.1.54 diody mogą wyświetlać dowolną informację, lecz standardowo
+wskazują stan znaczników klawiatury.
+Do zmiany znaczników klawiatury służą dwa następne wywołania funkcji ioctl.
+
+.IP \fBKDGKBLED\fP
+Pobranie wartości znaczników klawiatury: CapsLock, NumLock, ScrollLock
+(znaczników, nie stanu diod). \fIargp\fP wskazuje na zmienną typu char, do
+której zostaną przepisabne wartości znaczników.
+Najniższe trzy bity (maska 0x7) odzwierciedlają stan znaczników, a trzy
+najniższe bity następnego bajtu (maska 0x70) zawierają domyślne ustawienie
+znaczników. (Od wersji 1.1.54.)
+
+.IP \fBKDSKBLED\fP
+Ustawienie wartości znaczników klawiatury: CapsLock, NumLock, ScrollLock
+(znaczników, nie stanu diod). \fIargp\fP zawiera pożądany stan znaczników.
+Trzy najniższe bity (maska 0x7) zawierają stan znaczników, a trzy najniższe
+bity następnego bajtu (maska 0x70) zawierają domyślne ustawienie znaczników.
+(Od wersji 1.1.54.)
+
+.IP \fBKDGKBTYPE\fP
+Pobiranie typ klawiatury. Przekazuje wartość KB_101, zdefiniowaną jako 0x02;
+
+.IP \fBKDADDIO\fP
+Dodanie portu we/wy jako poprawnego. Rownoważne funkcji ioperm(arg,1,1).
+
+.IP \fBKDDELIO\fP
+Usunięcie portu we/wy z listy poprawnych portów. Równoważne funkcji
+ioperm(arg,1,0).
+
+.IP \fBKDENABIO\fP
+Włączenie dostępu do portów we/wy karty graficznej. Równoważne wywołaniu
+ioperm(0x3b4, 0x3df-0x3b4+1, 1).
+
+.IP \fBKDDISABIO\fP
+Wyłączenie dostępu do portów we/wy karty graficznej. Równoważne wywołaniu
+ioperm(0x3b4, 0x3df-0x3b4+1, 0).
+
+.IP \fBKDSETMODE\fP
+Włączenie trybu tekstowego/graficznego. \fIargp\fP przyjmuje wartość:
+
+    KD_TEXT       0x00
+    KD_GRAPHICS   0x01
+
+.IP \fBKDGETMODE\fP
+Pobranie informacji o ustawionym trybie: tekstowy/graficzny. \fIargp\fP
+wskazuje na zmienną typu long, której zostanie nadana jedna z podanych wyżej
+wartości.
+
+.IP \fBKDMKTONE\fP
+Wygenerowanie dźwięku o określonej długości.
+Niższe 16 bitów \fIargp\fP określa czas wyrażony w cyklach zegara, a
+wyższe 16 bitów podaje czas trwania w milisekundach.
+Jeśli czas trwania jest równy zeru, dźwięk zostaje wyłączony.
+Sterowanie jest przekazywane natychmiast.
+Na przyklad, \fIargp\fP = (125<<16) + 0x637 określa dźwięk zwykle skojarzony
+ze znakiem Ctrl-G. (Od wersji 0.99pl1; nie działa w 2.1.49-50.)
+
+.IP \fBKIOCSOUND\fP
+Włączenie lub wyłączenie generowanie dźwięków. Niższe 16 bitów \fIargp\fP 
+określa czas trwania w cyklach zegara (tzn. \fIargp\fP =
+1193180/częstostliwość). Jeśli \fIargp\fP = 0 wówczas dźwiek zostaje
+wyłączony. W każdym z przypadków sterowanie jest przekazywane natychmiast.
+
+.IP \fBGIO_CMAP\fP
+Pobranie z jądra aktualnie obowiązującej mapy kolorów. \fIargp\fP wskazuje
+na 48-bajtową tablicę. (Od wersji 1.3.3)
+
+.IP \fBPIO_CMAP\fP
+Zmiana domyślnej mapy kolorów trybu tekstowego. \fIargp\fP wskazuje na
+48-bajtową tablicę, która zawiera kolejno wartości Red, Green i Blue
+dla dostępnych 16 kolotów ekranu: 0 brak, 255 pełna intensywność. 
+Domyślnymi kolorami są, w kolejności: czarny, ciemnoczerwony
+ciemnozielony, brązowy, ciemnoniebieski, ciemnopurpurowy, ciemny
+niebieskozielony, jasnoszary, ciemnoszary, jasnoczerwony, jasnozielony,
+żółty, jasnoniebieski, jasnopurpurowy, jasny niebieskozielony i biały.
+(Od wersji 1.3.3.)
+
+.IP \fBGIO_FONT\fP
+Pobranie 256-znakowego fontu ekranowego w rozszerzonym formacie.
+\fIargp\fP wskazuje na tablicę 8192 bajtów. Jeśli aktualnie załadowany font
+jest jednym z fontów 512-bajtowych lub jeśli konsola nie
+jest w trybie tekstowym, funkcja powraca z kodem błędu \fBEINVAL\fP.
+
+.IP \fBGIO_FONTX\fP
+Pobranie fontu ekranowego i związanych z nim informacji. \fIargp\fP wskazuje
+na strukturę typu struct consolefontdesc (patrz \fBPIO_FONTX\fP). Przed
+wywołaniem funkcji, polu \fIcharcount\fP powinna zostać nadana wrtość równa
+maksymalnej liczbie znaków, jakie się zmieszczą w buforze wskazywanym przez
+\fIchardata\fP. Po zakończeniu, \fIcharcount\fP i \fIcharheight\fP są
+wypełniane odpowiednimi informacjami dotyczącymi aktualnie załadowanego fontu,
+a tablica \fIchardata\fP zawiera informacje o foncie, o ile przekazana wartość
+\fIcharcount\fP wskazywała wystarczającą ilość miejsca; w przeciwnym razie
+bufor nie jest modyfikowany, a zmiennej \fIerrno\fP nadawana jest wartość
+\fBENOMEM\fP. (Od wersji 1.3.1.)
+
+.IP \fBPIO_FONT\fP
+Ustawia 256-znakowy font ekranowy. Jest on ładowany do generatora znaków karty
+EGA/VGA. \fIargp\fP wskazuje 8192 bajtową mapę z 32 bajtami na jeden znak.
+W przypadku fontów 8x\fIN\fP (0 < \fIN\fP <= 32) wykorzystywane jest tylko
+pierwszych \fIN\fP bajtów. Ta procedura unieważnia jednocześnie odwzorowanie
+Unicode.
+
+.IP \fBPIO_FONTX\fP
+Ustawia font ekranowy i związane z nim informacje na temat jego prezentacji.
+\fIargp\fP wskazuje strukturę
+
+.nf
+struct consolefontdesc {
+        u_short \fIcharcount\fP;      /* liczba znaków w foncie (256 lub 512) */
+        u_short \fIcharheight\fP;     /* liiczba wierszy w foncie (1-32) */
+        char *\fIchardata\fP;         /* dane fontu w postaci rozszerzonej */
+};
+.fi
+
+Jeśli jest to konieczne, ekran zostanie odpowienio przeskalowany,
+a do odpowiednich procesów przesłany będzie sygnał \fBSIGWINCH\fP.
+Ta procedura unieważnia jednocześnie odwzorowanie Unicode.
+
+.IP \fBPIO_FONTRESET\fP
+Inicjalizuje czcionkę ekranową, rozmiar i odwzorowanie Unicode do wartości
+ustawionych podczas startu sytemu. \fIargp\fP nie jest używany, lecz powinien
+mieć wartość \fBNULL\fP, aby zapewnić zgodność z przyszłymi
+wersjami jądra. (Od wersji 1.3.28.)
+
+.IP \fBGIO_SCRNMAP\fP
+Pobranie z jądra odwzorowania ekranu. \fIargp\fP wskazuje na obszar
+o rozmiarze E_TABSZ, który jest wypełniany danymi fontu służącymi do
+wyświetlenia poszczególnych znaków. W przypadku gdy aktualnie załadowany font
+zawiera więcej niż 256 znaków, ta procedura zwraca raczej bezwartościowe
+informacje.
+
+.IP \fBGIO_UNISCRNMAP\fP
+Pobranie z jądra pełnego odwzorowania Unicode. \fIargp\fP wskazuje na obszar
+o rozmiarze E_TABSZ*sizeof(unsigned short), który jest wypełniany kodami
+Unicode odpowiednimi dla poszczególnych znaków. Specjalny zestaw kodów
+Unicode, rozpoczynający się od U+F000, służy do reprezentacji odwzorowania
+,,bezpośrednio na font'' (,,direct to font''). (Od wersji 1.3.1.)
+
+.IP \fBPIO_SCRNMAP\fP
+Załadowanie do jądra ,,definiowanej przez użytkownika'' (czwartej) tabeli
+odwzorowującej bajty na symbole ekranu konsoli, \fIargp\fP wskazuje na obszar
+o rozmiarze E_TABSZ.
+
+.IP \fBPIO_UNISCRNMAP\fP
+Załadowanie do jądra ,,definiowanej przez użytkownika'' (czwartej) tabeli
+odwzorowującej bajty na kody Unicode, które są z kolei tłumaczone na symbole
+ekranowe zgodnie z aktualnie załadowaną tabelą odwzorowania Unicode-na-font.
+Do bezpośredniego odwzorowania na symbole ekranowe mogą być wykorzystywane
+specjalne kody Unicode rozpoczynające się od U+F000. (Od wersji 1.3.1.)
+
+.IP \fBGIO_UNIMAP\fP
+Pobranie z jądra mapy odwzorowania Unicode-na-font. \fIargp\fP wskazuje na
+strukturę
+
+.nf
+struct unimapdesc {
+        u_short \fIentry_ct\fP;
+        struct unipair *\fIentries\fP;
+};
+.fi
+
+w której \fIentries\fP wskazują na tablicę struktur
+
+.nf
+struct unipair {
+        u_short \fIunicode\fP;
+        u_short \fIfontpos\fP;
+};
+.fi
+
+(Od wersji 1.1.92.)
+
+.IP \fBPIO_UNIMAP\fP
+Załadowanie do jądra mapy odwzorowania Unicode-na-font. \fIargp\fP wskazuje
+na strukturę typu struct unimapdesc. (Od wersji 1.1.92.)
+
+.IP \fBPIO_UNIMAPCLR\fP
+Wyczyszczenie tabeli, jeśli możliwe proponuje algorytm z mieszaniem (hash).
+
+.nf 
+struct unimapinit {
+        u_short \fIadvised_hashsize\fP;  /* 0 przy braku opinii */
+        u_short \fIadvised_hashstep\fP;  /* 0 przy braku opinii */
+        u_short \fIadvised_hashlevel\fP; /* 0 przy braku opinii */
+};
+.fi
+
+(Od wersji 1.1.92.)
+
+.IP \fBKDGKBMODE\fP
+Pobranie aktualnego stanu klawiatury. \fIargp\fP wskazuje na zmienną typu
+long, której zostanie nadana wartość równa jednej z poniższych stałych:
+
+    K_RAW         0x00   
+    K_XLATE       0x01   
+    K_MEDIUMRAW   0x02   
+    K_UNICODE     0x03
+
+.IP \fBKDSKBMODE\fP
+Ustawienie aktualnego stanu klawiatury. \fIargp\fP wskazuje na zmienną typu
+long o wartości równej jednej z powyższych stałych.
+
+.IP \fBKDGKBMETA\fP
+Pobranie trybu obsługi klawisza meta. \fIargp\fP wskazuje na zmienną typu
+long, której zostanie nadana wartość równa jednej z poniższych stałych:
+
+    K_METABIT     0x03   ustawienie najwyższego bitu 
+    K_ESCPREFIX   0x04   kod przedrostkowy ucieczki
+
+.IP \fBKDSKBMETA\fP
+Ustawienie trybu obsługi klawisza meta. \fIargp\fP wskazuje na zmienną typu
+long o wartości równej jednej z powyższych stałych:
+
+.IP \fBKDGKBENT\fP
+Pobranie jednej pozycji z tabeli translacji klawiszy (kod klawisza (keycode)
+na kod akcji). \fIargp\fP wskazuje na strukturę
+
+.nf
+struct kbentry {
+    u_char \fIkb_table\fP;
+    u_char \fIkb_index\fP;
+    u_short \fIkb_value\fP;
+};
+.fi
+
+której pierwsze dwa pola mają nadane wartości o następującym znaczeniu:
+\fIkb_table\fP określa rodzaj tabeli (0 <= \fIkb_table\fP < MAX_NR_KEYMAPS),
+a \fIkb_index\fP oznacza kod klawisza (keycode) (0 <= \fIkb_index\fP <
+NR_KEYS).
+Polu \fIkb_value\fP zostaje nadany odpowiedni kod akcji,
+K_HOLE, jeśli nie ma takiego klawisza,
+a K_NOSUCHMAP, jeśli \fIkb_table\fP jest niepoprawne.
+
+.IP \fBKDSKBENT\fP
+Nadanie wartości jednej pozycji tabeli translacji. \fIargp\fP wskazuje na
+strukturę typu struct kbentry.
+
+.IP \fBKDGKBSENT\fP
+Pobranie łańcucha znaków przypisanego klawiszowi funkcyjnemu. \fIargp\fP
+wskazuje na strukturę
+
+.nf
+struct kbsentry {
+    u_char \fIkb_func\fP;
+    u_char \fIkb_string\fP[512];
+};
+.fi
+
+\fIkb_string\fP przypisywany jest zakończony znakiem NUL łańcuch znaków,
+odpowiadający kodowi akcji \fIkb_func\fP-tego klawisza funkcyjnego.
+
+.IP \fBKDSKBSENT\fP
+Przypisuje klawiszowi funkcyjnemu łańcuch znaków. \fIargp\fP wskazuje na
+strukturę typu struct kbsentry.
+
+.IP \fBKDGKBDIACR\fP
+Odczytanie tabeli akcentów jądra. \fIargp\fP wskazuje na strukturę
+
+.nf
+struct kbdiacrs { 
+    unsigned int \fIkb_cnt\fP;
+    struct kbdiacr \fIkbdiacr\fP[256];
+};
+.fi
+
+gdzie \fIkb_cnt\fP oznacza liczbę pozycji w tablicy, z których
+każda jest strukturą
+
+struct kbdiacr { u_char \fIdiacr\fP, \fIbase\fP, \fIresult\fP;
+};
+
+.IP \fBKDGETKEYCODE\fP
+Odczytanie pozycji z tabeli kodów klawiszy (scan code to keycode).
+\fIargp\fP wskazuje na strukturę
+
+.nf
+struct kbkeycode { unsigned int \fIscancode\fP, \fIkeycode\fP; };
+.fi
+
+\fIkeycode\fP otrzymuje wartość odpowiednią dla podanego \fIscancode\fP.
+(Tylko z zakresu 89 <= \fIscancode\fP <= 255.   
+Dla 1 <= \fIscancode\fP <= 88, jest \fIkeycode\fP==\fIscancode\fP.)
+(Od wersji 1.1.63.)
+
+.IP \fBKDSETKEYCODE\fP
+Zapisanie pozycji w tabeli kodów klawiszy jądra. \fIargp\fP wskazuje na
+strukture typu struct kbkeycode. (Od wersji 1.1.63.)
+
+.IP \fBKDSIGACCEPT\fP
+Proces wywołujący tę funkcję wskazuje swą chęć do przyjęcia sygnału
+\fIargp\fP, generowanego przez wciśnięcie odpowiedniej kombinacji klawiszy.
+(1 <= \fIargp\fP <= NSIG).
+(Patrz spawn_console() w linux/drivers/char/keyboard.c.)
+
+.IP \fBVT_OPENQRY\fP
+Przekazanie pierwszej dostępnej (ale nie otwartej) konsoli. \fIargp\fP
+wskazuje na zmienną typu int, której zostanie nadana wartość równa numerowi
+konsoli wirtualnej (1 <= \fI*argp\fP <= MAX_NR_CONSOLES).
+
+.IP \fBVT_GETMODE\fP
+Pobranie trybu aktywnej konsoli wirtualnej. \fIargp\fP wskazuje na struktuę
+
+.nf
+struct vt_mode {
+    char \fImode\fP;     /* tryb konsoli wirtualnej */
+    char \fIwaitv\fP;    /* jeśli ustawione, czeka przy zapisie,
+                            jeśli nie jest aktywna */
+    short \fIrelsig\fP;  /* sygnał w przypadku zwolnienia */
+    short \fIacqsig\fP;  /* sygnał w przypadku uzyskania */
+    short \fIfrsig\fP;   /* niewykorzystane (równe 0) */
+};
+.fi
+
+..., w której przekazywany jest tryb pracy aktualnej konsoli wirtualnej (vt).
+\fImode\fP może przyjmować następujące wartości:
+
+    VT_AUTO       autoamtyczne przełączanie vt
+    VT_PROCESS    przełączanie sterowane przez proces
+    VT_ACKACQ     potwierdzanie przełączenia
+
+.IP \fBVT_SETMODE\fP
+Ustawienie trybu aktywnej konsoli wirtualnej. \fIargp\fP wskazuje na strukturę
+typu struct vt_mode.
+
+.IP \fBVT_GETSTATE\fP
+Ustawienie globalne informacje o stanie konsoli wirtualnej. \fIargp\fP
+wskazuje na strukturę
+
+.nf
+struct vt_stat {
+    ushort \fIv_active\fP;  /* aktywna konsola wirtualna */
+    ushort \fIv_signal\fP;  /* sygnał do wysłania */
+    ushort \fIv_state\fP;   /* maska bitowa konsoli wirt. */
+};
+.fi
+
+Dla każej aktualnie używanej konsoli ustawiany jest odpowiedni bit w polu
+\fIv_state\fP. (Jądra od 1.0 do 1.1.92.)
+
+.IP \fBVT_RELDISP\fP
+Zwolnienie ekranu.
+
+.IP \fBVT_ACTIVATE\fP
+Przełączenie na konsolę \fIargp\fP (1 <= \fIargp\fP <= MAX_NR_CONSOLES).
+
+.IP \fBVT_WAITACTIVE\fP
+Oczekiwanie na aktywację konsoli wirtualnej \fIargp\fP.
+
+.IP \fBVT_DISALLOCATE\fP
+Zwolnienie pamięci przydzielonej dla konsoli wirtualnej \fIargp\fP.
+(Od wersji 1.1.54.)
+
+.IP \fBVT_RESIZE\fP
+Zmiana wybrażenia jądra o rozmiarach ekranu. \fIargp\fP wskazuje na strukturę
+
+.nf
+struct vt_sizes {
+    ushort \fIv_rows\fP;       /* liczba wierszy  */
+    ushort \fIv_cols\fP;       /* liczba kolumn */
+    ushort \fIv_scrollsize\fP; /* aktualnie nie używane */
+};
+.fi
+
+Należy pamiętać, że nie zmienia to trybu karty graficznej
+Patrz resizecons(8). (Od wersji 1.1.54.) 
+
+.IP \fBVT_RESIZEX\fP
+Zmiana wyobrażenia jądra o różnych parametrach ekranu. \fIargp\fP wskazuje na
+strukturę
+
+.nf
+struct vt_consize {
+        ushort \fIv_rows\fP;          /* liczba wierszy */
+        ushort \fIv_cols\fP;          /* liczba kolumn */
+        ushort \fIv_vlin\fP;          /* liczba wierszy pikseli na ekranie */
+        ushort \fIv_clin\fP;          /* liczba wierszy pikseli na znak */
+        ushort \fIv_vcol\fP;          /* liczba kolumn pikseli na ekranie */
+        ushort \fIv_ccol\fP;          /* liczba kolumn pikseli na znak */
+};
+.fi
+
+Każdy z parametrów może mieć wartość zerową, co oznacza ,,nie zmieniać'',
+lecz jeśli jednoczęsnie zmienianych jest kilka parametrów, muszą one być ze
+sobą zgodne. Należy pamiętać, że nie zmienia to trybu karty graficznej
+Patrz resizecons(8). (Od wersji 1.3.3.)
+
+.PP
+Działanie poniższych funkcji ioctl jest zależne od wartości pierwszego bajtu
+struktury wskazywanej przez \fIargp\fP, tutaj oznaczanego jako \fIsubcode\fP.
+Mogą z nich korzystać jedynie administrator i właściciel aktualnej konsoli.
+.IP "\fBTIOCLINUX, subcode=0\fP"
+Zrzut ekranu
+Zniknęlo w 1.1.92. (Dla jądra 1.1.92 i późniejszych, obecnie należy zamiast
+tego czytać z /dev/vcsN lub /dev/vcsaN.)  
+
+.IP "\fBTIOCLINUX, subcode=1\fP"
+Pobranie inforamcji o zadaniu. Zniknęło w 1.1.92.
+
+.IP "\fBTIOCLINUX, subcode=2\fP"
+Ustawienie zaznaczenia.
+\fIargp\fP wskazuje na strukturę
+
+   struct {char \fIsubcode\fP;
+       short \fIxs\fP, \fIys\fP, \fIxe\fP, \fIye\fP;
+       short \fIsel_mode\fP;
+   }
+
+\fIxs\fP i \fIys\fP oznaczają początkową kolumnę i wiersz
+\fIxe\fP i \fIye\fP oznaczają końcową kolumnę i wiersz.  
+(Górny lewy róg ma współrzędne wiersz=kolumna=1.)
+\fIsel_mode\fP jest równe 0 w przypadku zaznaczania znak po znaku, 
+1 - słowo po słowie,
+lub 2 - wiersz po wierszu.
+Zaznaczone znaki ekranowe są podświetlone i zachowane w statycznej tablicy
+sel_buffer zdefiniowanej w devices/char/console.c.
+
+.IP "\fBTIOCLINUX, subcode=3\fP"
+Wstawienie zanaczenia.
+Znaki znajdujące się w buforze zaznaczenia są zapisywane do \fIfd\fP.
+
+.IP "\fBTIOCLINUX, subcode=4\fP"
+Odtworzenie ekranu po wygaszeniu.
+
+.IP "\fBTIOCLINUX, subcode=5\fP"
+Wypełnienie 256-bitowej tablicy definującej znaki w "słowie" dla
+zaznaczania "słowo-po-słowie". (Od wersji 1.1.32.)
+
+.IP "\fBTIOCLINUX, subcode=6\fP"
+\fIargp\fP wskazuje na zmienną typu char, której nadawana jest wartość
+zmiennej jądra \fIshift_state\fP. (Od wersji 1.1.32.)
+
+.IP "\fBTIOCLINUX, subcode=7\fP"
+\fIargp\fP wskazuje na zmienną typu char, której nadawana jest wartość
+zmiennej jądra \fIreport_mouse\fP. (Od wersji 1.1.33.)
+
+.IP "\fBTIOCLINUX, subcode=8\fP"
+Zrzucenie informacji o szerokości i wysokości ekranu, pozycji kursora
+i wszystkich parach znak-atrybuty. (Tylko jądra od 1.1.67 do 1.1.91.  
+Począwszy od 1.1.92 można przecztyać wszystkie te inforamcje z /dev/vcsa*.)
+
+.IP "\fBTIOCLINUX, subcode=9\fP"
+Odtworzenie rozmiaru ekranu, położenia kursora i wszystkich par znak-atrybut.
+(Tylko jądra od 1.1.67 do 1.1.91. 
+Począwszy od jądra 1.1.92, można to wykonać przez zapis do /dev/vcsa*.)  
+
+.IP "\fBTIOCLINUX, subcode=10\fP"
+Obsługuje funkcję oszczędzania energii (Power Saving) monitorów nowej
+generacji. Tryb wygaszania ekranu VESA przyjmuje wartość \fIargp\fP[1], co
+powoduje sterowanie wygaszaniem ekranu w sposób następujący:
+
+    \fI0\fP: Wygaszanie ekranu jest wyłączone.
+
+    \fI1\fP: Aktualne zawartości rejestrów karty graficznej zostają zachowane,
+następnie sterownik zostaje zaprogramowany tak, aby wyłączył impulsy
+synchronizacji pionowej. Powoduje to przestawienie monitora w tryb oczekiwania
+(standby). Jeśli monitor posiada licznik czasowy Off_Mode, wtedy może
+ewentualnie sam wyłączyć zasilanie.
+
+    \fI2\fP: Zostają zachowane aktualne ustawienia, następnie wyłączane są
+zarówno impulsy synchronizacji zarówno pionowej, jak i poziomej. Powoduje to
+wyłaczenie monitora (tryb "off"). Opcję tę należy wybrać jeśli monitor nie
+posiada licznika czasowego Off_Mode lub jeśli chcemy aby monitor wyłączył się
+natychmiast. (\fIOstrzeżenei:\fP Częste wyłączanie zasilania może uszkodzić
+monitor.)
+
+(Od wersji 1.1.76.)
+
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracane jest 0. Po błędzie zwracane jest -1 i
+ustawiana jest zmienna \fIerrno\fP.
+.SH BŁĘDY
+\fIerrno\fP może przyjmować następujące wartości:
+
+.TP
+.B EBADF
+deskryptor pliku jest nieprawidłowy.
+.TP
+.B
+ENOTTY
+deskryptor pliku nie jest skojarzony ze specjalnym urządzeniem znakowym lub
+podane polecenie nie ma do niego zastosowania.
+.TP
+.B EINVAL
+deskryptor pliku lub \fIargp\fP jest niepoprawny.
+.TP
+.B EPERM
+naruszenie uprawnień.
+.SH OSTRZEŻENIE
+Nie należy traktować tej strony podręcznika jak dokumentacji funkcji ioctl
+dla konsoli Linuksa. Jest ona przeznaczona dla ciekawskich jako alternatywa
+wobec czytania zródeł jądra. Funkcje ioctl są niudokumentowanymi funkcjami
+wewnętrznymi Linuksa, które mogą ulec zmianie bez ostrzeżenia (i rzeczywiście,
+ten dokument odzwierciedla w sposób mniej lub bardziej dokładny sytuację dla
+jądra w wersji 1.1.94; istnieje wiele mniej i bardziej znaczących różnic
+w stosunku do poprzednich wersji.)
+
+Bardzo często wywołania funkcji ioctl są wprowadzane w celu komunikacji
+pomiędzy jądrem i szczególnymi, dobrze znanymi programami (fdisk, hdparm,
+setserial, tunelp, loadkeys, selection, setfont itd.), i ich zachowanie
+zostanie zmienione, kiedy będzie tego wymagał któryś z tych programów.
+
+Programy korzystające z tych wywołań ioctl nie będą przenośne na inne systemy
+Unix, nie będą działać poprawnie ze starszymi wersjami jadra Linuksa, ani nie
+będą współpracować z przyszłymi wersjami jądra.
+
+Należy korzystać z funkcji zgodnych z POSIX.
+
+.SH "ZOBACZ TAKŻE"
+.BR kbd_mode (1),
+.BR loadkeys (1),
+.BR dumpkeys (1),
+.BR mknod (1),
+.BR setleds (1),
+.BR setmetamode (1),
+.BR ioperm (2),
+.BR execve (2),
+.BR fcntl (2),
+.BR termios (3),
+.BR console (4),
+.BR console_codes (4),
+.BR mt (4),
+.BR sd (4),
+.BR tty (4),
+.BR ttys (4),
+.BR tty_ioctl (4),
+.BR vcs (4),
+.BR vcsa (4),
+.BR charsets (7),
+.BR mapscrn (8),
+.BR setfont (8),
+.BR resizecons (8),
+.IR /usr/include/linux/kd.h ,
+.I /usr/include/linux/vt.h

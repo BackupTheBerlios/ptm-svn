@@ -1,0 +1,76 @@
+.\" Tłumaczenie Jarosław Beczek (bexx@poczta.onet.pl)
+.\" --------
+.\" Copyright (C) 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:06:49 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Fri Aug 25 23:17:51 1995 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Wed Dec 18 00:47:18 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" --------
+.TH STRCPY 3 1993-04-11 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+strcpy, strncpy \- kopiuje łańcuch znaków
+.SH SKŁADNIA
+.nf
+.B #include <string.h>
+.sp
+.BI "char *strcpy(char *" dest ", const char *" src );
+.sp
+.BI "char *strncpy(char *" dest ", const char *" src ", size_t " n );
+.fi
+.SH OPIS
+Funkcja \fBstrcpy()\fP kopiuje łańcuch znaków wskazywany przez \fIsrc\fP
+(łącznie z kończącym znakiem `\\0') to tablicy wskazywanej przez
+\fIdest\fP. Łańcuchy nie mogą na siebie nachodzić. Łańcuch docelowy
+\fIdest\fP musi być wystarczająco długi, żeby pomieścić kopie \fIsrc\fP.
+.PP
+Funkcja \fBstrncpy()\fP jest podobna do \fBstrcpy()\fP, z tym że kopiuje nie
+więcej niż \fIn\fP bajtów z \fIsrc\fP. Dlatego, jeżeli nie było
+znaku null wśród pierwszych \fIn\fP bajtów \fIsrc\fP, łańcuch skopiwany
+nie będzie zakończony znakiem null.
+.PP
+Jeżeli długość
+.I src
+jest mniejsza niż
+.IR n ,
+to reszta
+.I dest
+zostanie wypełniona znakiem null.
+.SH "WARTOŚĆ ZWRACANA"
+Funkcje \fBstrcpy()\fP i \fBstrncpy()\fP zwracają wskaźnik do
+łańcucha docelowego \fIdest\fP.
+.SH BŁĘDY
+Jeżeli łańcuch docelowy w funkcji \fBstrcpy()\fP nie jest wystarczająco długi
+(czytaj: programista jest głupi/leniwy, i nie sprawdził rozmiaru przed
+kopiowaniem) to może zdarzyć się cokolwiek.
+Przepełnianie łańcuchów o stałej długości jest ulubioną techniką crackerów.
+.SH "ZGODNE Z"
+SVID 3, POSIX, BSD 4.3, ISO 9899
+.SH "ZOBACZ TAKŻE"
+.BR bcopy (3),
+.BR memccpy (3),
+.BR memcpy (3),
+.BR memmove (3)

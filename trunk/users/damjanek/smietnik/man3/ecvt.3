@@ -1,0 +1,84 @@
+.\" {PTM/AB/0.1/15-12-1998/"ecvt, fcvt - konwersja liczby zmiennoprzecinkowej na łańcuch"}
+.\" tłumaczenie Adam Byrtek (abyrtek@priv.onet.pl)
+.\" Aktualizacja do man-pages 1.53 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" ------------
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:40:39 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Fri Jun 25 12:10:47 1999 by Andries Brouwer (aeb@cwi.nl)
+.\" ------------
+.TH ECVT 3 1999-06-25 "" "Podręcznik programisty Linuksa"
+.SH NAZWA
+ecvt, fcvt \- konwersja liczby zmiennoprzecinkowej na łańcuch
+.SH SKŁADNIA
+.B #include <stdlib.h>
+.sp
+.BI "char *ecvt(double " number ", int " ndigits ", int *" decpt ,
+.BI "int *" sign );
+.sp
+.BI "char *fcvt(double " number ", int " ndigits ", int *" decpt ,
+.BI "int *" sign );
+.SH OPIS
+Funkcja \fBecvt()\fP przekształca liczbę \fInumber\fP na łańcuch cyfr
+\fIndigits\fP (gdzie \fIndigits\fP jest ograniczone do zależnej od systemu
+wartości określonej przez precyzję typu double) zakończony znakiem NUL
+i zwraca wskaźnik do tego łańcucha. Najbardziej znacząca cyfra jest różna
+od zera, chyba że
+.I number
+wynosi zero. Najmniej znacząca cyfra jest zaokrąglana.
+Łańcuch nie zawiera kropki dziesiętnej, jednak pozycja kropki dziesiętnej
+względem początku łańcucha znajduje się w zmiennej *\fIdecpt\fP. Ujemna
+wartość *\fIdecpt\fP oznacza, że kropka dziesiętna znajduje się na lewo od
+początku łańcucha. Jeśli znak liczby \fInumber\fP jest ujemny, to *\fIsign\fP
+przyjmuje wartość różną od zera, a w przeciwnym przypadku 0. Gdy
+.I number
+jest zerem, nie jest określone czy *\fIdecpt\fP będzie równe 0 czy 1.
+.PP
+Funkcja \fBfcvt()\fP działa tak samo jak \fBecvt()\fP z tym wyjątkiem, że
+\fIndigits\fP określa liczbę cyfr po kropce dziesiętnej.
+.SH "WARTOŚĆ ZWRACANA"
+Zarówno funkcja \fBecvt()\fP jak i \fBfcvt()\fP zwracają wskaźnik do
+statycznego łańcucha zawierającego reprezentację ASCII liczby \fInumber\fP.
+Łańcuch statyczny jest nadpisywany po każdym wywołaniu \fBecvt()\fP lub
+\fBfcvt()\fP.
+.SH UWAGI
+Funkcje te są przestarzałe. Zlecane jest używania
+.IR sprintf ()
+zamiast nich.
+Linuksowe libc4 i libc5 określały typ
+.I ndigits
+jako
+.BR size_t .
+Nie wszystkie locale używają kropki jako znaku podstawy (`kropka dziesiętna').
+.SH "ZGODNE Z"
+SysVR2, XPG2
+.SH "ZOBACZ TAKŻE"
+.BR ecvt_r (3),
+.BR gcvt (3),
+.BR qecvt (3),
+.BR setlocale (3),
+.BR sprintf (3)

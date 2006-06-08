@@ -1,0 +1,87 @@
+.\" Tłumaczenie wersji man-pages 1.44 - grudzień 2001 PTM
+.\"    aktualizacja do man-pages 1.51 - czerwiec 2002
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"
+.\" Copyright 2001 John Levon <moz@compsoc.man.ac.uk>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Additions, aeb, 2001-10-17.
+.TH CLEARENV 3  2001-10-17 "Podręcznik programisty Linuksa"
+.SH NAZWA
+clearenv \- czyszczenie środowiska
+.SH SKŁADNIA
+.nf
+.B #include <stdlib.h>
+.sp
+.BI "int clearenv(void);"
+.fi
+.SH OPIS
+Funkcja \fBclearenv()\fP czyści środowisko z wszystkich par nazwa-wartość
+i nadaje zewnętrznej zmiennej
+.I environ
+wartość NULL.
+
+.SH "WARTOŚĆ ZWRACANA"
+Funkcja \fBclearenv()\fP zwraca zero przy pomyślnym zakończeniu, a wartość
+niezerową w przypadku błędu.
+.\" Most versions of Unix return -1 on error, or do not even have errors.
+.\" Glibc info and the Watcom C library document "a nonzero value".
+
+.SH DOSTĘPNOŚĆ
+Brak w libc4, libc5. W glibc począwszy od glibc 2.0.
+
+.SH "ZGODNE Z"
+Różne warianty Uniksa (DGUX, HPUX, QNX, ...).
+POSIX.9 (bindings for FORTRAN77).
+POSIX.1-1996 nie akceptował \fBclearenv()\fP ani \fIputenv()\fP, ale zmienił
+zdanie i ujął te funkcje w wykazie w jednym z późniejszychwydań standardu
+(por. B.4.6.1). Jednakże, SUSv3 dodaje jedynie \fIputenv()\fP a odrzuca
+\fBclearenv()\fP.
+
+.SH UWAGI
+Używana w aplikacjach, które są świadome zagrożeń. Jeśli jest niedostępna,
+to przypisanie
+.RS
+.nf
+	environ = NULL;
+.fi
+.RE
+prawdopodobnie zrobi to samo.
+.LP
+Na stronach podręcznika dla DGUX i Tru64 jest napisane: Jeśli
+.I environ
+zostało zmodyfikowane przez cokolwiek innego niż funkcje
+.IR putenv() ,
+.I getenv()
+lub
+.IR clearenv() ,
+to
+.BR clearenv()
+zwróci błąd, pozostawiając niezmienione środowisko procesu.
+.\" .LP
+.\" HPUX has a ENOMEM error return.
+.SH "ZOBACZ TAKŻE"
+.BR getenv (3),
+.BR putenv (3),
+.BR setenv (3),
+.BR unsetenv (3),
+.BR environ (5)

@@ -1,0 +1,327 @@
+.\" 
+.\" {PTM/PW/0.1/02-07-2000/"administruj dodatkowymi modułami IP Masquerading"}
+.\" Translation 2000 Paweł Wilk <siewca@dione.ids.pl>
+.\" 
+.\" Based on the original ipchains man page by Paul Russell
+.\" <Paul.Russell@rustcorp.com.au>
+.\"
+.\"	This program is free software; you can redistribute it and/or modify
+.\"	it under the terms of the GNU General Public License as published by
+.\"	the Free Software Foundation; either version 2 of the License, or
+.\"	(at your option) any later version.
+.\"
+.\"	This program is distributed in the hope that it will be useful,
+.\"	but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"	GNU General Public License for more details.
+.\"
+.\"	You should have received a copy of the GNU General Public License
+.\"	along with this program; if not, write to the Free Software
+.\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.\"
+.TH IPMASQADM 8 "Grudnia 1998" "" ""
+.SH NAZWA
+ipmasqadm \- administracja dodatkowymi modułami IP Masquerading
+.SH SKŁADNIA
+.BR "ipmasqadm <moduł> " "[opcje-specyficzne-dla-modułu]"
+.br
+.BR "ipmasqadm <moduł> -h"
+.sp
+.BR "ipmasqadm autofw " "opcje"
+.br
+.BR "ipmasqadm portfw " "opcje"
+.br
+.BR "ipmasqadm mfw " "opcje"
+.br
+.SH OPIS
+.B Ipmasqadm
+używane jest do konfigurowania dodatkowych udogodnień
+maskowania IP, zazwyczaj wspieranych przez dodatkowe
+moduły jądra.
+
+Wszystkie przekierowania wewnątrz-firewallowe
+są realizowane przez
+.IR maskowanie odwrotne (z ang. reverse-masquerading)
+tak więc
+.B musisz
+stworzyć reguły ścianki ogniowej, które muszą
+.IR pasować
+do wytworzonego przekierowania wedle połączenia wychodzącego
+(zamiast przychodzącego).
+
+Jądro musi być skompilowane z opcjami
+.br
+.B CONFIG_EXPERIMENTAL=y
+.br
+.B CONFIG_IP_MASQUERADE=y
+.br
+.B CONFIG_IP_MASQUERADE_MOD=y
+.br
+i 
+.br
+.B CONFIG_IP_MASQUERADE_IPAUTOFW=y/m
+.br
+.B CONFIG_IP_MASQUERADE_IPPORTFW=y/m
+.br
+.B CONFIG_IP_MASQUERADE_MFW=y/m
+.br
+dla odpowiednich modułów.
+
+Jeśli potrzebujesz przekierować jeden (lub więcej) wewnętrznych portów
+do hostów wewnętrznych rozważ użycie modułu o nazwie
+.B mfw
+
+W skrócie:
+.TS H
+c c c c
+c c c c
+l l l l.
+Krótki	moduł	moduł	opcja
+opis	ipmasqadm	jądra	jądra
+_
+Auto 	\fBautofw\fR.so	ip_masq_autofw.o	CONFIG_IP_MASQUERADE_IPAUTOFW
+Port	\fBportfw\fR.so	ip_masq_portfw.o	CONFIG_IP_MASQUERADE_IPPORTFW
+Fwmark	\fBmfw\fR.so	ip_masq_mfw.o     	CONFIG_IP_MASQUERADE_MFW
+.TE
+
+
+.SH MODUŁ autofw \- Auto-forwarding
+Moduł ten jest, w pewnych okolicznościach, zdolny do przechwytywania
+protokołów aplikacji, które nie mają wsparcia jako specyficzne (dedykowane)
+moduły maskujące.
+Jądro musi być skompilowane z opcją
+.br
+.B CONFIG_IP_MASQUERADE_IPAUTOFW=y/m
+.br
+
+.SS autofw -h
+.TP
+Pomoc komendy. Proszę na razie odnosić się do niej.
+.P
+Po mnóstwo użytecznych informacji dotyczących używania
+.I autofw
+proszę zajrzeć do
+.B http://ipmasq.home.ml.org
+
+.SH MODUŁ portfw \- Port-forwarding
+Ten moduł jest w stanie przekierować pakiety
+.I do-firewalla
+do
+.I wewnętrznych
+hostów, bazując na adresie i numerze portu.
+
+.SS portfw -h
+.TP
+Pomoc komendy. Proszę na razie odnosić się do niej.
+
+.SH MODUŁ mfw \- fwmark-forwarding
+Moduł ten pozwala przekierować
+pakiety
+.I do-firewalla
+do
+.I wewnętrznych
+hostów, bazując na pasującym znaczniku
+.I fwmark .
+Obejrzyj podręcznik
+.BR ipchains (8)
+aby dowiedzieć się jak ustawiać reguły firewall-a
+używając
+.IR fwmark owania.
+Także zauważ proszę, że ponieważ moduł ten działa
+.B tylko
+przy pierwszym pakiecie połączenia, więc
+ma tutaj sens dodanie przełącznika
+.B -y
+polecenia ipchains do reguł TCP przy obsłudze znaczników.
+
+
+.SS KOMENDY
+
+.TP
+.BR "mfw -A -m " "fwmark " "-r " "adres [port] " "[-p " "waga" "]"
+Dołącza jedną regułę do końca listy
+.I fwmark
+hostów podlegających przekierowaniu.
+.sp 0.5
+Pakiety
+.IR fwmark owane
+wytworzą
+.I tunel-maskujący
+by nim przekazywać późniejszy ruch połączeń do
+.BR "adresu"
+i
+.BR "portu" .
+
+Nastąpi to co najmniej
+.B waga
+razy przed
+.I kolejkowaniem
+kolejnej pozycji z taką samą wartością
+.BR "fwmark " .
+.sp 0.5
+Jeśli nie podano
+.B portu
+to zostanie użyte przekierowanie z oryginalnym adresem docelowym pakietu.
+
+.TP
+.BR "mfw -I -m " "fwmark " "-r " "adres [port] " "[-p " "waga" "]"
+Działa tak samo jak opcja
+.B "-A"
+z wyjątkiem tego, że reguła jest 
+.B wstawiana
+na początek listy.
+
+.TP
+.BR "mfw -D -m " "fwmark " "[-r " "adres [port] " "]"
+Usuwa podane reguły (podaną regułę).
+
+.TP
+.BR "mfw -E -m " "fwmark " "[-r " "address [port] " "] -p " "pref"
+Edycja podanych reguł, obecnie można zmieniać wartość
+.B -p .
+
+.TP
+.BR "mfw -S -m " "fwmark"
+Wymuś kolejkowanie w pozycjach
+przekierowań
+.I fwmark .
+
+.TP
+.BR "mfw -F "
+Opróżnij (skasuj)
+.B wszystkie
+reguły.
+
+.TP
+.BR "mfw -L [-n]"
+Wyświetl reguły, opcjonalnie pokazując tylko adresy (bez nazw).
+
+.SS PRZYKŁADY
+
+\".TP
+Przekieruj cały ruch Web do wewnętrznych maszyn hostA i hostB, 
+gdzie hostB będzie obsługiwał 2 razy połączenia hostA.
+Reguły przekazu
+.B już
+maskują wewnętrzne maszyny na zewnątrz (typowe).
+.RS
+
+ipchains -I input -p tcp -y -d twoja.domena.com/32 80
+.B -m 1
+.br
+ipmasqadm mfw -I
+.B -m 1 
+-r hostA 80 -p 10
+.br
+ipmasqadm mfw -I
+.B -m 1 
+-r hostB 80 -p 20
+.RE
+
+Przekieruj ruch ssh z zewnętrznego klienta klientA do
+wewnętrznego hostB, a także pokaż regułę maskującą by pozwolić
+na połączenia przychodzące do portu ssh
+.B tylko
+dla maszyny hostB.
+.RS
+
+ipchains -I forward -p tcp -d klientA/32 -s hostB/32 22 -j MASQ
+.br
+ipchains -I input -p tcp -y -s klientA/32 -d 0/0 22 
+.B -m 2
+.br
+ipmasqadm mfw -I
+.B -m 2
+-r hostB 22
+
+.RE
+
+Przekieruj cały ruch z zewnętrznego klientaA do wewnętrznego hostB,
+a także pokaż regułę maskującą by pozwolić maszynie hostB
+.B tylko
+(wyraźnie, prosto, ... po prostu *zielono*)
+.RS
+
+ipchains -I forward -d klientA/32 -s hostB/32 -j MASQ
+.br
+ipchains -I input -s klientA/32
+.B -m 3
+.br
+ipmasqadm mfw -I
+.B -m 3
+-r hostB
+
+.RE
+
+
+.SH PLIKI
+.TP 20
+.B /usr/lib/ipmasqadm/*.so
+Moduły używane przez interfejs jądra do ipmasqadm.
+.TP 20
+.B /proc/net/ipmasq/*
+Wewnętrzne pliki stanu modułów maskujących.
+
+.SH USTERKI
+W jądrach 2.2 nie ma możliwości by 
+.I współdzielić
+numery portów z
+.I normalnymi
+gniazdami. Obecnie moduły maskujące
+.B biorą priorytet
+nad gniazdami.
+
+Ponieważ przekierowania są obecnie maskującymi tunelami mają one
+takie same właściwości: czasy bezczynności, maksymalne liczby
+wpisów, itd.
+
+Automatyczne ładowanie modułów przez jądro
+zadziała dla przełączników
+.BR "-A " " i " "-I " ,
+ale nie dla 
+.BR -L ,
+więc ujrzysz ostrzeżenia o brakujących wpisach list
+.I /proc/net/ip_masq/... 
+kiedy moduł nie jest (automatycznie) załadowany. Zmieni się to w
+przyszłych wydaniach.
+
+.SH PRZESTROGI
+Protokoły, które używają kontroli i wytwarzają połączenie są zawsze kłopotliwe
+przy przekraczaniu ścianek ogniowych. Przykładami mogą tutaj być
+.BR ftp ,
+.BR irc ,
+.BR "real audio" ,
+itd
+.
+Ponieważ mamy tu do czynienia z
+.I przekazywaniem odwrotnego-maskowania
+problemy się też
+.IR odwracają ;
+na przykład: 
+.B ftp
+.I przekazywane
+z zewnątrz do wewnątrz
+i serwer już
+.B nie zadziała
+w trybie 
+.I PASV
+ponieważ serwer wyśle swój wewnętrzny
+.I adres
+do klienta na zewnątrz, w przeciwieństwie do
+tradycyjnych
+.IR nie- pasywnych
+połączeń, które się powiodą (pomyśl trochę nad tym, proszę).
+Trwają pracę nad wsparciem dla modułów
+.I dwukierunkowych .
+
+.SH UWAGI
+To jest moja pierwsza strona man, tak w razie gdybyś nie zauważył ... ;)
+
+Ostrzegam przed jej jakością pre-alpha.
+
+.SH ZOBACZ TAKŻE
+ipchains(8)
+
+.SH AUTOR
+Juan Jose Ciarlante <jjciarla@raiz.uncu.edu.ar>

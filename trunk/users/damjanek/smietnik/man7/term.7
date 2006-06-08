@@ -1,0 +1,223 @@
+.\"***************************************************************************
+.\" Copyright (c) 1998 Free Software Foundation, Inc.                        *
+.\"                                                                          *
+.\" Permission is hereby granted, free of charge, to any person obtaining a  *
+.\" copy of this software and associated documentation files (the            *
+.\" "Software"), to deal in the Software without restriction, including      *
+.\" without limitation the rights to use, copy, modify, merge, publish,      *
+.\" distribute, distribute with modifications, sublicense, and/or sell       *
+.\" copies of the Software, and to permit persons to whom the Software is    *
+.\" furnished to do so, subject to the following conditions:                 *
+.\"                                                                          *
+.\" The above copyright notice and this permission notice shall be included  *
+.\" in all copies or substantial portions of the Software.                   *
+.\"                                                                          *
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS  *
+.\" OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF               *
+.\" MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.   *
+.\" IN NO EVENT SHALL THE ABOVE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
+.\" DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR    *
+.\" OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR    *
+.\" THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               *
+.\"                                                                          *
+.\" Except as contained in this notice, the name(s) of the above copyright   *
+.\" holders shall not be used in advertising or otherwise to promote the     *
+.\" sale, use or other dealings in this Software without prior written       *
+.\" authorization.                                                           *
+.\"***************************************************************************
+.\"
+.\" $Id: term.7,v 1.4 2001/08/10 14:23:46 robert Exp $
+.\" Translation (c) 1998 Marcin Mazurek <mazek@capella.ae.poznan.pl>
+.\" {PTM/MM/0.1/08-10-1998/"term.7 - zasady nazywania typów terminali"}
+.TH TERM 7
+.ds n 5
+.ds d /usr/share/terminfo
+.SH NAZWA
+term \- zasady nazywania typów terminali
+.SH OPIS
+.PP
+Zmienna środowiskowa \fBTERM\fR powinna standardowo zawierać nazwę typu  
+terminala, konsoli lub urządzenia wyświetlającego, którego używasz. 
+Informacja ta jest niezbędna dla wszystkich programów wyświetlających wyniki
+na ekranie, włączając w to Twój edytor czy program pocztowy.
+.PP
+Standardowa wartość zmiennej \fBTERM\fR będzie ustawiona poprzez
+inicjalizację lini poprzez plik \fB/etc/inittab\fR (Linux i
+System-V-podobne UNIXy)
+lub plik \fB/etc/ttys\fR (BSD UNIXy). To prawie zawsze wystarczy dla stacji
+roboczych czy konsoli mikrokomputerów.
+.PP
+Jeśli używasz lini telefonicznej, typ urządzenia dołączonego do niej może być
+różny. Starsze systemy UNIXowe ustawiają początkowo bardzo prosty typ
+terminala np. `dumb' lub `dialup'.  Nowsze mogą używać
+terminala `vt100', odzwierciedlając rozpowszechnienie terminali DECa
+VT100-kompatybilnych i emulatorów z komputerów osobistych.
+.PP
+Nowoczesne telnet'y przekazują Twoją zmienną środowiskową \fBTERM\fR z
+lokalnego systemu do odległego. Mogą wystąpić problemy jeżeli terminfo lub  
+termcap na odległym systemie nie zawiera definicji terminala kompatybilnej z
+Twoją, ale ta sytuacja jest rzadka i może być prawie zawsze uniknięta przez
+ustawienie typu terminala na `vt100' (zakładając, że rzeczywiście używasz 
+VT100-podobnej konsoli, terminala, lub emulatora terminala.)
+.PP
+W każdym razie, możesz dowolnie zmieniać zmienną \fBTERM\fR ustawioną przez
+Twój system na dowolną wartość w profilu Twojej powłoki. Program \fBtset\fR(1) 
+może być w tym pomocny; możesz mu podać zbiór reguł aby wydedukował lub
+zażądał podania typu terminala bazując na urządzeniu tty i prędkości
+przesyłu danych (baud rate).
+.PP
+Ustawienie zmiennej \fBTERM\fR własną wartością może być także użyteczne
+jeśli stworzyłeś własną definicję terminala włączając opcje (takie jak 
+widzialny dzwonek (czyli błyśnięcie ekranu) lub podświetlenie) które mają
+zamienić standardowe ustawienia systemu.
+.PP
+Opisy typów terminali są przechowywane jako pliki zawierające dane opisujące
+ich możliwości w katalogu \*d. Aby przejrzeć listę wszystkich nazw terminali 
+rozpoznawanych przez system, wykonaj 
+
+	toe | more
+
+z promptu powłoki. Pliki te, opisujące możliwości terminali są przechowywane
+w formacie binarnym aby zapewnić optymalną prędkość dostępu do nich
+(odwrotnie niż w przypadku starego bazującego na tekście pliku \fBtermcap\fR, 
+który zastępują); aby sprawdzić jedną z pozycji musisz użyć komendy \fBinfocmp\fR(1).
+Wywołaj ją następująco:
+
+	infocmp \fInazwa\fR
+
+gdzie \fInazwa\fR jest nazwą typu terminala, który chcesz sprawdzić
+(i zarazem nazwą pliku w podkatalogu \*d nazwanym od pierwszej litery typu
+terminala). Komenda ta wyświetla plik z opisem terminala w formacie tekstowym
+opisanym przez \fBterminfo\fR(\*n).  
+.PP
+Pierwsza linia \fBterminfo\fR(\*n) opisuje nazwy, pod którymi terminfo
+rozpoznaje terminal, nazwy przedzielone są znakami `|', a ostatnia 
+zakończona jest przecinkiem.  Pierwsza nazwa jest podstawową nazwą
+terminala \fI(primary name)\fR, i powinna być używana przy ustawianiu
+zmiennej \fBTERM\fR.  Ostatnia nazwa jest w
+rzeczywistości opisem typu terminala (może zawierać spacje; inne muszą być
+pojedynczymi słowami). Nazwy pomiędzy pierwszą, a ostatnią (o ile istnieją)
+są aliasami nazwy terminala i zazwyczaj przechowywane są tam dawne nazwy
+terminala dla kompatybilności.
+.PP
+Istnieją pewne konwencje jak dobierać podstawowe nazwy terminala, które
+pozwalają aby były unikalne, a zarazem niosły w sobie pewną informację.
+Poniżej zamieszczony jest przewodnik, który krok po kroku wyjaśnia jak
+nazywać a także jak je rozumieć:
+.PP
+Najpierw wybierz główną nazwę.  Powinna się ona składać z małej litery
+i następujących po niej do siedmiu małych liter bądź cyfr. Powinieneś
+unikać używania znaków przestankowych w głównych nazwach, ponieważ są one
+używane i interpretowane jako nazwy plików i meta-znaków powłoki
+(np. takie jak !, $, *, ? etc.), umieszczone w nich mogą spowodować dziwne
+i kłopotliwe zachowanie.
+Ukośnik (/), czy jakikolwiek inny znak, który może zostać zinterpretowany
+przez czyjś system plików (\e, $, [, ]), jest szczególnie niebezpieczne 
+(terminfo jest niezależne od platformy, więc wybór nazwy zawierającej znaki
+specjalne może któregoś dnia spowodować pewne problemy dla przyszłych
+użytkowników). Znak kropki (.) jest względnie bezpieczny o ile występuje co
+najwyżej jedna w nazwie głównej; niektóre starsze nazwy terminfo
+wykorzystują ją.
+.PP
+Nazwa główna terminala lub typu konsoli stacji roboczej powinna prawie zawsze
+zaczynać się od przedrostka sprzedawcy (np. \fBhp\fR dla Hewlett-Packard, \fBwy\fR
+dla Wyse, czy \fBatt\fR dla terminali AT&T), lub popularną nazwą lini
+terminala (\fBvt\fR dla terminali typu  VT od DECa, czy \fBsun\fR dla
+konsoli stacji roboczych Suna czy \fBregent\fR dla modeli ADDS Regent).
+Możesz wylistować drzewo terminfo aby zobaczyć jakie przedrostki są już w
+powszechnym użyciu.
+Po nazwie głównej powinien znajdować się, jeśli to potrzebne, numer modelu;
+a więc \fBvt100\fR, \fBhp2621\fR, \fBwy50\fR.
+.PP
+Nazwą główną dla konsoli typu PC-Unix powinna być nazwa systemu
+operacyjnego np. \fBlinux\fR, \fBbsdos\fR, \fBfreebsd\fB, \fBnetbsd\fR.
+\fINie\fR powinna to być nazwa typu \fBconsole\fR czy jakakolwiek inna
+ogólna nazwa która może spowodować zamieszanie w środowisku o wielu
+platformach. Jeśli później następuje numer modelu, powinien wskazywać albo
+numer wersji systemu operacyjnego lub numer wersji sterownika konsoli.
+.PP
+Nazwą główna dla emulatora terminala (zakładając że nie pasuje do któregoś
+ze standardu ANSI lub typu vt100) powinna być nazwa programu lub z łatwością
+rozpoznawalny skrót (np. \fBversaterm\fR, \fBctrm\fR).
+.PP
+Po nazwie głównej, możesz dodać dowolną lecz rozsądną ilość rozdzielonych
+łącznikiem przyrostków określających specjalne właściwości.
+.TP 5
+2p
+Ma dwie strony pamięci.  Podobnie 4p, 8p, itd.
+.TP 5
+mc
+Magic-cookie.  Niektóre terminale (szczególnie starsze Wyse) mogą wspierać
+jedynie jeden atrybut bez utraty magic-cookie. Ich definicja w terminfo
+zazwyczaj jest sparowana z inną (która posiada ten przyrostek) aby wspierać
+dużą ilość atrybutów.
+.TP 5
+-am
+Włącza auto-margines (prawostronne zawijanie)
+.TP 5
+-m
+Tryb mono - wyłączenie wsparcia dla kolorów
+.TP 5
+-na
+Bez strzałek - termcap ignoruje strzałki które w rzeczywistości są na
+terminalu, więc użytkownik może używać ich lokalnie.
+.TP 5
+-nam
+Bez auto-marginesu - Wyłącz opcję am
+.TP 5
+-nl
+Bez etykiet - wyłącz miękkie etykiety
+.TP 5
+-nsl
+Bez lini statusu - zlikwiduj linię statusu
+.TP 5
+-pp
+Ma port drukarki który jest używany
+.TP 5
+-rv
+Terminal w odwróconym trybie video (czarny na białym)
+.TP 5
+-s
+Użyj lini statusu.
+.TP 5
+-vb
+Użyj widzialnego dzwonka (błysk) a nie krótkiego dzwięku.
+.TP 5
+-w
+Szeroki; terminal jest w 132 kolumnowym trybie.
+.PP
+Standardowo, jeśli typ Twojego terminala jest jednym z wariantów, który ma za zadanie
+określić liczbę lini, przyrostek powinien znaleźć się tam pierwszy. Dla
+hipotetycznego terminala FuBarCo model 2317 w 30-liniowym trybie z odwrotnym
+wyświetlaniem (reverse video), lepszą nazwą byłaby \fBfubar-30-rv\fR
+(niż np. `fubar-rv-30').
+.PP
+Typy terminali, które nie są opisane jako samodzielne sekcje, a raczej jako
+składniki do dołączenia do innych sekcji poprzez \fBuse\fR,
+są rozróżniane poprzez użycie znaków plus (+) a nie minus (-).
+.PP
+Komendy, które używają typu terminala aby kontrolować wyświetlanie często
+akceptują opcję -T, która pozwala podać typ terminala jako argument.
+Takie programy powinny skorzystać ze zmiennej środowiskowej \fBTERM\fR
+kiedy opcja -T jest nie podana.
+.SH PRZENOŚNOŚĆ
+Dla maksymalnej kompatybilności ze starymi systemami UNIXowymi V, nazwy i
+aliasy powinny być unikalne w pierwszych 14 znakach.
+.SH PLIKI
+.TP 5
+\*d/?/*
+skąpilowane pliki zawierające opisy terminali
+.TP 5
+/etc/inittab
+inicjalizacja lini tyy (AT&T-podobne UNIXy).
+.TP 5
+/etc/ttys
+inicjalizacja lini tty (BSD-podobne UNIXy).
+.SH "ZOBACZ TAKŻE"
+\fBcurses\fR(3X), \fBterminfo\fR(\*n), \fBterm\fR(\*d).
+.\"#
+.\"# The following sets edit modes for GNU EMACS
+.\"# Local Variables:
+.\"# mode:nroff
+.\"# fill-column:79
+.\"# End:

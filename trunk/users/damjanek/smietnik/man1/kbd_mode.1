@@ -1,0 +1,39 @@
+.\" 1999 PTM Przemek Borys
+.\" @(#)kbd_mode.1 1.0 940406 aeb
+.TH KBD_MODE 1 "6 Kwietnia 1994"
+.SH NAZWA
+kbd_mode \- zgłoś, lub ustaw tryb klawiatury
+.SH SKŁADNIA
+.B kbd_mode
+[
+.I -a | -u | -k | -s 
+]
+.SH OPIS
+.IX "kbd_mode command" "" "\fLkbd_mode\fR command"  
+.LP
+Bez podanych argumentów, program wypisuje bieżący tryb klawiatury
+(RAW, MEDIUMRAW or XLATE).
+Z argumentem ustawia go (tryb) w następujący sposób:
+.LP
+\-s: tryb scancode (RAW),
+.LP
+\-k: tryb keycode (MEDIUMRAW),
+.LP
+\-a: tryb ASCII (XLATE),
+.LP
+\-u: tryb UTF-8 (UNICODE).
+.LP
+Oczywiście "\-a" jest tylko tradycyjne, a używany kod może być dowolnym
+8-bitowym zestawem znaków. Opcja "\-u" powoduje, że oczekiwany jest zestaw
+16-bitowy, a znaki te są przekazywane do jądra jako 1, 2, lub 3 bajty
+(zgodnie z kodowaniem UTF-8).
+W tych dwóch trybach używane jest mapowanie zdefiniowane przez loadkeys(1).
+
+Uwaga: zmiana trybu klawiatury na inny niż ASCII lub Unicode spowoduje, że
+stanie się ona prawdopodobnie bezużyteczna. Komenda ta powinna być używana
+jeśli jakiś program zostawił twoją klawiaturę w niewłaściwym stanie.
+Zauważ, że w niektórych przedawnionych wersjach tego programu, opcja "\-u"
+była synonimem "\-s".
+.SH "ZOBACZ TAKŻE"
+.BR loadkeys (1)
+

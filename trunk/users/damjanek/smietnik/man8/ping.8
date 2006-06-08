@@ -1,0 +1,286 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl>
+.Dd January 7, 1999
+.Dt PING 8
+.Os "iputils-ss990107"
+.Sh NAZWA
+.Nm ping
+.Nd wysyła
+pakiety
+.Tn ICMP ECHO_REQUEST
+do hostów sieciowych
+.Sh SKŁADNIA
+.Nm ping
+.Op Fl dfnqrvR
+.Op Fl c Ar liczba
+.Op Fl i Ar oczekiwanie
+.Op Fl l Ar preload
+.Op Fl p Ar wzorzec
+.Op Fl s Ar rozmiarpakietu
+.Pp 
+Opcje zmienione: 
+    -I <nazwa urządzenia> może zostać wykorzystane do
+       ustawienia interfejsu wyjściowego.
+.Pp 
+Nowe opcje:
+   -T [tylko ping]:  opcja wysłania pieczątki czasowej IP.
+         -T tsonly       --- tylko pieczątki czasowe
+         -T tsandaddr    --- pieczątki i adresy
+         -T tsprespec host1 [host2 [host3 [host 4]]]
+                         --- przejścia pieczątek czasowych
+.Pp
+Udoskonalenia:
+  - rozumie komunikaty błędów icmp i prawidłowo na nie odpowiada.
+  - sprawdza sumę icmp i reaguje prawidłowo na uszkodzone pakiety.
+  - potrafi prawidłowo pingować loopback linuksowy.
+    itd.
+.Sh OPIS
+.Nm Ping
+używa obowiązkowego datagramu
+.Tn ICMP
+o nazwie
+.Tn ECHO_REQUEST ,
+wywołującego
+.Tn ICMP ECHO_RESPONSE
+od hosta lub bramki.
+Datagramy
+.Tn ECHO_REQUEST
+(``pingi'') składają się z nagłówka IP oraz
+.Tn ICMP
+, za którymi następuje
+.Dq struct timeval
+oraz określona liczba bajtów wypełnienia, używanych do wypełnienia pakietu.
+Opcje są następujące:
+Inne opcje to:
+.Bl -tag -width Ds
+.It Fl c Ar liczba
+Zakończ po wysłaniu (i odebraniu)
+.Ar liczba
+pakietów
+.Tn ECHO_RESPONSE
+.It Fl d
+Ustaw na używanym gnieździe opcję
+.Dv SO_DEBUG
+.It Fl f
+Produkuje pakiety tak szybko, jak powracają, lub 100 razy na sekundę,
+zależnie od tego, czego jest więcej.
+Dla każdego wysłanego
+.Tn ECHO_REQUEST
+drukowana jest kropka ``.'', a dla każdego odebranego
+.Tn ECHO_REPLY
+drukowane jest backspace.
+Daje to dynamiczny obraz zmian ilości opuszczonych pakietów. Opcji tej może
+używać jedynie superużytkownik.
+.Bf -emphasis
+Może to być bardzo ciężkie w sieci i powinno być używane ostrożnie.
+.Ef
+.It Fl i Ar oczekiwanie
+Czekaj
+.Ar oczekiwanie
+sekund
+.Em między wysłaniem kolejnych pakietów .
+Domyślnie czeka się jedną sekundę. Opcja ta jest niekompatybilna z opcją
+.Fl f
+.It Fl l Ar preload
+Jeśli podany jest
+.Ar preload ,
+ping jak najszybciej wysyła tyle pakietów, po czym przechodzi do
+normalnego trybu działania.
+Opcji tej używać może jedynie superużytkownik.
+.It Fl n
+Tylko wyjście numeryczne.
+Nie będą dokonywane próby odczytania nazw symbolicznych adresów hostów.
+.It Fl p Ar wzorzec
+Możesz podać do 16 bajtów wypełnienia wysyłanego pakietu. Jest to przydatne
+do diagnozowania w sieci problemów związanych z danymi.
+Np.
+.Dq Li \-p ff
+spowoduje wysyłanie pakietu wypełnionego jedynkami.
+.It Fl q
+Ciche wyjście.
+Poza liniami podsumowania na starcie/końcu nic nie jest wyświetlane.
+.It Fl R
+Nagrywaj trasę.
+Zawiera w pakiecie
+.Tn ECHO_REQUEST
+opcję
+.Tn RECORD_ROUTE
+i wyświetla bufor trasy zwróconych pakietów.
+Zauważ, że nagłówek IP wystarcza jedynie na 9 takich tras. Wiele hostów
+ignoruje lub zarzuca tę opcję.
+.It Fl r
+Pomiń normalne tabele trasowania i wysyłaj bezpośrednio do hosta w
+przyłączonej sieci. Jeśli host nie jest w sieci podłączonej bezpośrednio,
+zwracany jest błąd.
+Opcja ta może być używana do pingowania hosta lokalnego poprzez interfejs,
+przez który nie ma trasy (np. po jego porzuceniu przez
+.Xr routed 8 ) .
+.It Fl s Ar rozmiarpakietu
+Określa liczbę wysyłanych bajtów danych. Domyślną wartością jest
+56, co tłumaczy się na 64 bajty
+.Tn ICMP
+po połączeniu z 8 bajtami nagłówka
+.Tn ICMP .
+.It Fl v
+Wyjście gadatliwe. Odbierane pakiety
+.Tn ICMP
+inne niż
+.Tn ECHO_RESPONSE
+są listowane.
+.El
+.Pp
+Przy używaniu
+.Nm pinga
+do izolowania błędów, należy go najpierw zapuścić na hoście lokalnym, by
+sprawdzić czy lokalny interfejs sieciowy jest włączony i czy działa.
+Potem należy pingować coraz to dalsze hosty i bramki.
+Obliczane są czasy podróży i statystyki utraty pakietów.
+Jeśli odbierane są pakiety zduplikowane, nie są one włączane do obliczeń
+strat pakietów, choć ich czas podróży jest używany do obliczania
+minimalnego/średniego/maksymalnego czasu podróży. Po nadaniu (i odebraniu)
+określonej liczby pakietów, lub po zakończeniu programu przez
+.Dv SIGINT ,
+wyświetlane jest krótkie podsumowanie.
+.Pp
+Jeśli
+.Nm ping
+nie odbierze żadnych pakietów odpowiedzi, to zakończy działanie z kodem
+wyjścia 1. W przypadku błędu kod ten wynosi 2. W przeciwnym razie zwracane
+jest 0. Umożliwia to używanie kodu wyjścia do sprawdzania czy hosty żyją, czy
+gryzą ziemię.
+.Pp
+Program ten jest przeznaczony do testowania sieci, pomiarów i zarządzania.
+Z powodu obciążenia, jakie może wywołać w sieci, niemądre jest używanie
+.Nm pinga
+podczas normalnych operacji ze skryptów.
+.Sh SZCZEGÓŁY PAKIETU ICMP
+Nagłówek IP bez opcji ma 20 bajtów.
+Pakiet
+.Tn ICMP
+.Tn ECHO_REQUEST
+zawiera dodatkowych 8 bajtów nagłówka
+.Tn ICMP ,
+za którymi następuje określona ilość danych.
+Gdy podany jest
+.Ar rozmiarpakietu ,
+to określa on rozmiar dodatkowego bloków danych (domyślnie 56).
+Tak więc ilość danych znajdujących się wewnątrz pakietu ip typu
+.Tn ICMP
+.Tn ECHO_REPLY
+jest zawsze 8 bajtów większa niż żądana ilość danych
+(nagłówek
+.Tn ICMP ).
+.Pp
+Jeśli rozmiar danych ma wielkość przynajmniej 8 bajtów, to
+.Nm ping
+używa pierwszych 8 bajtów do włączania pieczątki czasowej, której używa do
+obliczeń czasów podróży. Jeśli podano mniej niż 8 bajtów wypełnienia, nie są
+podawane czasy podróży.
+.Sh ZDUPLIKOWANE I USZKODZONE PAKIETY
+.Nm Ping
+zgłasza pakiety uszkodzone i zduplikowane. Pakiety zduplikowane nigdy nie
+powinny się pojawiać i prawdopodobnie są powodowane przez nieprawidłowe
+retransmisje poziomu połączenia (link-level). Mogą się one pojawiać w wielu
+sytuacjach i rzadko są dobrym znakiem, choć obecność niskiej liczby
+duplikatów nie musi być zawsze powodem alarmu.
+.Pp
+Pakiety uszkodzone są oczywiście poważną przyczyną alarmu i często wskazują
+na uszkodzenie sprzętu na drodze pakietu
+.Nm pinga .
+.Sh UŻYWANIE RÓŻNYCH WZORCÓW DANYCH
+Poziom (inter)sieci nigdy nie powinien traktować pakietów odmiennie w
+zależności od danych zawartych w części danych. Niestety problemy zależne od
+danych czasem pojawiają się  w sieciach i pozostają długo niezauważane. W
+wielu przypadkach konkretny wzorzec powodujący problemy jest czymś, co nie
+posiada wystarczającej liczby zmian, np. jest samymi jedynkami lub samymi
+zerami, lub wzorcem na samym krańcu, prawie wypełnionym zerami.
+Niekoniecznie jednak musi wystarczyć podanie wzorca z samymi zerami w linii
+poleceń, gdyż interesujący wzorzec jest na poziomie połączenia i związek
+między tym co wpiszesz i tym co transmituje kontroler może być złożony.
+.Pp
+Znaczy to, że jeśli masz problem zależny od danych, to będziesz potrzebować
+wielu testów do jego izolacji. Jeśli masz szczęście, to może znajdziesz
+plik, który nie może być przesłany przez sieć lub który wymaga dużo więcej
+czasu do przesłania niż inne podobnej długości pliki.
+Możesz następnie taki plik przetestować w poszukiwaniu powtarzalnych wzorców
+z użyciem opcji
+.Fl p
+.Nm pinga .
+.Sh SZCZEGÓŁY TTL
+Wartość
+.Tn TTL
+pakietu IP reprezentuje maksymalną liczbę routerów IP, którą pakiet może
+minąć nim zostanie wyrzucony. W obecnej sytuacji, można oczekiwać że każdy
+router internetowy zdekrementuje wartość
+.Tn TTL
+o jeden.
+.Pp
+Specyfikacja
+.Tn TCP/IP
+określa, że pole
+.Tn TTL
+pakietu 
+.Tn TCP
+powinno być ustawiane na 60, lecz wiele systemów używa mniejszych wartości (4.3
+.Tn BSD
+używa 30, 4.2 używało
+15).
+.Pp
+Maksymalna możliwa wartość tego pola to 255 i większość systemów Unixowych
+ustawia wartość
+.Tn TTL
+pakietów
+.Tn ICMP ECHO_REQUEST
+na 255.
+Oto dlaczego możesz pingować pewne hosty, lecz nie możesz ich osiągnąć
+poprzez
+.Xr telnet 1
+czy
+.Xr ftp 1 .
+.Pp
+W normalnym działaniu, ping drukuje wartości ttl odbieranych pakietów.
+Gdy system zdalny otrzymuje pakiet ping, może on zrobić jedną z trzech
+rzeczy z polem
+.Tn TTL : 
+.Bl -bullet
+.It
+Nie zmienić go; jest to właściwość systemów Berkeley Unix przed wydaniem
+.Bx 4.3 tahoe.
+W tym wypadku wartość
+.Tn TTL
+odebranego pakietu wyniesie 255 minus liczba routerów na trasie podróży.
+.It
+Ustawić ją na 255: jest to właściwość obecnego Berkeley Unix. 
+W tym wypadku wartość
+.Tn TTL
+odebranego pakietu wyniesie 255 minus liczbę routerów na trasie
+.Xr od
+systemu zdalnego
+.Em do
+hosta
+.Nm ping Ns Em ującego.
+.It
+Ustawić na inną wartość. Niektóre maszyny używają dla pakietów
+.Tn ICMP
+tej samej wartości co dla pakietów
+.Tn TCP ,
+np. 30 lub 60. Inni mogą używać jeszcze bardziej dzikich wartości.
+.El
+.Sh BŁĘDY
+Wiele hostów i bram ignoruje opcję
+.Tn RECORD_ROUTE .
+.Pp
+Maksymalna długość nagłówka IP jest zbyt mała dla całkowitej użyteczności opcji
+w rodzaju
+.Tn RECORD_ROUTE .
+Jednak nie można z tym praktycznie nic zrobić.
+.Pp
+Szybkie pingowanie (flood pinging) nie jest ogólnie zalecanie, a w
+szczególności pingowanie adresu rozgłoszeniowego.
+.Sh ZOBACZ TAKŻE
+.Xr netstat 1 ,
+.Xr ifconfig 8
+.Sh HISTORIA
+Komenda
+.Nm
+pojawiła się w
+.Bx 4.3 .

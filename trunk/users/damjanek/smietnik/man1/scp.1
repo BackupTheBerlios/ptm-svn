@@ -1,0 +1,166 @@
+.\" 2000 PTM Przemek Borys <pborys@dione.ids.pl>
+.\" Translation update: Robert Luberda <robert@debian.org>, Mar 2004, openssh 3.6.1p2
+.\" $Id: scp.1,v 1.3 2004/06/16 04:49:28 ankry Exp $
+.\"
+.\"  -*- nroff -*-
+.\"
+.\" scp.1
+.\"
+.\" Author: Tatu Ylonen <ylo@cs.hut.fi>
+.\"
+.\" Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
+.\"                    All rights reserved
+.\"
+.\" Created: Sun May  7 00:14:37 1995 ylo
+.\"
+.\" $OpenBSD: scp.1,v 1.27 2003/03/28 10:11:43 jmc Exp $
+.\"
+.Dd 25 września 1999
+.Dt SCP 1
+.Os
+.Sh NAZWA
+.Nm scp
+.Nd bezpieczne kopiowanie (program zdalnego kopiowania plików)
+.Sh SKŁADNIA
+.Nm scp
+.Bk -words
+.Op Fl pqrvBC1246
+.Op Fl F Ar plik_konfig_ssh
+.Op Fl S Ar program
+.Op Fl P Ar port
+.Op Fl c Ar szyfr
+.Op Fl i Ar plik_tożsamości
+.Op Fl l Ar limit
+.Op Fl o Ar opcja_ssh
+.Sm off
+.Oo
+.Op Ar użytkownik@
+.Ar host1 No :
+.Oc Ns Ar nazwa_pliku1
+.Sm on
+.Op Ar ...
+.Sm off
+.Oo
+.Op Ar użytkownik@
+.Ar host2 No :
+.Oc Ar nazwa_pliku2
+.Sm on
+.Ek
+.Sh OPIS
+.Nm
+kopiuje pliki między komputerami w sieci. Do transferu danych używa
+.Xr ssh 1
+i wykorzystuje tę samą autoryzację oraz daje takie samo bezpieczeństwo jak
+.Xr ssh 1 .
+W przeciwieństwie do
+.Xr rcp 1 ,
+.Nm
+pyta w razie potrzeby o hasła uwierzytelniające.
+.\" FIXME: will ask for passwords or passphrases if they are needed for
+.\" authentication.
+.Pp
+Wszelkie nazwy pliku mogą zawierać specyfikacje hosta i użytkownika,
+określające, że plik jest kopiowany do/z tego hosta. Dozwolone jest
+kopiowanie między dwoma zdalnymi hostami.
+.Pp
+Dostępne są następujące opcje:
+.Bl -tag -width Ds
+.It Fl c Ar szyfr
+Wybiera szyfr używany do kodowania danych. Opcja ta jest przekazywana
+bezpośrednio do
+.Xr ssh 1 .
+.It Fl i Ar plik_tożsamości
+Wybiera plik, z którego odczytywana jest tożsamość (klucz prywatny) dla
+uwierzytelnienia RSA. Opcja ta jest przekazywana bezpośrednio do
+.Xr ssh 1 .
+.It Fl l Ar limit
+Określa maksymalną prędkość transferu danych podaną w Kbit/s.
+.It Fl p
+Zachowuje czasy modyfikacji oraz dostępu i prawa oryginalnego pliku.
+.It Fl r
+Kopiuje rekurencyjnie całe katalogi.
+.It Fl v
+Tryb gadatliwy. Powoduje, że
+.Nm
+i
+.Xr ssh 1
+drukują komunikaty debugowe o swoim działaniu. Jest to przydatne w
+debugowaniu problemów łączenia, autoryzacji i konfiguracji.
+.It Fl B
+Wybiera tryb wsadowy (nie pyta o hasła i frazy kodujące).
+.It Fl q
+Wyłącza wyświetlanie paska postępu.
+.It Fl C
+Włączenie kompresji. Przekazuje
+flagę
+.Fl C
+do programu
+.Xr ssh 1 ,
+włączającą kompresję danych.
+.It Fl F Ar plik_konfig_ssh
+Określa alternatywny plik konfiguracyjny
+.Nm ssh .
+Ta opcja jest bezpośrednio przekazywana do
+.Xr ssh 1 .
+.It Fl P Ar port
+Podaje port, do którego należy się podłączyć na zdalnym hoście. Zauważ, że opcja ta
+jest napisana jako wielkie
+.Sq P ,
+gdyż
+.Fl p
+już jest zarezerwowane dla innej
+operacji (zachowywania czasów modyfikacji i praw dostępu plików) w
+.Xr rcp 1 .
+.It Fl S Ar program
+Nazwa
+.Ar programu
+używanego do tworzenia zakodowanego połączenia.
+Program ten musi przyjmować opcje
+.Xr ssh 1 ,
+.It Fl o Ar opcje_ssh
+Może być użyte do przekazania opcji programowi
+.Nm ssh ,
+które muszą być podane w formacie opisanym w
+.Xr ssh_config 5 .
+Opcja ta jest użyteczna do przekazywania opcji,
+dla których nie ma osobnej flagi linii poleceń
+w programie
+.Nm scp .
+.It Fl 1
+Wymusza na
+.Nm
+użycie pierwszej wersji protokołu.
+.It Fl 2
+Wymusza na
+.Nm
+użycie drugiej wersji protokołu.
+.It Fl 4
+Wymusza na
+.Nm
+używanie tylko adresów IPv4.
+.It Fl 6
+Wymusza na
+.Nm
+używanie tylko adresów IPv6.
+.El
+.Sh DIAGNOSTYKA
+.Nm
+kończy pracę z kodem 0, jeżeli wszystko odbyło się pomyślnie, lub z kodem
+>0 w wypadku błędu.
+.Sh AUTORZY
+Timo Rinne <tri@iki.fi> i Tatu Ylonen <ylo@ssh.fi>
+.Sh HISTORIA
+.Nm
+jest oparty na programie
+.Xr rcp 1
+o kodzie źródłowym pochodzącyn z BSD, do którego prawa należą do władz
+Uniwersytetu Kalifornijskiego.
+.Sh ZOBACZ TAKŻE
+.Xr rcp 1 ,
+.Xr sftp 1 ,
+.Xr ssh 1 ,
+.Xr ssh-add 1 ,
+.Xr ssh-agent 1 ,
+.Xr ssh-keygen 1 ,
+.Xr ssh_config 5 ,
+.Xr sshd 8

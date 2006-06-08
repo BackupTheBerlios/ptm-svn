@@ -1,0 +1,171 @@
+.\" Tłumaczenie wersji man-pages 1.39 - wrzesień 2001 PTM
+.\" aktualizacja do man-pages 1.45 - grudzień 2001
+.\" Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Wed Jul 28 11:12:07 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Fri Sep  8 15:48:13 1995 by Andries Brouwer (aeb@cwi.nl)
+.\" --------
+.TH GETS 3 1993-04-04 "GNU" "Podręcznik programisty Linuksa"
+.SH NAZWA
+fgetc, fgets, getc, getchar, gets, ungetc \- wprowadzanie znaków i łańcuchów
+znakowych
+.SH SKŁADNIA
+.nf
+.B #include <stdio.h>
+.sp
+.BI "int fgetc(FILE *" stream );
+.nl
+.BI "char *fgets(char *" "s" ", int " "size" ", FILE *" "stream" );
+.nl
+.BI "int getc(FILE *" stream );
+.nl
+.BI "int getchar(void);"
+.nl
+.BI "char *gets(char *" "s" );
+.nl
+.BI "int ungetc(int " c ", FILE *" stream );
+.SH OPIS
+.B fgetc()
+odczytuje następny znak ze
+.I stream 
+i zwraca go jako rzutowanie
+.B unsigned char
+na
+.BR int ,
+lub
+.B EOF
+w przypadku końca pliku albo błędu.
+.PP
+.B getc()
+jest równoważne
+.B fgetc()
+z tym wyjątkiem, że może być zaimplementowane jako makro, które wylicza
+.I stream
+więcej niż raz.
+.PP
+.B getchar()
+jest równoważne
+.BI "getc(" stdin ) \fR.
+.PP
+.B gets() 
+odczytuje linię z
+.I stdin
+do bufora wskazywanego przez
+.I s
+aż do kończącego znaku nowej linii lub
+.BR EOF ,
+który jest zastępowany przez
+.BR '\e0' .
+Nie jest sprawdzane przepełnienie bufora (zobacz
+.B BŁĘDY
+poniżej).
+.PP
+.B fgets()
+odczytuje co najwyżej o jeden mniej niż
+.I size
+znaków ze
+.I stream
+i umieszcza je w buforze wskazywanym przez
+.IR s .
+Odczyt kończy się po napotkaniu
+.B EOF
+lub znaku nowej linii. Jeśli odczytany zostanie znak nowej linii, jest
+on przechowywany w buforze. Po ostatnim znaku w buforze jest umieszczany
+.BR '\e0' .
+.PP
+.B ungetc()
+odkłada
+.I c
+z powrotem do
+.IR stream ,
+rzutowane na
+.BR "unsigned char" ,
+o ile jest to możliwe dla następnych operacji odczytu. Odłożone znaki będą
+zwracane w odwrotnej kolejności; tylko jedno pomyślne odłożenie jest
+zagwarantowane.
+.PP
+Wywołania opisanych tu funkcji mogą być mieszane między sobą jak i z
+wywołaniami innych funkcji wejściowych z biblioteki
+.B stdio
+operujących na tym samym strumieniu wejściowym.
+.PP
+Informacje o nieblokujących odpowiednikach znajdują się w
+.BR unlocked_stdio (3).
+.SH "WARTOŚĆ ZWRACANA"
+.BR fgetc() , " getc() " i " getchar()"
+zwracają znak odczytany jako rzutowanie
+.B unsigned char
+na
+.B int
+lub
+.B EOF
+w przypadku końca pliku lub błędu.
+.PP
+.BR gets() " i " fgets()
+zwracają
+.I s
+w przypadku pomyślnego zakończenia, a
+.B NULL
+w przypadku błędu oraz gdy wystąpi koniec pliku, a nie zostanie odczytany
+żaden znak.
+.PP
+.B ungetc()
+zwraca 
+.I c
+w przypadku pomyślnego zakończenia, a
+.B EOF
+w przypadku błędu.
+.SH "ZGODNE Z"
+ANSI - C, POSIX.1
+.SH BŁĘDY
+Nigdy nie należy używać
+.BR gets() .
+Funkcja ta jest szczególnie niebezpieczna w użyciu, ponieważ bez znajomości
+danych z góry nie jest możliwe określenie, ile znaków
+.B gets()
+przeczyta, i ponieważ
+.B gets()
+będzie kontynuować umieszczanie znaków po przekroczeniu końca bufora.
+Było to wykorzystywane do łamania zabezpieczeń komputerów. Zamiast
+.B gets()
+należy korzystać z
+.BR fgets() .
+.PP
+Nie jest zalecane mieszanie wywołań funkcji wejściowych z biblioteki
+.B stdio
+z niskopoziomowymi wywołaniami
+.B read() 
+dla deskryptora pliku stowarzyszonego ze strumieniem wejściowym; wyniki będą
+nieokreślone i z dużym prawdopodobieństwem nie takie, jakich oczekiwano.
+.SH "ZOBACZ TAKŻE"
+.BR read (2),
+.BR write (2),
+.BR ferror (3),
+.BR fopen (3),
+.BR fread (3),
+.BR fseek (3),
+.BR puts (3),
+.BR scanf (3),
+.BR unlocked_stdio (3)

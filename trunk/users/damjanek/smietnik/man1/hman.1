@@ -1,0 +1,69 @@
+.\" Copyright (c) 1998 Andries Brouwer
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the README file that comes with the man 1.0
+.\" distribution.
+.\"
+.\" Translation: Robert Luberda <robert@debian.org>, Feb 2003, man-1.5k
+.\" $Id: hman.1,v 1.2 2003/03/15 16:42:40 robert Exp $
+.TH hman 1 "19 stycznia 1998"
+.LO 1
+.SH NAZWA
+hman \- przeglądanie stron podręcznika ekranowego
+.SH SYNOPSIS
+.B hman
+[ -P \fIprzeglądarka\fP ] [ -H \fIkomputer\fP ] [ \fIsekcja\fP ] \fInazwa\fP
+.br
+.B hman
+[ -P \fIprzeglądarka\fP ] [ -H \fIkomputer\fP ] [ \fIsekcja\fP ] [ indeks ]
+.SH OPIS
+Skrypt
+.B hman
+jest interfejsem do programu man2html(1), pozwalającym na wprowadzenie nazwy
+strony podręcznika ekranowego i zobaczenia jej w swojej ulubionej przeglądarce www.
+Swoim zachowaniem przypomina polecenie
+.BR man (1),
+więc można utworzyć alias z
+.B hman
+do
+.BR man .
+Jeżeli używaną przeglądarką jest netscape i netscape jest już uruchomiony, to
+.B hman
+użyje właśnie tej uruchomionej przeglądarki.
+
+.SH OPCJE
+.TP
+.B \-\^P " przeglądarka"
+Określa, której przeglądarki (np. lynx, xmosaic, arena, chimera,
+netscape, amaya, ...) użyć.
+Ta opcja unieważnia zmienną środowiskową
+.BR MANHTMLPAGER .
+Domyślną wartością jest wersja
+.BR lynx -a
+nie wymagająca serwera httpd.
+.TP
+.B \-\^H " komputer"
+Określa, ż którego komputera należy wziąć strony podręcznika.
+Ta opcja unieważnia zmienną środowiskową
+.BR MANHTMLHOST .
+Domyślną wartością jest
+.BR localhost .
+
+.SH ŚRODOWISKO
+.TP
+MANHTMLPAGER
+Domyślna przeglądarka www jest wybierana na podstawie wartości tej zmiennej.
+.TP
+MANHTMLHOST
+Domyślna komputer jest wybierany na podstawie wartości tej zmiennej.
+
+.SH "ZOBACZ TAKŻE"
+.BR man (1),
+.BR man2html (1),
+.BR arena (1),
+.BR lynx (1),
+.BR netscape (1),
+.BR xmosaic (1),
+.BR glimpse (1)
+
+http://www.mcom.com/newsref/std/x-remote.html

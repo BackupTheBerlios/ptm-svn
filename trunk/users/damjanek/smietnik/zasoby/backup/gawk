@@ -1,0 +1,11 @@
+# Lista polskich stron man dla pakietu
+# gawk
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+awk.1	man1/awk.1
+gawk.1	man1/gawk.1
+igawk.1	man1/igawk.1
+#
+# koniec listy

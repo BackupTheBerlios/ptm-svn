@@ -1,0 +1,57 @@
+.\" -*- nroff -*-
+.\" 
+.\" This man-page is Copyright (C) 1997 John S. Kallal
+.\" 
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\" 
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" 
+.\" correction, aeb, 970825
+.\" 
+.\" Tłumaczenie na język polski: Paweł Olszewski (alder@amg.net.pl)
+.\" {PTM/PO/0.1/03-06-1998/"urządzenie pełne"}
+.\" Aktualność: man-pages 1.48
+.\" 
+.TH FULL 4 1997-08-02 "Linux" "Podręcznik Programisty Linuksa"
+.SH NAZWA
+full \- urządzenie zawsze pełne
+.SH OPIS
+Plik \fB/dev/full\fP ma numer główny urządzenia 1 i numer poboczny 7.
+.LP
+Zapis do urządzenia \fB/dev/full\fP kończy się niepowodzeniem - zwraca
+błąd ENOSPC.
+
+Odczyt z urządzenia \fB/dev/full\fP zwróci znaki \\0.
+
+Wyszukania na urządzeniu \fB/dev/full\fP zawsze kończą się pomyślnie.
+.SH KONFIGURACJA
+Jeśli w systemie nie ma jeszcze pliku \fB/dev/full\fP, można go utworzyć
+za pomocą następujących poleceń:
+.nf
+
+        mknod -m 666 /dev/full c 1 7
+        chown root:root /dev/full
+
+.fi
+.SH PLIKI
+/dev/full
+.SH "ZOBACZ TAKŻE"
+.BR mknod (1),
+.BR null (4),
+.BR zero (4)

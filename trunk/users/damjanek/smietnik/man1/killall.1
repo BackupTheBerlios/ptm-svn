@@ -1,0 +1,107 @@
+.\" {PTM/LK/0.1/10-10-1998/"zakończ procesy określone nazwą"}
+.\" Tłumaczenie: 10-10-1998 Łukasz Kowalczyk (lukow@tempac.okwf.fuw.edu.pl)
+.\" Translation update: Robert Luberda <robert@debian.org>, Oct 2004, psmisc 21.5
+.\" $Id: killall.1,v 1.4 2004/10/09 14:50:42 robert Exp $
+.\"
+.TH KILLALL 1 "26 września 2003" "Linux" "Polecenia użytkowników"
+.SH NAZWA
+killall \- zakończ procesy o danej nazwie
+.SH SKŁADNIA
+.ad l
+.B killall
+.RB [ \-d , \-\-sid ]
+.RB [ \-c , \-\-context ]
+.RB [ \-e , --exact ]
+.RB [ \-g , \-\-process-group ]
+.RB [ \-i , \-\-interactive ]
+.RB [ \-q , \-\-quiet ]
+.RB [ \-s , \-\-signal
+.IR sygnał ]
+.RB [ \-v , \-\-verbose ]
+.RB [ \-w , \-\-wait ]
+.RB [ \-V , \-\-version ]
+.RB [ \-\- ]
+.I nazwa ...
+.br
+.B killall
+.RB \-l
+.br
+.B killall
+.RB \-V, \-\-version
+.ad b
+.SH OPIS
+.B killall
+wysyła sygnał do wszystkich procesów wymienionych w linii poleceń. Jeżeli
+nie podano nazwy sygnału, wysyłany jest sygnał SIGTERM.
+.PP
+Sygnały mogą być określane za pomocą nazwy (np. \fB\-HUP\fP) lub numeru
+(np. \fB\-1\fP).
+.PP
+Jeżeli nazwa polecenia zawiera ukośnik (\fB/\fP), sygnał wysyłany będzie do
+procesów wykonujących to polecenie, niezależnie od ich nazwy.
+.PP
+\fBkillall\fP zwraca zerowy kod wyjścia, jeżeli dla każdego podanego  polecenia
+przynajmniej jeden proces został zabity (zakończony). W przeciwnym razie \fBkillall\fP zwraca
+niezerowy kod wyjścia.
+.PP
+Proces \fBkillall\fP nigdy nie zabija samego siebie (chociaż może zabić inne
+procesy \fBkillall\fP).
+.SH OPCJE
+.IP "\fB\-e\fP, \fB\-\-exact\fP"
+Wymusza dokładne dopasowanie bardzo długich nazw. Jeżeli nazwa polecenia
+jest dłuższa niż 15 znaków, jej pełna postać może być niedostępna. W tym
+przypadku \fBkillall\fP zabije wszystkie procesy, których nazwa
+polecenia zgadza się z podaną w pierwszych 15 znakach. Po podaniu opcji
+\fB\-e\fP takie procesy są pomijane. Program informuje o każdym takim
+przypadku, jeżeli dodatkowo podano opcję \fB\-v\fP.
+.IP "\fB\-I\fP, \fB\-\-ignore-case\fP"
+Dopasowuje nazwy procesów, ignorując różnice w wielkości liter.
+.IP "\fB\-g\fP, \fB\-\-process-group\fP"
+Zabija grupę procesów, do której należy podany proces. Sygnał jest wysyłany
+tylko raz do danej grupy, nawet wtedy gdy w linii poleceń podano kilka procesów
+należących do tej samej grupy procesów.
+.IP "\fB\-i\fP, \fB\-\-interactive\fP"
+Pyta o zgodę przed zabiciem każdego procesu.
+.IP "\fB\-l\fP, \fB\-\-list\fP"
+Wypisuje wszystkie znane nazwy sygnałów.
+.IP "\fB\-q\fP, \fB\-\-quiet\fP"
+Nie wypisuje odnośnego komunikatu, gdy nie zabito żadnego procesu.
+.IP "\fB\-v\fP, \fB\-\-verbose\fP"
+Wypisuje komunikat o każdym udanym wysłaniu sygnału.
+.IP "\fB\-V\fP, \fB\-\-version\fP"
+Wypisuje informację o wersji programu.
+.IP "\fB\-w\fP, \fB\-\-wait\fP"
+Czeka, aż wszystkie zabite procesy zakończą działanie. \fBkillall\fP
+sprawdza co sekundę, czy któryś z zabitych procesów jeszcze istnieje i
+kończy działanie dopiero, gdy wszystkie skończą pracę. Zauważ, że
+\fBkillall\fP może czekać bez końca, gdy sygnał został zignorowany, nie
+zadziałał lub proces przeszedł do stanu zombie.
+.IP \fB\-d\fP
+(tylko Flask) Określa SID: zabija procesy tylko z podanym SID. Wyklucza użycie argumentu
+\fB\-c\fP. Musi poprzedzać inne argumenty linii poleceń.
+.IP \fB\-c\fP
+(tylko Flask) Określa kontekst bezpieczeństwa: zabija tylko procesy mające podany
+kontekst bezpieczeństwa. Wyklucza użycie \fB\-d\fP.
+Musi poprzedzać inne argumenty linii poleceń.
+.SH PLIKI
+.nf
+/proc	lokalizacja systemu plików proc
+.fi
+.SH "ZNANE PROBLEMY"
+Zabijanie procesów na podstawie nazwy pliku działa tylko wtedy, gdy plik
+wykonywalny jest podczas wykonywania w stanie otwartym.
+.\" [końcówka zdania nie przetłumaczona]
+.\" i.e. impure executables can't be killed this way.
+.PP
+Wydanie polecenia \fBkillall\fP \fInazwa\fP może nie działać zgodnie z
+oczekiwaniami na systemach nielinuksowych, zwłaszcza gdy zostanie
+wydane przez uprzywilejowanego użytkownika.
+.PP
+\fBkillall \-w\fP nie wykrywa sytuacji, w której proces znika i zostaje
+zastąpiony przez inny z tym samym numerem PID.
+.SH AUTORZY
+Werner Almesberger <Werner.Almesberger@epfl.ch> napisał oryginalne psmisc.
+Od wersji 20 można obwiniać Craiga Smalla <csmall@small.dropbear.id.au>.
+.SH "ZOBACZ TAKŻE"
+.BR kill "(1), " fuser "(1), " pgrep "(1), " pidof "(1), " pkill "(1), " ps "(1), " kill (2)
+.\"{{{}}}

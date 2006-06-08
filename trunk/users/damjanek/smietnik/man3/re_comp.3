@@ -1,0 +1,75 @@
+.\" Translation (c) 1999 Pawel Wilk <siewca@dione.ids.pl>
+.\" {PTM/PW/0.1/16-06-1999/"funkcje regex w wersji BSD"}
+.\" Aktualizacja do man-pages 1.48 - A. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\" --------
+.\" Copyright (C), 1995, Graeme W. Wilford. (Wilf.)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Wed Jun 14 16:10:28 BST 1995 Wilf. (G.Wilford@@ee.surrey.ac.uk)
+.\" --------
+.TH re_comp 3 1995-07-14 Linux "GNU"
+.SH NAZWA
+re_comp, re_exec \- funkcje kompilacji wyrażeń regularnych w wersji BSD
+.SH SKŁADNIA
+.B #include <sys/types.h>
+.br
+.B #include <regex.h>
+.sp
+.BI "char *re_comp(char *" regex );
+.br
+.BI "int re_exec(char *" string );
+.SH OPIS
+.B re_comp
+służy do kompilacji zakończonego znakiem NUL wyrażenia regularnego
+wskazywanego przez
+.IR regex .
+Tak skompilowany wzorzec zajmuje statyczny obszar pamięci, bufor wzorca,
+który jest nadpisywany przez następne użycia funkcji
+.BR re_comp .
+Jeśli
+.I regex
+jest równe
+.BR NULL ,
+to nie będzie wykonana żadna operacja a zawartość bufora wzorca nie ulegnie 
+zmianie.
+
+.B re_exec
+jest używana do oceny, czy zakończony znakiem NUL łańcuch tekstowy 
+wskazywany przez
+.I string
+pasuje do ostatnio kompilowanego
+.IR regex .
+.SH "WARTOŚĆ ZWRACANA"
+.B re_comp
+zwraca
+.B NULL
+po udanej kompilacji wyrażenia regularnego
+.IR regex ,
+a w przeciwnym wypadku zwraca wskaźnik do odpowiedniego komunikatu błędu.
+
+.B re_exec
+zwraca 1 w przypadku udanego dopasowania, a zero w przypadku błędu.
+.SH "ZGODNE Z"
+BSD 4.3
+.SH "ZOBACZ TAKŻE"
+.BR regex (7),
+.B "GNU regex manual"

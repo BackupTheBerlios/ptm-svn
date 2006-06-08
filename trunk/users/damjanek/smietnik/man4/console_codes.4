@@ -1,0 +1,546 @@
+.\" {PTM/PB/0.1/03-07-1999/"."}
+.\" Last update: Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>, Aug 2002,
+.\"              man-pages 1.52
+.\" 
+.\" Copyright (c) 1996 Andries Brouwer <aeb@cwi.nl>, Mon Oct 31 22:13:04 1996
+.\" 
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\" 
+.\" This is combined from many sources.
+.\" For Linux, the definitive source is of course console.c.
+.\" About vt100-like escape sequences in general there are
+.\" the ISO 6429 and ISO 2022 norms, the descriptions of
+.\" an actual vt100, and the xterm docs (ctlseqs.ms).
+.\" Substantial portions of this text are derived from a write-up
+.\" by Eric S. Raymond <esr@thyrsus.com>.
+.\" 
+.\" Tiny correction, aeb, 961107.
+.\" 
+.TH CONSOLE_CODES 4 1996-10-31 "Linux" "Podręcznik programisty Linuksa"
+.SH NAZWA
+console_codes \- kody konsolowe Linuksa oraz sekwencje specjalne
+.SH OPIS
+Konsola Linuksa implementuje duży podzbiór kontrolek terminali VT102 oraz
+ECMA-48/ISO 6429/ANSI X3.64, plus określone sekwencje trybu prywatnego,
+dotyczące zmiany palety kolorów, mapowania zestawu znaków itp.
+W poniższych, tabelarycznych opisach, druga kolumna podaje dla danej funkcji
+mnemoniki ECMA-48 lub DEC (te drugie są poprzedzone ciągiem DEC).
+Sekwencje bez mnemoników nie są ani ECMA-48 ani VT102.
+.LP
+Po przetworzeniu normalnego wyjścia, gdy strumień znaków dojdzie do
+sterownika konsoli, która ma go fizycznie wyświetlić, to pierwszą
+rzeczą, która jest robiona, jest przetłumaczenie tego strumienia z języka
+przetwarzania na język wyświetlania.
+.LP
+Jeśli konsola znajduje się w trybie UTF-8, to nadchodzące bajty są najpierw
+składane w 16-bitowe kody Unicode. W przeciwnym wypadku, każdy bajt
+jest przetwarzany zgodnie z bieżącym mapowaniem (które go tłumaczy na
+wartość Unicode). Dalsza dyskusja znajduje się poniżej, w sekcji ZESTAWY
+ZNAKÓW.
+.LP
+W normalnym wypadku, wartość Unicode jest konwertowana na indeks fontu,
+który jest przechowywany w pamięci obrazu. Efektem użycia tego indeksu jest
+pojawienie się odpowiadającego glifu (wizerunku znaku, znalezionego
+w nieulotnej pamięci obrazu) na ekranie. Należy zauważyć, że użycie Unicode
+(i konstrukcja sprzętu PC) pozwala na jednoczesne używanie 512 różnych glifów.
+.LP
+Jeśli bieżąca wartość Unicode jest znakiem sterującym lub jeśli przetwarzana
+jest sekwencja specjalna, to wartość ta jest traktowana w sposób specjalny.
+Zamiast zmieniania jej na indeks fontu i interpretacji jako glif, może ona
+wyzwolić ruchy kursora lub inne funkcje sterujące.
+Dalszą dyskusja znajduje się poniżej, w sekcji KONTROLKI KONSOLI LINUX.
+.LP
+Ogólnie nie jest dobrym zwyczajem wkodowywanie do programów
+kodów terminala na sztywno. Linux obsługuje bazę danych
+.IR terminfo (5),
+która opisuje właściwości terminali.
+Zamiast ręcznego wyprowadzania sekwencji kontrolnych konsoli, prawie zawsze
+wygodniej jest korzystać z biblioteki obsługi terminala
+.BR ncurses (3),
+oraz programów narzędziowych, takich jak
+.BR tput (1),
+czy
+.BR reset (1).
+
+.SH KONTROLKI KONSOLI LINUX
+
+Sekcja ta opisuje wszystkie znaki sterujące i sekwencje specjalne, które
+wywołują funkcje specjalne (tj. wszystko inne niż wypisywanie glifu w pozycji
+kursora) konsoli Linuksa.
+.SS "Znaki sterujące"
+Znak jest znakiem sterujące, jeśli (przed transformacją wynikającą z tablicy
+mapowania) posiada jeden z 14 kodów
+00 (NUL), 07 (BEL), 08 (BS), 09 (HT), 0a (LF), 0b (VT),
+0c (FF), 0d (CR), 0e (SO), 0f (SI), 18 (CAN), 1a (SUB),
+1b (ESC), 7f (DEL).
+Można sobie ustawić tryb `display control characters' (wyświetlania znaków
+sterujących), który umożliwia wyświetlanie 07, 09, 0b, 18, 1a, 7f jako
+glifów. Z drugiej strony, w trybie UTF-8 wszystkie kody 00-1f są uznawane
+za znaki sterujących, niezależnie od trybu `display control characters'.
+
+Jeśli mamy znak sterujący, to jest on natychmiast wykonywany i kasowany
+(nawet w środku sekwencji specjalnej), a sekwencja specjalna leci dalej, z
+następnym znakiem. (Jednak ESC rozpoczyna nową sekwencję specjalną,
+przypuszczalnie anulując niedokończoną poprzednią, a CAN i SUB przerywają
+dowolną sekwencję specjalną).
+Rozpoznawanymi znakami sterującymi są BEL, BS, HT, LF, VT, FF,
+CR, SO, SI, CAN, SUB, ESC, DEL, CSI. Robią one to, czego można oczekiwać:
+.HP
+BEL (0x07, ^G) wydaje dźwięk;
+.HP
+BS (0x08, ^H) przesuwa kursor o jedną spację w lewo
+(lecz nie poza początek wiersza);
+.HP
+HT (0x09, ^I) przesuwa kursor do następnego tabulatora, lub na koniec wiersza,
+gdy wcześniej tabulatora nie ma;
+.HP
+LF (0x0A, ^J), VT (0x0B, ^K) i FF (0x0C, ^L) dają nowy wiersz;
+.HP
+CR (0x0D, ^M) daje powrót karetki - przewinięcie kursora na początek wiersza;
+.HP
+SO (0x0E, ^N) włącza zbiór znaków G1, a jeśli ustawione jest LF/NL (tryb
+nowego wiersza), również powrót karetki;
+.HP
+SI (0x0F, ^O) włącza zestaw znaków G0;
+.HP
+CAN (0x18, ^X) i SUB (0x1A, ^Z) przerywają sekwencje specjalne;
+.HP
+ESC (0x1B, ^[) rozpoczyna nową sekwencję specjalną;
+.HP
+DEL (0x7F) jest ignorowane;
+.HP
+CSI (0x9B) równoważne ESC [.
+.\" .LP
+.SS "Sekwencje ESC- lecz nie CSI-"
+.TS
+l l l.
+ESC c	RIS	Reset.
+ESC D	IND	Przesuw o wiersz.
+ESC E	NEL	Nowy wiersz.
+ESC H	HTS	Ustawienie tabulatora w bieżącej kolumnie.
+ESC M	RI	Cofnięcie o wiersz.
+ESC Z	DECID	DEC prywatna identyfikacja. Jądro zwraca napis
+		ESC [ ? 6 c, twierdząc że jest to VT102.
+ESC 7	DECSC	Zachowanie bieżącego stanu (współrzędne kursora,
+		atrybuty, zestawy znaków G0 i G1).
+ESC 8	DECRC	Odtworzenie ostatnio zachowanego przez ESC 7 stanu.
+ESC [	CSI	Wprowadzacz sekwencji sterujących
+ESC %		Rozpocznęcie sekwencji wybierania zestawu znaków
+ESC % @		\0\0\0Wybranie domyślnego (ISO 646 / ISO 8859-1)
+ESC % G		\0\0\0Wybranie UTF-8
+ESC % 8		\0\0\0Wybranie UTF-8 (przestarzałe)
+ESC # 8	DECALN	DEC test wyrównania ekranu - wypełnienie ekranu
+		znakami E.
+ESC (		Rozpoczęcie sekwencji, definiującej zestaw znaków G0
+ESC ( B		\0\0\0Wybranie domyślnego (mapowanie ISO 8859-1)
+ESC ( 0		\0\0\0Wybranie mapowania grafiki vt100
+ESC ( U		\0\0\0Wybranie mapowania zerowego - wprost do ROM ze
+		znakami
+ESC ( K		\0\0\0Wybranie mapowania użytkownika - mapę załadowaną
+		\0\0\0programem narzędziowym \fBmapscrn\fP(8).
+ESC )		Rozpoczęcie sekwencji, definiującej zestaw znaków G1
+		(po której następuje B, 0, U, K, jak wyżej).
+ESC >	DECPNM	Ustawienie dla bloku klawiszy trybu numerycznego.
+ESC =	DECPAM	Ustawienie dla bloku klawiszy trybu aplikacyjnego.
+ESC ]	OSC	(Powinno być: polecenie systemu operacyjnego)
+		ESC ] P \fInrrggbb\fP: ustawienie palety z parametrem
+		podanym w 7 szesnastkowych cyfrach, następujących po
+		ostatnim P :-(.
+		\fIn\fP jest tu kolorem (0-15), a \fIrrggbb\fP określa
+		wartości czerwieni/zieleni/niebieskości (0-255).
+		ESC ] R: resetuje paletę
+.TE
+.SS "Sekwencje ECMA-48 CSI"
+
+Za CSI (lub ESC [) następuje sekwencja parametrów, co najwyżej NPAR (16),
+które są liczbami dziesiętnymi, oddzielonymi średnikami. Pusty lub nieobecny
+parametr przyjmowany jest za zero. Sekwencja parametrów może być
+poprzedzona pojedynczym znakiem zapytania.
+
+Jednak po CSI [ (lub ESC [ [) odczytywany jest pojedynczy znak, a cała
+sekwencja jest ignorowana (pomysł ten ma na celu ignorowanie
+klawisza funkcyjnego dającego echo).
+
+Akcja sekwencji CSI jest określona jej ostatnim znakiem.
+
+.TS
+l l l.
+@	ICH	Wstawienie określonej liczby pustych znaków.
+A	CUU	Przesunięcie kursora w górę o zadaną liczbę wierszy.
+B	CUD	Przesunięcie kursora w dół o zadaną liczbę wierszy.
+C	CUF	Przesunięcie kursora w prawo o zadaną liczbę kolumn.
+D	CUB	Przesunięcie kursora w lewo o zadaną liczbę kolumn.
+E	CNL	Przesunięcie kursora w dół o zadaną liczbę wierszy
+		i do kolumny 1.
+F	CPL	Przesunięcie kursora w górę o zadaną liczbę wierszy
+		i do kolumny 1.
+G	CHA	Przesunięcie kursora do wskazanej kolumny bieżącego
+		wiersza.
+H	CUP	Przesunięcie kursora do wskazanego wiersza i kolumny
+		(początek w 1,1).
+J	ED	Wymazanie ekranu (domyślnie: od pozycji kursora, do końca
+		ekranu).
+		ESC [ 1 J: czyści od początku do kursora.
+		ESC [ 2 J: czyści cały ekran.
+K	EL	Wymazanie wiersza (domyślnie od kursora do końca wiersza).
+		ESC [ 1 K: czyści od początku wiersza do kursora.
+		ESC [ 2 K: czyści cały wiersz.
+L	IL	Wstawienie zadanej liczby pustych wierszy.
+M	DL	Skasowanie zadanej liczby wskazanych wierszy.
+P	DCH	Skasowanie zadanej liczby wskazanych znaków w bieżącym
+		wierszu.
+X	ECH	Wymazanie zadanej liczby wskazanych znaków w bieżącym
+		wierszu.
+a	HPR	Przesunięcie kursora w prawo o zadaną liczbę kolumn.
+c	DA	Odpowiedź: ESC [ ? 6 c: `Jestem VT102'
+d	VPA	Przesunięcie kursora do wskazanego wiersza i bieżącej
+		kolumny.
+e	VPR	Przesunięcie kursora w dół zadaną liczbę o wierszy.
+f	HVP	Przesunięcie kursora do wskazanego wiersza i kolumny.
+g	TBC	Bez parametrów: skasowanie tabulatora w bieżącej pozycji.
+		ESC [ 3 g: skasowanie wszystkich tabulatorów.
+h	SM	Ustawienie trybu (patrz niżej).
+l	RM	Inicjalizacja trybu (patrz niżej).
+m	SGR	Ustawienie atrybutów (patrz niżej).
+n	DSR	Raport o stanie (patrz niżej).
+q	DECLL	Ustawienie LED-ów klawiatury.
+		ESC [ 0 q: wyłączenie wszystkich LED-ów.
+		ESC [ 1 q: włączenie ScrollLock
+		ESC [ 2 q: włączenie NumLock
+		ESC [ 3 q: włączenie CapsLock
+r	DECSTBM	Ustawinie obszaru przewijania; parametry to górny i dolny
+		wiersz.
+s	?	Zapamiętanie pozycji kursora.
+u	?	Odtworzenie pozycji kursora.
+`	HPA	Przesunięcie kursora do wskazanej kolumny bieżącego
+		wiersza.
+.TE
+.SS Interpretacja grafiki zbioru ECMA-48
+
+Sekwencja ESC [ <parametry> m ustawia atrybuty wyświetlania. Można ustawić
+wiele atrybutów w pojedynczej sekwencji specjalnej.
+.LP
+.TS
+l l.
+param	wynik
+0	inicjalizacja wszystkich atrybutów do wartości domyślnych
+1	włączenie pogrubienia
+2	włączenie półrozjaśnienia (symulowane kolorem na ekranach
+	kolorowych)
+4	włączenie podkreślenia (symulowane kolorem na ekranach
+	kolorowych)
+	(kolory używane do symulacji są ustawiane za pomocą ESC ] ...)
+5	włączenie migania
+7	włączenie inwersji
+10	wyłączenie wybranego mapowania, znacznika kontroli wyświetlania
+	i znacznika przełączania meta.
+11	wybranie mapowania zerowego, ustawienie znacznika kontroli
+	wyświetlania, wyłączenie znacznika przełączania meta.
+12	wybranie mapowania zerowego, ustawienie znacznika kontroli
+	wyświetlania, włączenie znacznika przełączania meta.
+	(znacznik przełączania meta powoduje, że wysoki bit
+	bajtu jest zmieniany przed translacją tablicy mapowań.)
+21	ustawienie normalnej jasności (nie jest to zgodne z ECMA-48)
+22	ustawienie normalnej jasności
+24	wyłączenie podkreślenia
+25	wyłączenie migania
+27	wyłaczenie inwersji
+30	ustawienie kolor czarnego
+31	ustawienie koloru czerwonego
+32	ustawienie koloru zielonego
+33	ustawienie koloru brązowego
+34	ustawienie koloru niebieskiego
+35	ustawienie koloru fioletowego
+36	ustawienie koloru niebieskozielonego
+37	ustawienie koloru białego
+38	włączenie podkreślenia, ustawienie koloru domyślnego
+39	wyłączenie podkreślenia, ustawienie koloru domyślnego
+40	ustawienie czarnego tła
+41	ustawienie czerwonego tła
+42	ustawienie zielonego tła
+43	ustawienie brązowego tła
+44	ustawienie niebieskiego tła
+45	ustawienie fioletowego tła
+46	ustawienie niebieskozielonego tła
+47	ustawienie białego tła
+49	ustawienie domyślnego koloru tła
+.TE
+.SS Przełączniki trybu ECMA-48
+.TP
+ESC [ 3 h
+DECCRM (domyślnie wyłączone): Wyświetlanie znaków sterujących.
+.TP
+ESC [ 4 h
+DECIM (domyślnie wyłączone): Włączenie trybu wstawiania (insert).
+.TP
+ESC [ 20 h
+LF/NL (domyślnie wyłączone): Automatyczne podążanie za echem LF, VT lub
+FF z CR.
+.LP
+.SS Polecenia zgłaszania stanu ECMA-48
+.TP
+ESC [ 5 n
+Raport stanu urządzenia (DSR): Odpowiedzią jest ESC [ 0 n (Terminal OK).
+.TP
+ESC [ 6 n
+Raport pozycji kursora (CPR): Odpowiedzią jest ESC [ \fIy\fP ; \fIx\fP R,
+gdzie \fIx,y\fP to pozycja kursora.
+
+.SS Sekwencje trybu prywatnego DEC (DECSET/DECRST).
+
+Nie są one opisane w  ECMA-48. Opisano tu sekwencje włączania trybu;
+Sekwencje wyłączania trybu można uzyskać przez zamianę ostatniego `h' na
+`l'.
+.TP
+ESC [ ? 1 h
+DECCKM (domyślnie wyłączone): Gdy włączone, klawisze kursora wysyłają
+przedrostek ESC O, a nie ESC [.
+.TP
+ESC [ ? 3 h
+DECCOLM (domyślnie wyłączone = 80 kolumn): Przełącznik trybu 80/132 kolumny.
+W źródłach sterownika zaznaczono, że to nie wystarcza; niektóre narzędzia
+trybu użytkownika, takie jak
+.BR resizecons (8)
+muszą zmienić rejestry sprzętowe karty graficznej konsoli.
+.TP
+ESC [ ? 5 h
+DECSCNM (domyślnie wyłączone): Włączenie trybu inwersji.
+.TP
+ESC [ ? 6 h
+DECOM (domyślnie wyłączone): Gdy włączone, adresowanie kursora następuje
+względem górnego lewego narożnika regionu przewijania.
+.TP
+ESC [ ? 7 h
+DECAWM (domyślnie włączone): Włączenie autozawijania. W tym trybie znak
+graficzny, wyemitowany za 80 (lub 132) kolumną, zostanie zawinięty na
+początek następnego wiersza.
+.TP
+ESC [ ? 8 h
+DECARM (domyślnie włączone): Włączenie samopowtarzania klawiatury.
+.TP
+ESC [ ? 9 h
+Zgłaszanie myszy X10 (domyślnie wyłączone): Ustawienie trybu zgłaszania na 1
+(lub wyłączenie na 0) \- patrz niżej.
+.TP
+ESC [ ? 25 h
+DECCM (domyślnie włączone): Uczynienie kursora widzialnym.
+.TP
+ESC [ ? 1000 h
+Zgłaszanie myszy X11 (domyślnie wyłączone): Ustawienie trybu zgłaszania na 2
+(lub wyłączenie na 0) \- patrz niżej.
+
+.SS Prywatne sekwencje CSI konsoli Linuksa
+
+Następujące sekwencje nie należą ani do ECMA-48, ani do oryginalnego VT102.
+Zostały one wprowadzone przez sterownik konsoli Linuksa. Kolorami
+w parametrach SGR są:
+0 = czarny, 1 = czerwony, 2 = zielony, 3 = brązowy, 4 = niebieski,
+5 = fioletowy, 6 = niebieskozielony, 7 = biały.
+
+.TS
+l l.
+ESC [ 1 ; \fIn\fP ]	Ustawienie koloru \fIn\fP jako kolor podkreślenia.
+ESC [ 2 ; \fIn\fP ]	Ustawienie koloru \fIn\fP jako kolor dim.
+ESC [ 8 ]       	Uczynienie bieżącej pary kolorów atrybutem domyślnym.
+ESC [ 9 ; \fIn\fP ]	Ustawienie okresu wygaszania ekranu na \fIn\fP
+	minut.
+ESC [ 10 ; \fIn\fP ]	Ustawienie częstotliwości dzwonka w Hz.
+ESC [ 11 ; \fIn\fP ]	Ustawienie czasu trwania dzwonka w ms.
+ESC [ 12 ; \fIn\fP ]	Przeniesienie podanej konsoli na wierzch.
+ESC [ 13 ]      	Wyłączenie wygaszenia ekranu.
+ESC [ 14 ; \fIn\fP ]   	Ustawienie czasu wyłączenia zasilania VESA
+	w minutach.
+.TE
+
+.SH "ZESTAWY ZNAKÓW"
+
+Jądro zna 4 translacje bajtów na symbole znaków ekranu konsoli.
+Tymi czterema tablicami są: a) Latin1 -> PC, b) grafika VT100 -> PC,
+c) PC -> PC, d) zdefiniowane przez użytkownika.
+
+Istnieją dwa zbiory znaków, zwane G0 i G1, a jeden z nich jest bieżącym
+zestawem znaków. (Początkowo G0.) Wpisanie ^N powoduje, że bieżącym zestawem
+staje się G1, a ^O, że G0.
+
+Zmienne G0 i G1 wskazują na tablicę translacji i mogą być zmieniane przez
+użytkownika. Początkowo wskazują odpowiednio na tablice a) i b).
+Sekwencje ESC ( B i ESC ( 0 oraz ESC ( U i ESC ( K powodują, że G0 wskazuje
+odpowiednio na tablice a), b), c), d).
+Sekwencje ESC ) B i ESC ) 0 oraz ESC ) U i ESC ) K powodują, że G1 wskazuje
+odpowiednio na tablice a), b), c), d).
+
+Sekwencja ESC c powoduje reset terminala, który jest tym, czego
+potrzeba, jeśli ekran ulegnie zaśmieceniu. Często zalecane "echo ^V^O"
+powoduje tylko, że G0 staje się bieżącym, lecz nie ma gwarancji że wskazuje
+on na tablicę a).
+W niektórych dystrybucjach znajduje się program
+.BR reset (1),
+który po prostu wysyła "echo ^[c".
+Jeśli wpis dla konsoli w bazie terminfo jest prawidłowy (i posiada wpis
+rs1=\\Ec), to zadziała również "tput reset".
+
+Zdefiniowana przez użytkownika tablica mapowań może być ustawiana za pomocą
+.BR mapscrn (8).
+Wynikiem mapowania jest to, że jeśli wyświetlany jest symbol c, to do pamięci
+grafiki wysyłany jest symbol s = mapa[c]. Mapa bitowa, odpowiadająca s, która
+znajduje się w nieulotnej pamięci grafiki, może być zmieniona za pomocą
+.BR setfont(8).
+
+.SH "ŚLEDZENIE MYSZY"
+
+Funkcja śledzenia myszy jest przeznaczana do zgłaszania stanu myszy,
+zgodnego z xterm. Ponieważ sterownik konsoli nie ma możliwości
+dowiedzenia się o urządzeniu ani o rodzaju myszy, zgłoszenia te zwracane są
+w strumieniu wejściowym konsoli tylko wtedy, gdy sterownik terminala
+wirtualnego otrzymuje ioctl odświeżający stan myszy. Ioctl-e te muszą być
+generowane przez świadomą istnienia myszy aplikację trybu użytkownika, taką
+jak demon \fBgpm(8)\fR.
+
+Parametry dla wszystkich sekwencji specjalnych śledzenia myszy, generowanych
+przez \fIxterm\fP, kodują parametry numeryczne w pojedynczych znakach, jako
+\fIwartość\fP+40. Na przykład, `!' to 1. Współrzędne ekranu zaczynają się od 1.
+
+Tryb zgodności z X10 wysyła sekwencje specjalne przy naciskaniu przycisków,
+kodując położenie oraz który przycisk myszy został naciśnięty.
+Jest to włączane przez wysłanie ESC [ ? 9 h i wyłączane przez ESC [ ? 9 l.
+Przy naciskaniu przycisków, \fIxterm\fP wysyła
+ESC [ M \fIbxy\fP (6 znaków). \fIb\fP jest tu równe klawisz\-1,
+a \fIx\fP i \fIy\fP są współrzędnymi x i y kursora myszy w momencie
+przyciśnięcia. Ten sam kod produkuje jądro.
+
+Normalny tryb śledzenia (nie zaimplementowany w Linuksie 2.0.24) wysyła
+sekwencję specjalną zarówno po przyciśnięciu, jak i po zwolnieniu przycisku.
+Wysyłana jest również informacja modyfikatora. Jest to włączane przez
+wysłanie ESC [ ? 1000 h, a wyłączane przez ESC [ 1000 l.
+\fIxterm\fP po naciśnięciu lub zwolnieniu przycisku wysyła ESC [ M \fIbxy\fP.
+Dwa niższe bity \fIb\fP kodują informację o przycisku: 0=naciśnięto pierwszy,
+1=naciśnięto drugi, 2=naciśnięto trzeci, 3=zwolnienie. W górnych bitach
+zakodowane są modyfikatory wciśnięte podczas naciskania przycisku. Są one
+dodawane: 4=Shift, 8=Meta, 16=Control. Znowu, \fIx\fP i \fIy\fP to
+współrzędne kursora myszy podczas zdarzenia. Górny lewy narożnik to (1,1).
+
+.SH "PORÓWNANIA Z INNYMI TERMINALAMI"
+
+Wiele różnych typów terminali, podobnie jak konsola Linuksa, jest opisywanych
+jako `zgodne z VT100'. Poniżej omówiono różnice między konsolą Linuksa
+i dwoma najważniejszymi spośród innych terminali: DEC VT102 i
+.BR xterm (1).
+.\"
+.SS Obsługa znaków sterujących
+Vt102 rozpoznawał też następujące znaki sterujące:
+.HP
+NUL (0x00) było ignorowane;
+.HP
+ENQ (0x05) wywoływało komunikat odpowiadający;
+.HP
+DC1 (0x11, ^Q, XON) wznawiało transmisję;
+.HP
+DC3 (0x13, ^S, XOFF) powodowało, że vt100 ignorował (i przestawał
+transmitować) wszystkie kody poza XOFF i XON.
+.LP
+Przetwarzanie DC1/DC3 tego rodzaju, jakie było w VT100 może być włączone
+przez sterownik tty.
+.LP
+Program
+.I xterm
+(w trybie vt100) rozpoznaje znaki sterujące
+BEL, BS, HT, LF, VT, FF, CR, SO, SI, ESC.
+
+.SS Sekwencje specjalne
+Sekwencje VT100 nie implementowane przez konsolę Linuksa:
+.LP
+.TS
+l l l.
+ESC N	SS2	Pojedyncze przesunięcie 2. (Wybranie zestawu znaków G2
+		tylko dla następnego znaku.)
+ESC O	SS3	Pojedyncze przesunięcie 3. (Wybranie zestawu znaków G3
+		tylko dla następnego znaku.)
+ESC P	DCS	Łańcuch kontrolny urządzenia (zakończony ESC \e)
+ESC X	SOS	Początek łańcucha.
+ESC ^	PM	Komunikat prywatności (zakończony ESC \e)
+ESC \e	ST	Zakończenie łańcucha
+ESC * ...		Wyznaczenie zestawu znaków G2
+ESC + ...		Wyznaczenie zestawu znaków G3
+.TE
+
+Program
+.I xterm
+(w trybie vt100) rozpoznaje ESC c, ESC # 8, ESC >, ESC =,
+ESC D, ESC E, ESC H, ESC M, ESC N, ESC O, ESC P ... ESC \,
+ESC Z (daje odpowiedź ESC [ ? 1 ; 2 c, `Jestem vt100 z rozszerzoną opcją
+grafiki') i ESC ^ ... ESC \ o takich samych znaczeniach, jak opisano powyżej.
+Przyjmuje ESC (, ESC ), ESC *,  ESC + , po których następuje 0, A, B,
+odpowiednio dla specjalnego zestawu znaków DEC i zbioru rysowania linii,
+UK oraz USASCII.
+Przyjmuje ESC ] dla ustawiania pewnych zasobów:
+.LP
+.TS
+l l.
+ESC ] 0 ; txt BEL	Ustawienie nazwy ikony i tytułu okna na txt.
+ESC ] 1 ; txt BEL	Ustawienie nazwy ikony na txt.
+ESC ] 2 ; txt BEL	Ustawienie tytułu okna na txt.
+ESC ] 4 6 ; nazwa BEL	Zmiana pliku logu na nazwa (normalnie wyłączone
+	przez opcję kompilacji)
+ESC ] 5 0 ; fn BEL	Ustawienie fontu na fn.
+.TE
+
+Rozpoznaje następujące, z nieznacznie zmienionym znaczeniem:
+.LP
+.TS
+l l l.
+ESC 7  DECSC	Zachowanie kursora
+ESC 8  DECRC	Odtworzenie kursora
+.TE
+
+Podobnie, rozpoznaje również
+.LP
+.TS
+l l l.
+ESC F		Kursor do dolnego lewego narożnika ekranu (o ile włączone
+		zasobem hpLowerleftBugCompat).
+ESC l		Blokowanie pamięci (dla terminali HP).
+		Blokuje pamięć ponad kursorem.
+ESC m		Odblokowanie pamięci (dla terminali HP).
+ESC n	LS2	Wywołanie zestawu znaków G2.
+ESC o	LS3	Wywołanie zestawu znaków G3.
+ESC |	LS3R	Wywołanie zestawu znaków G3 jako GR.
+		W xtermie jest to bez widocznego efektu.
+ESC }	LS2R	Wywołanie zestawu znaków G2 jako GR.
+		W xtermie jest to bez widocznego efektu.
+ESC ~	LS1R	Wywołanie zestawu znaków G1 jako GR.
+		W xtermie jest to bez widocznego efektu.
+.TE
+Nie rozpoznaje ESC % ...
+.\"
+.SS Sekwencje CSI
+Program
+.I xterm
+(od wersji XFree86 3.1.2G) nie rozpoznaje SGR-ów migania i trybu
+niewidocznego. Podstawowe wersje X11R6 nie rozpoznają SGR-ów ustawiania
+kolorów. Wszystkie inne sekwencje CSI ECMA-48, rozpoznawane przez Linuksa,
+są również rozpoznawane przez
+.I xterm
+i vice-versa.
+
+Program
+.I xterm
+rozpoznaje wszystkie opisane powyżej sekwencje Trybu Prywatnego DEC, lecz nie
+rozpoznaje żadnej z prywatnych sekwencji Linuksa. Omówienie sekwencji
+prywatnych
+.IR xterm 'a
+znajduje się w dokumencie
+.IR "Xterm Control Sequences" ,
+napisanym przez Edwarda Moya i Stephena Gildea'a, dostępnym w dystrybucji X.
+
+.SH BŁĘDY
+
+W 2.0.24 CSI jest zepsute, a NUL nie jest ignorowany w sekwencjach
+specjalnych.
+
+.SH "ZOBACZ TAKŻE"
+.BR console (4),
+.BR console_ioctl (4),
+.BR charsets (4)

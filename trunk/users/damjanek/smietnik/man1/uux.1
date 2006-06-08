@@ -1,0 +1,248 @@
+.\" {PTM/PB/0.1/25-04-1999/"Zdalne wywołanie komendy poprzez UUCP"}
+''' $Id: uux.1,v 1.3 2001/09/16 09:38:33 wojtek2 Exp $
+.TH uux 1 "Taylor UUCP 1.06"
+.SH NAZWA
+uux \- Zdalne wywołanie polecenia poprzez UUCP
+.SH SKŁADNIA
+.B uux
+.RI [ opcje ]
+.I polecenie
+.SH OPIS
+.I uux
+jest używane do wykonania zadanego polecenia na zdalnym systemie lub do
+wykonania polecenia na systemie lokalnym z użyciem plików ze zdalnych
+systemów. Podane polecenie nie jest wywoływane natychmiastowo; żądanie
+jest kolejkowane do czasu gdy demon
+.IR uucico (8)
+nie zadzwoni do odpowiedniego systemu i jej nie wykona. Demon jest
+uruchomiany automatycznie, chyba że zostanie podana opcja
+.B \-r
+lub
+.BR \-\-nouucico .
+
+Właściwe wykonanie polecenia jest dokonywane przez demona
+.IR uuxqt (8).
+
+Argumenty plikowe mogą być zebrane z systemów zdalnych, a także ze
+standardowego wejścia. Standardowe wyjście może być przekierowane do pliku
+na zdalnym systemie.
+
+Nazwa polecenia może być poprzedzona nazwą systemu, zakończoną wykrzyknikiem,
+jeśli ma ono być wykonane na zdalnym systemie. Pusta nazwa systemu jest
+brana za nazwę systemu lokalnego.
+
+Argumenty zawierające wykrzyknik są uważane za nazwy plików.
+Przed wykrzyknikiem znajduje się nazwa systemu, na którym leży dany plik,
+a za wykrzyknikiem - ścieżka do tego pliku. Pusta nazwa systemu oznacza
+system lokalny; taki zapis musi być użyty przy transferowaniu pliku lokalnego
+do polecenia wywoływanego na zdalnym systemie. Jeśli ścieżka nie jest
+ścieżką bezwzględną, zostanie dołączona do bieżącego katalogu roboczego
+systemu lokalnego; rezultat nie musi być znaczący dla zdalnego systemu.
+Ścieżka może zaczynać się od
+.B ~/
+- wówczas jest względna w stosunku do publicznego katalogu UUCP (zwykle
+/usr/spool/uucppublic) na odpowiednim systemie. Ścieżka może się zaczynać od
+.BR ~nazwa ,
+wówczas względna w stosunku do katalogu domowego użytkownika o podanej
+nazwie, na danym systemie.
+
+Standardowe wyjście i wejście można przekierowywać jak zwykle. Nazwy plików
+z nimi kojarzonych mogą zawierać wykrzykniki, wskazujące system.
+Zauważ, że znaki przekierowania podczas przekazywania do 
+.I uux
+muszą być cytowane i nie powinno się dopuszczać do interpretowania ich
+przez powłokę. Przekierowanie dopisujące (>>) nie działa.
+
+Wszystkie podane pliki są przed wywołaniem polecenia zbierane do pojedynczego
+katalogu. Znaczy to, że każdy plik musi mieć inną nazwę. Np,
+.br
+.in +0.5i
+.nf
+uux 'sys1!diff sys2!~user1/foo sys3!~user2/foo >!foo.diff'
+.fi
+.in -0.5i
+nie powiedzie się, ponieważ obydwa pliki zostaną skopiowane na sys1 i
+zapisane pod tą samą nazwą foo.
+
+Dla zapobieżenia interpretacji wykrzykników można cytować argumenty
+za pomocą nawiasów. Przydaje się to podczas wywoływania polecenia
+.I uucp
+na zdalnym systemie.
+
+Żądanie wywołania pustego polecenia (np.
+.I uux sys!)
+nie stworzy pliku poll'ującego na dany system.
+.SH OPCJE
+.I uux
+przyjmuje następujące opcje:
+.TP 5
+.B \-, \-p, \-\-stdin
+Odczytuje standardowe wejście i używa go jako standardowego wejścia dla
+wywoływanego polecenia.
+.TP 5
+.B \-c, \-\-nocopy
+Nie kopiuje plików lokalnych do katalogu kolejkowego. Tak jest domyślnie.
+Jeśli zostaną one usunięte przed przetworzeniem przez demon
+.IR uucico (8),
+kopiowanie nie powiedzie się. Pliki muszą być odczytywalne przez demona
+.IR uucico (8),
+a także przez użytkownika wywołującego
+.IR uux .
+.TP 5
+.B \-C, \-\-copy
+Kopiuje pliki lokalne do katalogu kolejkowego.
+.TP 5
+.B \-l, \-\-link
+Tworzy dowiązania do plików lokalnych w katalogu kolejkowym. Jeśli nie
+można utworzyć dowiązania do pliku, ponieważ leży on na innym urządzeniu,
+zostanie skopiowany, chyba że podano jedną z opcji
+.B \-c
+lub
+.B \-\-nocopy
+(innymi słowy, użycie opcji
+.B \-\-link
+przełącza domyślny tryb z
+.B \-\-nocopy
+na
+.BR \-\-copy ).
+Jeśli pliki zostaną zmienione przed przetworzeniem przez demona
+.IR uucico (8),
+użyte zostaną wersje zmienione. Pliki musza być odczytywalne dla demona
+.IR uucico (8),
+oraz dla użytkownika wywołującego
+.I uux.
+.TP 5
+.B \-g poziom, \-\-grade poziom
+Ustawia poziom polecenia transferu plików. Zadania wyższego stopnia są
+wykonywane jako pierwsze. Poziomy przyjmują wartości 0 ... 9 A ... Z a ... z
+od najwyższego do najniższego.
+.TP 5
+.B \-n, \-\-notification=no
+Nie wysyła listów o stanie zadania, nawet jeśli się nie powiedzie.
+.TP 5
+.B \-z, \-\-notification=error
+Wysyła informacje o błędach w zadaniu. Dla wielu demonów
+.IR uuxqt ,
+łącznie z Taylor UUCP
+.I uuxqt,
+jest to akcja domyślna; dla nich opcja
+.B \-\-notification=error
+nie daje żadnego rezultatu. Jednak niektóre demony
+.I uuxqt
+wysyłają pocztę, jeśli zadanie się powiedzie, chyba że użyje się opcji
+.BR \-\-notification=error ,
+a parę innych demonów 
+.I uuxqt
+w ogóle nie będzie wysyłać listów jeśli zdanie się powiedzie, o ile nie
+będzie ustawiona opcja
+.BR \-\-notification=error .
+.TP 5
+.B \-r, \-\-nouucico
+Nie uruchamia demona
+.IR uucico (8)
+natychmiast; zamiast tego po prostu kolejkuje żądanie do dalszego
+przetworzenia.
+.TP 5
+.B \-j, \-\-jobid
+Wypisuje na standardowym wyjściu identyfikatory zadań. Identyfikatory są
+generowane dla każdej operacji kopiowania plików, wymaganej do dokonania
+operacji. Kopie te moga być unieważniane przez przekazanie identyfikatorowi
+zadania opcji
+.B \-\-kill
+programu
+.IR uustat (1),
+która uniemożliwi dokonanie wywołania.
+.TP 5
+.B \-a adres, \-\-requestor adres
+Zgłasza stan zadania na podany adres e-mail.
+.TP 5
+.B \-x typ, \-\-debug typ
+Włącza dany rodzaj diagnostyki. Rozpoznawane są następujące:
+abnormal, chat, handshake, uucp-proto, proto, port,
+config, spooldir, execute, incoming, outgoing. Dla uux znaczenie mają tylko
+abnormal, config, spooldir i execute.
+
+Po podzieleniu przecinkami, można podać wiele rodzajów, a opcja
+.B \-\-debug
+może pojawić się wiele razy. Można również podać liczbę, która włączy
+kolejne rodzaje powyższej listy; np,
+.B \-\-debug 2
+jest równoważne
+.B \-\-debug abnormal,chat.
+.TP 5
+.B \-I plik, \-\-config plik
+Wskazuje plik konfiguracyjny, z którego ma korzystać program.
+Opcja ta może być niedostępna, zależnie od tego, jak skompilowano
+.IR uux .
+.TP 5
+.B \-v, \-\-version
+Wypisuje wersję i kończy pracę.
+.TP 5
+.B \-\-help
+Wypisuje informację o sposobie użycia i kończy pracę.
+.SH PRZYKŁADY
+.br
+.nf
+uux -z - sys1!rmail user1
+.fi
+Wywołuje polecenie ,,rmail user1'' na systemie sys1, podając za standardowe
+wejście to, co podano
+.I uux
+jako standardowe wejście. Jeśli pojawi się błąd, wysyła wiadomość za pomocą
+klienta
+.IR mail (1).
+
+.br
+.nf
+uux 'diff -c sys1!~user1/file1 sys2!~user2/file2 >!file.diff'
+.fi
+Ściąga dwa nazwane pliki z systemu sys1 i systemu sys2 i wywołuje
+.IR diff ,
+a następnie wkłada wynik do bieżącego katalogu. Bieżący katalog musi być
+dostępny do zapisu dla demona
+.IR uuxqt (8).
+
+.br
+.nf
+uux 'sys1!uucp ~user1/file1 (sys2!~user2/file2)'
+.fi
+Wywołuje na systemie sys1
+.I uucp
+i kopiuje plik file1 (z systemu sys1) na sys2. Ten przykład pokazuje
+zastosowanie nawiasów do cytowania.
+.SH OGRANICZENIA
+Zdalny system może nie pozwalać na wywoływanie niektórych poleceń. Wiele
+zdalnych systemów zezwala tylko na wywoływanie
+.I rmail
+i
+.I rnews.
+
+Niektóre z opcji są zależne od zdolności demona
+.I uuxqt
+(8) na zdalnym systemie.
+.SH PLIKI
+Nazwy plików można zmieniać podczas kompilacji lub w pliku
+konfiguracyjnym, więc poniższe są tylko przybliżeniami.
+
+.br
+/usr/lib/uucp/config - Plik konfiguracyjny.
+.br
+/usr/spool/uucp -
+Katalog kolejkowy UUCP.
+.br
+/usr/spool/uucp/Log -
+Plik logu UUCP.
+.br
+/usr/spool/uucppublic -
+Domyślny katalog publiczny UUCP.
+.SH ZOBACZ TAKŻE
+mail(1), uustat(1), uucp(1), uucico(8), uuxqt(8)
+.SH BŁĘDY
+Nie można odwoływać się do plików między wieloma systemami.
+
+.B \-\-jobid
+tworzy zbyt wiele identyfikatorów i nie ma możliwości anulowania lokalnego
+wywołania wymagającego zdalnych plików.
+.SH AUTOR
+Ian Lance Taylor
+(ian@airs.com)

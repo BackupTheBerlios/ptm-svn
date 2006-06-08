@@ -1,0 +1,35 @@
+# Lista polskich stron man dla pakietu
+# GNU textutils 2.0
+#
+# Format:
+# nazwa_docelowa    plik_w_PTM
+#
+cat.1		man1/cat.1
+cksum.1		man1/cksum.1
+comm.1		man1/comm.1
+csplit.1	man1/csplit.1
+cut.1		man1/cut.1
+expand.1	man1/expand.1
+fmt.1		man1/fmt.1
+fold.1		man1/fold.1
+head.1		man1/head.1
+join.1		man1/join.1
+md5sum.1	man1/md5sum.1
+nl.1		man1/nl.1
+od.1		man1/od.1
+paste.1		man1/paste.1
+pr.1		man1/pr.1
+ptx.1		man1/ptx.1
+sort.1		man1/sort.1
+split.1		man1/split.1
+sum.1		man1/sum.1
+tac.1		man1/tac.1
+tail.1		man1/tail.1
+textutils.1	man1/textutils.1
+tsort.1		man1/tsort.1
+tr.1		man1/tr.1
+unexpand.1	man1/unexpand.1
+uniq.1		man1/uniq.1
+wc.1		man1/wc.1
+#
+# koniec listy
