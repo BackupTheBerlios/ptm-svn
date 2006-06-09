@@ -1,0 +1,18 @@
+.\" 1999 PTM Przemek Borys
+.\" $Id: which.1,v 1.3 2004/07/07 14:22:05 robert Exp $
+.TH WHICH 1 LOCAL
+.SH NAZWA
+which \- pokaż pełną ścieżkę komendy
+.SH SKŁADNIA
+.B which
+nazwa_programu ...
+.SH OPIS
+.I Which
+pobiera serię nazw programów i drukuje pełne ścieżki programów, które
+powłoka
+by wywołała, aby je uruchomić. Robi to, symulując przeszukiwanie przez
+powłokę
+zmiennej środowiskowej
+.BR $PATH .
+.SH "ZOBACZ TAKŻE"
+Rodzinę execve(2), exec(3).

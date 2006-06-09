@@ -1,0 +1,26 @@
+.\" {PTM/PB/0.1/28-06-1999/"."}
+.TH WALL 1 "10 Październik 1994" "" "Podręcznik użytkownika Linuksa"
+.SH NAZWA
+wall - wyślij wiadomość do terminali wszystkich użytkowników
+.SH OPIS
+.B wall
+.RB [ plik ]
+.SH OPIS
+.B Wall
+wysyła wiadomość do wszystkich zalogowanych użytkowników, których zezwolenie
+\fBmesg\fR(1) jest ustawione na \fByes\fR. Przekazywana (wyświetlana) jest
+zawartość pliku będącego argumentem komendy. Brak argumentu spowoduje
+pobranie treści wiadomości ze standardowego wejścia.
+W tym przypadku, wiadomość powinna być zakończona znakiem \fBEOF\fR
+(zwykle Control-D).
+.PP
+Tylko superużytkownik może wysłać wiadomość do na terminale użytkowników,
+którzy ustawili odrzucanie wiadomości lub pracują z programem, który robi to
+automatycznie.
+.SH ZOBACZ TAKŻE
+.BR mesg (1),
+.BR talk (1),
+.BR write (1),
+.BR shutdown (8).
+.SH AUTOR
+Miquel van Smoorenburg, miquels@cistron.nl
