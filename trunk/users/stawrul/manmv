@@ -14,6 +14,6 @@ $ sed -e '/^\[/d' equeryres > wyciag_manow
 
 4. Przechodzimy do katalogu trunk/man-pages i wykonujemy polecenie:
 
-$ perl -e 'while (<>){ /.*\/(.*)-\d/; $prog = $1; system("mkdir ~/ptm/trunk/man-pages/$prog && svn add ~/ptm/trunk/man-pages/$prog && svn cleanup;"); /.*\/(.*).gz/; system("svn mv ~/ptm/trunk/users/damjanek/smietnik/man1/$1 ~/ptm/trunk/man-pages/$prog"); }' wyciag_manow
+$ perl -e 'while (<>){ /.*\/(.*)-\d/; $prog = $1; system("mkdir ~/ptm/trunk/man-pages/$prog ; svn add ~/ptm/trunk/man-pages/$prog ; svn cleanup;"); /.*\/(.*).gz/; system("svn mv ~/ptm/trunk/users/damjanek/smietnik/man1/$1 ~/ptm/trunk/man-pages/$prog"); }' wyciag_manow
 
 UWAGA: należy zmienić ścieżki w obu wywołaniach system stosownie do posiadanej struktury katalogów
