@@ -1,0 +1,57 @@
+.\" {PTM/RL/30-04-2002/"łatwy vim"}
+.\" Translation: Robert Luberda <robert@debian.org>, Apr 2002; vim 6.1
+.\" Translation update: Robert Luberda <robert@debian.org>, Jul 2004; vim 6.3
+.\" $Id: evim.1,v 1.2 2004/07/07 14:21:04 robert Exp $
+.\"
+.TH EVIM 1 "16 lutego 2002"
+.SH NAZWA
+evim \- łatwy vim, edycja pliku vimem ustawionym jako edytor bez żadnych trybów
+.SH SKŁADNIA
+.br
+.B evim
+[opcje] [plik ..]
+.br
+.B eview
+.SH OPIS
+.B evim
+uruchamia
+.B vima
+i ustawia takie opcje, żeby się zachowywał jak edytor bez żadnych trybów (edycji,
+poleceń itp.).
+To ciągle jest vim, ale używany jako edytor typu wskaż-i-kliknij, tak że ma
+się wrażenie używania notepada pod MS-Windows.
+.B evim
+zawsze uruchamia się w GUI, dając możliwość używania menu i paska narzędzi.
+.PP
+Jest przeznaczony dla ludzi, którzy na prawdę nie potrafią w normalny sposób
+pracować z vimem.
+Edycja jest mniej wydajna.
+.PP
+.B eview
+zachowuje się tak samo, ale uruchamia się w trybie tylko do odczytu, jak evim -R.
+.PP
+Aby uzyskać szczegółowe informacje o vimie, jego opcjach itp., proszę przeczytać vim(1) .
+.PP
+Opcja 'insertmode' jest włączona, tak aby była możliwość bezpośredniego wpisywania tekstu.
+.br
+Mapowanie klawiszy jest tak ustawione, aby operację  "skopiuj i wklej" ("copy and paste")
+uruchamiało się tak samo, jak pod MS-Windows.
+CTRL-X wycina tekst, CTRL-C kopiuje, a CTRL-V wkleja tekst.
+Aby uzyskać poprzednie znaczenie CTRL-V, należy użyć CTRL-Q.
+.SH OPCJE
+Patrz vim(1).
+.SH PLIKI
+.TP 15
+/usr/share/vim/vim63/evim.vim
+Skrypt inicjujący evima.
+.SH AKA
+Także znany jako (w oryg.`Also Known As') "Vim dla opornych".
+Używając evima, powinieneś wziąć chusteczkę do nosa, zawiązać supły
+w każdym rogu i założyć ją na głowę.
+.SH ZOBACZ TAKŻE
+vim(1)
+.SH AUTOR
+Większość
+.B vima
+została napisana przez Brama Moolenaara, jednakże z dużą pomocą innych ludzi.
+Zobacz Help/Credits w menu.
