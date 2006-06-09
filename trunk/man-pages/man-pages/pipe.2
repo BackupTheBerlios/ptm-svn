@@ -1,0 +1,71 @@
+.\" 1999 PTM Przemek Borys
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" 1999 PTM Przemek Borys
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Fri Jul 23 23:25:42 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 17:23:51 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH PIPE 2 1993-07-23 "Linux 0.99.11" "Podręcznik programisty Linuksa"
+.SH NAZWA
+pipe \- utworzenie potoku
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.BI "int pipe(int " filedes "[2]);"
+.SH OPIS
+.B pipe
+tworzy parę sprzężonych deskryptorów pliku, wskazujących na i-węzeł potoku i
+umieszcza je w tablicy wskazywanej przez
+.IR filedes .
+.I filedes[0]   
+jest dla odczytu, a
+.I filedes[1]
+dla zapisu.
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracane jest zero. Po błędzie zwracane jest \-1
+i odpowiednio ustawiane
+.IR errno .
+.SH BŁĘDY
+.TP
+.B EMFILE
+Proces używa zbyt wielu deskryptorów pliku.
+.TP
+.B ENFILE
+Tablica plików systemu jest pełna.
+.TP
+.B EFAULT
+.I filedes
+jest nieprawidłowy.
+.SH "ZGODNE Z"
+SVr4, SVID, AT&T, POSIX, X/OPEN, BSD 4.3
+.SH "ZOBACZ TAKŻE"
+.BR read (2),
+.BR write (2),
+.BR fork (2),
+.BR socketpair (2)

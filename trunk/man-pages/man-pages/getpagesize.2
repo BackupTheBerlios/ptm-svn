@@ -1,0 +1,86 @@
+.\" Copyright (C) 2001 Andries Brouwer <aeb@cwi.nl>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Translation (c) 2002 Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"              manpages 1.47
+.\"
+.TH GETPAGESIZE 2 2001-12-21 "Linux 2.5.0" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getpagesize \- pobranie rozmiaru strony pamięci
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.B int getpagesize(void);
+.SH OPIS
+Funkcja
+.B getpagesize()
+zwraca ilość bajtów w stronie, przy czym "strona" jest to pojęcie takie, jak
+używane w opisie
+.BR mmap (2),
+gdzie jednostką mapowanie plików jest strona pamięci.
+
+Rozmiar tego rodzaju stron, które są używane przez
+.B mmap
+można znaleźć za pomocą
+
+.RS
+.nf
+#include <unistd.h>
+long sz = sysconf(_SC_PAGESIZE);
+.fi
+.RE
+
+(gdzie niektóre systemy dopuszczają również synonim _SC_PAGE_SIZE dla
+_SC_PAGESIZE), lub
+
+.RS
+.nf
+#include <unistd.h>
+int sz = getpagesize();
+.fi
+.RE
+.SH HISTORIA
+Ta funkcja pierwotnie pojawiła się w 4.2BSD.
+.SH "ZGODNE Z"
+SVr4, 4.4BSD, SUSv2.
+W SUSv2 funkcja
+.B getpagesize()
+jest oznaczona jako "pozostałość" ("legacy"), a w POSIX 1003.1-2001 została
+pominięta. HPUX nie zawiera tej funkcji.
+.SH UWAGI
+Obecność
+.B getpagesize()
+jako funkcji systemowej Linuksa zależy od architektury. Jeśli istnieje, zwraca
+symbol jądra PAGE_SIZE, który zależy od architektury i modelu maszyny.
+W ogólności, aby mieć jedną dystrybucję binarną dla każdej architektury, używa
+się binariów, które są zależne od architektury, ale nie od modelu maszyny.
+Oznacza to, że program użytkownika nie powinien określać PAGE_SIZE podczas
+kompilacji na podstawie plików nagłówkowych, a używać bieżącej funkcji
+systemowej, co najmniej dla tych architektur (np. sun4), dla których istnieje
+zależność PAGE_SIZE od modelu maszyny.
+W tym miejscu libc4, libc5 i glibc 2.0 zawodzą, gdyż ich
+.B getpagesize()
+zwraca wartość wyliczoną statycznie, a nie korzysta funkcji systemowej.
+Wszystko jest OK w glibc 2.1.
+.SH "ZOBACZ TAKŻE"
+.BR mmap (2),
+.BR sysconf (3)

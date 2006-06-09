@@ -1,0 +1,74 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Updated with additions from Mitchum DSouza <m.dsouza@mrc-apu.cam.ac.uk>
+.\" Portions Copyright 1993 Mitchum DSouza <m.dsouza@mrc-apu.cam.ac.uk>
+.\"
+.\" Modified Tue Oct 22 00:22:35 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Translation (c) 1998 Przemek Borys <pborys@dione.ids.pl>
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\"
+.TH GETHOSTID 2 1993-11-29 "Linux 0.99.13" "Podręcznik programisty Linuksa"
+.SH NAZWA
+gethostid, sethostid \- pobranie lub ustawienie unikalnego identyfikatora
+obecnej maszyny
+.SH SKŁADNIA
+.B #include <unistd.h>
+.sp
+.B long gethostid(void);
+.br
+.BI "int sethostid(long " hostid );
+.SH OPIS
+Pobranie lub ustawienie unikalnego 32-bitowego identyfikatora obecnej maszyny.
+32-bitowy identyfikator powinien być unikalny wśród wszystkich istniejących
+systemów uniksowych. Normalnie jest to podobne do adresu internetowego
+lokalnej maszyny, zwracanego przez
+.BR gethostbyname (3),
+i dlatego zwykle nie musi być ustawiane.
+
+Funkcja
+.B sethostid
+jest zastrzeżona dla superużytkownika.
+
+Argument
+.I hostid
+jest przechowywany w pliku
+.IR /etc/hostid .
+.SH "WARTOŚĆ ZWRACANA"
+.B gethostid
+zwraca 32-bitowy identyfikator obecnej maszyny, jaki został ustawiony przez
+.BR sethostid (2).
+.SH "ZGODNE Z"
+4.2BSD. Funkcje te porzucono w 4.4BSD.
+POSIX.1 nie definiuje tych funkcji, lecz ISO/IEC 9945-1:1990 
+wspomina o nich w B.4.4.1. SVr4 zawiera 
+.B gethostid
+lecz brak tam
+.BR sethostid .
+.SH PLIKI
+.I /etc/hostid
+.SH "ZOBACZ TAKŻE"
+.BR hostid (1),
+.BR gethostbyname (3)

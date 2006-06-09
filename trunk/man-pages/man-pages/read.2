@@ -1,0 +1,147 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" 1999 PTM Przemek Borys
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\"
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Sat Jul 24 00:06:00 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Wed Jan 17 16:02:32 1996 by Michael Haardt
+.\"   <michael@cantor.informatik.rwth-aachen.de>
+.\" Modified Thu Apr 11 19:26:35 1996 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Sun Jul 21 18:59:33 1996 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Fri Jan 31 16:47:33 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Sat Jul 12 20:45:39 1997 by Michael Haardt
+.\"   <michael@cantor.informatik.rwth-aachen.de>
+.\"
+.TH READ 2 1997-07-12 "Linux 2.0.32" "Podręcznik programisty Linuksa"
+.SH NAZWA
+read \- odczyt z deskryptora pliku
+.SH SKŁADNIA
+.nf
+.B #include <unistd.h>
+.sp
+.BI "ssize_t read(int " fd ", void *" buf ", size_t " count );
+.fi
+.SH OPIS
+.B read()
+próbuje odczytać maksymalnie
+.I count
+bajtów z deskryptora plików
+.I fd
+do bufora, którego początek znajduje się w
+.IR buf .
+.PP
+Jeśli
+.I count
+jest równe zero, \fBread()\fP zwraca zero i nic więcej się nie dzieje.
+Jeśli
+.I count
+jest większe niż SSIZE_MAX, wynik jest nieokreślony.
+.PP
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracana jest liczba odczytanych bajtów (zero oznacza
+koniec pliku), oraz o tę wartość przesuwana jest pozycja w pliku.
+Nie jest błędem, jeśli liczba ta jest mniejsza niż liczba żądanych bajtów;
+może się to zdarzyć np. ponieważ chwilowo dostępnych jest mniej bajtów (może
+z powodu bliskości końca plików, a może z powodu czytania z potoku lub
+z terminala), lub ponieważ \fBread()\fR zostało przerwane sygnałem.
+Po błędzie zwracane jest \-1 i odpowiednio ustawiane
+.IR errno .
+W tym wypadku nie jest określone czy pozycja w pliku się zmieni.
+.SH BŁĘDY
+.TP
+.B EINTR
+Wywołanie zostało przerwane sygnałem przed odczytaniem danych.
+.TP
+.B EAGAIN 
+Przy użyciu
+.B O_NONBLOCK
+wybrano nieblokujące we/wy, a nie ma akurat danych dostępnych do odczytania
+natychmiast.
+.TP
+.B EIO
+Błąd we/wy. Zdarza się to na przykład, gdy proces jest w grupie procesów tła
+próbuje czytać z kontrolującego tty, i blokuje lub ignoruje sygnał SIGTTIN,
+lub jego grupa procesów jest osierocona. Może się to również zdarzyć, gdy
+wystąpi niskopoziomowy błąd we/wy podczas odczytu z dysku lub taśmy.
+.TP
+.B EISDIR
+.I fd
+odnosi się do katalogu.
+.TP
+.B EBADF
+.I fd
+nie jest prawidłowym deskryptorem pliku, lub nie jest otwarty dla odczytu.
+.TP
+.B EINVAL
+.I fd
+wskazuje na obiekt nieodpowiedni do odczytu.
+.TP
+.B EINVAL
+.I fd
+jest skojarzony z obiektem, który nie jest odpowiedni dla odczytu.
+.TP
+.B EFAULT
+.I buf
+wskazuje poza dostępną dla użytkownika przestrzeń adresową.
+.PP
+Mogą się pojawić inne błędy, zależnie od obiektu skojarzonego z
+.IR fd .
+POSIX zezwala by
+.B read
+którego przerwano po odczytaniu fragmentu danych zwrócił \-1 (z
+.I errno
+ustawionym na EINTR) lub by zwróćił ilość odczytanych bajtów.
+.SH "ZGODNE Z"
+SVr4, SVID, AT&T, POSIX, X/OPEN, BSD 4.3
+.SH OGRANICZENIA
+Na systemach plików NFS, odczytanie niewielkiej ilości danych spowoduje
+uaktualnienie znacznika czasu tylko za pierwszym razem. Następne wywołania
+tego nie uczynią. Jest to związana z buforowaniem atrybutów po stronie
+klienta, gdyż większość (jeżeli nie wszystkie) klienty NFS pozostawiają
+uaktualnianie atime serwerowi, a odczyty po stronie klienta, odbywające
+się z buforów klienta nie spowodują  uaktualnienia atime na serwerze, gdyż
+nie ma wówczas odczytów po stronie serwera. Semantykę UNIX-a można uzyskać
+poprzez wyłączenie buforowania atrybutów po stronie klienta. Jednakże,
+w większości przypadków spowoduje to istotny wzrost obciążenia serwera
+i zmniejszy wydajność.
+.PP
+Wiele systemów plików i dysków jest uważane za dostatecznie szybkie, aby
+implementacja
+.B O_NONBLOCK
+była uważana za zbędną. Tak więc, O_NONBLOCK może nie być dostępne dla
+plików i/lub dysków.
+.SH "ZOBACZ TAKŻE"
+.BR close (2),
+.BR fcntl (2),
+.BR ioctl (2),
+.BR lseek (2),
+.BR readdir (2),
+.BR readlink (2),
+.BR select (2),
+.BR write (2),
+.BR fread (3)

@@ -1,0 +1,349 @@
+.\" Copyright 1993 Giorgio Ciucci (giorgio@crcc.it)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Tue Oct 22 17:53:56 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Fri Jun 19 10:59:15 1998 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Sun Feb 18 01:59:29 2001 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified 20 Dec 2001, Michael Kerrisk <mtk16@ext.canterbury.ac.nz>
+.\" Modified 21 Dec 2001, aeb
+.\" Translated by Rafal Lewczuk 14 July 1999
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Jan 2002,
+.\"              manpages 1.47
+.\" 
+.TH SEMCTL 2 2001-12-21 "Linux 2.4.1" "Podręcznik programisty Linuksa"
+.SH NAZWA
+semctl \- sterowanie semaforami
+.SH SKŁADNIA
+.nf
+.B #include <sys/types.h>
+.B #include <sys/ipc.h>
+.B #include <sys/sem.h>
+.sp
+.BI "int semctl(int " semid ", int " semnum ", int " cmd ", ...);"
+.fi
+.SH OPIS
+Funkcja
+.B semctl
+wykonuje operację sterującą określoną przez
+.I cmd
+na zestawie semaforów określonym przez
+.I semid
+lub na
+.IR semnum \-tym
+semaforze tego zestawu. (Numeracja semaforów zaczyna się od 0.)
+.PP
+Funkcja ta posiada trzy lub cztery argumenty. Gdy jest ich cztery, wywołanie
+ma postać
+.BI semctl( semid , semnum , cmd , arg ),
+gdzie czwarty argument
+.I arg
+jest typu
+.B union semun
+zdefiniowanego następująco:
+
+.nf
+#if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+/* union semun jest zdefiniowana w <sys/sem.h> */
+#else
+/* dla zgodności z X/OPEN musimy sami sobie zdefiniować */
+union semun {
+      int val;                  /* wartość dla SETVAL */
+      struct semid_ds *buf;     /* bufor dla IPC_STAT i IPC_SET */
+      unsigned short *array;    /* tablica dla GETALL i SETALL */
+                                /* Część specyficzna dla Linuksa: */
+      struct seminfo *__buf;    /* bufor dla IPC_INFO */
+};
+#endif
+.fi
+.PP
+Dozwolone wartości parametru
+.I cmd
+to:
+.TP 12
+.B IPC_STAT
+Kopiowanie informacji ze struktury kontrolnej zestawu semaforów
+do struktury wskazywanej przez
+.IB arg .buf\fR.
+Argument
+.I semnum
+jest pomijany.
+Proces wywołujący funkcję musi mieć prawa do odczytu zestawu semaforów.
+.TP
+.B IPC_SET
+Zapis wartości niektórych pól struktury
+.B semid_ds
+wskazywanej przez
+.IB arg .buf
+do struktury kontrolnej zestawu semaforów z jednoczesnym uaktualnieniem pola
+.B sem_ctime
+(tj. przypisaniem mu aktualnego wskazania czasu).
+Pola zadanej struktury
+.B "struct semid_ds"
+wskazywanej przez
+.IB arg .buf\fR,
+których wartości są kopiowane to:
+.nf
+.sp
+.ft B
+	sem_perm.uid
+	sem_perm.gid
+	sem_perm.mode	\fR/* tylko 9 najmniej znaczących bitów */\fP
+.fi
+.ft R
+.sp
+Efektywny identyfikator użytkownika procesu wywołującego musi wskazywać na
+administratora systemu, twórcę zestawu semaforów lub jego właściciela.
+Argument
+.I semnum
+jest pomijany.
+.TP
+.B IPC_RMID
+Natychmiastowe usunięcie zestawu semaforów i związanych z nim struktur danych.
+Wszystkie procesy oczekujące zostaną wznowione i wywołania, które wykonywały
+zasygnalizują błąd (przypisując zmiennej
+.B errno
+wartość
+.BR EIDRM ).
+Efektywny identyfikator użytkownika procesu wywołającego funkcję musi
+wskazywać na administratora systemu, twórce zestawu semaforów lub jego
+właściciela. Argument
+.I semnum
+jest pomijany.
+.TP
+.B GETALL
+Zwraca wartości
+.B semval
+wszystkich semaforów z zestawu umieszczając je w tablicy
+.IB arg .array\fR.
+Argument
+.I semnum
+jest pomijany.
+Proces wywołujący funkcję musi mieć prawa do odczytu zestawu semaforów.
+.TP
+.B GETNCNT
+Zwraca wartość
+.B semncnt
+skojarzoną z semaforem numer
+.I semnum
+semaforem
+(tzn. liczbę procesów oczekujących na zwiększenie się wartości
+.B semval
+skojarzonej z semaforem numer
+.IR semnum ).
+Proces wywołujący funkcję musi mieć prawa do odczytu zestawu semaforów.
+.TP
+.B GETPID
+Zwraca wartość
+.B sempid
+skojarzoną z semaforem o numerze
+.I semnum
+w zestawie.
+(jest to identyfikator procesu, który ostatnio wykonał
+.B semop
+na semaforze).
+Proces wywołujący funkcję musi mieć prawa do odczytu zestawu semaforów.
+.TP
+.B GETVAL
+Zwraca wartość
+.B semval
+semafora o numerze
+.I semnum
+w zestawie.
+Proces wywołujący funkcję musi mieć prawa do odczytu zestawu semaforów.
+.TP
+.B GETZCNT
+Zwraca wartość
+.B semzcnt
+skojarzoną z semaforem o numerze
+.I semnum
+w zestawie.
+(tzn. liczbę procesów oczekujących na osiągnięcie przez semafor o numerze
+.I semnum
+wartości 0).
+Proces wywołujący funkcję musi mieć prawa do odczytu zestawu semaforów.
+.TP
+.B SETALL
+Przypisuje wartości
+.B semval
+wszystkim semaforom zestawu, korzystając z tablicy
+.IB arg .array ,
+jednocześnie uaktualnia pole
+.B sem_ctime
+struktury
+.B semid_ds
+skojarzonej z zestawem.
+Wszystkie struktury
+.B sem_undo
+skojarzone z zestawem są we wszystkich procesach zwalniane.
+Procesy oczekujące na osiągnięcie przez poszczególne semafory określonych
+wartości są wznawiane, jeśli któraś z wartości
+.B semval
+stanie się zerowa lub wzrośnie.
+Argument
+.I semnum
+jest pomijany.
+Proces wywołujący funkcję musi mieć prawa do modyfikacji zestawu semaforów.
+.TP
+.B SETVAL
+Przypisuje wartość
+.IB arg .val
+polu
+.B semval
+semafora o numerze
+.I semnum
+w zestawie. Pole
+.B sem_ctime
+struktury
+.B semid_ds
+skojarzonej z semaforem jest uaktualniane.
+Wszystkie struktury
+.B sem_undo
+skojarzone z semaforem są zwalniane.
+Procesy oczekujące na osiągnięcie przez semafor określonych wartości
+zostaną wznowione, jeśli
+.B semval
+stanie się równe zeru lub wzrośnie.
+Proces wywołujący funkcję musi mieć prawa do odczytu zestawu semaforów.
+.SH "WARTOŚĆ ZWRACANA"
+W przypadku wystąpienia błędu,
+.B semctl
+zwróci
+.BR \-1 ,
+przypisując zmiennej
+.B errno
+wartość określającą rodzaj błędu.
+W przeciwnym przypadku zwrócona zostanie nieujemna wartość zależna od
+określonej przez
+.I cmd
+wykonywanej operacji w następujący sposób:
+.TP 11
+.B GETNCNT
+wartość
+.BR semncnt .
+.TP
+.B GETPID
+wartość
+.BR sempid .
+.TP
+.B GETVAL
+wartość
+.BR semval .
+.TP
+.B GETZCNT
+wartość
+.BR semzcnt .
+.LP
+Dla wszystkich pozostałych wartości
+.I cmd
+w razie pomyślnego zakończenia zwracane jest 0.
+.SH BŁĘDY
+W przypadku wystąpienia błędu, zmienna
+.B errno
+przyjmie jedną z następujących wartośći:
+.TP 11
+.B EACCES
+Proces wywołujący funkcję nie ma odpowiednich praw wymaganych do wykonania
+operacji
+.IR cmd .
+.TP
+.B EFAULT
+Adres wskazywany przez
+.IB arg .buf
+lub
+.IB arg .array
+jest niedostępny.
+.TP
+.B EIDRM
+Zestaw semaforów został usunięty.
+.TP
+.B EINVAL
+Niewłaściwa wartość parametru
+.I cmd
+lub
+.IR semid .
+.TP
+.B EPERM
+Argument
+.I cmd
+ma wartość
+.B IPC_SET
+lub
+.BR IPC_RMID ,
+ale proces wywołujący funkcję nie ma uprawnień upoważniających do wykonania
+tego polecenia.
+.TP
+.B ERANGE
+Argument
+.I cmd
+ma wartość
+.B SETALL
+lub
+.B SETVAL
+ale przekazywana wartość semafora
+.B semval
+(dla któregoś z semaforów zestawu) jest mniejsza od 0 lub większa od wartości
+ograniczenia systemowego
+.BR SEMVMX .
+.SH UWAGI
+Polecenia sterujące
+.BR IPC_INFO ,
+.B SEM_STAT
+i
+.B SEM_INFO
+są używane przez program
+.BR ipcs (8)
+do pobierania informacji o używanych zasobach w systemie.
+Jeśli zajdzie potrzeba, polecenia te mogą w przyszłości ulec zmianie lub
+ich obsługa może zostać zawarta w systemie plików /proc.
+.LP
+Niektóre pola struktury \fIstruct semid_ds\fP były w Linuksie 2.2 typu short
+a stały się typu long w Linuksie 2.4. Aby to wykorzystać, powinna wystarczyć
+rekompilacja pod glibc-2.1.91 lub nowszą.
+(Jądro rozróżnia stare i nowe wywołania za pomocą znacznika IPC_64 w
+.IR cmd .)
+.PP
+Dla wywołania
+.B semctl
+obowiązują następujące ograniczenia systemowe:
+.TP 11
+.B SEMVMX
+Maksymalna wartość
+.BR semval :
+zależna od implementacji (32767).
+.LP
+W celu uzyskania lepszej przenośności, najlepiet zawsze wywoływać
+.B semctl
+z czterema argumentami.
+.LP
+Pod Linuksem funkcja
+.B semctl
+nie jest funkcją systemową, ale jest zaimplementowana poprzez funkcję
+systemową
+.BR ipc (2).
+.SH "ZGODNE Z"
+SVr4, SVID. W SVr4 udokumntowano jeszcze EINVAL i EOVERFLOW.
+.SH "ZOBACZ TAKŻE"
+.BR ipc (2),
+.BR shmget (2),
+.BR shmat (2),
+.BR shmdt (2),
+.BR ipc (5)

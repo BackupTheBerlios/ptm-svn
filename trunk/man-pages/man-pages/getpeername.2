@@ -1,0 +1,104 @@
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)getpeername.2	6.5 (Berkeley) 3/10/91
+.\"
+.\" Modified Sat Jul 24 16:37:50 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Thu Jul 30 14:37:50 1993 by Martin Schulze <joey@debian.org>
+.\" Modified Sun Mar 28 21:26:46 1999 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified 17 Jul 2002, Michael Kerrisk <mtk16@ext.canterbury.ac.nz>
+.\"    Added 'socket' to NAME, so that "man -k socket" will show this page.
+.\"
+.\" Translation (c) 1998 Przemek Borys <pborys@dione.ids.pl> 
+.\" Last update: A. Krzysztofowicz <ankry@mif.pg.gda.pl>, Aug 2002,
+.\"              manpages 1.52
+.\"
+.TH GETPEERNAZWA 2 1993-07-30 "BSD" "Podręcznik programisty Linuksa"
+.SH NAZWA
+getpeername \- pobranie nazwy drugiej strony połączonego gniazda
+.SH SKŁADNIA
+.B #include <sys/socket.h>
+.sp
+.BI "int getpeername(int " s ", struct sockaddr *" name ", socklen_t *" namelen );
+.SH OPIS
+.B getpeername
+zwraca nazwę drugiej strony równorzędnego połączenia odbywającego się poprzez
+gniazdo
+.IR s .
+Parametr
+.I namelen
+powinien być zainicjalizowany tak, aby podawać rozmiar obszaru wskazywanego
+przez
+.IR name .
+Po zakończeniu, będzie on zawierać rzeczywisty rozmiar zwróconej nazwy
+(w bajtach). Nazwa jest obcinana, jeśli zadany bufor jest zbyt mały.
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu zwracane jest zero. Po błędzie zwracane jest \-1
+i odpowiednio ustawiane
+.IR errno .
+.SH BŁĘDY
+.TP
+.B EBADF
+Argument
+.I s
+nie jest prawidłowym deskryptorem.
+.TP
+.B ENOTSOCK
+Argument
+.I s
+jest plikiem, a nie gniazdem.
+.TP
+.B ENOTCONN
+Gniazdo nie jest podłączone.
+.TP
+.B ENOBUFS
+Brakło zasobów w systemie do wykonania tej operacji.
+.TP
+.B EFAULT
+Parametr
+.I name
+wskazuje na obszar pamięci nie będący dozwoloną przestrzenią adresową procesu.
+.SH "ZGODNE Z"
+SVr4, 4.4BSD (funkcja
+.B getpeername
+pojawiła się pierwotnie w 4.2BSD).
+.SH UWAGA
+Trzeci argument
+.B getpeername
+jest w rzeczywistości typu `int *' (i tak jest w BSD 4.*, libc4 i libc5).
+Pewne zamieszanie w POSIX doprowadziło jego zmiany na obecny socklen_t.
+Szkic standardu nie sostał jeszcze przyjęty, ale glibc2 już jest z nim
+zgodne i zawiera również socklen_t. Zobacz także
+.BR accept (2).
+.SH "ZOBACZ TAKŻE"
+.BR accept (2),
+.BR bind (2),
+.BR getsockname (2)

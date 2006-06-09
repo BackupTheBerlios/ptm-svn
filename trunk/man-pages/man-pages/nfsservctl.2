@@ -1,0 +1,50 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This text is in the public domain.
+.\" Translation (c) 2001 Andrzej M. Krzysztofowicz <ankry@mif.pg.gda.pl>
+.\"              manpages 1.47
+.\"
+.TH NFSSERVCTL 2 1997-07-16 "Linux 2.1.32" "Podręcznik programisty Linuksa"
+.SH NAZWA
+nfsservctl \- funkcja systemowa stanowiąca interfejs do demona NFS w jądrze
+.SH SKŁADNIA
+.B #include <linux/nfsd/syscall.h>
+.sp
+.BI "nfsservctl(int " cmd ", struct nfsctl_arg *" argp ", union nfsctl_res *" resp );
+.SH OPIS
+.nf
+/*
+ * To są polecenia rozumiane przez nfsctl().
+ */
+#define NFSCTL_SVC              0       /* This is a server process. */
+#define NFSCTL_ADDCLIENT        1       /* Dodanie klienta NFS. */
+#define NFSCTL_DELCLIENT        2       /* Usunięcie klienta NFS. */
+#define NFSCTL_EXPORT           3       /* eksportowanie systemu plików. */
+#define NFSCTL_UNEXPORT         4       /* zaprzestanie eksportowania
+                                           systemu plików. */
+#define NFSCTL_UGIDUPDATE       5       /* uaktualnienie mapy uid/gid klienta. */
+#define NFSCTL_GETFH            6       /* otrzymanie fh (używane przez mountd) */
+
+struct nfsctl_arg {
+        int                     ca_version;     /* zabezpieczenie */
+        union {
+                struct nfsctl_svc       u_svc;
+                struct nfsctl_client    u_client;
+                struct nfsctl_export    u_export;
+                struct nfsctl_uidmap    u_umap;
+                struct nfsctl_fhparm    u_getfh;
+                unsigned int            u_debug;
+        } u;
+}
+
+union nfsctl_res {
+        struct knfs_fh          cr_getfh;
+        unsigned int            cr_debug;
+};
+.fi
+.SH "WARTOŚĆ ZWRACANA"
+Po pomyślnym zakończeniu, zwracane jest zero. W przypadku błędu, zwracane
+jest \-1 i odpowiednio ustawiane
+.IR errno .
+.SH "ZGODNE Z"
+Ta funkcja jest specyficzna dla Linuksa.
