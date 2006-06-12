@@ -1,0 +1,31 @@
+Opis procesu rekrutacji do zespołu PTM.
+
+Przede wszystkim kandydat na tłumacza powinien zapoznać się z całą zawartością
+strony projektu, przeczytać wszystkie artykuły i poznać zasady rządzące
+projektem. Warto również pozwiedzać repozytorium SVN w którym odbywają się
+prace nad manualami, zapoznać z jego strukturą i organizacją.
+
+Następnie należy napisać e-maila do osoby zarządzającej projektem, gdzie
+należy przedstawić krótką notkę biograficzną zawierającą opis kwalifikacji
+przyszłego tłumacza i kilka ciepłych słów na temat projektu. Od całego listu
+powinna bić aura ogromnej motywacji do pracy cechującej zgłaszającą się osobę.
+Powinien on też zawierać krótką notkę na temat tego co osoba zgłaszająca się do
+pracy chce tłumaczyć lub poprawiać - lub informację "sam nie wiem co chcę
+robić, powiedzcie mi gdzie się mogę przydać".
+
+Obecnie koordynatorem tłumaczeń jest Damian Szeluga (damjanek@gentoo.pl).
+
+Jeśli e-mail będzie przekonywujący, koordynator poprosi kandydata o założenie
+konta w serwisie <a
+href="http://developer.berlios.de">developer.berlios.de</a>.
+
+Po założeniu konta należy ponownie skontaktować się z koordynatorem i podać mu
+swój login.
+
+Po 6h od momentu odebrania przez koordynatora maila z loginem, skrypty berliosa
+powinny dodać osobę do projektu i umożliwić jej dostęp do roboczego SVN, w
+którym przechowujemy many.
+
+Później pozostaje już tylko pracować.
+
+
