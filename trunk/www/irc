@@ -1,0 +1,35 @@
+Miejscem spotkań tłumaczy manuali, miejscem konsultacji i uzyskiwania
+odpowiedzi na pytania jakie mogą pojawić się podczas pracy, jest nasz
+oficjalny kanał IRC.
+
+Kanał nazywa się #ptm i znajduje się w sieci <a
+href="http://freenode.net">irc.freenode.net</a>.
+
+Można dostać się na niego w następujący sposób:
+
+<ol>
+<li>
+Instalujemy program do IRC-a. Polecamy <a href="http://irssi.org">irssi</a> lub
+<a href="http://xchat.org">xchat</a>.
+</li>
+<li>
+Uruchamiamy go i wpisujemy:
+<code>
+/connect irc.freenode.net
+/join #ptm
+</code>
+</li>
+</ol>
+
+Powinno otworzyć się odpowiednie okienko.
+
+Kilka uwag regulaminowych:
+
+Kanał należy do projektu tłumaczenia manuali i rozmowy tam prowadzone powinny
+dotyczyć tematyki związanej z tłumaczeniami.
+Obowiązuje kodowanie UTF-8. Jeśli nie możesz, nie umiesz lub nie chcesz go
+ustawić, pisz bez polskich znaków.
+
+Serdecznie zapraszamy tam wszystkich chętnych do merytorycznej dyskusji na
+temat pracy jaką wykonujemy oraz chętnych do dołączenia do projektu.
+
