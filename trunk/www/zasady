@@ -1,0 +1,34 @@
+Zasady pisania dla PTM.
+
+Zasady tu spisane powinny być stosowane we wszystkich tłumaczeniach
+przygotowywanych dla naszego projektu, a każde ich złamanie w już
+przetłumaczonych stronach man powinno być traktowane jako błąd, który należy
+niezwłocznie naprawić.
+
+<ul>
+<li>
+Tłumaczenie musi być możliwie wierne oryginałowi. Nie wolno dopisywać uwag od
+siebie, nowych rozdziałów, sugestii, niczego. Jeśli oryginalna strona man
+zawiera błąd, zgłaszamy go autorom oryginału prosząc ich o jego poprawienie.
+</li>
+<li>
+Tłumaczenie musi być pisane zgodnie z zasadami polskiej gramatyki, interpunkcji
+i ortografii.
+</li>
+<li>Obowiązuje zakaz bratania się z czytelnikiem - pisanie "per Ty" jest
+zabronione i powinno się tego unikać nawet jeśli taka forma jest stosowana w
+oryginale.  Dokumenty muszą być pisane w formie bezosobowej, "należy", "warto",
+którą można wspomóc liczbą mnogą "robimy", "instalujemy" itp.
+</li>
+<li>Obowiązuje zakaz pisania jakichkolwiek szowinizmów. Unikamy sformułowań sugerujących
+taką, a nie inną płeć czytelnika.
+</li>
+<li>Odmiana słowa Linux w języku polskim jest kwestią sporną. My popieramy linię
+Rady Języka Polskiego i w odmianie zamieniamy "x" na "ks" we wszystkich
+przypadkach poza mianownikiem. Linux, Linuksie, Linuksa. Pisanie w inny sposób
+będzie traktowany jak błąd ortograficzny.
+</li>
+
+Podane reguły nie podlegają dyskusji. Mają zastosowanie dla wszystkich stron
+man. Każda z nimi niezgodność jest traktowana jako poważny błąd i wiąże się z
+wstrzymaniem publikacji do jego naprawienia.
