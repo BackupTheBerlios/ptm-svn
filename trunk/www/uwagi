@@ -1,0 +1,75 @@
+Uwag kilka o tłumaczeniu tekstów dla PTM.
+
+Stawiamy na jakość.
+
+Priorytetem jest wierność oryginałowi. Nie tolerujemy żadnych literackich
+zapędów tłumaczy, tekst przetłumaczonego manuala ma być tak bliski oryginałowi
+jak to tylko możliwe.
+Wbrew pozorom nie ma to nic wspólnego z tłumaczeniem słowo po słowie.
+Tłumaczenie słowo po słowie oznacza skasowanie tekstu przez dział korekty.
+
+Stąd moja pierwsza uwaga:
+Nie wolno tłumaczyć tekstu słowo po słowie - należy przeczytać całe zdanie,
+czasem nawet cały akapit i potem przekazać dokładnie tę samą treść możliwie
+sprawnie w naszym rodzimym języku. Wymaga to trochę wprawy i często
+przeczytania przetłumaczonego tekstu kilka razy na głos. Polecam te metody, one
+zapewnią, że teksty, które przyślecie nie polecą do kosza tylko trafią do
+czytelników. Tekst musi wyglądać naturalnie dla polskiego czytelnika, ma być
+napisany zgodnie z polskimi zasadami gramatyki i interpunkcji, nie angielskimi.
+
+Tłumaczenie to nie jest prosta sprawa. Jeśli ktoś pisał, że to łatwe - kłamał.
+Tłumaczenie dokumentacji wymaga nie tylko znajomości tematyki tłumaczonego
+tekstu i rozumienia języka angielskiego. Przede wszystkim wymaga pewnej dość
+rzadkiej zdolności - swobody w przelewaniu myśli w słowa, wprawy w posługiwaniu
+się językiem polskim. 
+
+Na szczęście w Internecie jest wiele źródeł, dzięki którym można znacznie
+poprawić swoje umiejętności.
+
+Na szczególną uwagę zasługuje serwis <a href="http://pwn.com.pl">Wydawnictwa
+Naukowego PWN</a>. Zawiera on serię słowników, które pozwolą rozwiać
+wątpliwości dotyczące interpunkcji i ortografii ("przecież" czy "przecierz"?).
+Można tam sprawdzić gdzie stawia się przecinki (stawiamy przecinek przed "aby"
+i "przecież" czy nie?), można sprawdzić też jakie części mowy pisze się z "nie"
+łącznie, a które rozłącznie ("niedouczony" czy "nie douczony"?).. 
+Generalnie jest tam wszystko co Polak wiedzieć powinien, a czego często już nie
+pamięta z lat młodości.
+
+Niestety piękna polszczyzna to jeszcze nie dość by stać się świetnym tłumaczem.
+Tłumaczymy dokumentację systemu operacyjnego, teksty techniczne, często
+zawierające informacje jakich nie ma nigdzie indziej w języku polskim.
+
+W związku z tym zderzamy się co chwila z okrutną koniecznością przetłumaczenia
+terminu, który wydaje się nie mieć odpowiednika w naszym języku. Oczywiście
+można wtedy wymyślić samemu jakieś słowo (tak przetłumaczono "interface" jako
+"międzymordzie"). Można też wykazać się sprytem i zapytać na kanale #ptm w
+sieci irc.freenode.net, gdzie inni tłumacze z przyjemnością poinformują
+zdesperowanego kolegę co jest czym. Ale co robić, kiedy koledzy nie wiedzą, a
+wymyślić się nie da? Cóż, jest kilka miejsc w sieci, gdzie można szybko
+sprawdzić niemal wszystko. Polecam szczególnie <a
+href="http://pl.wikipedia.org">Wikipedię</a>.  Ludzie ją redagujący to wysoce
+wykwalifikowany zespół, który zazwyczaj dostarcza bardzo przemyślanej i
+profesjonalnej terminologii. 
+Jest też kilka zbiorków słówek dla tłumaczy, które są rozsiane po całej sieci.
+Ja osobiście bardzo lubię słownik znajdujący się pod adresem <a
+href="http://dev.gentoo.org/~rane/slownik.gz">http://dev.gentoo.org/~rane/slownik.gz</a>.
+Korzystam z niego od dawna i rzadko kiedy mnie zawodzi. Mozna go pobrać
+programem wget oraz przeszukiwać programem zgrep (szczegóły pracy z nimi są w
+odpowiednich stronach man).
+
+Naukę procesu tłumaczenia dokumentacji warto wesprzeć konkretnymi uwagami,
+jakie na szczęście nam, nowicjuszom i hobbystom, w obfitych ilościach zostawili
+w Internecie profesjonalni tłumacze.
+
+Bezcennym źródłem informacji jest <a
+href="http://venus.ci.uw.edu.pl/~milek/slowniki/zasady.htm">strona Marcina
+Miłkowskiego</a>.
+
+Wiele cennych uwag zawiera również <a
+href="http://www.piotr.kresak.pl/konwen222.htm">Poradnik dla tłumaczących
+oprogramowanie firmy Lotus</a>.
+
+Lektura obu tych stron to niezbędne wymaganie dla osób chcących przystąpić do
+naszego projektu. Wiedza tam zawarta (i połączona z wiernością tłumaczenia i
+poprawnością językową) gwarantuje odpowiednio wysoki poziom tłumaczenia, by
+dołączyć go do oficjalnych wydań pakietu polskich stron man.
