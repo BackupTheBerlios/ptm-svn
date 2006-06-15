@@ -1,0 +1,14 @@
+Do firm i instytucji!
+
+Szanowni Państwo!
+	Czy zatrudniacie Państwo zdolnych i pełnych zapału użytkowników Linuksa? Jeżeli tak to zapraszamy Państwa do współpracy przy realizacji
+Projektu Tłumaczenia Manuali. Naszą misją jest dostarczenie wszystkim polskojęzycznym użytkownikom systemów z rodzin GNU/Linux dokumentacji systemowej man w rodzimym języku. W związku z tym, iż zasoby dokumentacji są ogromne potrzebujemy wielu tłumaczy – być może Państwa pracownicy, po godzinach pracy, chcieli by włączyć się w rozwój i upowszechnianie rozwiązań OpenSource wśród naszych rodaków.
+	Jeżeli jesteście Państwo zainteresowani pomocą zapraszamy na stronę Projektu Tłumaczenia Manuali – http://ptm.berlios.de. Cała praca
+odbywa się na zasadach wolontariatu. W zamian za    pomoc w postaci tłumaczy możemy obiecać umieszczenie linka do Państwa strony wśród zaprzyjaźnionych firm i instytucji.
+
+Bardzo prosimy o przekazanie informacji o PTM swoim pracownikom.
+
+
+Z góry serdecznie dziękujemy.
+
+Zespół PTM.
