@@ -4,3 +4,6 @@
 #przerzucić ze źródeł), oraz wprowadzić modyfikację w tym pliku.
 
 zsh - 4.3.2-dev-1
+groff - groff-1.19.1
+apache - 2.0.55
+bash - 3.1_p16
