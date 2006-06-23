@@ -1,0 +1,6 @@
+#Plik, w którym należy umieszczać informacje o tym, w jakiej wersji jest pakiet
+#w trunk/angielskie/. Jeśli pojawia się update pakietu, należy odpowiednio
+#zaktualizować teksty w trunk/angielskie/pakiet/ (najprościej po prostu
+#przerzucić ze źródeł), oraz wprowadzić modyfikację w tym pliku.
+
+zsh - 4.3.2-dev-1
