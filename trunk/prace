@@ -1,0 +1,12 @@
+# W tym pliku należy dopisywać się na czas wykonywania jakieś operacji
+# (korekty/tłumaczenia/etc.). 
+#
+# Format: 
+# data Nick_na_berlios robiony_pakiet/nazwa_dokumentu planowany_termin_zwrotu
+#
+# Przykład:
+# 23/06/06 damjanek zsh/zsh.1 30/06/06
+#
+# Na bierząco proszę ten plik uaktualniać. Nawet jeśli koordynator przydziela
+# jakiś plik, obowiązkiem tłumacza jest umieścić tutaj stosowny wpis.
+
