@@ -6,7 +6,7 @@ przybliżyć podstawy niezbędne dla partycypacji w naszym projekcie.
 Przede wszystkim należy założyć konto w serwisie http://developer.berlios.de.
 Następnie należy udać się z loginem do jednego z administratorów SVN. Obecnie
 są nimi Łukasz Damentko (rane@gentoo.org) i Damian Szeluga
-(damjanek@gentoo.pl). Należy podać im swój login i poczekać na bycie
+(damjanek@gentoo.pl). Należy podać im swój login i poczekać na zostanie
 zatwierdzonym jako członek projektu. Potem należy poczekać 6 godzin aż skrypty
 SVN serwisu Berlios zaakceptują nowo dodanego człowieka jako członka projektu.
 
@@ -14,17 +14,22 @@ Później można przystąpić do etapu pracy właściwej:
 
 Po pierwsze, trzeba pobrać zawartość repozytorium SVN na dysk:
 
-$ svn checkout svn+ssh://<login>@svn.berlios.de/svnroot/repos/ptm/
-(Oczywiście Należy zastąpić <login> nazwą swojego konta na Berlios)
+<code>
+$ svn checkout svn+ssh://LOGIN@svn.berlios.de/svnroot/repos/ptm/
+(Oczywiście Należy zastąpić LOGIN nazwą swojego konta na Berlios)
+</code>
 
 Pobierze się katalog ptm/ identyczny z tym, który można pozwiedzać na stronie
-http://svn.berlios.de/viewcvs/ptm/
+<a
+href="http://svn.berlios.de/viewcvs/ptm/">http://svn.berlios.de/viewcvs/ptm/</a>.
 
 Następnie można utworzyć sobie katalog domowy, służący do bieżącej pracy w SVN.
 
+<code>
 $ cd ptm/trunk/users/
-$ svn mkdir <login>
+$ svn mkdir LOGIN
 $ svn commit -m "tworze sobie katalog"
+</code>
 
 Katalog domowy zostanie dodany do repozytorium.
 
@@ -32,8 +37,8 @@ Następnie pożyczamy sobie jakiś dowolny plik leżący w katalogu man-pages, n
 którym zamierzamy pracować i kopiujemy go do nowo utworzonego katalogu
 domowego:
 
-$ cp <costam> .
-$ svn add <costam>
+$ cp JAKIŚ_PLIK .
+$ svn add JAKIŚ_PLIK
 $ svn commit -m "plik, ktory bede tlumaczyl"
 
 Następnie można przystąpić do edycji. Po dokonaniu zmian można zapisać plik w
@@ -53,22 +58,18 @@ Teraz kilka końcowych uwag dotyczących SVN:
 
 Katalogi w nim się znajdujące to:
 
-html/      - przetłumaczone strony man w formacie HTML
-man-pages/ - najbardziej oficjalna część repo - strony man, którymi zarządzamy
-users/     - robocze katalogi użytkowników
-www/       - strony www projektu - wstęp wzbroniony bez specjalnych przepustek i upoważnień
+<ul>
+<li>html/ - przetłumaczone strony man w formacie HTML</li>
+<li>man-pages/ - najbardziej oficjalna część repo - strony man, którymi zarządzamy</li>
+<li>users/ - robocze katalogi użytkowników</li>
+<li>www/ - strony www projektu - wstęp wzbroniony bez specjalnych przepustek i upoważnień</li>
+</ul>
 
-Kilka uwag regulaminowych:
+Mała uwaga regulaminowa:
+Psucie katalogów domowych innych użytkowników to najłatwiejsza metoda
+pozbawianie się dostępu do repozytorium.
 
-Przede wszystkim: jeśli ktoś coś popsuje to sam będzie to naprawiał. :)
-Po drugie, psucie katalogów innych użytkowników (users/*) będzie karane
-obcięciem kończyn. Po trzecie, stronę www zmieniają admini projektu, mieszanie
-tam to najlepszy sposób na pozbycie się kilku kończyn.
-
-Pytania i sugestie dotyczące tego tekstu można przesyłać do autora - Łukasz Damentko - na
-adres rane@gentoo.org
-
-Życzę miłej pracy. :)
+Życzymy miłej pracy. :)
 
 
 
