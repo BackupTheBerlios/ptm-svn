@@ -1,0 +1,394 @@
+.\" 1999 PTM Przemek Borys
+'\"
+'\" Copyright (c) 1993 The Regents of the University of California.
+'\" Copyright (c) 1994-1996 Sun Microsystems, Inc.
+'\"
+'\" See the file "license.terms" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\" 
+'\" SCCS: @(#) Tcl.n 1.128 96/08/26 12:59:50
+'
+'\" The definitions below are for supplemental macros used in Tcl/Tk
+'\" manual entries.
+'\"
+'\" .AP type name in/out ?indent?
+'\"	Start paragraph describing an argument to a library procedure.
+'\"	type is type of argument (int, etc.), in/out is either "in", "out",
+'\"	or "in/out" to describe whether procedure reads or modifies arg,
+'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+'\"	needed;  use .AS below instead)
+'\"
+'\" .AS ?type? ?name?
+'\"	Give maximum sizes of arguments for setting tab stops.  Type and
+'\"	name are examples of largest possible arguments that will be passed
+'\"	to .AP later.  If args are omitted, default tab stops are used.
+'\"
+'\" .BS
+'\"	Start box enclosure.  From here until next .BE, everything will be
+'\"	enclosed in one large box.
+'\"
+'\" .BE
+'\"	End of box enclosure.
+'\"
+'\" .CS
+'\"	Begin code excerpt.
+'\"
+'\" .CE
+'\"	End code excerpt.
+'\"
+'\" .VS ?br?
+'\"	Begin vertical sidebar, for use in marking newly-changed parts
+'\"	of man pages.  If an argument is present, then a line break is
+'\"	forced before starting the sidebar.
+'\"
+'\" .VE
+'\"	End of vertical sidebar.
+'\"
+'\" .DS
+'\"	Begin an indented unfilled display.
+'\"
+'\" .DE
+'\"	End of indented unfilled display.
+'\"
+'\" .SO
+'\"	Start of list of standard options for a Tk widget.  The
+'\"	options follow on successive lines, in four columns separated
+'\"	by tabs.
+'\"
+'\" .SE
+'\"	End of list of standard options for a Tk widget.
+'\"
+'\" .OP cmdName dbName dbClass
+'\"	Start of description of a specific option.  cmdName gives the
+'\"	option's name as specified in the class command, dbName gives
+'\"	the option's name in the option database, and dbClass gives
+'\"	the option's class in the option database.
+'\"
+'\" .UL arg1 arg2
+'\"	Print arg1 underlined, then print arg2 normally.
+'\"
+'\" SCCS: @(#) man.macros 1.8 96/02/15 20:02:24
+'\"
+'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.if t .wh -1.3i ^B
+.nr ^l \n(.l
+.ad b
+'\"	# Start an argument description
+.de AP
+.ie !"\\$4"" .TP \\$4
+.el \{\
+.   ie !"\\$2"" .TP \\n()Cu
+.   el          .TP 15
+.\}
+.ie !"\\$3"" \{\
+.ta \\n()Au \\n()Bu
+\&\\$1	\\fI\\$2\\fP	(\\$3)
+.\".b
+.\}
+.el \{\
+.br
+.ie !"\\$2"" \{\
+\&\\$1	\\fI\\$2\\fP
+.\}
+.el \{\
+\&\\fI\\$1\\fP
+.\}
+.\}
+..
+'\"	# define tabbing values for .AP
+.de AS
+.nr )A 10n
+.if !"\\$1"" .nr )A \\w'\\$1'u+3n
+.nr )B \\n()Au+15n
+.\"
+.if !"\\$2"" .nr )B \\w'\\$2'u+\\n()Au+3n
+.nr )C \\n()Bu+\\w'(in/out)'u+2n
+..
+.AS Tcl_Interp Tcl_CreateInterp in/out
+'\"	# BS - start boxed text
+'\"	# ^y = starting y location
+'\"	# ^b = 1
+.de BS
+.br
+.mk ^y
+.nr ^b 1u
+.if n .nf
+.if n .ti 0
+.if n \l'\\n(.lu\(ul'
+.if n .fi
+..
+'\"	# BE - end boxed text (draw box now)
+.de BE
+.nf
+.ti 0
+.mk ^t
+.ie n \l'\\n(^lu\(ul'
+.el \{\
+.\"	Draw four-sided box normally, but don't draw top of
+.\"	box if the box started on an earlier page.
+.ie !\\n(^b-1 \{\
+\h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.el \}\
+\h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.\}
+.fi
+.br
+.nr ^b 0
+..
+'\"	# VS - start vertical sidebar
+'\"	# ^Y = starting y location
+'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.de VS
+.if !"\\$1"" .br
+.mk ^Y
+.ie n 'mc \s12\(br\s0
+.el .nr ^v 1u
+..
+'\"	# VE - end of vertical sidebar
+.de VE
+.ie n 'mc
+.el \{\
+.ev 2
+.nf
+.ti 0
+.mk ^t
+\h'|\\n(^lu+3n'\L'|\\n(^Yu-1v\(bv'\v'\\n(^tu+1v-\\n(^Yu'\h'-|\\n(^lu+3n'
+.sp -1
+.fi
+.ev
+.\}
+.nr ^v 0
+..
+'\"	# Special macro to handle page bottom:  finish off current
+'\"	# box/sidebar if in box/sidebar mode, then invoked standard
+'\"	# page bottom macro.
+.de ^B
+.ev 2
+'ti 0
+'nf
+.mk ^t
+.if \\n(^b \{\
+.\"	Draw three-sided box if this is the box's first page,
+.\"	draw two sides but no top otherwise.
+.ie !\\n(^b-1 \h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.el \h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.\}
+.if \\n(^v \{\
+.nr ^x \\n(^tu+1v-\\n(^Yu
+\kx\h'-\\nxu'\h'|\\n(^lu+3n'\ky\L'-\\n(^xu'\v'\\n(^xu'\h'|0u'\c
+.\}
+.bp
+'fi
+.ev
+.if \\n(^b \{\
+.mk ^y
+.nr ^b 2
+.\}
+.if \\n(^v \{\
+.mk ^Y
+.\}
+..
+'\"	# DS - begin display
+.de DS
+.RS
+.nf
+.sp
+..
+'\"	# DE - end display
+.de DE
+.fi
+.RE
+.sp
+..
+'\"	# SO - start of list of standard options
+.de SO
+.SH "OPCJE STANDARDOWE"
+.LP
+.nf
+.ta 4c 8c 12c
+.ft B
+..
+'\"	# SE - end of list of standard options
+.de SE
+.fi
+.ft R
+.LP
+Zobacz podrêcznik \fBoptions\fR(n) dla dalszych szczegó³ów o standardowych
+opcjach.
+..
+'\"	# OP - start of full description for a single option
+.de OP
+.LP
+.nf
+.ta 4c
+Nazwa linii komend:	\\fB\\$1\\fR
+Nazwa bazy danych:	\\fB\\$2\\fR
+Klasa bazy danych:	\\fB\\$3\\fR
+.fi
+.IP
+..
+'\"	# CS - begin code excerpt
+.de CS
+.RS
+.nf
+.ta .25i .5i .75i 1i
+..
+'\"	# CE - end code excerpt
+.de CE
+.fi
+.RE
+..
+.de UL
+\\$1\l'|0\(ul'\\$2
+..
+.TH Tcl n "" Tcl "Wbudowane komendy Tcl"
+.BS
+.SH NAZWA
+Tcl \- Podsumowanie sk³adni jêzyka Tcl
+.BE
+
+.SH OPIS
+.PP
+Nastêpuj±ce regu³y definiuj± semantykê jêzyka Tcl:
+.IP [1]
+Skrypt Tcl jest ³añcuchem, zawieraj±cym jedn±, lub wiêcej komend.
+¦redniki i nowe linie s± separatorami komend, chyba ¿e s± zacytowane.
+Zamykaj±ce nawiasy s± normalnie terminatorami komend.
+.IP [2]
+Komenda jest analizowana w dwóch krokach.
+Najpierw interpreter Tcl rozbija komendê na \fIs³owa\fR i dokonuje opisanych
+ni¿ej podstawieñ. Podstawienia te s± dokonywane jednakowo dla wszystkich
+komend.
+Pierwsze s³owo jest u¿ywane do lokalizowania procedury komendy, która wykona
+polecenie, a nastêpnie wszystkie pozosta³e s³owa komendy s± przekazywane do
+tej procedury.
+Procedura mo¿e interpretowaæ ka¿de ze swoich s³ów w dowolny sposób, np. jako
+liczbê ca³kowit±, nazwê zmiennej, listê, lub skrypt Tcl.
+Ró¿ne komendy ró¿nie interpretuj± swoje s³owa.
+.IP [3]
+S³owa komendy s± rozdzielane bia³ymi spacjami (poza nowymi liniami, które s±
+separatorami komend).
+.IP [4]
+Pierwszy znak s³owa to podwójny cudzys³ów (``"''), ostatni równie¿.
+Je¶li miêdzy cudzys³owami pojawi± siê ¶redniki, nawiasy czy bia³e spacje, to
+bêd± one traktowane jak zwyk³e znaki w³±czone w s³owo.
+Podstawianie komend i zmiennych, oraz podstawianie uko¶nikowe jest
+dokonywane na znakach miêdzycudzys³owowych w sposób opisany ni¿ej.
+Podwójne cudzys³owy nie s± zachowywane jako elementy s³owa.
+.IP [5]
+Je¶li pierwszy znak s³owa jest otwartym nawiasem klamrowym (``{''), to s³owo
+jest koñczone klamr± zamykaj±c±, (``}'').
+Klamry zagnie¿d¿aj± siê w s³owie: ka¿da otwarta klamra musi mieæ klamrê
+zamykaj±c± (jednak je¶li klamra jest cytowana lewym uko¶nikiem, to jej 
+dzia³anie nie wymaga klamry zamykaj±cej).
+Na znakach miêdzy klamrami nie dokonuje siê ¿adnych podstawieñ, nie licz±c
+podstawieñ lewy uko¶nik-nowa linia. S³owo sk³ada siê dok³adnie ze znaków 
+miêdzy klamrami, nie licz±c samych klamr.
+.IP [6]
+Je¶li s³owo zawiera otwarty nawias kwadratowy (``[''), to Tcl dokonuje
+\fIpodstawienia komendy\fR.
+Aby tego dokonaæ, wo³a rekursywnie interpreter Tcl, który przetwarza znaki
+znajduj±ce za nawiasem jako skrypt Tcl. Skrypt mo¿e zawieraæ dowoln± liczbê
+komend i musi byæ zakoñczony nawiasem zamykaj±cym (``]'').
+Wyniki skryptu (np. wynik ostatniej komendy) s± podstawiane zamiast
+nawiasów, wraz ze znakami znajduj±cymi siê miêdzy nimi.
+Mo¿e byæ dowolnie wiele podstawieñ w pojedynczym s³owie. Podstawianie komend
+nie jest dokonywane na s³owach ujêtych w nawiasy klamrowe.
+.IP [7]
+Je¶li s³owo zawiera znak dolara (``$'') to Tcl dokonuje \fIpodstawienia
+zmiennej\fR: znak dolara i nastêpuj±ce znaki s± zastêpowane warto¶ci±
+zmiennej. Podstawienie zmiennej mo¿e przybraæ jedn± z postaci:
+.RS
+.TP 15
+\fB$\fInazwa\fR
+ \fINazwa\fR jest nazw± zmiennej skalarnej; nazwa jest koñczona dowolnym
+znakiem, który nie jest liter±, cyfr±, lub podkre¶leniem.
+.TP 15
+\fB$\fInazwa\fB(\fIindeks\fB)\fR
+\fINazwa\fR daje nazwê zmiennej tablicowej, a \fIindeks\fR daje nazwê jej
+elementu. \fINazwa\fR musi sk³adaæ siê tylko z liter, cyfr i podkre¶leñ.
+Na znakach \fIindeksu\fR dokonywane s± podstawienia komend, zmiennych i
+lewych uko¶ników.
+.TP 15
+\fB${\fInazwa\fB}\fR
+\fINazwa\fR jest nazw± zmiennej skalarnej. Mo¿e zawieraæ dowolne znaki poza
+zamykaj±cymi nawiasami klamrowymi.
+.LP
+W pojedynczym s³owie mo¿e byæ wiele podstawieñ zmiennych. Na s³owach, ujêtych
+w klamry nie jest dokonywane podstawienie zmiennych.
+.RE
+.IP [8]
+Je¶li w s³owie znajduje siê lewy uko¶nik (``\e''), to nastêpuje
+\fIpodstawienie uko¶nikowe\fR.
+We wszystkich wypadkach, poza opisanymi ni¿ej, uko¶nik jest porzucany, a
+nastêpuj±cy znak jest traktowany jak zwyk³y i jest w³±czany w s³owo.
+Umo¿liwia to w³±czanie znaków takich, jak podwójne cytaty, nawiasy
+zamykaj±ce i znaki dolara.
+Nastêpuj±ca tabela pokazuje sekwencje uko¶nikowe, które s± traktowane
+szczególnie, wraz z warto¶ciami, które wchodz± w ich miejsce.
+.RS
+.TP 6
+\e\fBa\fR
+Dzwonek (0x7).
+.TP 6
+\e\fBb\fR
+Backspace (0x8).
+.TP 6
+\e\fBf\fR
+Form feed (0xc).
+.TP 6
+\e\fBn\fR
+Nowa linia (0xa).
+.TP 6
+\e\fBr\fR
+Powrót karetki (0xd).
+.TP 6
+\e\fBt\fR
+Tabulacja (0x9).
+.TP 6
+\e\fBv\fR
+Tabulacja pionowa (0xb).
+.TP 6
+\e\fB<nowalinia>\fIbia³aspacja\fR
+Zamiast uko¶nika, nowej linii i bia³ej (bia³ych) spacji, podstawiany jest 
+pojedynczy znak spacji.
+Sekwencja uko¶nikowa jest unikalna dlatego, ¿e jest podstawiana w oddzielnym
+przedbiegu przed przetworzeniem komendy.
+Znaczy to, ¿e bêdzie podstawiona nawet gdy nast±pi miêdzy nawiasami, a
+wynikaj±ca spacja bêdzie traktowana jako separator s³ów (o ile nie jest w
+cudzys³owach lub klamrach).
+.TP 6
+\e\e
+Lewy uko¶nik (``\e'').
+.TP 6
+\e\fIooo\fR
+Cyfry \fIooo\fR (jedna, dwie, lub trzy z nich) daj± rzeczywist± ósemkow±
+warto¶æ znaku.
+.TP 6
+\e\fBx\fIhh\fR
+Cyfry szesnastkowe \fIhh\fR daj± szesnastkow± warto¶æ znaku. Obecna mo¿e byæ
+dowolna liczba cyfr.
+.LP
+Podstawianie uko¶nikowe nie jest dokonywane na s³owach ujêtych w klamry, nie
+licz±c podstawienia uko¶nik-nowa linia, opisanego wy¿ej.
+.RE
+.IP [9]
+Je¶li w miejscu, gdzie Tcl oczekuje pierwszego znaku pierwszego s³owa
+komendy znajduje siê znak ``#'', to znak ten i znaki za nim nastêpuj±ce, a¿
+do nowej linii, s± traktowane jako komentarz i s± ignorowane.
+Znak komentarza ma znaczenie gdy znajduje siê na pocz±tku komendy.
+.IP [10]
+Ka¿dy znak jest przetwarzany przez interpreter Tcl tylko raz jako element
+tworzenia s³ów komendy.
+Na przyk³ad, je¶li nast±pi podstawienie zmiennych, dalsze podstawienia na
+warto¶ci zmiennej nie nastêpuj±; warto¶æ jest wstawiana dos³ownie.
+Je¶li nast±pi podstawianie komend, to zagnie¿d¿one komendy s± przetwarzane
+ca³o¶ciowo przez rekursywne wywo³ania interpretera Tcl; przed tym wywo³aniem
+nie s± robione ¿adne podstawienia. Podobnie po wywo³aniu nie robi siê
+¿adnych dodatkowych podstawieñ.
+.IP [11]
+Podstawienia nie tycz± siê ograniczników s³ów komendy. Na przyk³ad podczas
+podstawiania zmiennych ca³a warto¶æ zmiennej staje siê czê¶ci± pojedynczego
+s³owa, nawet je¶li warto¶æ zmiennej zawiera spacje.

@@ -1,0 +1,153 @@
+.\" 1999 PTM Rafał Witkowski
+.\" Poprawki: Przemek Borys
+.\" $XConsortium: startx.man /main/8 1996/12/09 17:09:15 kaleb $
+.\" Copyright (c) 1993  X Consortium
+.\" 
+.\" $XFree86: xc/programs/xinit/startx.man,v 1.1.1.3.2.2 1998/11/05 19:38:35 hohndel Exp $
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining
+.\" a copy of this software and associated documentation PLIKI (the
+.\" "Software"), to deal in the Software without restriction, including
+.\" without limitation the rights to use, copy, modjeżeliy, merge, publish,
+.\" distribute, sublicense, and/or sell copies of the Software, and to
+.\" permit persons to whom the Software is furnished to do so, subject to
+.\" the following conditions:
+.\" 
+.\" The above copyright notice and this permission notice shall be included
+.\" in all copies or substantial portions of the Software.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+.\" OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+.\" MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+.\" IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+.\" OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+.\" ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+.\" OTHER DEALINGS IN THE SOFTWARE.
+.\" 
+.\" Except as contained in this notice, the name of the X Consortium shall
+.\" not be used in advertising or otherwise to promote the sale, use or
+.\" other dealings in this Software without prior written authorization
+.\" from the X Consortium.
+.TH STARTX 1 "Release 6.3" "X Version 11"
+.SH NAZWA
+startx \- inicjuje sesję X-Windows
+.SH SKŁADNIA
+.B startx
+.RI [[ klient ]
+.I opcje
+\&\.\|.\|.]
+.RB [ \-\^\-
+.RI [ serwer ]
+.I opcje
+\&.\|.\|.]
+.SH OPIS
+UWAGA: Skrypt \fIstartx\fP  dostarczony razem z dystrybucją X11 
+jest przykładem przeznaczonym bardziej jako baza dla indywidualnych 
+rozwiązań niż jako gotowy produkt. Administratorzy sieci powinni go 
+dostosować do własnych sieci. Jeżeli to zrobią, powinni też wtedy 
+zaktualizować te strony podręcznika!
+.PP
+Skrypt startx jest interfejsem do programu xinit, który dostarcza
+przyjaznej obsługi użytkownika dla uruchamiania pojedynczej sesji systemu 
+X Window. Jest wywoływany zwykle bez argumentów.
+.PP
+Jest jeden ważny wyjątek w przypadku kiedy wybrana jest odmienna głębia
+koloru. Wtedy wchodzi w grę dopasowanie argumentów dla serwera, opcja 
+jest z przedrostkiem 
+.RB `--'
+(Zobacz stronę podręcznika
+.IR xinit (1)
+dla szcegółów o argumentach). W szczególności aby uruchomić serwer w trybie 
+16bpp użyj
+.sp
+startx -- -bpp 16
+.PP
+Aby określić program klienta, używanego do pracy,
+\fIstartx\fR najpierw szuka pliku o nazwie
+.I .xinitrc
+w osobistym katalogu użytkownika.
+Jeżeli go nie znajdzie, używa pliku
+.I xinitrc
+w katalogu bibliotecznym programu 
+.I xinit
+.pp
+Jeżeli w linii komend są podane opcje, to mają one pierwszeństwo nad tymi 
+z plików. Aby określić serwer, przeznaczony do uruchomienia, 
+.I startx
+najpierw szuka pliku nazwanego 
+.I .xserverrc
+w osobistym katalogu użytkownika.
+Jeżeli go nie znajdzie, używa pliku 
+.I xserverrc
+w katalogu bibliotecznym 
+.IR xinit .
+Użytkownik w rzeczywistości rzadko potrzebuje tworzyć plik 
+.I .xserverrc.	
+.PP
+(Zobacz podręcznik
+.IR xinit (1)
+dla dalszych szczegółów o argumentach). 
+.PP
+Plik 
+.I .xinitrc
+jest zazwyczaj skryptem powłoki, którego wywołują liczni klienci, włączając 
+swoje właściwości użytkownika. Gdy skrypt ten istnieje, 
+.I startx 
+przerywając sesję serwera i zamyka też każdą inną, wymagającą tego sesję. 
+Większość klientów uruchamianych przez 
+.I .xinitrc
+powinno pracować w tle. Ostatni klient powinien pracować 
+w pierwszym planie; jeżeli istnieje, sesja będzie zakończona.
+Często wybiera się jako ``magicznego'' klienta menedżera sesji, menedżera
+okien, albo zgoła \fIxterm\fP.
+.SH PRZYKŁAD
+.PP
+Poniżej jest przykład \fI\.xinitrc\fP, uruchamiający poszczególne aplikacje 
+i pozostawiający menedżer okien w pracy jako ``ostatnią'' aplikację.  
+Zakładając, że menedżer okien jest prawidłowo skonfigurowany, użytkownik 
+wybiera opcję ``Exit'' menu do zamknięcia sesji X.
+.sp
+.in +4
+.nf
+xrdb  \-load  $HOME/.Xresources
+xsetroot  \-solid  gray  &
+xbiff  \-geometry  \-430+5  &
+oclock  \-geometry  75x75\-0\-0  &
+xload  \-geometry  \-80\-0  &
+xterm  \-geometry  +0+60  \-ls  &
+xterm  \-geometry  +0\-100  &
+xconsole  \-geometry  \-0+0  \-fn  5x7  &
+exec  twm
+.fi
+.in -4
+.SH "Zmienne środowiska"
+.TP 25
+DISPLAY
+Ta zmienna zostaje ustawiana na nazwę wyświetlacza, z którym klient powinien 
+się łączyć.  UWAGA : 
+.IR ustawiana ,
+nie czytana.
+.SH PLIKI
+.TP 25
+.I $(HOME)/.xinitrc
+Klient przeznaczony do uruchomienia.  Typowy skrypt powłoki który wykonuje 
+wiele programów w tle.
+.TP 25
+.I $(HOME)/.xserverrc
+Serwer przeznaczony do uruchomienia.  Domyślnym jest
+.I X.
+.TP 25
+.I <XRoot>/lib/X11/xinit/xinitrc
+Klient przeznaczony do uruchomienia, jeżeli użytkownik nie ma pliku
+.I .xinitrc
+ <XRoot> odnosi się do katalogu root w gałęzi instalacyjnej X11.
+.TP 25
+.I <XRoot>/lib/X11/xinit/xserverrc
+Klient (chyba serwer?! - przyp. tłum.) przeznaczony do uruchomienia jeżeli 
+użytkownik nie ma pliku
+.I .xserverrc
+Jest to wymagane tylko wtedy, kiedy serwer potrzebuje specjalnych argumentów 
+lub nie jest nazwany.  <XRoot> odnosi się do katalogu root w gałęzi 
+instalacyjnej X11.
+.SH "ZOBACZ TAKŻE"
+.IR xinit (1)
