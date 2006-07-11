@@ -1,9 +1,0 @@
-#
-# pliki włączane, które nie tworzą samodzielnej dokumentacji
-#
-fdl-1.1.texi
-getdate.texi
-gpl-2.texi
-included
-perm.texi
-sample.wgetrc.munged_for_texi_inclusion
