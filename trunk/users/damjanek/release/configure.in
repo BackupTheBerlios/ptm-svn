@@ -1,0 +1,21 @@
+# Process this file with autoconf to produce a configure script.
+AC_INIT(FAQ)
+AM_INIT_AUTOMAKE(man-pages-pl, 1.58)
+
+# Checks for programs.
+AC_PROG_INSTALL
+AC_PROG_LN_S
+
+AC_OUTPUT([
+	Makefile
+	man1/Makefile
+	man2/Makefile
+	man3/Makefile
+	man4/Makefile
+	man5/Makefile
+	man6/Makefile
+	man7/Makefile
+	man8/Makefile
+	man9/Makefile
+	mann/Makefile
+])
