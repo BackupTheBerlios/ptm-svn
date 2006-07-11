@@ -16,5 +16,4 @@ AC_OUTPUT([
 	man6/Makefile
 	man7/Makefile
 	man8/Makefile
-	man9/Makefile
 ])
