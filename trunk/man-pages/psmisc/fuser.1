@@ -4,7 +4,7 @@
 .\"
 .TH FUSER 1 "1 października 1999" "Linux" "Komendy użytkownika"
 .SH NAZWA
-fuser \- podaje procesy korzystające z plików lub soketów
+fuser \- podaje procesy korzystające z plików lub gniazd
 .SH SKŁADNIA
 .ad l
 .B fuser
@@ -43,15 +43,15 @@ mmap-owany plik lub biblioteka dzielona.
 z plików lub po błędzie krytycznym. Jeśli udał się dostęp do choćby jednego
 pliku, \fBfuser\fP zwraca zero.
 .PP
-Aby móc wyszukać procesy używające soketów TCP lub UDP, trzeba za pomocą
+Aby móc wyszukać procesy używając gniazd TCP lub UDP, trzeba za pomocą
 opcji \fB-n\fP wybrać odpowiednią przestrzeń nazw. Domyślnie, \fBfuser\fP
-będzie szukał zarówno soketów IPv6, jak i soketów IPv4. Aby to zmienić, należy
-użyć opcji \fB-4\fP i \fB-6\fP. Soket(y) może (mogą) być określony(-ne)
-przez podanie portów lokalnego i zdalnego oraz zdalnego adresu. Wszystkie
-pola są nieobowiązkowe, trzeba jednak podać przecinki poprzedzające opuszczone
+będzie szukał zarówno gniazd IPv6, jak i IPv4. Aby to zmienić, należy
+użyć opcji \fB-4\fP i \fB-6\fP. Gniazda mogą być określone przez podanie portu
+lokalnego i zdalnego oraz zdalnego adresu. Wszystkie pola są nieobowiązkowe,
+trzeba jednak podać przecinki poprzedzające opuszczone
 pola:
 
-.RB \fB[\fP\fIport_lokalny\fP\fB][\fP,\fB[\fP\fIzdalny_komp\fP\fB][\fP,\fB[\fIport_zdalny\fP\fB]]]
+.RB \fB[\fP\fIport_lokalny\fP\fB][\fP,\fB[\fP\fIzdalny_komputer\fP\fB][\fP,\fB[\fIport_zdalny\fP\fB]]]
 
 Adresy IP oraz numery portów mogą być podane albo w postaci symbolicznej,
 albo jako numery.
@@ -60,12 +60,12 @@ albo jako numery.
 Pokazuje wszystkie pliki, podane w linii komend. Domyślnie pokazywane są tylko
 pliki, do których dostęp uzyskał przynajmniej jeden proces.
 .IP \fB\-k\fP
-Ubija procesy korzystające z pliku. Jeśli nie jest użyta opcja
+Zabija procesy korzystające z pliku. Jeśli nie jest użyta opcja
 \fB-\fP\fIsygnał\fP, wysyłany jest SIGKILL. Proces \fBfuser\fP nigdy sam siebie
-nie ubije, lecz może ubić inne procesy \fBfuser\fP. Przed próbą ubicia
+nie zabije, lecz może zabić inne procesy \fBfuser\fP. Przed próbą zabicia,
 efektywny ID użytkownika procesu jest ustawiany na rzeczywisty.
 .IP \fB\-i\fP
-Przed ubiciem procesu, prosi użytkownika o potwierdzenie. Opcja ta jest
+Przed zabiciem procesu, prosi użytkownika o potwierdzenie. Opcja ta jest
 ignorowana, jeżeli nie podano opcji \fB-k\fP.
 .IP \fB\-l\fP
 Wyświetla wszystkie znane nazwy sygnałów.
@@ -98,10 +98,10 @@ pliku wymiany itp.), wartością tego pola jest \fBkernel\fP.
 .IP \fB\-V\fP
 Wyświetla informację o wersji.
 .IP \fB\-4\fP
-Wyszukuje tylko sokety IPv4. Ta opcja nie może być używana łącznie z opcją
+Wyszukuje tylko gniazda IPv4. Ta opcja nie może być używana łącznie z opcją
 \fB-6\fP, a używanie jej ma efekt tylko z przestrzeniami nazw tcp i udp.
 .IP \fB\-6\fP
-Wyszukuje tylko sokety IPv6. Ta opcja nie może być używana łącznie z opcją
+Wyszukuje tylko gniazda IPv6. Ta opcja nie może być używana łącznie z opcją
 \fB-4\fP, a używanie jej ma efekt tylko z przestrzeniami nazw tcp i udp.
 .IP \fB\-\fP
 Resetuj wszystkie opcje i ustaw sygnał z powrotem na SIGKILL.
