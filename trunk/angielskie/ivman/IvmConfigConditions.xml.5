@@ -1,0 +1,101 @@
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.TH IVMCONFIGCONDITIONS.XML 5 "12 May 2005"
+.SH NAME
+IvmConfigConditions.xml \- rules for processing hardware conditions by
+.BR ivman(8)
+
+.SH DESCRIPTION
+IvmConfigConditions.xml specifies hardware conditions to be caught by
+.BR ivman(8),
+and allows running of certain commands when devices emit conditions.
+
+IvmConfigConditions.xml is parsed as an XML file.  The general form of the
+file is:
+
+.RS 1
+<?xml version="1.0" encoding="UTF-8"?>
+.br
+<ivm:ConditionsConfig version="0.1" xmlns:ivm="http://www.eikke.com/ivm">
+
+   <ivm:Match name="matchname" value="matchvalue">
+.br
+      <ivm:Condition name="conditionname1" exec="command1" />
+.br
+      <ivm:Condition name="conditionname1" exec="command1" />
+.br
+   </ivm:Match>
+
+   ...
+   
+</ivm:PropertiesConfig>
+.RE
+
+Each time a condition is emitted by a device, this file will be parsed.  If the
+Match rule matches the device on which the condition came from, and the Condition
+rule matches the name of the condition which occurred, then the command specified in
+the 'exec' option will be executed.
+
+A Match element can have any of the following names:
+.RS 5
+.TP
+.B ivm.mountable
+Whether or not HAL specifies that a device can and should
+be mounted.  Must be "true" or "false".
+.TP
+.B hal.anything
+The string in place of "anything" will be taken as the name
+of a HAL property string for the device, and the value of the property will
+be compared to the value given.  Run 'lshal' to see a list of HAL properties
+which can be used here.
+.TP
+.B *
+Match every device.  Use with care!
+.RE
+
+As many Matches can be nested as is desired.
+
+Condition names usually take the form of something like 'ButtonPressed', which may occur when an ACPI-enabled
+button is pressed on your machine.  See the HAL specification for a full list of
+possible conditions.
+
+The
+.B exec
+attributes of Condition tags support substitution of HAL device properties. 
+This is accomplished by surrounding the property name with
+.BR $
+symbols.  For instance, if
+.BR $hal.volume.mount_point$
+is within a command, it will be replaced with the volume's mount point before
+execution.  No character escaping is done in the substitution, but the
+characters ' and " are replaced with ?, so you can surround the substitution
+with quotes without fear.
+
+Remember that this is an XML file, which means that characters which have a special
+meaning in XML (entities) need to be escaped.  Some characters which are popular in shell scripting
+(&, <, >) are among these special characters.  As a quick reference,
+& becomes &amp; , < becomes &lt; , > becomes &gt; , ' becomes &apos; and " becomes &quot; .
+
+
+.SH "SEE ALSO"
+.BR ivman (8),
+.BR IvmConfigBase.xml (5),
+.BR IvmConfigActions.xml (5)

@@ -1,0 +1,149 @@
+.\"
+.\" $Id: capget.2,v 1.4 1999/09/09 16:43:26 morgan Exp $
+.\" written by Andrew Morgan <morgan@linux.kernel.org>
+.\" may be distributed as per GPL
+.\" Modified by David A. Wheeler <dwheeler@ida.org>
+.\" Modified 2004-05-27, mtk
+.\" Modified 2004-06-21, aeb
+.\"
+.TH CAPGET 2 2004-06-21 "Linux 2.6.6" "Linux Programmer's Manual"
+.SH NAME
+capget, capset \- set/get capabilities
+.SH SYNOPSIS
+.B #undef _POSIX_SOURCE
+.br
+.B #include <sys/capability.h>
+.sp
+.BI "int capget(cap_user_header_t " hdrp ", cap_user_data_t " datap );
+.sp
+.BI "int capset(cap_user_header_t " hdrp ", const cap_user_data_t " datap );
+.SH DESCRIPTION
+As of Linux 2.2, the power of the superuser (root) has been partitioned into
+a set of discrete capabilities.
+Every thread has a set of effective capabilities identifying
+which capabilities (if any) it may currently exercise.
+Every thread also has a set of inheritable capabilities that may be
+passed through an
+.BR execve (2)
+call, and a set of permitted capabilities
+that it can make effective or inheritable.
+.PP
+These two functions are the raw kernel interface for getting and
+setting capabilities.  Not only are these system calls specific to Linux,
+but the kernel API is likely to change and use of
+these functions (in particular the format of the
+.B cap_user_*_t
+types) is subject to change with each kernel revision.
+.sp
+The portable interfaces are
+.BR cap_set_proc (3)
+and
+.BR cap_get_proc (3);
+if possible you should use those interfaces in applications.
+If you wish to use the Linux extensions in applications, you should
+use the easier-to-use interfaces
+.BR capsetp (3)
+and 
+.BR capgetp (3).
+.SS "Current details"
+Now that you have been warned, some current kernel details.
+The structs are defined as follows.
+.sp
+.nf
+.in +4n
+#define _LINUX_CAPABILITY_VERSION  0x19980330
+
+typedef struct __user_cap_header_struct {
+    int version;
+    int pid;
+} *cap_user_header_t;
+
+typedef struct __user_cap_data_struct {
+    int effective;
+    int permitted;
+    int inheritable;
+} *cap_user_data_t;
+.fi
+.in -4n
+.sp
+The calls will return EINVAL, and set the 
+.I version 
+field of
+.I hdr
+to _LINUX_CAPABILITY_VERSION when another version was specified.
+
+The calls operate on the capabilities of the thread specified by the 
+.I pid 
+field of
+.I hdr
+when that is non-zero, or on the capabilities of the calling thread if
+.I pid
+is 0.
+If 
+.I pid
+refers to a single-threaded process, then 
+.I pid
+can be specified as a traditional process ID;
+operating on a thread of a multithreaded process requires a thread ID
+of the type returned by 
+.BR gettid (2).
+For 
+.BR capset (), 
+.I pid
+can also be: \-1, meaning effect the change on all threads except the
+caller and
+.IR init (8);
+or a value less than \-1, in which case the change is applied
+to all members of the process group whose ID is \-\fIpid\fP.
+    
+For details on the data, see
+.BR capabilities (7).
+.SH "RETURN VALUE"
+On success, zero is returned.  On error, \-1 is returned, and
+.I errno
+is set appropriately.
+.SH ERRORS
+.TP
+.B EFAULT
+Bad memory address. Neither of
+.I hdrp
+and
+.I datap
+may be NULL.
+.TP
+.B EINVAL
+One of the arguments was invalid.
+.TP
+.B EPERM
+An attempt was made to add a capability to the Permitted set, or to set
+a capability in the Effective or Inheritable sets that is not in the
+Permitted set.
+.TP
+.B EPERM
+The caller attempted to use
+.BR capset ()
+to modify the capabilities of a thread other than itself,
+but lacked sufficient privilege; the
+.B CAP_SETPCAP
+capability is required.
+(A bug in kernels before 2.6.11 meant that this error could also 
+occur if a thread without this capability tried to change its
+own capabilities by specifying the
+.I pid
+field as a non-zero value (i.e., the value returned by
+.BR getpid (2)) 
+instead of 0.)
+.TP
+.B ESRCH
+No such thread.
+.SH "FURTHER INFORMATION"
+The portable interface to the capability querying and setting
+functions is provided by the
+.B libcap
+library and is available from here:
+.br
+.B ftp://ftp.kernel.org/pub/linux/libs/security/linux-privs
+.SH "SEE ALSO"
+.BR clone(2),
+.BR gettid (2), 
+.BR capabilities (7)

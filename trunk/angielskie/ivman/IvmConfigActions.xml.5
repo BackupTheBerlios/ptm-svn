@@ -1,0 +1,180 @@
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" 050106, Rohan <rohan.pm@gmail.com>: initial version
+.\" 050128, Rohan: info on XML entities
+.\" 050429, Rohan: no more IvmConfigMappings.xml
+.\"
+.TH IVMCONFIGACTIONS.XML 5 "12 May 2005"
+.SH NAME
+IvmConfigActions.xml \- actions to be performed by
+.BR ivman(8)
+
+.SH DESCRIPTION
+IvmConfigActions.xml specifies which actions are to be performed by
+.BR ivman(8)
+when a device is inserted/attached to the system, where an
+action is defined as mounting the device or executing a program.
+
+IvmConfigActions.xml is parsed as an XML file.  The general form of the
+file is:
+
+.RS 1
+<?xml version="1.0" encoding="UTF-8"?>
+.br
+<ivm:ActionsConfig version="0.2" xmlns:ivm="http://www.eikke.com/ivm">
+
+   <ivm:Match name="matchname" value="matchvalue">
+.br
+      <ivm:Option name="optionname1" value="optionvalue1" />
+.br
+      <ivm:Option name="optionname2" value="optionvalue2" />
+.br
+      ...
+.br
+   </ivm:Match>
+
+   ...
+   
+</ivm:ActionsConfig>
+.RE
+
+Each time a device is added to the system, this file is parsed.  If, for
+a Match element, matchname=matchvalue is true for the new device, then
+the Match or Option elements within that Match element are parsed.
+
+A Match element can have any of the following names:
+.RS 5
+.TP
+.B ivm.mountable
+Whether or not HAL specifies that a device can and should
+be mounted.  Must be "true" or "false".
+.TP
+.B hal.anything
+The string in place of "anything" will be taken as the name
+of a HAL property string for the device, and the value of the property will
+be compared to the value given.  Run 'lshal' to see a list of HAL properties
+which can be used here.
+.TP
+.B *
+Match every device.  Use with care!
+.RE
+
+An Option element can have any of the following names:
+.RS 5
+.TP
+.B checkOnInit
+If set to 'true', IvmConfigActions.xml will be parsed when Ivman starts and rules
+will be applied to all devices currently attached to the system.  This can be used to,
+for example, mount any removable devices attached to the system when Ivman starts.  This
+option should be specified outside of any 'match' constructs.
+.TP
+.B mount
+Whether or not to mount the device.  Must be "true" or "false".  If more than
+one value applies to a device, then the one closest to the end of the file will
+be used.
+.TP
+.B exec
+A command to execute when the device or disc is inserted.  The amount of commands per
+device is unlimited.
+.TP
+.B execun
+A command to execute when the device or disc is removed.  The amount of commands per
+device is unlimited.  Note that HAL property substitution is limited for execun; since the
+device no longer exists when the command is executed, we cannot get information about
+it from HAL, therefore any substitution will occur with the property values at the time
+of device insertion (or mounting if Ivman mounted it), NOT removal.
+.TP
+.B execdvd
+A command to execute when the device is inserted if the device is a volume
+containing DVD-format video.  The amount of commands per
+device is unlimited.  NOTE: execdvd is deprecated!  A HAL property now exists to indicate whether or
+not a DVD contains video - volume.disc.is_videodvd .
+.RE
+
+.B exec,
+.B execdvd
+and
+.B execun
+support substitution of HAL device properties.  This
+is accomplished by surrounding the property name with
+.BR $
+symbols.  For instance, if
+.BR $hal.volume.mount_point$
+is within a command, it will be replaced with the volume's mount point before
+execution.  No character escaping is done in the substitution, but the
+characters ' and " are replaced with ?, so you can surround the substitution
+with quotes without fear.
+
+Remember that this is an XML file, which means that characters which have a special
+meaning in XML (entities) need to be escaped.  Some characters which are popular in shell scripting
+(&, <, >) are among these special characters.  As a quick reference,
+& becomes &amp; , < becomes &lt; , > becomes &gt; , ' becomes &apos; and " becomes &quot; .
+
+As many Matches can be nested as is desired, and as many Matches and Options
+can be placed within a Match as is desired.  This, along with the ability to
+test HAL properties, makes Ivman quite flexible; see the examples below.
+
+.SH EXAMPLES
+<!-- autoplay video DVDs -->
+.br
+<ivm:Match name="hal.volume.disc.type" value="dvd_rom">
+.br
+    <ivm:Option name="execdvd" value="xine -f -g -D dvd:$hal.block.device$" />
+.br
+</ivm:Match>
+
+<!-- autoplay audio CDs -->
+.br
+<ivm:Match name="hal.volume.disc.type" value="cd_rom">
+.br
+    <ivm:Match name="hal.volume.disc.has_audio" value="true">
+.br
+        <ivm:Match name="hal.volume.disc.has_data" value="false">
+.br
+            <ivm:Option name="exec" value="cdplay -d $hal.block.device$ -c" />
+.br
+        </ivm:Match>
+.br
+    </ivm:Match>
+.br
+</ivm:Match>
+
+<!-- blacklist some partitions we don't want mounted -->
+.br
+<ivm:Match name="hal.block.device" value="/dev/hda5">
+.br
+    <ivm:Option name="mount" value="false" />
+.br
+</ivm:Match>
+.br
+<ivm:Match name="hal.block.device" value="/dev/hda2">
+.br
+    <ivm:Option name="mount" value="false" />
+.br
+</ivm:Match>
+
+Many more examples are given in the default file provided with Ivman.
+
+.SH "SEE ALSO"
+.BR ivman (8),
+.BR IvmConfigBase.xml (5),
+.BR IvmConfigProperties.xml (5),
+.BR IvmConfigConditions.xml (5)

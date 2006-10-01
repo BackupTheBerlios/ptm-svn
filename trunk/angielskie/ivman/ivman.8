@@ -1,0 +1,114 @@
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" 050106, Rohan <rohan.pm@gmail.com>: initial version
+.\" 050112, Rohan: included IvmConfigProperties.xml
+.\" 050425, Rohan: '--system' option
+.\" 050429, Rohan: no more IvmConfigMappings.xml, add info on HAL symlink fstab bug
+.\" 051209, Rohan: -c, --confdir
+.\"
+.TH IVMAN 8 "9 December 2005"
+.SH NAME
+ivman \- volume manager
+.SH SYNOPSIS
+.B ivman
+.RB [ " -sd " ]
+.RB [ " --nofork " ]
+.RB [ " -c " <directory> " ] 
+.SH DESCRIPTION
+Ivman, or
+.B Ikke's Volume Manager,
+is a daemon to handle the mounting of media as they are
+inserted/attached to the system.  It can also be used to execute
+arbitrary commands when a device with certain properties is added
+to the system (Windows autoplay style functionality), and to execute
+arbitrary commands when device properties change.  Ivman uses HAL to
+monitor the state of your system's hardware.
+
+.SH OPTIONS
+.TP
+.BR \-\^s " or " \-\-system
+Start Ivman in system-wide mode.  This is the default if running Ivman
+as root.  When this option is specified, Ivman reads from the system-wide
+configuration directory ( usually
+.I /etc/ivman/
+); if this option is not specified, Ivman reads from 
+.I ${HOME}/.ivman/
+instead.  Either of these locations may be overridden with the -c option.
+Other behaviour may differ slightly when running in system-wide mode.
+Don't use this option unless you know you need it.
+.TP
+.BR \-\-nofork
+Force Ivman not to daemonize, regardless of settings in IvmConfigBase.xml.
+Useful for capturing debugging output.
+.TP
+.BR \-\^d " or " \-\-debug
+Force Ivman to give debugging output, regardless of settings in IvmConfigBase.xml.
+.TP
+.BR \-\^c " " <directory> " or " \-\-confdir " " <directory>
+Force Ivman to load configuration files from the specified directory.
+
+.SH DETAILS
+Ivman is a flexible device manager, allowing users to run arbitrary commands when devices
+are added/removed, when device properties change, and when devices emit conditions.
+
+For automount purposes, Ivman should be run once from a system-wide init script and once
+per user session (e.g., create a link to /usr/bin/ivman in  ~/.kde/Autostart or
+put an entry for /usr/bin/ivman in gnome-session-manager).
+When a device is attached, Ivman will call pmount or mount to mount the device.  If pmount is used, it will mount
+the device readable and writeable only for the current user; if no per-user instance of
+Ivman is running, the device will be mounted read/write for everyone in the same group as
+is required to use the pmount command, and read-only for everyone else.  If regular mount is used, then an fstab entry must exist in /etc/fstab for the device to be mounted, and the settings given in that fstab entry will be used for the mount.
+
+Ivman is supplied with sensible default configuration files for
+volume management, but autoplay functionality has no default actions;
+you will need to edit
+.BI ${HOME}/.ivman/IvmConfigActions.xml(5)
+or
+.BI /etc/ivman/IvmConfigActions.xml(5)
+to specify some programs to execute.  The syntax of this file and the
+other Ivman configuration files are specified in their own manpages.
+
+.SH FILES
+.TP
+.I /etc/ivman/IvmConfigActions.xml
+actions to perform when media is inserted
+.TP
+.I /etc/ivman/IvmConfigBase.xml
+options affecting the running of Ivman
+.TP
+.I /etc/ivman/IvmConfigConditions.xml
+actions to perform when devices emit conditions
+.TP
+.I /etc/ivman/IvmConfigProperties.xml
+actions to perform when device properties change
+
+.SH "SEE ALSO"
+.BR IvmConfigActions.xml (5),
+.BR IvmConfigBase.xml (5),
+.BR IvmConfigConditions.xml (5),
+.BR IvmConfigProperties.xml (5)
+
+.SH BUGS
+Hopefully, none :-)  But there could be some still lurking.
+If you encounter a bug, please forward details to
+.I rohan.pm@gmail.com
+or add it to the bug tracker at the project's Sourceforge page,
+.I http://sourceforge.net/projects/ivman

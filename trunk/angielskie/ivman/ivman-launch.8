@@ -1,0 +1,54 @@
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.TH IVMAN-LAUNCH 8 "10 February 2006"
+.SH NAME
+ivman-launch \- launch script for Ivman
+.SH SYNOPSIS
+.B ivman-launch [ " --exit-with-session " <cmd> " ] [ OPTIONS ]
+.SH DESCRIPTION
+ivman-launch is a simple script used to launch Ivman.  Its sole purpose is
+to ensure Ivman is closed at the end of a user's login session.  You can use
+it if your session manager does not properly close Ivman when you log out.
+
+ivman-launch supports the same command-line options as Ivman, and one additional
+option: --exit-with-session.  Thus, there is no point using ivman-launch if you
+do not need to use this option.
+
+.SH OPTIONS
+.TP
+.BR \-\-exit\-with\-session " " <cmd>
+ivman-launch will block until the command 'cmd' terminates, at which point it will kill
+Ivman and exit itself.  If the command 'cmd' is not running when ivman-launch is started,
+Ivman will exit immediately.  Note that this option implies Ivman will be called with the '--nofork'
+option.
+
+.SH EXAMPLE
+The following command in an ~/.xinitrc file would cause Ivman to launch in the background when
+your session begins, and exit when your session ends:
+
+.BR ivman-launch " " --exit-with-session " " xinit " " &
+
+
+.SH "SEE ALSO"
+.BR ivman (8)
+
+.SH CREDITS
+This script was written by Daniele Favara.

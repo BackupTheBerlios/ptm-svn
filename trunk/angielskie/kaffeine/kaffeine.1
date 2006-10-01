@@ -1,0 +1,63 @@
+.TH KAFFEINE: "1" "September 2005" "Kaffeine: 0.7.1" "User Commands"
+.SH NAME
+Kaffeine: \- manual page for Kaffeine Player 0.7.1
+.SH SYNOPSIS
+.B kaffeine
+[\fIQt-options\fR] [\fIKDE-options\fR] [\fIoptions\fR] [\fIfile\fR]
+.SH DESCRIPTION
+A media player for KDE 3. Can use multiple backends for playback, default is xine.
+.SH OPTIONS
+.SS "Generic options:"
+.TP
+\fB\-\-help\fR
+Show help about options
+.TP
+\fB\-\-help\-qt\fR
+Show Qt specific options
+.TP
+\fB\-\-help\-kde\fR
+Show KDE specific options
+.TP
+\fB\-\-help\-all\fR
+Show all options
+.TP
+\fB\-\-author\fR
+Show author information
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+Show version information
+.TP
+\fB\-\-license\fR
+Show license information
+.TP
+\fB\-\-\fR
+End of options
+.SS "Options":
+.TP
+\fB\-p\fR, \fB\-\-play\fR
+Start playing immediately
+.TP
+\fB\-f\fR, \fB\-\-fullscreen\fR
+Start in fullscreen mode
+.HP
+\fB\-a\fR, \fB\-\-audiodriver\fR <argument> Set audio driver (e.g. alsa, arts, oss,...)
+.HP
+\fB\-x\fR, \fB\-\-videodriver\fR <argument> Set video driver (e.g. xv, xshm,...)
+.TP
+\fB\-d\fR, \fB\-\-device\fR <argument>
+Set Audio-CD/VCD/DVD device path (e.g. /dev/cdrom)
+.TP
+\fB\-\-verbose\fR
+Output more debug messages
+.TP
+\fB\-w\fR, \fB\-\-wizard\fR
+Run installation wizard
+.SS "Arguments:"
+.TP
+file
+File(s) to play. Can be a local file, a directory, or "DVD", "VCD", "AudioCD".
+.SH More Information
+http://kaffeine.sourceforge.net
+.SH Bug Reports and Suggestions
+Please send bug reports and suggestions to kaffeine-user@lists.sourceforge.net
+

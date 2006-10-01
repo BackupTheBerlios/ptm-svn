@@ -1,0 +1,42 @@
+.TH HASHALOT 1 "09 Feb 2004"
+.SH NAME
+hashalot \- read a passphrase and print a hash
+.SH SYNOPSIS
+.B  hashalot [ \-s SALT ] [ \-x ] [ \-n #BYTES ] HASHTYPE
+.br
+.B  HASHTYPE [ \-s SALT ] [ \-x ] [ \-n #BYTES ]
+.SH DESCRIPTION
+.PP
+\fIhashalot\fP is a small tool that reads a passphrase from standard
+input, hashes it using the given hash type, and prints the result to
+standard output.
+.PP
+Supported values for \fIHASHTYPE\fP:
+.br
+.RS 8
+ripemd160 rmd160 rmd160compat sha256 sha384 sha512
+.RE
+.PP
+.SH OPTIONS
+.l
+The option
+.B \-s \fISALT\fP
+specifies an initialization vector to the hashing algorithm. You need
+this if you want to prevent identical passwords to map to identical
+hashes, which is a security risk.
+.PP
+If the
+.B \-x
+option is given then the hash will be printed as a string of hexadecimal
+digits.
+.PP
+The
+.B \-n
+option can be used to limit (or increase) the number of bytes output. The
+default is as appropriate for the specified hash algorithm: 20 bytes for
+RIPEMD160, 32 bytes for SHA256, etc. The default for the "rmd160compat"
+hash is 16 bytes, for compatibility with the old kerneli.org utilities.
+.SH AUTHOR
+Ben Slusky <sluskyb@paranoiacs.org>
+.PP
+This manual page was written by Matthias Urlichs <smurf@debian.org>.

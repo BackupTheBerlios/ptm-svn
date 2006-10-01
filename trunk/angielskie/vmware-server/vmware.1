@@ -1,0 +1,132 @@
+.\" Copyright 1998-2006 VMware, Inc. All rights reserved.
+.\"   Updated copyright and options, 6/2/04 - Kam
+.\"   Updated copyright, 1/27/2005 - Kam
+.\"   Updated copyright,configuration and license info 5/23/2006 - Martha
+.\"
+.\" Print with groff -mandoc <thisfile> | lpr
+.Dd March 10, 2005
+.Dt VMWARE 1
+.Os Linux
+.Sh NAME
+.Nm vmware
+.Nd Intel(TM) x86(TM)-based virtual machine
+.Sh SYNOPSIS
+.Nm vmware
+.Op Fl s Ar name=value
+.Op Fl m 
+.Op Fl x
+.Op Fl X
+.Op Fl q
+.Op Fl v
+.Op Ar configfile
+.Op Ar -- <X toolkit options>
+.Sh COPYRIGHT
+.if n Copyright (C) 1998-2006 VMware, Inc.  All rights reserved.
+.if t Copyright \(co 1998-2006 VMware, Inc.  All rights reserved.
+.Sh DESCRIPTION
+The
+.Nm vmware
+command starts an Intel X86-based virtual machine.
+Depending upon your hardware configuration, you can
+run a number of virtual machines simultaneously.
+.Pp
+This page describes options for starting
+virtual machines from the command line using
+.Nm vmware .
+For more information, see the in-product Help
+and the VMware Web site at
+.Nm http://www.vmware.com/support .
+.Pp
+A VMware virtual machine provides an execution environment
+for full, unmodified operating systems running on an
+x86-based computer.
+The \fIhost\fP
+operating system runs on the real hardware. A \fIguest\fP
+operating system runs inside a virtual machine.
+You may install one of several different guest operating
+systems in each of your virtual machines, and
+each operating system is secure
+and isolated from the host machine's operating system as well as from
+the other guest operating systems on the host.
+.Pp
+You can specify a virtual machine's configuration by
+setting parameters in a \fIconfiguration file\fP using the
+syntax \fIname\fP=\fIvalue\fP.
+Parameters are set one-per-line.
+Lines that begin with a number sign (#) are comments and
+are ignored.
+To use a configuration file, specify it on the
+.Nm vmware
+command line.
+.Pp
+You can also change configuration variables on the command line
+using the \fI-s\fP option with
+the following syntax:
+.Pp
+.Dl \fIname\fP=\fIvalue\fP
+.Pp
+After a double-dash separator (--),
+.Nm X toolkit
+options may be passed as arguments, although
+some of them (in particular size and title) are ignored.
+.Sh OPTIONS
+.Bl -tag -width xxxx
+.It Fl s Ar name=value
+Set the configuration variable \fIname\fP to
+\fIvalue\fP, overriding other definitions of
+\fIname\fP.
+.It Fl m 
+Start the local console in quick switch mode. In this
+mode, the local console occupies the entire screen
+and you can switch between virtual machines by selecting
+tabs at the top of the screen.
+.It Fl x
+Power-on the virtual machine
+on startup.  Equivalent to pressing the power-on button
+after the program starts.
+Requires that you specify a configuration file on the command line.
+.It Fl X
+Power-on and switch to full screen.  Same as \fB-x\fP, but
+switch to full screen mode after powering on.
+Requires that you specify a configuration file on the command line.
+.It Fl q
+Attempt to exit the virtual machine
+after powering off.  This is particularly useful when the guest
+operating system is capable of powering off the virtual machine.
+Requires that you specify a configuration file on the command line.
+.It Fl v
+Display the program version then exit without starting
+a virtual machine.
+.El
+.Sh "ENVIRONMENT VARIABLES"
+.Bl -tag -width TMPDIR -compact
+.It Pa TMPDIR
+Location of temporary files.  Defaults to
+.Nm /tmp.
+.El
+.Sh FILES
+.Bl -tag -width /etc/vmware/locations -compact
+.It Pa /etc/vmware/locations
+Record of where files are installed.
+.It Pa /etc/vmware/config
+User-specific configuration default settings.
+.It Pa ~/.vmware/preferences
+User-specific preferences.
+.It Pa ~/etc/vmware/license
+User license.
+.It Pa /usr/lib/vmware (by default)
+Library directory, possibly shared by several hosts.
+.It Pa diskfile.MULTILOCK
+.It Pa diskfile.READLOCK
+.It Pa diskfile.WRITELOCK
+Temporary lock files for diskfile.
+.It Pa diskfile.REDO
+Redo log for diskfile, created when diskfile is accessed in undoable mode.
+.El
+.Sh SEE ALSO
+Most of the documentation for VMware products is
+available in the user's manual for that product, through Help
+(run
+.Nm vmware
+and click the Help button) and at
+.Nm http://www.vmware.com/support .

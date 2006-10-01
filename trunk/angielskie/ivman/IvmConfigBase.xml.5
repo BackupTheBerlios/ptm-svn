@@ -1,0 +1,130 @@
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" 050106, Rohan <rohan.pm@gmail.com>: initial version
+.\" 050429, Rohan: no more IvmConfigMappings.xml
+.\" 051106, Rohan: 0.6.5 release
+.\"
+.TH IVMCONFIGBASE.XML 5 "6 November 2005"
+.SH NAME
+IvmConfigBase.xml \- options affecting the running of
+.BR ivman(8)
+
+.SH DESCRIPTION
+IvmConfigBase.xml contains a few options which affect the behaviour of
+.BR ivman(8).
+
+IvmConfigBase.xml is parsed as an XML file during Ivman's initialisation.
+The general form of the file is:
+
+.RS 1
+<?xml version="1.0" encoding="UTF-8"?>
+.br
+<ivm:BaseConfig version="0.2" xmlns:ivm="http://www.eikke.com/ivm">
+
+   <ivm:Option name="optionname1" value="optionvalue1" />
+.br
+   <ivm:Option name="optionname2" value="optionvalue2" />
+.br
+   ...
+   
+</ivm:BaseConfig>
+.RE
+
+An Option element can have any of the following names:
+.RS 5
+.TP
+.B fork
+Whether or not Ivman should daemonize itself (run in the background).  Must
+be "true" or "false".  In general, for an instance of Ivman running as root,
+you want this to be true, but for an instance of Ivman running as non-root,
+you want this to be false so the program will close when the user's session
+ends.
+.TP
+.B debug
+Whether or not Ivman should output extra debug information.  Must be "true"
+or "false".  If Ivman is running in the background, debug messages will go
+to the system log; otherwise, messages will go to
+.BR stdout(3).
+.TP
+.B sleep
+By default, a system-wide instance of Ivman will wait a short while before mounting
+any device.  This is to give a user-mode instance of Ivman, or another volume manager,
+a change to mount the volume first, since the system-wide instance of Ivman generally
+has more restrictive permissions set on its mounted volumes.  If you want to disable
+this behaviour, set sleep to "false".
+.TP
+.B user
+User account under which Ivman should run.  It is suggested that you create an
+unprivileged user named 'ivman', and add any commands which need root privileges
+to ivman's entry in /etc/sudoers .  Note that Ivman should still be started as root
+when this option is used; it will automatically drop privileges after initialising.
+.TP
+.B group
+Group under which Ivman should run.  This should be whatever group is required on your
+system in order to use the 'pmount' command.  Also, if you have a system-wide and not
+a per-user instance of Ivman running when a mountable device is inserted, the device will
+be mounted writeable by users of this group.  Note that Ivman should still be started as root
+when this option is used; it will automatically drop privileges after initialising.
+.TP
+.B mountcommand
+Command to execute to mount devices.  It is recommended you leave this blank, in which case
+Ivman will automatically detect the best method of mounting.  Specifically, Ivman tries to
+use (in the following order):
+.BR pmount-hal(1),
+.BR pmount(1),
+.BR mount(8).
+If you specify this option, you must also specify umountcommand.
+.TP
+.B umountcommand
+Command to execute to unmount devices. It is recommended you leave this blank.
+If you specify this option, you must also specify mountcommand.
+.TP
+.B umask
+If neither of mountcommand or umountcommand are specified, and Ivman is running as a system-wide
+instance, and pmount was detected, then volumes will be mounted using this umask.  When not using
+pmount, umask should be set in
+.BR fstab(5),
+or set in HAL policy files if fstab-sync is being used.
+If ommitted, defaults to 022 (rwxr-xr-x).
+.RE
+
+.B mountcommand
+and
+.B umountcommand
+support (and, in most cases, will require) substitution of HAL device
+properties. This is accomplished by surrounding the property name with $
+symbols. For instance, to use the traditional
+.BR mount(8)
+utility for mounting, you would set mountcommand to "mount
+'$hal.block.device$'".  No character escaping is done in the substitution, but
+the characters ' and " are replaced with ?, so you can surround the substitution
+with quotes without fear.
+
+Remember that this is an XML file, which means that characters which have a special
+meaning in XML (entities) need to be escaped.  Some characters which are popular in shell scripting
+(&, <, >) are among these special characters.  As a quick reference,
+& becomes &amp; , < becomes &lt; , > becomes &gt; , ' becomes &apos; and " becomes &quot; .
+
+.SH "SEE ALSO"
+.BR ivman (8),
+.BR IvmConfigActions.xml (5),
+.BR IvmConfigConditions.xml (5)
+.BR IvmConfigProperties.xml (5)
