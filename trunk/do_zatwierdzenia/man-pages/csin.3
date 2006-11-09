@@ -1,0 +1,31 @@
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Dystrybuowane zgodnie z licencją GPL
+.\"
+.TH CSIN 3 2002-07-28 "" "zespolone funkcje matematyczne"
+.SH NAZWA
+csin, csinf, csinl \- zespolona funkcja sinus
+.SH SKŁADNIA
+.B #include <complex.h>
+.sp
+.BI "double complex csin(double complex " z ");"
+.br
+.BI "float complex csinf(float complex " z );
+.br
+.BI "long double complex csinl(long double complex " z ");"
+.sp
+Parametr dla linkera: \-lm.
+.SH OPIS
+Zespolona funkcja sinus csin(z) jest zdefniowana jako (exp(i*z)\-exp(\-i*z))/(2*i). 
+.SH "ZGODNE Z"
+C99
+.SH "ZOBACZ RÓWNIEŻ"
+.BR cabs (3),
+.BR csin (3),
+.BR ctan (3),
+.BR complex (7)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de

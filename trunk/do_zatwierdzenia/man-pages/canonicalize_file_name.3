@@ -1,0 +1,30 @@
+.\"  Copyright 2005 walter harms (walter.harms@informatik.uni-oldenburg.de)
+.\"  and Copyright 2005 Michael Kerrisk (mtk-manpages@gmx.net).
+.\"  Dystrybuowane zgodnie z licencją GNU General Public License.
+.\"
+.TH CANONICALIZE_FILE_NAME 3 2005-07-14 "GNU" ""
+.SH NAZWA
+canonicalize_file_name \-  zwraca kanoniczną nazwę pliku
+.SH SKŁADNIA
+.sp
+.B #define _GNU_SOURCE
+.br
+.B #include <stdlib.h>
+.sp
+.BI "char *canonicalize_file_name (const char *" path ");"
+.SH OPIS
+Wywołanie
+.I canonicalize_file_name(path)
+jest równoważne wywołaniu
+.IR "realpath(path,\ NULL)" .
+
+.SH "ZGODNE Z"
+Funkcja jest rozszerzeniem GNU.
+.SH "ZOBACZ RÓWNIEŻ"
+.BR realpath (3)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de

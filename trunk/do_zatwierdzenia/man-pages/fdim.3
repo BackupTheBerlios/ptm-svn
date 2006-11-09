@@ -1,0 +1,33 @@
+.\" Copyright 2003 Walter Harms, Andries Brouwer
+.\" Dystrybuowane zgodnie z licencją GPL
+.\"
+.TH FDIM 3 2003-07-24 "" "funkcje matematyczne"
+.SH NAZWA
+fdim, fdimf, fdiml \- dodatnia różnicy
+.SH SKŁADNIA
+.B #include <math.h>
+.sp
+.BI "double fdim(double " x ", double " y );
+.br
+.BI "float fdimf(float " x ", float " y );
+.br
+.BI "long double fdiml(long double " x ", long double " y );
+.sp
+Parametr dla kompilatora: \-std=c99; parametr dla linkera: \-lm.
+.SH OPIS
+Powyższe funkcje zwracają max(\fIx\fP-\fIy\fP,0).
+Jeżeli
+.I x
+lub
+.I y
+lub obie są NaN, to Nan jest zwracany.
+.SH "ZGODNE Z"
+C99
+.SH "ZOBACZ RÓWNIEŻ"
+.BR fmax (3)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de

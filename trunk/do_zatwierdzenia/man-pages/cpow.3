@@ -1,0 +1,31 @@
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Dystrybuowane zgodnie z licencją GPL
+.\"
+.TH CPOW 3 2002-07-28 "" "zesolone funkcje matematyczne"
+.SH NAZWA
+cpow, cpowf, cpowl \- zespolona funkcja potęgowania
+.SH SKŁADNIA
+.B #include <complex.h>
+.sp
+.BI "double complex cpow(double complex " x ", complex double " z ");"
+.br
+.BI "float complex cpowf(float complex " x ", complex float " z ");"
+.br
+.BI "long double complex cpowl(long double complex " x ", complex long double " z ");"
+.sp
+Parametr dla linkera: \-lm.
+.SH OPIS
+Funkcja wylicza liczbę x podniesioną do potęgi z.
+(z odcięciem x-ów leżących w ujemnej części osi rzeczywistej.)
+.SH "ZGODNE Z"
+C99
+.SH "ZOBACZ RÓWNIEŻ"
+.BR cabs (3),
+.BR pow (3),
+.BR complex (7)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de

@@ -1,0 +1,31 @@
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Dystrybuowane zgodnie z licencją GPL
+.\"
+.TH CTANH 3 2002-07-28 "" "zespolone funkcje matematyczne"
+.SH NAZWA
+ctanh, ctanhf, ctanhl \- zespolony hyperboliczny tangens
+.SH SKŁADNIA
+.B #include <complex.h>
+.sp
+.BI "double complex ctanh(double complex " z ");"
+.br
+.BI "float complex ctanhf(float complex " z );
+.br
+.BI "long double complex ctanhl(long double complex " z ");"
+.sp
+Parametr dla linkera: \-lm.
+.SH OPIS
+Funkcja zespolonego hiperbolicznego tangensa ctanh(z) jest matematycznie zdefiniowana jako csinh(z) / ccosh(z).
+.SH "ZGODNE Z"
+C99
+.SH "ZOBACZ RÓWNIEŻ"
+.BR cabs (3),
+.BR ccosh (3),
+.BR csinh (3),
+.BR complex (7)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de

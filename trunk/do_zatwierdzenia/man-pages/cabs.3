@@ -1,0 +1,35 @@
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Dystrybuowane zgodnie z licencją GPL
+.\"
+.TH CABS 3 2002-07-28 "" "zespolone funkcje matematyczne"
+.SH NAZWA
+cabs, cabsf, cabsl \- wartość bezwzględna liczby zespolonej 
+.SH SKŁADNIA
+.B #include <complex.h>
+.sp
+.BI "double cabs(double complex " z );
+.br
+.BI "float cabsf(float complex " z );
+.br
+.BI "long double cabsl(long double complex " z );
+.sp
+Parametr dla linkera: \-lm.
+.SH OPIS
+Funkcja
+.BR cabs () 
+Zwraca wartość bezwzględną liczby zespolonej z. Wynik jest liczbą rzeczywistą. 
+.SH NOTA
+Funkja jest aktualnie aliasem dla hypot(a,b) = sqrt(a*a+b*b).
+.SH "ZGODNE Z"
+C99
+.SH "ZOBACZ RÓWNIEŻ"
+.BR abs (3),
+.BR cimag (3),
+.BR hypot (3),
+.BR complex (7)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de

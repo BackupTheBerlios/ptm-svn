@@ -1,0 +1,35 @@
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Dystrybuowane zgodnie z licencją GPL
+.\"
+.TH CONJ 3 2002-07-28 "" "zespolone funkcje matematyczne"
+.SH NAZWA
+conj, conjf, conjl \- wylicza liczbę sprzężoną z liczbą zespoloną
+.SH SKŁADNIA
+.B #include <complex.h>
+.sp
+.BI "double complex conj(double complex " z ); 
+.br
+.BI "float complex conjf(float complex " z ); 
+.br
+.BI "long double complex conjl(long double complex " z ); 
+.sp
+Parametr dla linkera: \-lm.
+.SH OPIS
+Funkcja
+.BR conj () 
+zwraca liczbę sprzężoną z liczbą zespoloną z.
+Jest to wartość uzyskana przez zmianę znaku częsci urojonej.
+.LP
+Według wzoru: cabs(z) = csqrt(z * conj(z)).
+.SH "ZGODNE Z"
+C99
+.SH "ZOBACZ RÓWNIEŻ"
+.BR cabs (3),
+.BR sqrt (3),
+.BR complex (7)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de

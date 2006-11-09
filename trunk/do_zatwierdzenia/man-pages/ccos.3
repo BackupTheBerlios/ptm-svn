@@ -1,0 +1,31 @@
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Dystrybuowane zgodnie z licencją GPL
+.\"
+.TH CCOS 3 2002-07-28 "" "zespolone funkce matematyczne"
+.SH NAZWA
+ccos, ccosf, ccosl \- zespolona funkcja cosinus
+.SH SYNOPSIS
+.B #include <complex.h>
+.sp
+.BI "double complex ccos(double complex " z ");"
+.br
+.BI "float complex ccosf(float complex " z ");"
+.br
+.BI "long double complex ccosl(long double complex " z ");"
+.sp
+Parametr dla linkera: \-lm.
+.SH OPIS
+Zespolona finkcja cosinus ccos(z) jest zdeniowana jako (exp(i*z)+exp(\-i*z))/2. 
+.SH "ZGODNE Z"
+C99
+.SH "ZOBACZ RÓWNIEŻ"
+.BR cabs (3),
+.BR csin (3),
+.BR ctan (3),
+.BR complex (7)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de

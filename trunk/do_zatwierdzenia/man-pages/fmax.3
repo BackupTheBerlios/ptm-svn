@@ -1,0 +1,28 @@
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" Dystrybuowane zgodnie z licencją GPL
+.\"
+.TH FMAX 3 2002-07-28 "" "funkcje matematyczne"
+.SH NAZWA
+fmax, fmaxf, fmaxl \- znajduje największą wartość 
+.SH SKŁADNIA
+.B #include <math.h>
+.sp
+.BI "double fmax(double " x ", double " y );
+.br
+.BI "float fmaxf(float " x ", float " y );
+.br
+.BI "long double fmaxl(long double " x ", long double " y );
+.sp
+Parametr dla kompilatora: \-std=c99; parametr dla linkera: \-lm.
+.SH OPIS
+Znajduje większą wartość spośród x i y.
+.SH "ZGODNE Z"
+C99
+.SH "ZOBACZ RÓWNIEŻ"
+.BR fmin (3)
+.SH TŁUMACZENIE
+Paweł Sędrowski
+.br
+Projekt Tłumaczenia Manuali
+.br
+http://ptm.berlios.de
